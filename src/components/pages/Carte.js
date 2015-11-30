@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, Image} from 'react-native';
 import _ from 'lodash';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
@@ -12,7 +12,7 @@ import Filtre from './Filtre/List';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
 
-var mapRef = 'mapRef';
+import Carousel from '../ui/Carousel';
 
 class Carte extends Page {
   static route(title) {
@@ -40,13 +40,12 @@ class Carte extends Page {
 
     this.state = this.restaurantsState();
     this.state.showsUserLocation = false;
-    this.state.initialPosition = 'unkown';
-    this.state.options = {
-      center: {
-        latitude: 48.8534100,
-        longitude: 2.3378000
-      },
-      zoom: 11
+    this.state.initialPosition = 'unknown';
+    this.state.center = {
+      latitude: 48.8534100,
+      longitude: 2.3378000,
+      latitudeDelta: 0.12,
+      longitudeDelta: 0.065
     };
   }
 
@@ -55,12 +54,11 @@ class Carte extends Page {
       RestaurantsActions.fetchRestaurants();
 
       this.setState({showsUserLocation: true});
-/*
+
       navigator.geolocation.getCurrentPosition(
         () => PushNotificationIOS.requestPermissions(),
         () => PushNotificationIOS.requestPermissions()
       );
-*/
 
       navigator.geolocation.getCurrentPosition(
         (initialPosition) => this.setState({initialPosition}),
@@ -85,18 +83,39 @@ class Carte extends Page {
 
   onRegionChangeComplete = (region) => {
     // to check if in area
-    var westLongitude = region.longitude + region.longitudeDelta
-    var eastLongitude = region.longitude - region.longitudeDelta
-    var northLatitude = region.latitude + region.latitudeDelta
-    var bottomLatitude = region.latitude - region.latitudeDelta
+    var westLongitude = region.longitude + region.longitudeDelta;
+    var eastLongitude = region.longitude - region.longitudeDelta;
+    var northLatitude = region.latitude + region.latitudeDelta;
+    var bottomLatitude = region.latitude - region.latitudeDelta;
+  }
+
+  onAnnotationPress = (annotation) => {
+    this.setState({index : _.findIndex(this.state.data, {'name' : annotation.title})});
+    this.refs.carousel.goToPage(this.state.index, 'annotationPress');
+  }
+
+  carouselOnPageChange = (i, from) => {
+    var event = {
+      nativeEvent: {
+        action: 'annotation-click',
+        annotation: this.state.data[i]
+      }
+    }
+    this.setState({index : i});
+    if (from !== 'annotationPress' && from !== 'layout') {
+      // Here call function to select annotation on map
+      //this.refs.mapview._onPress(event);
+    }
   }
 
   renderPage() {
     return (
   		<View style={{flex: 1, position: 'relative'}}>
         <MapView
+          ref="mapview"
           style={styles.restaurantsMap}
           showsUserLocation={this.state.showsUserLocation}
+          followUserLocation={false}
           annotations={_.map(this.state.data, (restaurant) => {
             var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
             myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
@@ -104,8 +123,8 @@ class Carte extends Page {
               latitude: restaurant.latitude,
               longitude: restaurant.longitude,
               title: restaurant.name,
-              subtitle: restaurant.food[1],
-              rightCallout: {
+              subtitle: restaurant.food[1]
+              /*rightCallout: {
                 type: 'button',
                 onPress: () => {
                   this.props.navigator.push(Restaurant.route({id: restaurant.id}));
@@ -116,17 +135,30 @@ class Carte extends Page {
                 config: {
                   image: restaurant.pictures[0]
                 }
-              }
+              }*/
             };
           })}
-          region={{
-            latitude: 48.8534100,
-            longitude: 2.3378000,
-            latitudeDelta: 0.12,
-            longitudeDelta: 0.065
-          }}
+          region={this.state.center}
+          onAnnotationPress={this.onAnnotationPress}
           onRegionChangeComplete={this.onRegionChangeComplete} />
 
+        <Carousel
+          style={styles.carousel}
+          ref="carousel"
+          onPageChange={this.carouselOnPageChange}>
+          {_.map(this.state.data, (restaurant) => {
+            return (
+                <Image
+                  source={{uri: restaurant.pictures[0]}}
+                  style={styles.imageRestaurant}>
+                  <View style={styles.imageRestaurantInfos}>
+                    <Text style={styles.imageRestaurantName}>{restaurant.name}</Text>
+                  </View>
+                </Image>
+            );
+          })}
+        </Carousel>
+        
 				<TouchableHighlight style={styles.filterMessage} underlayColor='#38E1B2' onPress={() => this.props.navigator.push(Filtre.route())}>
 						<View style={styles.filterContainer}>
               {RestaurantsStore.filterActive() ? 
@@ -188,7 +220,7 @@ var styles = StyleSheet.create({
       {rotate: '90deg'}
     ]
   },
-    triangleDown: {
+  triangleDown: {
     width: 0,
     height: 0,
     marginRight: 5,
@@ -204,6 +236,33 @@ var styles = StyleSheet.create({
     transform: [
       {rotate: '180deg'}
     ]
+  },
+  imageRestaurant: {
+    flex: 1,
+    position: 'relative',
+    height: 120,
+  },
+  carousel: {
+    height: 120,
+    position: 'absolute',
+    bottom: 5,
+    left: 5,
+    right: 5,
+  },
+  imageRestaurantInfos: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)'    
+  },
+  imageRestaurantName: {
+    fontWeight: '900',
+    fontSize: 11,
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)',
+    color: 'white',
+    marginTop: 2,
+    position: 'absolute',
+    bottom: 30,
+    left: 5
   }
 });
 

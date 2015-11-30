@@ -40,8 +40,6 @@ class RecoStep3 extends Component {
   }
 
   componentDidMount() {
-    console.log("============");
-    console.log(this.props.editing);
     if (this.props.editing) {
       RecoStore.listen(this.onRecoUpdate);
       RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);

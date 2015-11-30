@@ -37,7 +37,7 @@ Class RCTPushNotificationManager = nil;
    * on the same Wi-Fi network.
    */
 
-  jsCodeLocation = [NSURL URLWithString:@"http://10.18.194.124:8081/index.ios.bundle?platform=ios&dev=true"];
+  jsCodeLocation = [NSURL URLWithString:@"http://10.139.87.242:8081/index.ios.bundle?platform=ios&dev=true"];
 
   /**
    * OPTION 2

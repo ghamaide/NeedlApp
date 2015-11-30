@@ -18,11 +18,36 @@ class Carousel extends Component{
     this.refs.view.setNativeProps.apply(null, arguments);
   }
 
-  pageChange(i) {
+  pageChange(i, from) {
     this.setState({page: i});
     if (this.props.onPageChange) {
-      this.props.onPageChange(i);
+      this.props.onPageChange(i, from);
     }
+  }
+
+  goToPage(i, from) {
+    var pagesToGo = i - this.state.page;
+    if (pagesToGo >= 0) {
+      this.goForward(pagesToGo, from);
+    } else if (pagesToGo <= 0) {
+      this.goBackward(-pagesToGo, from);
+    }
+  }
+
+  goForward = (i, from) => {
+    var size = this.state.width - ((this.props.insetMargin || 0) * 2);
+    this.setState({
+      offset: this.state.offset + size * i
+    });
+    this.pageChange(this.state.page + i, from);
+  }
+
+  goBackward = (i, from) => {
+    var size = this.state.width - ((this.props.insetMargin || 0) * 2);
+    this.setState({
+      offset: this.state.offset - size * i
+    });
+    this.pageChange(this.state.page - i, from);
   }
 
   render() {
@@ -53,7 +78,7 @@ class Carousel extends Component{
     }
 
     return (
-      <View ref="view" style={[{position: 'relative'}, this.props.style]} onLayout={(e) => {
+      <View ref="view" style={[{position: 'relative', backgroundColor: 'black'}, this.props.style]} onLayout={(e) => {
         this.setState({width: e.nativeEvent.layout.width});
       }}>
         {this.state.width ?
@@ -68,7 +93,7 @@ class Carousel extends Component{
               if (this.props.insetMargin && nbChildren === 1) {
                 return this.pageChange(-1);
               }
-              return this.pageChange(0);
+              return this.pageChange(0, "layout");
             }}
             onMomentumScrollEnd={this.onAnimationEnd}
             contentInset={{top: 0, left: this.props.insetMargin, bottom: 0, right: this.props.insetMargin}}
@@ -85,26 +110,14 @@ class Carousel extends Component{
          : null}
          {canGoBack ?
           <TouchableOpacity style={[styles.flecheWrapper, styles.flecheWrapperLeft, this.props.leftFlecheStyle]}
-          onPress={() => {
-            var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-            this.setState({
-              offset: this.state.offset - size
-            });
-            this.pageChange(this.state.page - 1);
-          }}>
+          onPress={this.goBackward}>
               <Image style={[styles.fleche, styles.flecheLeft]} source={require('../../assets/img/arrow.png')} />
           </TouchableOpacity>
           : null}
 
         {canGoForward ?
           <TouchableOpacity style={[styles.flecheWrapper, styles.flecheWrapperRight, this.props.rightFlecheStyle]}
-          onPress={() => {
-            var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-            this.setState({
-              offset: this.state.offset + size
-            });
-            this.pageChange(this.state.page + 1);
-          }}>
+          onPress={this.goForward}>
               <Image style={[styles.fleche]} source={require('../../assets/img/arrow.png')} />
           </TouchableOpacity>
           : null}
@@ -143,7 +156,8 @@ class Carousel extends Component{
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderRadius: 10
   },
   flecheWrapper: {
     position: 'absolute',
