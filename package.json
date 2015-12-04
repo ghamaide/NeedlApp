@@ -22,6 +22,7 @@
     "react-native-keyboardevents": "^0.4.5",
     "react-native-linear-gradient": "^0.3.2",
     "react-native-message-composer": "^0.0.3",
+    "react-native-multi-slider": "^0.2.2",
     "react-native-overlay": "^0.2.9",
     "react-native-refreshable-listview": "^1.3.0",
     "react-native-sglistview": "^0.1.3",

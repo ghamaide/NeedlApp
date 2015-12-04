@@ -95,11 +95,12 @@ class Carte extends Page {
     var northLatitude = region.latitude + radius * region.latitudeDelta / 2;
     var bottomLatitude = region.latitude - radius * region.latitudeDelta / 2;
     var distanceToCenter = this.getDistance(region.latitude, region.longitude, northLatitude, region.longitude);
-    // bof pour le calcul
+    // bof pour le calcul, réponse en km
   }
 
   onRegionChange = (region) => {
-    this.setState({isChanging : true});
+    // to see if the user is changing region
+    //this.setState({isChanging : true});
   }
 
   onAnnotationPress = (annotation) => {
