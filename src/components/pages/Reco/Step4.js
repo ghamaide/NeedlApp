@@ -31,7 +31,7 @@ class RecoStep4 extends Component {
 
     return (
       <ScrollView
-        style={{flex: 1, backgroundColor: 'black'}}
+        style={{flex: 1, backgroundColor: '#FFFFFF'}}
         contentInset={{top: 0}}
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
@@ -81,7 +81,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  color: 'white',
+  color: '#000000',
   marginTop: 10,
   fontSize: 16,
   textAlign: 'center'

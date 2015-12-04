@@ -74,7 +74,7 @@ class RecoStep2 extends Component {
 
 var styles = StyleSheet.create({
  container: {
-  backgroundColor: 'black',
+  backgroundColor: '#FFFFFF',
   padding: 10,
   flex: 1,
   alignItems: 'center',
@@ -83,7 +83,7 @@ var styles = StyleSheet.create({
  title: {
   marginBottom: 30,
   fontSize: 16,
-  color: '#DDD',
+  color: '#888888',
   textAlign: 'center'
  },
  pastilleContainer: {

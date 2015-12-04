@@ -167,14 +167,15 @@ class Restaurant extends Page {
         <View style={styles.recoContainer}>
           {RestaurantsStore.recommenders(restaurant.id).length ?
             <View>
-              <Text style={styles.containerTitle}>Ils l''ont recommandé</Text>
+              <Text style={styles.containerTitle}>Ils l'ont recommandé</Text>
               <View style={{alignItems: 'center'}}>
                 <Carousel ref="carousel" style={{
                   flexDirection: 'row',
                   height: 80,
                   width: 240,
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  backgroundColor: 'transparent'
                 }} elemSize={80} insetMargin={80} leftFlecheStyle={{marginLeft: -35}} rightFlecheStyle={{right: 0}}
                   onPageChange={(i) => {
                   this.setState({
@@ -193,7 +194,7 @@ class Restaurant extends Page {
               </View>
             </View>
             :
-            <Text style={styles.containerTitle}>Aucun ami ne l''a recommendé</Text>
+            <Text style={styles.containerTitle}>Aucun ami ne l'a recommendé</Text>
           }
           {(RestaurantsStore.recommenders(restaurant.id).length  && _.keys(restaurant.reviews).length && restaurant.reviews[this.state.reviewSelected]) ?
             <View style={styles.reviewBox}>
@@ -254,7 +255,7 @@ class Restaurant extends Page {
         <View style={styles.wishContainer}>
           {RestaurantsStore.wishers(restaurant.id).length ?
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.containerTitle}>Ils ont envie d''y aller</Text>
+              <Text style={styles.containerTitle}>Ils ont envie d'y aller</Text>
               <Carousel ref="carousel" style={{
                 flexDirection: 'row',
                 height: 80,
@@ -272,7 +273,7 @@ class Restaurant extends Page {
                 })}
               </Carousel>
             </View>
-          : <Text style={styles.containerTitle}>Pas encore d''ami qui veut y aller</Text>}
+          : <Text style={styles.containerTitle}>Pas encore d'ami qui veut y aller</Text>}
 
           {(!_.contains(RestaurantsStore.wishers(restaurant.id), MeStore.getState().me.id) &&
                     !_.contains(RestaurantsStore.recommenders(restaurant.id), MeStore.getState().me.id)) ?
@@ -422,14 +423,14 @@ var styles = StyleSheet.create({
     height: 300
   },
   callContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: '#CCCCCC',
     padding: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row'
   },
   reservationText: {
-    color: 'white',
+    color: '#444444',
     fontSize: 16,
     alignSelf: 'center'
   },
@@ -438,7 +439,7 @@ var styles = StyleSheet.create({
   },
   recoContainer: {
     padding: 20,
-    backgroundColor: '#222'
+    backgroundColor: '#FFFFFF'
   },
   wishContainer: {
     padding: 20
@@ -446,7 +447,7 @@ var styles = StyleSheet.create({
   containerTitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: 'white',
+    color: '#000000',
     marginBottom: 20,
     textAlign: 'center'
   },
@@ -454,12 +455,12 @@ var styles = StyleSheet.create({
     height: 150
   },
   lieuContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     alignItems: 'center'
   },
   address: {
-    color: 'white',
+    color: '#444444',
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10
@@ -475,7 +476,7 @@ var styles = StyleSheet.create({
     marginTop: 1
   },
   metroText: {
-    color: 'white'
+    color: '#888888'
   },
   avatarWrapper: {
     height: 60,
@@ -495,7 +496,7 @@ var styles = StyleSheet.create({
     marginTop: -10
   },
   reviewBox: {
-    backgroundColor: '#EF582D',
+    backgroundColor: '#CCCCCC',
     borderRadius: 5,
     marginTop: 10,
     marginBottom: 10,
@@ -519,12 +520,12 @@ var styles = StyleSheet.create({
   },
   reviewText: {
     textAlign: 'center',
-    color: 'black'
+    color: '#000000'
   },
   reviewAuthor: {
     marginTop: 5,
     textAlign: 'center',
-    color: 'black'
+    color: '#444444'
   },
   recoButton: {
     backgroundColor: '#38E1B2'
@@ -543,12 +544,12 @@ var styles = StyleSheet.create({
   menuTitle: {
     textAlign: 'center',
     fontWeight: 'bold',
-    color: 'white',
+    color: '#000000',
     marginBottom: 5
   },
   menuPlat: {
     textAlign: 'center',
-    color: 'white',
+    color: '#444444',
     paddingTop: 2,
     paddingBottom: 2
   },

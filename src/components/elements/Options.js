@@ -15,11 +15,11 @@ class Options extends Component {
 
 var styles = StyleSheet.create({
   optionsWrappers: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     padding: 10
   },
   optionsButton: {
-    backgroundColor: '#555',
+    backgroundColor: '#444444',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
@@ -34,7 +34,7 @@ var styles = StyleSheet.create({
     marginTop: 2
   },
   optionsText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontSize: 16,
     backgroundColor: 'transparent'
   }

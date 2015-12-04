@@ -17,11 +17,11 @@ class NewText extends OldText {
     }
 
     if (_.isArray(this.props.style)){
-      props.style.push({fontFamily: 'Quicksand-Regular', fontSize: 12});
+      props.style.push({fontFamily: 'Quicksand-Regular', fontSize: 13});
     } else if (props.style) {
-      props.style = [props.style, {fontFamily: 'Quicksand-Regular', fontSize: 12}];
+      props.style = [props.style, {fontFamily: 'Quicksand-Regular', fontSize: 13}];
     } else {
-      props.style = {fontFamily: 'Quicksand-Regular', fontSize: 12};
+      props.style = {fontFamily: 'Quicksand-Regular', fontSize: 13};
     }
 
     this.props = props;
@@ -40,11 +40,11 @@ class NewTextInput extends OldTextInput {
     var props = _.clone(this.props);
 
     if (_.isArray(this.props.style)){
-      props.style.push({fontFamily: 'Quicksand-Regular', fontSize: 12});
+      props.style.push({fontFamily: 'Quicksand-Regular', fontSize: 13});
     } else if (props.style) {
-      props.style = [props.style, {fontFamily: 'Quicksand-Regular', fontSize: 12}];
+      props.style = [props.style, {fontFamily: 'Quicksand-Regular', fontSize: 13}];
     } else {
-      props.style = {fontFamily: 'Quicksand-Regular', fontSize: 12};
+      props.style = {fontFamily: 'Quicksand-Regular', fontSize: 13};
     }
 
     this.props = props;

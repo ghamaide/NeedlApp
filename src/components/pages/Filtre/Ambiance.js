@@ -65,7 +65,7 @@ class Ambiance extends Component {
 
   render() {
     return <ListView
-      style={{backgroundColor: 'black'}}
+      style={{backgroundColor: '#FFFFFF'}}
       dataSource={this.state.ambiance}
       renderRow={this.renderRow}
       contentInset={{top: 0}}
@@ -76,7 +76,7 @@ class Ambiance extends Component {
 
 var styles = StyleSheet.create({
   rowWrapper: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
     borderColor: '#EF582D'
@@ -85,13 +85,13 @@ var styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    color: 'white',
+    color: '#000000',
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 5
   },
   value: {
-    color: '#CCC',
+    color: '#444444',
     fontSize: 14
   }
 });

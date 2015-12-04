@@ -87,7 +87,7 @@ export class FriendsActions {
   }
 
   uploadContacts(data) {
-    console.log(data);
+    //console.log(data);
     // requets to upload data
   }
 

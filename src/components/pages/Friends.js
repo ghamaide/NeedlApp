@@ -70,7 +70,7 @@ class Friends extends Page {
 
   renderFriend = (friend) => {
     return (
-      <TouchableHighlight style={styles.friendRowWrapper} onPress={() => {
+      <TouchableHighlight style={styles.friendRowWrapper} underlayColor="#FFFFFF" onPress={() => {
         this.props.navigator.push(Profil.route({id: friend.id}, friend.name));
       }}>
         <View style={styles.friendRow}>
@@ -92,7 +92,7 @@ class Friends extends Page {
     }
 
     return <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l''instant, ajoutes en !</Text>
+      <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, ajoutes en !</Text>
     </View>;
   }
 
@@ -122,11 +122,11 @@ class Friends extends Page {
 
 var styles = StyleSheet.create({
   friendsList: {
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     flex: 1
   },
   friendRowWrapper: {
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
     borderColor: '#EF582D',
@@ -144,15 +144,15 @@ var styles = StyleSheet.create({
   friendInfos: {
     flex: 1,
     marginLeft: 20,
-    paddingTop: 8
+    paddingTop: 4
   },
   friendName: {
-    color: 'white',
+    color: '#000000',
     fontSize: 18,
     fontWeight: 'bold'
   },
   friendRecos: {
-    color: 'white',
+    color: '#444444',
     fontSize: 14
   },
   nbRequestsContainer: {

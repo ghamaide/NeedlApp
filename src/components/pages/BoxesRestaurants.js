@@ -2,6 +2,7 @@
 
 import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, ListView, ScrollView} from 'react-native';
 import _ from 'lodash';
+import GridView from 'react-native-grid-view';
 
 import Box from '../elements/Box';
 
@@ -18,10 +19,10 @@ class BoxesRestaurants extends Page {
     return {
       component: BoxesRestaurants,
       title: 'Restaurants',
-      leftButtonTitle: 'Bars',
+      /*leftButtonTitle: 'Bars',
       onLeftButtonPress() {
         this.replace(BoxesBars.route());
-      }
+      }*/
     };
   }
 
@@ -37,7 +38,7 @@ class BoxesRestaurants extends Page {
         {name: "Grandes tablees", image: require('../../assets/img/grandes_tablees.jpg')},
         {name: "Pour un date", image: require('../../assets/img/date.jpg')},
       ]),
-      data: ds.cloneWithRows([
+      data: [
         {name: "Terrasse", image: require('../../assets/img/brunch.jpg')},
         {name: "Bonne Franquette", image: require('../../assets/img/dej_business.jpg')},
         {name: "Festif", image: require('../../assets/img/en_couple.jpg')},
@@ -45,7 +46,7 @@ class BoxesRestaurants extends Page {
         {name: "Traditionnel", image: require('../../assets/img/entre_amis.jpg')},
         {name: "Fast", image: require('../../assets/img/grandes_tablees.jpg')},
         {name: "Romantique", image: require('../../assets/img/date.jpg')},
-      ])
+      ]
       // Images to change
       // Put the list in restaurants stores
     };
@@ -90,9 +91,11 @@ class BoxesRestaurants extends Page {
 					</TouchableHighlight>
           <ScrollView
             automaticallyAdjustContentInsets={false}>
-  					<ListView contentContainerStyle={styles.list}
-              dataSource={this.state.data}
-              renderRow={this.renderData} />
+  					<GridView
+              style={styles.list}
+              items={this.state.data}
+              itemsPerRow={2}
+              renderItem={this.renderData} />
           </ScrollView>
 				</View>
 		);
@@ -104,19 +107,17 @@ var styles = StyleSheet.create({
 		flex: 1
 	},
   list: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center'
+    padding: 0,
+    margin: 0
   },
   filterButton: {
-  	backgroundColor: 'black',
+  	backgroundColor: '#FFFFFF',
   	paddingTop: 10,
     paddingBottom: 0,
   	height: 30
   },
   filterButtonMessage: {
-    color: 'white',
+    color: '#000000',
     fontSize: 28,
     fontWeight: '500',
     textAlign: 'center'

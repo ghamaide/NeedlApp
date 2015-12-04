@@ -93,7 +93,7 @@ class Liste extends Page {
 		// TODO : change the style of the "Filtrer" button
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-				<TouchableHighlight style={styles.filterContainerWrapper} onPress={() => {
+				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route());
 				}}>
 					<View style={styles.filterContainer}>
@@ -124,6 +124,7 @@ var styles = StyleSheet.create({
   restaurantRowWrapper: {
 		marginTop: 5,
 		marginBottom: 5,
+		backgroundColor: '#555555'
 	},
 	restaurantRow: {
 		flexDirection: 'row',
@@ -193,16 +194,16 @@ var styles = StyleSheet.create({
 		left: 5
 	},
 	filterMessageText: {
-		color: 'white',
+		color: '#000000',
     fontSize: 16,
     fontWeight: '500',
     textAlign: 'center',
-		backgroundColor: 'black',
+		backgroundColor: '#FFFFFF',
 		paddingTop: 12,
 		paddingBottom: 10
 	},
 	filterContainerWrapper: {
-		backgroundColor: 'black',
+		backgroundColor: '#FFFFFF',
 	},
 	filterContainer: {
 		flex: 1,
@@ -222,7 +223,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '90deg'}
     ]
@@ -239,7 +240,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '180deg'}
     ]

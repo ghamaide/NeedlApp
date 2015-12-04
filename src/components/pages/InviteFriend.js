@@ -185,13 +185,13 @@ class InviteFriend extends Page {
 
 var styles = StyleSheet.create({
   contactsList: {
-    backgroundColor: 'black'
+    backgroundColor: '#FFFFFF'
   },
   contactWrapper: {
     flex: 1,
     flexDirection: 'row',
     padding: 5,
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
     borderColor: '#EF582D',
@@ -203,18 +203,18 @@ var styles = StyleSheet.create({
     flex: 1
   },
   contactName: {
-    color: 'white',
+    color: '#000000',
     fontSize: 11,
     paddingTop: 2,
     paddingBottom: 2
   },
   contactNumber: {
-    color: 'white',
+    color: '#888888',
     fontSize: 11,
     flex: 1
   },
   contactMail: {
-    color: 'white',
+    color: '#888888',
     fontSize: 11,
     flex: 1
   },

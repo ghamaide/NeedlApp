@@ -167,7 +167,7 @@ class Profil extends Page {
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>
-            <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d''ici 24h</Text>
+            <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d'ici 24h</Text>
           </View>
         </Overlay>
 
@@ -180,7 +180,7 @@ class Profil extends Page {
         </View>
 
         {profil.recommendations.length ?
-          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, 'black')
+          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, '#FFFFFF')
           : null}
 
         {profil.wishes.length ?
@@ -263,7 +263,9 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#CCCCCC'
   },
   textInfoContainer: {
     flex: 1,
@@ -275,14 +277,14 @@ var styles = StyleSheet.create({
     borderRadius: 40
   },
   profilName: {
-    color: 'white',
+    color: '#000000',
     fontWeight: 'bold',
     fontSize: 20,
     backgroundColor: 'transparent',
     marginBottom: 5
   },
   profilNbRecos: {
-    color: 'white',
+    color: '#444444',
     fontSize: 16,
     backgroundColor: 'transparent'
   },
@@ -294,7 +296,7 @@ var styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: 'white'
+    color: '#000000'
   },
   restaurantsCarousel: {
     height: 150,

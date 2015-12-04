@@ -110,7 +110,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   filterButton: {
-  	backgroundColor: 'black',
+  	backgroundColor: 'white',
   	paddingTop: 10,
     paddingBottom: 0,
   	height: 30

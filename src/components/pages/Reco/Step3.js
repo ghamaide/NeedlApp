@@ -124,7 +124,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  color: 'white',
+  color: '#000000',
   fontSize: 16,
   textAlign: 'center'
  },
