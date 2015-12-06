@@ -12,7 +12,6 @@ import Profil from './pages/Profil';
 import Onboard_Friends from './pages/Onboard_Friends';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
-import Restaurants from './pages/Restaurants';
 import BoxesRestaurants from './pages/BoxesRestaurants';
 import RecoStep1 from './pages/Reco/Step1';
 

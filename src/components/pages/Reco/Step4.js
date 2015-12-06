@@ -30,13 +30,7 @@ class RecoStep4 extends Component {
     var reco = RecoStore.getReco();
 
     return (
-      <ScrollView
-        style={{flex: 1, backgroundColor: '#FFFFFF'}}
-        contentInset={{top: 0}}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}
-      >
+      <View style={styles.container}>        
         <Text style={styles.title}>Sélectionne 1 à 3 points forts</Text>
          <ToggleGroup
           ref="togglegroup"
@@ -67,7 +61,7 @@ class RecoStep4 extends Component {
             </View>;
           }}
         </ToggleGroup>
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -76,6 +70,7 @@ var styles = StyleSheet.create({
  container: {
   backgroundColor: 'transparent',
   padding: 10,
+  flex: 1,
   alignItems: 'center',
   justifyContent: 'center'
  },
@@ -83,7 +78,7 @@ var styles = StyleSheet.create({
   marginBottom: 30,
   color: '#000000',
   marginTop: 10,
-  fontSize: 16,
+  fontSize: 14,
   textAlign: 'center'
  },
  pastilleContainer: {

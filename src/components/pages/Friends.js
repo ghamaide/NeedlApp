@@ -128,7 +128,6 @@ var styles = StyleSheet.create({
   friendRowWrapper: {
     backgroundColor: 'white',
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
     borderColor: '#EF582D',
   },
   friendRow: {
@@ -148,7 +147,7 @@ var styles = StyleSheet.create({
   },
   friendName: {
     color: '#000000',
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold'
   },
   friendRecos: {
@@ -171,7 +170,7 @@ var styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: 14,
     color: 'white'
   }
 });

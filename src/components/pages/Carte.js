@@ -14,6 +14,7 @@ import Liste from './Liste';
 import Restaurant from './Restaurant';
 
 import Carousel from '../ui/Carousel';
+import RestaurantElement from '../elements/Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -177,13 +178,15 @@ class Carte extends Page {
           onPageChange={this.carouselOnPageChange}>
           {_.map(this.state.data, (restaurant) => {
             return (
-              <Image
-                source={{uri: restaurant.pictures[0]}}
-                style={styles.imageRestaurant}>
-                <View style={styles.imageRestaurantInfos}>
-                  <Text style={styles.imageRestaurantName}>{restaurant.name}</Text>
-                </View>
-              </Image>
+              <RestaurantElement
+                name={restaurant.name}
+                pictures={restaurant.pictures}
+                type={restaurant.food[1]}
+                budget={restaurant.price_range}
+                height={120}
+                onPress={() => {
+                  this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+                }}/>
             );
           })}
         </Carousel>
@@ -202,7 +205,7 @@ class Carte extends Page {
           ]
         }
         
-				<TouchableHighlight style={styles.filterMessage} underlayColor='#38E1B2' onPress={() => this.props.navigator.push(Filtre.route())}>
+				<TouchableHighlight style={styles.filterMessage} underlayColor='#DDDDDD' onPress={() => this.props.navigator.push(Filtre.route())}>
 						<View style={styles.filterContainer}>
               {RestaurantsStore.filterActive() ? 
                 [
@@ -227,7 +230,7 @@ var styles = StyleSheet.create({
     position: 'relative'
   },
   filterMessage: {
-    backgroundColor: '#38E1B2',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     padding: 12,
     position: 'absolute',
     top: 0,
@@ -236,7 +239,7 @@ var styles = StyleSheet.create({
   },
   filterMessageText: {
     color: '#000000',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '500',
     textAlign: 'center'
   },

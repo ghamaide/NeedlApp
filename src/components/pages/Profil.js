@@ -279,7 +279,7 @@ var styles = StyleSheet.create({
   profilName: {
     color: '#000000',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 16,
     backgroundColor: 'transparent',
     marginBottom: 5
   },
@@ -293,7 +293,7 @@ var styles = StyleSheet.create({
   },
   restaurantsWrapperTitle: {
     marginBottom: 10,
-    fontSize: 28,
+    fontSize: 14,
     fontWeight: 'bold',
     alignSelf: 'center',
     color: '#000000'

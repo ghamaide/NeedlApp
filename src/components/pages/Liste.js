@@ -8,6 +8,7 @@ import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
 import Page from '../ui/Page';
+import RestaurantElement from '../elements/Restaurant';
 import Filtre from './Filtre/List';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
@@ -35,7 +36,6 @@ class Liste extends Page {
       error: RestaurantsStore.error(),
 			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
-    console.log(this.state.data);
   }
 
   constructor(props) {
@@ -66,26 +66,18 @@ class Liste extends Page {
 
 	renderRestaurant = (restaurant) => {
     return (
-      <TouchableHighlight style={styles.restaurantRowWrapper} onPress={() => {
-        this.props.navigator.push(Restaurant.route({id: restaurant.id}));
-      }}>
-        <View style={styles.restaurantRow}>
-					<Image 
-						source={{uri: restaurant.pictures[0]}} 
-						style={styles.restaurantImage}>
-          	<View style={styles.restaurantInfos}>
-							<Text style={styles.restaurantName}>{restaurant.name}</Text>
-          		<View style={styles.restaurantSubway}>
-          			<Image
-          				source={require('../../assets/img/subway.png')}
-          				style={styles.restaurantSubwayImage} />
-          			<Text style={styles.restaurantSubwayText}>{restaurant.subways[1][0]}</Text>
-          		</View>
-          		<Text style={styles.restaurantType}>{restaurant.food[1]}</Text>
-						</View>
-					</Image>
-        </View>
-      </TouchableHighlight>
+      <RestaurantElement
+        name={restaurant.name}
+        pictures={restaurant.pictures}
+        subway={restaurant.subways[1][0]}
+        type={restaurant.food[1]}
+        height={200}
+        marginTop={5}
+        marginBottom={5}
+        underlayColor={"#FFFFFF"}
+        onPress={() => {
+          this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+        }}/>
     );
   }
 
@@ -195,7 +187,7 @@ var styles = StyleSheet.create({
 	},
 	filterMessageText: {
 		color: '#000000',
-    fontSize: 16,
+    fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',

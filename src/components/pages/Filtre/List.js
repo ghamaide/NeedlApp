@@ -152,12 +152,12 @@ var styles = StyleSheet.create({
   title: {
     color: '#000000',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 14,
     marginBottom: 5
   },
   value: {
     color: '#777777',
-    fontSize: 14
+    fontSize: 13
   },
   clearButton: {
     backgroundColor: '#FFFFFF',
@@ -168,7 +168,7 @@ var styles = StyleSheet.create({
   clear: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 14,
     color: 'black',
     padding: 10,
     textAlign: 'center',

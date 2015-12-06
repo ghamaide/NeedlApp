@@ -58,10 +58,7 @@ Class RCTPushNotificationManager = nil;
     CGFloat height = MAX(RCTScreenSize().width, RCTScreenSize().height);
     if (height == 480) launchImageName = @"Default@2x.png"; // iPhone 4/4s
     else if (height == 568) launchImageName = @"Default-568h@2x.png"; // iPhone 5/5s
-    else if (height == 667) {
-      launchImageName = @"Default-667h@2x.png"; // iPhone 6
-      printf("lol");
-    }
+    else if (height == 667) launchImageName = @"Default-667h@2x.png"; // iPhone 6
     else if (height == 736) launchImageName = @"Default-736h@3x.png"; // iPhone 6+
   } else if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
     CGFloat scale = RCTScreenScale();

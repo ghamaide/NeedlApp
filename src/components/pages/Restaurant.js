@@ -122,7 +122,6 @@ class Restaurant extends Page {
         editing: true
       };
     } else {
-      console.log('200');
       RecoActions.setReco({
         restaurant: {
           id: restaurant.id,
@@ -142,6 +141,10 @@ class Restaurant extends Page {
 
   renderPage() {
     var restaurant = this.state.data;
+    var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
+      return '€';
+    }).join('') + (restaurant.price_range > 3 ? '+' : '');
+
     return (
       <ScrollView
         style={{flex: 1}}
@@ -151,12 +154,15 @@ class Restaurant extends Page {
         contentContainerStyle={styles.container}>
 
         <View style={styles.header}>
-          <RestaurantElement
-                style={styles.header}
-                name={restaurant.name}
-                pictures={restaurant.pictures}
-                type={restaurant.food[1]}
-                budget={restaurant.price_range} />
+          <Image 
+            source={{uri: restaurant.pictures[0]}} 
+            style={styles.restaurantImage}>
+            <View style={styles.restaurantInfos}>
+              <Text style={styles.restaurantName}>{restaurant.name}</Text>
+              <Text style={styles.restaurantType}>{restaurant.food[1]}</Text>
+              <Text style={styles.restaurantPrice}>{budget}</Text>
+            </View>
+          </Image>
         </View>
 
         <View style={[styles.callContainer]}>
@@ -421,6 +427,45 @@ var styles = StyleSheet.create({
   },
   header: {
     height: 300
+  },
+  restaurantImage: {
+    flex: 1,
+  },
+  restaurantInfos: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)'    
+  },
+  restaurantName: {
+    fontWeight: '900',
+    fontSize: 15,
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)',
+    color: '#FFFFFF',
+    marginTop: 2,
+    position: 'absolute',
+    bottom: 40,
+    left: 10
+  },
+  restaurantType: {
+    flex: 1,
+    fontWeight: '900',
+    fontSize: 15,
+    backgroundColor: 'rgba(0,0,0,0)',
+    color: '#FFFFFF',
+    marginTop: 2,
+    position: 'absolute',
+    bottom: 10,
+    left: 10
+  },
+  restaurantPrice: {
+    flex: 1,
+    fontWeight: '900',
+    fontSize: 15,
+    backgroundColor: 'rgba(0,0,0,0)',
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    color: '#FFFFFF'
   },
   callContainer: {
     backgroundColor: '#CCCCCC',

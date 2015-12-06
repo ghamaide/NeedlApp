@@ -94,6 +94,7 @@ class Notifs extends Page {
           pictures={[notif.restaurant_picture]}
           type={notif.restaurant_food}
           budget={notif.restaurant_price_range}
+          height={180}
           onPress={() => {
             this.props.navigator.push(Restaurant.route({id: notif.restaurant_id}, notif.restaurant_name));
           }}/>

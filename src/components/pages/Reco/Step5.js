@@ -68,8 +68,8 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  color: 'white',
-  fontSize: 16,
+  color: '#000000',
+  fontSize: 14,
   textAlign: 'center'
  },
  pastilleContainer: {

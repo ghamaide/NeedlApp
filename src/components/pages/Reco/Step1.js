@@ -145,7 +145,8 @@ var styles = StyleSheet.create({
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
-    margin: 10
+    margin: 10,
+    fontSize: 13
   },
   restaurantsList: {
     flex: 1,
@@ -156,7 +157,6 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 10,
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
     borderColor: '#EF582D'
   },
   viewContainer: {

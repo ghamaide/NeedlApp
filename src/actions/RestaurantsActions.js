@@ -13,7 +13,6 @@ export class RestaurantsActions {
         if (err) {
           return this.actions.restaurantsFetchFailed(err);
         }
-
         this.actions.restaurantsFetched(result);
       });
   }
@@ -28,6 +27,7 @@ export class RestaurantsActions {
 
   fetchRestaurant(id) {
     //this.dispatch(id);
+
     request('GET', '/api/restaurants/' + id)
       .end((err, result) => {
         if (err) {
@@ -125,6 +125,10 @@ export class RestaurantsActions {
 
   setFilter(type, filter) {
     this.dispatch({type: type, filter: filter});
+  }
+
+  clearFilters() {
+    this.dispatch();
   }
 }
 

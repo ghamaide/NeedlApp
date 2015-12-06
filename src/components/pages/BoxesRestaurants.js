@@ -8,9 +8,10 @@ import Box from '../elements/Box';
 
 import Page from '../ui/Page';
 
-import Carte from './Carte';
 import Liste from './Liste';
 import BoxesBars from './BoxesBars';
+
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -38,22 +39,30 @@ class BoxesRestaurants extends Page {
           {name: "Entre amis", image: require('../../assets/img/entre_amis.jpg')},
           {name: "Grandes tablees", image: require('../../assets/img/grandes_tablees.jpg')},
           {name: "Pour un date", image: require('../../assets/img/date.jpg')},
+          {name: "Autres", image: require('../../assets/img/autre.jpg')},
         ],
         [
-          {name: "Terrasse", image: require('../../assets/img/brunch.jpg')},
-          {name: "Bonne Franquette", image: require('../../assets/img/dej_business.jpg')},
-          {name: "Festif", image: require('../../assets/img/en_couple.jpg')},
-          {name: "Chic", image: require('../../assets/img/en_famille.jpg')},
-          {name: "Traditionnel", image: require('../../assets/img/entre_amis.jpg')},
-          {name: "Fast", image: require('../../assets/img/grandes_tablees.jpg')},
-          //{name: "Romantique", image: require('../../assets/img/date.jpg')},
+          {name: "Terrasse", image: require('../../assets/img/terrasse.jpg')},
+          {name: "Bonne Franquette", image: require('../../assets/img/bonne_franquette.jpg')},
+          {name: "Festif", image: require('../../assets/img/festif.jpg')},
+          {name: "Chic", image: require('../../assets/img/chic.jpg')},
+          {name: "Traditionnel", image: require('../../assets/img/traditionnel.jpg')},
+          {name: "Fast", image: require('../../assets/img/fast.jpg')},
+          {name: "Romantique", image: require('../../assets/img/romantique.jpg')},
+          {name: "Autres", image: require('../../assets/img/autre.jpg')},
+        ],
+        [
+          {name: "€", image: require('../../assets/img/prix_1.jpg')},
+          {name: "€€", image: require('../../assets/img/prix_2.jpg')},
+          {name: "€€€", image: require('../../assets/img/prix_3.jpg')},
+          {name: "€€€+", image: require('../../assets/img/prix_4.jpg')},
         ]
       ],
       dataFilters: [
         {id: 0, name: "Occasions"},
         {id: 1, name: "Ambiances"},
-        {id: 2, name: "Points forts"},
-        {id: 3, name: "Prix"},
+        {id: 2, name: "Prix"},
+        {id: 3, name: "Points forts"},
       ],
       
       // Images to change
@@ -71,11 +80,12 @@ class BoxesRestaurants extends Page {
   }
   
   componentWillMount() {
-    
+    // on mount    
   }
 
   componentWillUnmount() {
-    
+    console.log('1');
+    // on unmount
   }
 
   showFilters = () => {
@@ -168,7 +178,7 @@ class BoxesRestaurants extends Page {
 
 var styles = StyleSheet.create({
 	container: {
-		flex: 1
+		flex: 1,
 	},
   filtersList: {
     position: 'absolute',
@@ -179,7 +189,10 @@ var styles = StyleSheet.create({
   },
   list: {
     padding: 0,
-    margin: 0
+    marginLeft: 0,
+    marginRight: 0,
+    marginBottom: 0,
+    marginTop: 5
   },
   filterContainer: {
     flex: 1,
@@ -195,12 +208,12 @@ var styles = StyleSheet.create({
   },
   filterButtonMessage: {
     color: '#000000',
-    fontSize: 28,
+    fontSize: 13,
     fontWeight: '500',
     textAlign: 'center'
   },
   filtersText: {
-    fontSize: 14,
+    fontSize: 13,
     padding: 10,
     height: 35,
     borderBottomWidth: 0.5,

@@ -37,7 +37,7 @@ var styles = StyleSheet.create({
   boxText: {
     flex: 1,
     fontWeight: '900',
-    fontSize: 15,
+    fontSize: 13,
     color: 'white',
     position: 'absolute',
     bottom: 5,

@@ -82,7 +82,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  fontSize: 16,
+  fontSize: 14,
   color: '#888888',
   textAlign: 'center'
  },
