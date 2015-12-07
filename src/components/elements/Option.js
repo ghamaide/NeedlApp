@@ -26,7 +26,7 @@ var styles = StyleSheet.create({
     margin: 5
   },
   optionsButton: {
-    backgroundColor: '#555',
+    backgroundColor: '#888888',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
@@ -41,7 +41,7 @@ var styles = StyleSheet.create({
   },
   optionsText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 14,
     backgroundColor: 'transparent'
   }
 });

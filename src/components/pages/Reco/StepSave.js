@@ -77,7 +77,7 @@ class RecoStepSave extends Component {
 
     if (this.state.err && !this.state.err.notice) {
       content = <View style={styles.errorBlock}>
-        <Text style={{color: 'white'}}>Erreur lors de l''enregistrement</Text>
+        <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
           label="Réessayer"
           onPress={() => {
@@ -88,7 +88,7 @@ class RecoStepSave extends Component {
 
     return (
       <View style={styles.container}>
-        <Text style={{color: 'white'}}>Merci d''avoir partagé!</Text>
+        <Text style={{color: '#000000'}}>Merci d'avoir partagé!</Text>
         {content}
       </View>
     );
@@ -97,7 +97,7 @@ class RecoStepSave extends Component {
 
 var styles = StyleSheet.create({
  container: {
-  backgroundColor: 'black',
+  backgroundColor: '#FFFFFF',
   padding: 10,
   flex: 1,
   alignItems: 'center',

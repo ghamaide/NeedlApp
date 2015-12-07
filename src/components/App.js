@@ -12,7 +12,6 @@ import Profil from './pages/Profil';
 import Onboard_Friends from './pages/Onboard_Friends';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
-import Restaurants from './pages/Restaurants';
 import BoxesRestaurants from './pages/BoxesRestaurants';
 import RecoStep1 from './pages/Reco/Step1';
 
@@ -231,28 +230,28 @@ class App extends Component {
             {
               component: BoxesRestaurants,
               name: 'Accueil',
-              icon: require('../assets/img/home.png')
+              icon: require('../assets/img/tabs/icons/home.png')
             },
             {
               component: Friends,
               name: 'Amis',
-              icon: require('../assets/img/friend.png'),
+              icon: require('../assets/img/tabs/icons/friend.png'),
               pastille: this.state.friendsPastille <= 10 ? this.state.friendsPastille : '9+'
             },
             {
               component: RecoStep1,
-              icon: require('../assets/img/add.png')
+              icon: require('../assets/img/tabs/icons/add.png')
             },
             {
               component: Notifs,
               name: 'Notifs',
-              icon: require('../assets/img/notif.png'),
+              icon: require('../assets/img/tabs/icons/notif.png'),
               pastille: this.state.notifsPastille <= 10 ? this.state.notifsPastille : '9+'
             },
             {
               component: Profil,
               name: 'Profil',
-              icon: require('../assets/img/account.png')
+              icon: require('../assets/img/tabs/icons/account.png')
             }
           ]}
           initialSkipCache={!!this.notifLaunchTab}

@@ -35,19 +35,34 @@ class Carousel extends Component{
   }
 
   goForward = (i, from) => {
+
     var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-    this.setState({
-      offset: this.state.offset + size * i
-    });
-    this.pageChange(this.state.page + i, from);
+    if (typeof i === 'number') {
+      this.setState({
+        offset: this.state.offset + size * i
+      });
+      this.pageChange(this.state.page + i, from);
+    } else {
+      this.setState({
+        offset: this.state.offset + size
+      });
+      this.pageChange(this.state.page + 1, from);
+    }
   }
 
   goBackward = (i, from) => {
     var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-    this.setState({
-      offset: this.state.offset - size * i
-    });
-    this.pageChange(this.state.page - i, from);
+    if (typeof i === 'number') {
+      this.setState({
+        offset: this.state.offset - size * i
+      });
+      this.pageChange(this.state.page - i, from);
+    } else {
+      this.setState({
+        offset: this.state.offset - size
+      });
+      this.pageChange(this.state.page - 1, from);
+    }
   }
 
   render() {
@@ -111,14 +126,14 @@ class Carousel extends Component{
          {canGoBack ?
           <TouchableOpacity style={[styles.flecheWrapper, styles.flecheWrapperLeft, this.props.leftFlecheStyle]}
           onPress={this.goBackward}>
-              <Image style={[styles.fleche, styles.flecheLeft]} source={require('../../assets/img/arrow.png')} />
+              <Image style={[styles.fleche, styles.flecheLeft]} source={require('../../assets/img/other/icons/arrow.png')} />
           </TouchableOpacity>
           : null}
 
         {canGoForward ?
           <TouchableOpacity style={[styles.flecheWrapper, styles.flecheWrapperRight, this.props.rightFlecheStyle]}
           onPress={this.goForward}>
-              <Image style={[styles.fleche]} source={require('../../assets/img/arrow.png')} />
+              <Image style={[styles.fleche]} source={require('../../assets/img/other/icons/arrow.png')} />
           </TouchableOpacity>
           : null}
       </View>

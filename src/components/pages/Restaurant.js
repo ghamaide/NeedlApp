@@ -100,10 +100,10 @@ class Restaurant extends Page {
     ProfilStore.unlisten(this.onProfilStoreUpdate);
   }
 
-  getToggle (map, v) {
+  getToggle (map, v, color) {
     return <Toggle
       style={styles.toggle}
-      labelColor="#AAA"
+      labelColor={color}
       label={map[v].label}
       icon={map[v].icon}
       active={false}
@@ -122,7 +122,6 @@ class Restaurant extends Page {
         editing: true
       };
     } else {
-      console.log('200');
       RecoActions.setReco({
         restaurant: {
           id: restaurant.id,
@@ -142,6 +141,10 @@ class Restaurant extends Page {
 
   renderPage() {
     var restaurant = this.state.data;
+    var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
+      return '€';
+    }).join('') + (restaurant.price_range > 3 ? '+' : '');
+
     return (
       <ScrollView
         style={{flex: 1}}
@@ -152,11 +155,11 @@ class Restaurant extends Page {
 
         <View style={styles.header}>
           <RestaurantElement
-                style={styles.header}
-                name={restaurant.name}
-                pictures={restaurant.pictures}
-                type={restaurant.food[1]}
-                budget={restaurant.price_range} />
+            name={restaurant.name}
+            pictures={restaurant.pictures}
+            type={restaurant.food[1]}
+            height={250}
+            budget={restaurant.price_range} />
         </View>
 
         <View style={[styles.callContainer]}>
@@ -167,14 +170,15 @@ class Restaurant extends Page {
         <View style={styles.recoContainer}>
           {RestaurantsStore.recommenders(restaurant.id).length ?
             <View>
-              <Text style={styles.containerTitle}>Ils l''ont recommandé</Text>
+              <Text style={styles.containerTitle}>Ils l'ont recommandé</Text>
               <View style={{alignItems: 'center'}}>
                 <Carousel ref="carousel" style={{
                   flexDirection: 'row',
                   height: 80,
                   width: 240,
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  backgroundColor: 'transparent'
                 }} elemSize={80} insetMargin={80} leftFlecheStyle={{marginLeft: -35}} rightFlecheStyle={{right: 0}}
                   onPageChange={(i) => {
                   this.setState({
@@ -193,7 +197,7 @@ class Restaurant extends Page {
               </View>
             </View>
             :
-            <Text style={styles.containerTitle}>Aucun ami ne l''a recommendé</Text>
+            <Text style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
           }
           {(RestaurantsStore.recommenders(restaurant.id).length  && _.keys(restaurant.reviews).length && restaurant.reviews[this.state.reviewSelected]) ?
             <View style={styles.reviewBox}>
@@ -209,7 +213,7 @@ class Restaurant extends Page {
             <Option
               style={styles.recoButton}
               label={'Je recommande'}
-              icon={require('../../assets/img/japprouve.png')}
+              icon={require('../../assets/img/actions/icons/japprouve.png')}
               onPress={() => {this.approuve(false);}} />
             : null}
         </View>
@@ -219,12 +223,12 @@ class Restaurant extends Page {
             <Text style={styles.containerTitle}>Ambiances</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance);
+                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
               })}
             </View>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance);
+                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
               })}
             </View>
           </View>
@@ -235,17 +239,17 @@ class Restaurant extends Page {
             <Text style={styles.containerTitle}>Points forts</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(0, 3), (strength) => {
-              	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+              	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
               })}
             </View>
             <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(3), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#888888");
               })}
             </View>
              <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(6), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
               })}
             </View>
           </View>
@@ -254,13 +258,14 @@ class Restaurant extends Page {
         <View style={styles.wishContainer}>
           {RestaurantsStore.wishers(restaurant.id).length ?
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.containerTitle}>Ils ont envie d''y aller</Text>
+              <Text style={styles.containerTitle}>Ils ont envie d'y aller</Text>
               <Carousel ref="carousel" style={{
                 flexDirection: 'row',
                 height: 80,
                 width: 240,
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                backgroundColor: 'transparent'
               }} elemSize={80} insetMargin={80} leftFlecheStyle={{marginLeft: -35}} rightFlecheStyle={{right: 0}}>
                 {_.map(RestaurantsStore.wishers(restaurant.id), (userId) => {
                   var profil = ProfilStore.profil(userId);
@@ -272,14 +277,14 @@ class Restaurant extends Page {
                 })}
               </Carousel>
             </View>
-          : <Text style={styles.containerTitle}>Pas encore d''ami qui veut y aller</Text>}
+          : <Text style={styles.containerTitle}>Pas encore d'ami qui veut y aller</Text>}
 
           {(!_.contains(RestaurantsStore.wishers(restaurant.id), MeStore.getState().me.id) &&
                     !_.contains(RestaurantsStore.recommenders(restaurant.id), MeStore.getState().me.id)) ?
             <Option
             style={styles.recoButton}
             label={RestaurantsStore.addWishLoading(restaurant.id) ? 'Enregistrement...' : 'Sur ma wishlist'}
-            icon={require('../../assets/img/aessayer.png')}
+            icon={require('../../assets/img/actions/icons/aessayer.png')}
             onPress={() => {
               if (RestaurantsStore.addWishLoading(restaurant.id)) {
                 return;
@@ -341,7 +346,7 @@ class Restaurant extends Page {
           <Text style={styles.containerTitle}>Lieu</Text>
           <Text style={styles.address}>{restaurant.address}</Text>
           <View style={styles.metroContainer}>
-            <Image source={require('../../assets/img/metro.png')} style={styles.metroImage} />
+            <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
             <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
           </View>
         </View>
@@ -372,7 +377,7 @@ class Restaurant extends Page {
             [
               <Option
                 label={RestaurantsStore.removeWishLoading(restaurant.id) ? 'Suppression...' : 'Retirer de mes envies'}
-                icon={require('../../assets/img/unlike.png')}
+                icon={require('../../assets/img/actions/icons/unlike.png')}
                 onPress={() => {
                   if (RestaurantsStore.removeWishLoading(restaurant.id)) {
                     return;
@@ -386,12 +391,12 @@ class Restaurant extends Page {
             ]
             :
             [
-              <Option label="Modifier ma reco" icon={require('../../assets/img/modify.png')} onPress={() => {
+              <Option label="Modifier ma reco" icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
                 this.approuve(true);
               }} />,
               <Option
                 label={RestaurantsStore.removeRecoLoading(restaurant.id) ? 'Suppression...' : 'Supprimer ma reco'}
-                icon={require('../../assets/img/poubelle.png')}
+                icon={require('../../assets/img/actions/icons/poubelle.png')}
                 onPress={() => {
                   if (RestaurantsStore.removeRecoLoading(restaurant.id)) {
                     return;
@@ -421,15 +426,54 @@ var styles = StyleSheet.create({
   header: {
     height: 300
   },
+  restaurantImage: {
+    flex: 1,
+  },
+  restaurantInfos: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)'    
+  },
+  restaurantName: {
+    fontWeight: '900',
+    fontSize: 15,
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)',
+    color: '#FFFFFF',
+    marginTop: 2,
+    position: 'absolute',
+    bottom: 40,
+    left: 10
+  },
+  restaurantType: {
+    flex: 1,
+    fontWeight: '900',
+    fontSize: 15,
+    backgroundColor: 'rgba(0,0,0,0)',
+    color: '#FFFFFF',
+    marginTop: 2,
+    position: 'absolute',
+    bottom: 10,
+    left: 10
+  },
+  restaurantPrice: {
+    flex: 1,
+    fontWeight: '900',
+    fontSize: 15,
+    backgroundColor: 'rgba(0,0,0,0)',
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    color: '#FFFFFF'
+  },
   callContainer: {
-    backgroundColor: 'transparent',
+    backgroundColor: '#E0E0E0',
     padding: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row'
   },
   reservationText: {
-    color: 'white',
+    color: '#444444',
     fontSize: 16,
     alignSelf: 'center'
   },
@@ -438,15 +482,16 @@ var styles = StyleSheet.create({
   },
   recoContainer: {
     padding: 20,
-    backgroundColor: '#222'
+    backgroundColor: '#FFFFFF'
   },
   wishContainer: {
-    padding: 20
+    padding: 20,
+    backgroundColor: '#E0E0E0'
   },
   containerTitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: 'white',
+    color: '#000000',
     marginBottom: 20,
     textAlign: 'center'
   },
@@ -454,12 +499,12 @@ var styles = StyleSheet.create({
     height: 150
   },
   lieuContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     padding: 20,
     alignItems: 'center'
   },
   address: {
-    color: 'white',
+    color: '#444444',
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10
@@ -475,7 +520,7 @@ var styles = StyleSheet.create({
     marginTop: 1
   },
   metroText: {
-    color: 'white'
+    color: '#888888'
   },
   avatarWrapper: {
     height: 60,
@@ -495,7 +540,7 @@ var styles = StyleSheet.create({
     marginTop: -10
   },
   reviewBox: {
-    backgroundColor: '#EF582D',
+    backgroundColor: '#E0E0E0',
     borderRadius: 5,
     marginTop: 10,
     marginBottom: 10,
@@ -512,19 +557,19 @@ var styles = StyleSheet.create({
     top: -7,
     left: -7,
     position: 'absolute',
-    backgroundColor: '#EF582D',
+    backgroundColor: '#E0E0E0',
     transform: [
       {rotate: '45deg'}
     ]
   },
   reviewText: {
     textAlign: 'center',
-    color: 'black'
+    color: '#000000'
   },
   reviewAuthor: {
     marginTop: 5,
     textAlign: 'center',
-    color: 'black'
+    color: '#444444'
   },
   recoButton: {
     backgroundColor: '#38E1B2'
@@ -534,7 +579,8 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   toggle: {
-    margin: 10
+    margin: 10,
+    backgroundColor: "#EF582D"
   },
   menuInnerContainer: {
     alignItems: 'center',
@@ -543,12 +589,12 @@ var styles = StyleSheet.create({
   menuTitle: {
     textAlign: 'center',
     fontWeight: 'bold',
-    color: 'white',
+    color: '#000000',
     marginBottom: 5
   },
   menuPlat: {
     textAlign: 'center',
-    color: 'white',
+    color: '#444444',
     paddingTop: 2,
     paddingBottom: 2
   },

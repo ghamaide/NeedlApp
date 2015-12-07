@@ -29,6 +29,7 @@ export class FriendsActions {
   }
 
   editSuccess(data) {
+    console.log(data);
     this.dispatch(data);
   }
 
@@ -87,7 +88,7 @@ export class FriendsActions {
   }
 
   uploadContacts(data) {
-    console.log(data);
+    //console.log(data);
     // requets to upload data
   }
 

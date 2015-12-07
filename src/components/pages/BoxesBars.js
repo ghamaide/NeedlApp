@@ -27,27 +27,7 @@ class BoxesBars extends Page {
 
   occasionsState() {
     return {
-      // we want the map even if it is still loading
-      dataOccasions: ds.cloneWithRows([
-        {name: "Brunch", image: require('../../assets/img/brunch.jpg')},
-        {name: "Business", image: require('../../assets/img/dej_business.jpg')},
-        {name: "En Couple", image: require('../../assets/img/en_couple.jpg')},
-        {name: "En Famille", image: require('../../assets/img/en_famille.jpg')},
-        {name: "Entre amis", image: require('../../assets/img/entre_amis.jpg')},
-        {name: "Grandes tablees", image: require('../../assets/img/grandes_tablees.jpg')},
-        {name: "Pour un date", image: require('../../assets/img/date.jpg')},
-      ]),
-      data: ds.cloneWithRows([
-        {name: "Terrasse", image: require('../../assets/img/brunch.jpg')},
-        {name: "Bonne Franquette", image: require('../../assets/img/dej_business.jpg')},
-        {name: "Festif", image: require('../../assets/img/en_couple.jpg')},
-        {name: "Chic", image: require('../../assets/img/en_famille.jpg')},
-        {name: "Traditionnel", image: require('../../assets/img/entre_amis.jpg')},
-        {name: "Fast", image: require('../../assets/img/grandes_tablees.jpg')},
-        {name: "Romantique", image: require('../../assets/img/date.jpg')},
-      ])
-      // Images to change
-      // Put the list in restaurants stores
+      // see boxesrestaurants
     };
   }
 
@@ -110,7 +90,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   filterButton: {
-  	backgroundColor: 'black',
+  	backgroundColor: 'white',
   	paddingTop: 10,
     paddingBottom: 0,
   	height: 30

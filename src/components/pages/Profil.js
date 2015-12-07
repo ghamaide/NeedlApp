@@ -167,7 +167,7 @@ class Profil extends Page {
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>
-            <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d''ici 24h</Text>
+            <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d'ici 24h</Text>
           </View>
         </Overlay>
 
@@ -180,7 +180,7 @@ class Profil extends Page {
         </View>
 
         {profil.recommendations.length ?
-          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, 'black')
+          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, '#FFFFFF')
           : null}
 
         {profil.wishes.length ?
@@ -194,18 +194,18 @@ class Profil extends Page {
 					 			label="Envoyer une liste"
 					 			key={"list send " + profil.id}
 					 			onPress={this.pickImage}
-								icon={require('../../assets/img/import_list.png')} />,
+								icon={require('../../assets/img/actions/icons/import_list.png')} />,
               <Option
 					 			key={"edit " + profil.id}
 								label="Modifier"
-								icon={require('../../assets/img/modify.png')}
+								icon={require('../../assets/img/actions/icons/modify.png')}
 								onPress={() => {
                 	this.props.navigator.push(EditMe.route());
               	}} />,
               <Option
 					 			key={"logout " + profil.id}
 								label="Me Déconnecter"
-								icon={require('../../assets/img/signout.png')}
+								icon={require('../../assets/img/actions/icons/signout.png')}
 								onPress={LoginActions.logout} />
             ]
             :
@@ -214,7 +214,7 @@ class Profil extends Page {
                 <Option
 									key={profil.id}
                   label={ProfilStore.maskProfilLoading(profil.id) ? 'Masque...' : 'Masquer ses recos'}
-                  icon={require('../../assets/img/masquer.png')}
+                  icon={require('../../assets/img/actions/icons/masquer.png')}
                   onPress={() => {
                     if (ProfilStore.maskProfilLoading(profil.id)) {
                       return;
@@ -224,7 +224,7 @@ class Profil extends Page {
                 <Option
 									key={'showReco' + profil.id}
                   label={ProfilStore.displayProfilLoading(profil.id) ? 'Affichage...' : 'Afficher ses recos'}
-                  icon={require('../../assets/img/afficher.png')}
+                  icon={require('../../assets/img/actions/icons/afficher.png')}
                   onPress={() => {
                     if (ProfilStore.displayProfilLoading(profil.id)) {
                       return;
@@ -234,7 +234,7 @@ class Profil extends Page {
               <Option
 								key={'deleteFriend' + profil.id}
                 label={FriendsStore.removeFriendshipLoading(profil.id) ? 'Suppression...' : 'Retirer de mes amis'}
-                icon={require('../../assets/img/retirer.png')}
+                icon={require('../../assets/img/actions/icons/retirer.png')}
                 onPress={() => {
                   if (FriendsStore.removeFriendshipLoading(profil.id)) {
                     return;
@@ -263,7 +263,9 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#CCCCCC'
   },
   textInfoContainer: {
     flex: 1,
@@ -275,14 +277,14 @@ var styles = StyleSheet.create({
     borderRadius: 40
   },
   profilName: {
-    color: 'white',
+    color: '#000000',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 16,
     backgroundColor: 'transparent',
     marginBottom: 5
   },
   profilNbRecos: {
-    color: 'white',
+    color: '#444444',
     fontSize: 16,
     backgroundColor: 'transparent'
   },
@@ -291,10 +293,10 @@ var styles = StyleSheet.create({
   },
   restaurantsWrapperTitle: {
     marginBottom: 10,
-    fontSize: 28,
+    fontSize: 14,
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: 'white'
+    color: '#000000'
   },
   restaurantsCarousel: {
     height: 150,

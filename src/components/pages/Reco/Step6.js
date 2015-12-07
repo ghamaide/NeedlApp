@@ -85,8 +85,8 @@ var styles = StyleSheet.create({
  title: {
   marginTop: 10,
   marginBottom: 20,
-  color: 'white',
-  fontSize: 16,
+  color: '#000000',
+  fontSize: 13,
   textAlign: 'center'
  },
  reviewInput: {
@@ -94,7 +94,7 @@ var styles = StyleSheet.create({
   padding: 10,
   borderWidth: 1,
   borderColor: '#ccc',
-  color: 'white'
+  color: '#444444'
  }
 });
 

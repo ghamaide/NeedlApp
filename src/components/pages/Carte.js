@@ -1,7 +1,8 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, Image} from 'react-native';
+import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, Image, PixelRatio} from 'react-native';
 import _ from 'lodash';
+import Dimensions from 'Dimensions';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import RestaurantsStore from '../../stores/Restaurants';
@@ -13,6 +14,9 @@ import Liste from './Liste';
 import Restaurant from './Restaurant';
 
 import Carousel from '../ui/Carousel';
+import RestaurantElement from '../elements/Restaurant';
+
+var windowWidth = Dimensions.get('window').width;
 
 class Carte extends Page {
   static route(title) {
@@ -31,7 +35,8 @@ class Carte extends Page {
       // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error()
+      error: RestaurantsStore.error(),
+      isChanging: false
     };
   }
 
@@ -39,6 +44,7 @@ class Carte extends Page {
     super(props);
 
     this.state = this.restaurantsState();
+    this.state.isChanging = false;
     this.state.showsUserLocation = false;
     this.state.initialPosition = 'unknown';
     this.state.center = {
@@ -83,10 +89,19 @@ class Carte extends Page {
 
   onRegionChangeComplete = (region) => {
     // to check if in area
-    var westLongitude = region.longitude + region.longitudeDelta;
-    var eastLongitude = region.longitude - region.longitudeDelta;
-    var northLatitude = region.latitude + region.latitudeDelta;
-    var bottomLatitude = region.latitude - region.latitudeDelta;
+    this.setState({isChanging : false});
+    var radius = 300 / windowWidth;
+    var westLongitude = region.longitude - radius * region.longitudeDelta / 2;
+    var eastLongitude = region.longitude + radius * region.longitudeDelta / 2;
+    var northLatitude = region.latitude + radius * region.latitudeDelta / 2;
+    var bottomLatitude = region.latitude - radius * region.latitudeDelta / 2;
+    var distanceToCenter = this.getDistance(region.latitude, region.longitude, northLatitude, region.longitude);
+    // bof pour le calcul, réponse en km
+  }
+
+  onRegionChange = (region) => {
+    // to see if the user is changing region
+    //this.setState({isChanging : true});
   }
 
   onAnnotationPress = (annotation) => {
@@ -106,6 +121,20 @@ class Carte extends Page {
       // Here call function to select annotation on map
       //this.refs.mapview._onPress(event);
     }
+  }
+
+  getDistance = (lat1,lon1,lat2,lon2) => {
+    var R = 6371; // Radius of the earth in km
+    var dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
+    var dLon = this.deg2rad(lon2 - lon1); 
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *  Math.sin(dLon/2) * Math.sin(dLon/2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+  }
+
+  deg2rad(deg) {
+    return deg * (Math.PI/180);
   }
 
   renderPage() {
@@ -140,6 +169,7 @@ class Carte extends Page {
           })}
           region={this.state.center}
           onAnnotationPress={this.onAnnotationPress}
+          onRegionChange={this.onRegionChange}
           onRegionChangeComplete={this.onRegionChangeComplete} />
 
         <Carousel
@@ -148,18 +178,34 @@ class Carte extends Page {
           onPageChange={this.carouselOnPageChange}>
           {_.map(this.state.data, (restaurant) => {
             return (
-                <Image
-                  source={{uri: restaurant.pictures[0]}}
-                  style={styles.imageRestaurant}>
-                  <View style={styles.imageRestaurantInfos}>
-                    <Text style={styles.imageRestaurantName}>{restaurant.name}</Text>
-                  </View>
-                </Image>
+              <RestaurantElement
+                name={restaurant.name}
+                pictures={restaurant.pictures}
+                type={restaurant.food[1]}
+                budget={restaurant.price_range}
+                height={120}
+                onPress={() => {
+                  this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+                }}/>
             );
           })}
         </Carousel>
         
-				<TouchableHighlight style={styles.filterMessage} underlayColor='#38E1B2' onPress={() => this.props.navigator.push(Filtre.route())}>
+        {this.state.isChanging ? 
+          [
+            <View style={styles.targetContainer}>
+              <View style={[styles.fillRectangleTop, {width: windowWidth}]} />
+              <Image
+                source={require('../../assets/img/other/images/target.png')}
+                style={[styles.targetImage, {width: windowWidth, height: windowWidth}]} />
+              <View style={styles.fillRectangleBottom} />
+            </View>
+          ] : [
+            null
+          ]
+        }
+        
+				<TouchableHighlight style={styles.filterMessage} underlayColor='#DDDDDD' onPress={() => this.props.navigator.push(Filtre.route())}>
 						<View style={styles.filterContainer}>
               {RestaurantsStore.filterActive() ? 
                 [
@@ -184,7 +230,7 @@ var styles = StyleSheet.create({
     position: 'relative'
   },
   filterMessage: {
-    backgroundColor: '#38E1B2',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     padding: 12,
     position: 'absolute',
     top: 0,
@@ -192,8 +238,8 @@ var styles = StyleSheet.create({
     right: 0
   },
   filterMessageText: {
-    color: 'white',
-    fontSize: 16,
+    color: '#000000',
+    fontSize: 14,
     fontWeight: '500',
     textAlign: 'center'
   },
@@ -215,7 +261,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '90deg'}
     ]
@@ -232,7 +278,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '180deg'}
     ]
@@ -263,6 +309,27 @@ var styles = StyleSheet.create({
     position: 'absolute',
     bottom: 30,
     left: 5
+  },
+  targetContainer: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'transparent'
+  },
+  targetImage: {
+    backgroundColor: 'transparent',
+    alignItems: 'center'
+  },
+  fillRectangleBottom: {
+    flex: 1,
+    backgroundColor: 'rgba(239, 88, 45, 0.4)',
+  },
+  fillRectangleTop: {
+    backgroundColor: 'rgba(239, 88, 45, 0.2)',
+    height: 40,
+
   }
 });
 

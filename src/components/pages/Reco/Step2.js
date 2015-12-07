@@ -52,14 +52,14 @@ class RecoStep2 extends Component {
                 <Toggle
                   size={60}
                   style={styles.pastille}
-                  icon={require('../../../assets/img/japprouve.png')}
+                  icon={require('../../../assets/img/actions/icons/japprouve.png')}
                   activeInitial={false}
                   label="Je recommande"
                   value={'approved'} />
                 <Toggle
                   size={60}
                   style={styles.pastille}
-                  icon={require('../../../assets/img/aessayer.png')}
+                  icon={require('../../../assets/img/actions/icons/aessayer.png')}
                   activeInitial={false}
                   label="Sur ma wishlist"
                   value={'totry'} />
@@ -74,7 +74,7 @@ class RecoStep2 extends Component {
 
 var styles = StyleSheet.create({
  container: {
-  backgroundColor: 'black',
+  backgroundColor: '#FFFFFF',
   padding: 10,
   flex: 1,
   alignItems: 'center',
@@ -82,8 +82,8 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  fontSize: 16,
-  color: '#DDD',
+  fontSize: 13,
+  color: '#888888',
   textAlign: 'center'
  },
  pastilleContainer: {

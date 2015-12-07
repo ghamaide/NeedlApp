@@ -36,3 +36,21 @@
   onRegionChangeComplete(region) {
     console.log(region);
   }
+
+
+<View key="areaIndicator" style={styles.areaIndicator}>
+  <Image
+    source={require('../../assets/img/area.png')}
+    style={styles.areaIndicatorImage} />
+</View>
+
+
+
+          <ScrollView
+            automaticallyAdjustContentInsets={false}>
+            <GridView
+              style={styles.list}
+              items={this.state.data}
+              itemsPerRow={2}
+              renderItem={this.renderData} />
+          </ScrollView>

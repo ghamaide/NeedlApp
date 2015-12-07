@@ -83,9 +83,9 @@ class PatchedNavigatorIOS extends Component {
   render() {
     return <NavigatorIOS
       ref="nav"
-      barTintColor="#EF582D"
-      tintColor="black"
-      titleTextColor="white"
+      barTintColor="#FFFFFF"
+      tintColor="#000000"
+      titleTextColor="#000000"
       key={this.state.index + 'n' + this.state.rerender}
       {...this.props}
       initialRoute={this.patchRoute(this.props.initialRoute)} />;
@@ -158,7 +158,7 @@ class TabView extends Component {
      <View
         style={styles.tabbarContainer}>
         	<Navigator
-            style={{backgroundColor: '#EF582D', paddingTop: 20}}
+            style={{backgroundColor: '#FFFFFF', paddingTop: 20}}
             initialRouteStack={this.props.tabs}
             initialRoute={this.props.tabs[this.props.initialSelected || 0]}
             ref="tabs"
@@ -200,7 +200,7 @@ class TabView extends Component {
 var styles = StyleSheet.create({
   tabbarContainer: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   tabbarContent: {
     flex: 1
@@ -208,7 +208,7 @@ var styles = StyleSheet.create({
   tabbarContentWrapper: {
     marginTop: 0,
     paddingBottom: 44,
-    backgroundColor: '#000000'
+    backgroundColor: '#FFFFFF'
   },
   tabbarTabs: {
     height: 60,

@@ -11,11 +11,12 @@ class RecoStep5 extends Component {
   static route() {
     return {
       component: RecoStep5,
-      title: 'Prix',
+      title: 'Occasion',
       rightButtonTitle: 'Valider',
       onRightButtonPress() {
         var reco = RecoStore.getReco();
-        if (!reco['price_range']) {
+        console.log(reco);
+        if (!reco.occasions || !reco.occasions.length) {
           return;
         }
         this.push(Step6.route());
@@ -29,28 +30,36 @@ class RecoStep5 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne le prix moyen du plat principal</Text>
+        <Text style={styles.title}>Sélectionne les occasions correspondant au restaurant</Text>
         <ToggleGroup
-          maxSelection={1}
+          maxSelection={3}
           fifo={true}
-          selectedInitial={[reco.price_range]}
-          onSelect={(v) => {
-            reco['price_range'] = v;
+          selectedInitial={reco.occasions}
+          onSelect={(v, selected) => {
+            reco.occasions = selected;
           }}
           onUnselect={(v, selected) => {
-            delete reco['price_range'];
+            reco.occasions = selected;
           }}>
           {(Toggle) => {
-            return <View style={{alignItems: 'center'}}>
-              <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} activeInitial={false} text="€" label="- 15 €" value={1} />
-                <Toggle size={60} style={styles.pastille} activeInitial={false} text="€€" label="15 à 20 €" value={2} />
+            return (
+              <View style={{alignItems: 'center'}}>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label="Business" value={1} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label="Couple" value={2} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label="Famille" value={3} />
+                </View>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Nombreux" value={5} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={6} />
+                </View>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={7} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/autre.png')} activeInitial={false} label="Autres" value={8} />
+                </View>
               </View>
-              <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} activeInitial={false} text= "€€€" label="20 à 30 €" value={3} />
-                <Toggle size={60} style={styles.pastille} activeInitial={false} text="€€€+" label="+ 30 €" value={4} />
-              </View>
-            </View>;
+            );
           }}
         </ToggleGroup>
       </View>
@@ -68,8 +77,8 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  color: 'white',
-  fontSize: 16,
+  color: '#000000',
+  fontSize: 13,
   textAlign: 'center'
  },
  pastilleContainer: {
@@ -77,7 +86,10 @@ var styles = StyleSheet.create({
   alignItems: 'center'
  },
  pastille: {
-  margin: 10
+  marginLeft: 15,
+  marginRight: 15,
+  marginTop: 10,
+  marginBottom: 10
  }
 });
 

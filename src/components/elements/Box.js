@@ -1,16 +1,19 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TouchableHighlight, Image} from 'react-native';
+import React, {StyleSheet, Component, Text, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import Dimensions from 'Dimensions';
+
+var windowWidth = (Dimensions.get('window').width / PixelRatio.get()) - 6;
 
 class Box extends Component {
 
   render() {
     return (
-      <TouchableHighlight style={styles.boxWrapper} onPress={this.props.onPress}>
-        <View style={styles.box}>
+      <TouchableHighlight style={[styles.boxWrapper, {width: windowWidth, height: windowWidth}]} onPress={this.props.onPress}>
+        <View style={[styles.box, {width: windowWidth, height: windowWidth}]}>
           <Image 
             source={this.props.image} 
-            style={styles.boxImage} />
+            style={[styles.boxImage, {width: windowWidth, height: windowWidth}]} />
           <Text style={styles.boxText}>{this.props.label}</Text>
         </View>
       </TouchableHighlight>
@@ -20,25 +23,21 @@ class Box extends Component {
 
 var styles = StyleSheet.create({
   boxWrapper: {
-    width: 150,
-    height: 150,
+    flex: 1,
     alignItems: 'stretch',
     margin: 3
   },
   box: {
-    width: 150,
-    height: 150,
-    alignItems: 'stretch'
+    flex: 1,
+    alignItems: 'stretch',
   },
   boxImage: {
     flex: 1,
-    width: 150,
-    height: 150
   },
   boxText: {
     flex: 1,
     fontWeight: '900',
-    fontSize: 15,
+    fontSize: 13,
     color: 'white',
     position: 'absolute',
     bottom: 5,

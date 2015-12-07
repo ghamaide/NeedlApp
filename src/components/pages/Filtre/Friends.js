@@ -93,10 +93,10 @@ class Friends extends Page {
 
 var styles = StyleSheet.create({
   friendsList: {
-    backgroundColor: 'black'
+    backgroundColor: '#FFFFFF'
   },
   friendRowWrapper: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
     borderColor: '#EF582D',
@@ -113,7 +113,7 @@ var styles = StyleSheet.create({
     borderRadius: 30
   },
   friendName: {
-    color: 'white',
+    color: '#000000',
     fontSize: 18,
     fontWeight: 'bold'
   }

@@ -58,7 +58,7 @@ class Login extends Component {
       <View style={styles.loginWrapper}>
         <View style={styles.logoImageWrapper}>
           <View style={styles.logoImageInnerWrapper}>
-            <Image source={require('../../assets/img/needllogo.png')} style={styles.logoImage} resizeMode={Image.resizeMode.contain}>
+            <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode={Image.resizeMode.contain}>
               <View style={styles.sublineSpacer} />
               <View style={styles.subline}>
                 <Text style={styles.sublineText}>Les restos préférés</Text>

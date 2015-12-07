@@ -3,6 +3,7 @@
 import React, {StyleSheet, Text, ListView, View, Image, TouchableHighlight} from 'react-native';
 import _ from 'lodash';
 import SGListView from 'react-native-sglistview';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import NotifsActions from '../../actions/NotifsActions';
 import NotifsStore from '../../stores/Notifs';
@@ -66,6 +67,10 @@ class Notifs extends Page {
     this.setState(Notifs.notifsState);
   }
 
+  onRefresh() {
+    // reload the list here
+  }
+
   renderHeader = () => {
     var nbPot = NotifsStore.getState().notifs.length;
 
@@ -89,6 +94,7 @@ class Notifs extends Page {
           pictures={[notif.restaurant_picture]}
           type={notif.restaurant_food}
           budget={notif.restaurant_price_range}
+          height={180}
           onPress={() => {
             this.props.navigator.push(Restaurant.route({id: notif.restaurant_id}, notif.restaurant_name));
           }}/>
@@ -111,15 +117,19 @@ class Notifs extends Page {
 
   renderPage() {
 
-    return <SGListView
-      style={styles.notifsList}
-      dataSource={this.state.data}
-      renderRow={this.renderNotif}
-      renderHeader={this.renderHeader}
-      contentInset={{top: 0}}
-      scrollRenderAheadDistance={150}
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false} />;
+    return (
+      <RefreshableListView
+        style={styles.notifsList}
+        dataSource={this.state.data}
+        renderRow={this.renderNotif}
+        renderHeaderWrapper={this.renderHeader}
+        contentInset={{top: 0}}
+        scrollRenderAheadDistance={150}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false}
+        loadData={this.onRefresh}
+        refreshDescription="Refreshing..." />
+    );
   }
 }
 
@@ -128,14 +138,12 @@ var styles = StyleSheet.create({
     paddingTop: 20
   },
   notifRow: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingBottom: 20,
+    padding: 0,
     backgroundColor: 'transparent',
     position: 'relative',
   },
   notifInfos: {
-    backgroundColor: '#222',
+    backgroundColor: '#EEEEEE',
     padding: 20,
     flexDirection: 'row'
   },
@@ -148,7 +156,7 @@ var styles = StyleSheet.create({
     flex: 1,
     marginLeft: 15,
     padding: 10,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#FFFFFF',
     borderRadius: 5
   },
   friendQuoteText: {
@@ -157,7 +165,7 @@ var styles = StyleSheet.create({
   friendQuoteDate: {
     marginTop: 5,
     fontSize: 12,
-    color: '#AAA'
+    color: '#888888'
   },
   triangle: {
     height: 15,
@@ -165,7 +173,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: 17,
     left: -5,
-    backgroundColor: '#F2F2F2',
+    backgroundColor: '#FFFFFF',
     transform: [
       {rotate: '45deg'}
     ]
@@ -177,7 +185,7 @@ var styles = StyleSheet.create({
   emptyText: {
     textAlign: 'center',
     fontSize: 16,
-    color: 'white'
+    color: '#000000'
   }
 });
 

@@ -55,8 +55,8 @@ class RecoStep1 extends Component {
         }
       }}>
         <View style={styles.restaurantRowInner}>
-          <Text style={{color: 'white'}}>{restaurant.name_and_address.split(': ')[0]}</Text>
-          <Text style={{color: 'white'}}>{restaurant.name_and_address.split(': ')[1]}</Text>
+          <Text style={{color: '#000000'}}>{restaurant.name_and_address.split(': ')[0]}</Text>
+          <Text style={{color: '#444444'}}>{restaurant.name_and_address.split(': ')[1]}</Text>
         </View>
       </TouchableHighlight> 
     );
@@ -92,7 +92,7 @@ class RecoStep1 extends Component {
         size="large" />
         );
     } else if(this.state.status.restaurantsLoadingError) {
-      content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d''exécution, veuillez réessayer</Text>);
+      content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
     } else if (!this.state.nb) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Pas de résultat</Text>);
     } else {
@@ -127,7 +127,7 @@ class RecoStep1 extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black'
+    backgroundColor: '#FFFFFF'
   },
   firstMessage: {
     backgroundColor: '#38E1B2',
@@ -135,7 +135,7 @@ var styles = StyleSheet.create({
   },
   firstMessageText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'center'
   },
@@ -145,29 +145,29 @@ var styles = StyleSheet.create({
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
-    margin: 10
+    margin: 10,
+    fontSize: 13
   },
   restaurantsList: {
     flex: 1,
-    backgroundColor: 'black'
+    backgroundColor: '#FFFFFF'
   },
   restaurantRowInner: {
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     padding: 10,
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
     borderColor: '#EF582D'
   },
   viewContainer: {
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     flex: 1,
     alignItems: 'center',
     padding: 10
   },
   noResultText: {
     fontWeight: 'bold',
-    color: 'white'
+    color: '#000000'
   }
 });
 

@@ -8,6 +8,7 @@ import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
 import Page from '../ui/Page';
+import RestaurantElement from '../elements/Restaurant';
 import Filtre from './Filtre/List';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
@@ -16,11 +17,11 @@ import Restaurant from './Restaurant';
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class Liste extends Page {
-  static route() {
+  static route(title) {
     return {
       component: Liste,
-      title: 'Liste',
-      rightButtonIcon: require('../../assets/img/home.png'),
+      title: title,
+      rightButtonIcon: require('../../assets/img/tabs/icons/home.png'),
       onRightButtonPress() {
 				this.replace(Carte.route("Carte"));
       }
@@ -35,7 +36,6 @@ class Liste extends Page {
       error: RestaurantsStore.error(),
 			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
-    console.log(this.state.data);
   }
 
   constructor(props) {
@@ -66,34 +66,25 @@ class Liste extends Page {
 
 	renderRestaurant = (restaurant) => {
     return (
-      <TouchableHighlight style={styles.restaurantRowWrapper} onPress={() => {
-        this.props.navigator.push(Restaurant.route({id: restaurant.id}));
-      }}>
-        <View style={styles.restaurantRow}>
-					<Image 
-						source={{uri: restaurant.pictures[0]}} 
-						style={styles.restaurantImage}>
-          	<View style={styles.restaurantInfos}>
-							<Text style={styles.restaurantName}>{restaurant.name}</Text>
-          		<View style={styles.restaurantSubway}>
-          			<Image
-          				source={require('../../assets/img/subway.png')}
-          				style={styles.restaurantSubwayImage} />
-          			<Text style={styles.restaurantSubwayText}>{restaurant.subways[1][0]}</Text>
-          		</View>
-          		<Text style={styles.restaurantType}>{restaurant.food[1]}</Text>
-						</View>
-					</Image>
-        </View>
-      </TouchableHighlight>
+      <RestaurantElement
+        name={restaurant.name}
+        pictures={restaurant.pictures}
+        subway={restaurant.subways[1][0]}
+        type={restaurant.food[1]}
+        height={200}
+        marginTop={5}
+        marginBottom={5}
+        underlayColor={"#FFFFFF"}
+        onPress={() => {
+          this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+        }}/>
     );
   }
 
   renderPage() {
-		// TODO : change the style of the "Filtrer" button
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-				<TouchableHighlight style={styles.filterContainerWrapper} onPress={() => {
+				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route());
 				}}>
 					<View style={styles.filterContainer}>
@@ -124,6 +115,7 @@ var styles = StyleSheet.create({
   restaurantRowWrapper: {
 		marginTop: 5,
 		marginBottom: 5,
+		backgroundColor: '#555555'
 	},
 	restaurantRow: {
 		flexDirection: 'row',
@@ -193,16 +185,16 @@ var styles = StyleSheet.create({
 		left: 5
 	},
 	filterMessageText: {
-		color: 'white',
-    fontSize: 16,
+		color: '#000000',
+    fontSize: 13,
     fontWeight: '500',
     textAlign: 'center',
-		backgroundColor: 'black',
+		backgroundColor: '#FFFFFF',
 		paddingTop: 12,
 		paddingBottom: 10
 	},
 	filterContainerWrapper: {
-		backgroundColor: 'black',
+		backgroundColor: '#FFFFFF',
 	},
 	filterContainer: {
 		flex: 1,
@@ -222,7 +214,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '90deg'}
     ]
@@ -239,7 +231,7 @@ var styles = StyleSheet.create({
     borderBottomWidth: 10,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'white',
+    borderBottomColor: '#000000',
     transform: [
       {rotate: '180deg'}
     ]

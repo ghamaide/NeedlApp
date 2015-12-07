@@ -26,17 +26,9 @@ class RecoStep4 extends Component {
   state = {}
 
   render() {
-
     var reco = RecoStore.getReco();
-
     return (
-      <ScrollView
-        style={{flex: 1, backgroundColor: 'black'}}
-        contentInset={{top: 0}}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}
-      >
+      <View style={styles.container}>        
         <Text style={styles.title}>Sélectionne 1 à 3 points forts</Text>
          <ToggleGroup
           ref="togglegroup"
@@ -52,22 +44,22 @@ class RecoStep4 extends Component {
           {(Toggle) => {
             return <View style={{alignItems: 'center'}}>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/cuisine.png')} activeInitial={false} label="Cuisine" value={1} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/service.png')} activeInitial={false} label="Service" value={2} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/cadre.png')} activeInitial={false} label="Cadre" value={3} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cuisine.png')} activeInitial={false} label="Cuisine" value={1} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/service.png')} activeInitial={false} label="Service" value={2} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cadre.png')} activeInitial={false} label="Cadre" value={3} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/original.png')} activeInitial={false} label="Original" value={4} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/copieux.png')} activeInitial={false} label="Copieux" value={5} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/vins.png')} activeInitial={false} label="Vins" value={6} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/original.png')} activeInitial={false} label="Original" value={4} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/copieux.png')} activeInitial={false} label="Copieux" value={5} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/vins.png')} activeInitial={false} label="Vins" value={6} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/qtiteprix.png')} activeInitial={false} label="Qté Prix" value={7} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/qtiteprix.png')} activeInitial={false} label="Qté Prix" value={7} />
               </View>
             </View>;
           }}
         </ToggleGroup>
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -76,14 +68,15 @@ var styles = StyleSheet.create({
  container: {
   backgroundColor: 'transparent',
   padding: 10,
+  flex: 1,
   alignItems: 'center',
   justifyContent: 'center'
  },
  title: {
   marginBottom: 30,
-  color: 'white',
+  color: '#000000',
   marginTop: 10,
-  fontSize: 16,
+  fontSize: 13,
   textAlign: 'center'
  },
  pastilleContainer: {
@@ -91,7 +84,10 @@ var styles = StyleSheet.create({
   alignItems: 'center'
  },
  pastille: {
-  margin: 10
+  marginLeft: 15,
+  marginRight: 15,
+  marginTop: 10,
+  marginBottom: 10
  }
 });
 

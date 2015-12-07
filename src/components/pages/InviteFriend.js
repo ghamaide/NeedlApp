@@ -1,10 +1,9 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS} from 'react-native';
+import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS, NativeModules} from 'react-native';
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
 import RNComm from 'react-native-communications';
-//import RNMessageComposer from 'react-native-message-composer';
 
 import Page from '../ui/Page';
 import ErrorToast from '../ui/ErrorToast';
@@ -59,36 +58,41 @@ class InviteFriend extends Page {
     this.checkPermission();
   }
 
-  sendMail = (to, subject, body) => {
-    //RNComm.email([to], null, null, subject, body)
-  }
+  sendSms = (phone_number) => {
+    var message = "Hey, je viens de m'inscrire sur Needl, rejoins moi pour partager tes restos ! Télécharge l'application ici : https://itunes.apple.com/fr/app/id1027312535";
 
-  sendSms = (phone_number, subject, message) => {
-    /*RNMessageComposer.composeMessageWithArgs(
+    NativeModules.RNMessageComposer.composeMessageWithArgs(
     {
       'messageText': message,
-      'subject': subject,
+      'subject': "",
       'recipients':[phone_number]
     },
     (result) => {
       switch(result) {
-        case Composer.Sent:
+        case NativeModules.RNMessageComposer.Sent:
             console.log('the message has been sent');
             break;
-        case Composer.Cancelled:
+        case NativeModules.RNMessageComposer.Cancelled:
             console.log('user cancelled sending the message');
             break;
-        case Composer.Failed:
+        case NativeModules.RNMessageComposer.Failed:
             console.log('failed to send the message');
             break;
-        case Composer.NotSupported:
+        case NativeModules.RNMessageComposer.NotSupported:
             console.log('this device does not support sending texts');
             break;
         default:
             console.log('something unexpected happened');
             break;
       }
-    });*/
+    });
+  }
+
+  sendMail = (adress) => {
+    var message = "Hey, je viens de m'inscrire sur Needl, rejoins moi pour partager tes restos ! Télécharge l'application ici : https://itunes.apple.com/fr/app/id1027312535";
+    var subject = "Viens partager tes restos sur Needl !";
+
+    RNComm.email(adress, null, null, subject, message);
   }
 
   checkPermission() {
@@ -96,7 +100,7 @@ class InviteFriend extends Page {
       console.log(permission);
       if(permission === 'undefined'){
         Contacts.requestPermission( (err, permission) => {
-          console.log(err);
+          this.getContacts();
         })
       }
       if(permission === 'authorized'){
@@ -111,7 +115,7 @@ class InviteFriend extends Page {
   getContacts() {
     Contacts.getAll((err, retrievedContacts) => {
       if(err && err.type === 'permissionDenied'){
-       // message avec indication sur comment authoriser les contacts
+        this.authorizeShowContacts();
       } else {
         this.setState({contacts : retrievedContacts});
         MeActions.uploadContacts(retrievedContacts);
@@ -122,25 +126,27 @@ class InviteFriend extends Page {
   authorizeShowContacts() {
     AlertIOS.alert(
       "Vous n'avez pas autorisé Needl à avoir accès à vos contacts",
-      "Vous pouvez changer ca dans 'Settings -> Privacy'"
+      "Vous pouvez changer ca dans 'Settings -> Privacy'",
+      [
+        {text: 'OK', onPress: () => this.props.navigator.pop()},
+      ]
     );
   }
 
-  renderContact = (contact) => {
+  renderContact = (contact) => {    
     return (
       <View style={styles.contactWrapper}>
-        <Image
-          source={(contact.thumbnailPath === "") ? require('../../assets/img/default_profile.png') : {uri: contact.thumbnailPath}}
-          style={styles.contactImage} />
         <View style={styles.contactInfoWrapper}>
           <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
           <View style={styles.contactActionWrapper}>
             <Text style={styles.contactNumber}>{contact.phoneNumbers[0] ? contact.phoneNumbers[0].number : ""}</Text>
             {contact.phoneNumbers[0] ? 
               [
-                <Image
-                  source={require('../../assets/img/send_sms.png')}
-                  style={styles.imageSMS} />
+                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendSms(contact.phoneNumbers[0].number)}>
+                  <Image
+                    source={require('../../assets/img/actions/icons/send_sms.png')}
+                    style={styles.imageSMS} />
+                </TouchableHighlight>
               ] : [
               ]
             }
@@ -149,9 +155,9 @@ class InviteFriend extends Page {
             <Text style={styles.contactMail}>{contact.emailAddresses[0] ? contact.emailAddresses[0].email : ""}</Text>          
             {contact.emailAddresses[0] ? 
               [
-                <TouchableHighlight onPress={this.sendMail([contact.emailAddresses[0].email], "lol", "lol lol")}>
+                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendMail([contact.emailAddresses[0].email])}>
                   <Image
-                    source={require('../../assets/img/send_mail.png')}
+                    source={require('../../assets/img/actions/icons/send_mail.png')}
                     style={styles.imageMail} />
                 </TouchableHighlight>
               ] : [
@@ -185,13 +191,13 @@ class InviteFriend extends Page {
 
 var styles = StyleSheet.create({
   contactsList: {
-    backgroundColor: 'black'
+    backgroundColor: '#FFFFFF'
   },
   contactWrapper: {
     flex: 1,
     flexDirection: 'row',
     padding: 5,
-    backgroundColor: 'black',
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
     borderColor: '#EF582D',
@@ -203,19 +209,20 @@ var styles = StyleSheet.create({
     flex: 1
   },
   contactName: {
-    color: 'white',
-    fontSize: 11,
+    color: '#000000',
+    fontSize: 13,
     paddingTop: 2,
-    paddingBottom: 2
+    paddingBottom: 2,
+    marginBottom: 10
   },
   contactNumber: {
-    color: 'white',
-    fontSize: 11,
+    color: '#888888',
+    fontSize: 12,
     flex: 1
   },
   contactMail: {
-    color: 'white',
-    fontSize: 11,
+    color: '#888888',
+    fontSize: 12,
     flex: 1
   },
   contactImage: {
@@ -227,19 +234,20 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     paddingTop: 2,
-    paddingBottom: 2
+    paddingBottom: 2,
+    height: 30
   },
   imageSMS: {
-    width: 15,
-    height: 15,
-    borderRadius: 7.5,
+    width: 20,
+    height: 16.8,
     marginLeft: 5,
+    marginTop: 2
   },
   imageMail: {
-    width: 15,
-    height: 15,
-    borderRadius: 7.5,
-    marginLeft: 5
+    width: 20,
+    height: 12.8,
+    marginLeft: 5,
+    marginTop: 4
   }
 });
 
