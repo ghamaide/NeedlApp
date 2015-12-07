@@ -21,7 +21,7 @@ class Liste extends Page {
     return {
       component: Liste,
       title: title,
-      rightButtonIcon: require('../../assets/img/home.png'),
+      rightButtonIcon: require('../../assets/img/tabs/icons/home.png'),
       onRightButtonPress() {
 				this.replace(Carte.route("Carte"));
       }
@@ -82,7 +82,6 @@ class Liste extends Page {
   }
 
   renderPage() {
-		// TODO : change the style of the "Filtrer" button
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
 				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {

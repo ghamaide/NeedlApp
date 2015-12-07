@@ -213,7 +213,7 @@ class Restaurant extends Page {
             <Option
               style={styles.recoButton}
               label={'Je recommande'}
-              icon={require('../../assets/img/japprouve.png')}
+              icon={require('../../assets/img/actions/icons/japprouve.png')}
               onPress={() => {this.approuve(false);}} />
             : null}
         </View>
@@ -284,7 +284,7 @@ class Restaurant extends Page {
             <Option
             style={styles.recoButton}
             label={RestaurantsStore.addWishLoading(restaurant.id) ? 'Enregistrement...' : 'Sur ma wishlist'}
-            icon={require('../../assets/img/aessayer.png')}
+            icon={require('../../assets/img/actions/icons/aessayer.png')}
             onPress={() => {
               if (RestaurantsStore.addWishLoading(restaurant.id)) {
                 return;
@@ -346,7 +346,7 @@ class Restaurant extends Page {
           <Text style={styles.containerTitle}>Lieu</Text>
           <Text style={styles.address}>{restaurant.address}</Text>
           <View style={styles.metroContainer}>
-            <Image source={require('../../assets/img/metro.png')} style={styles.metroImage} />
+            <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
             <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
           </View>
         </View>
@@ -377,7 +377,7 @@ class Restaurant extends Page {
             [
               <Option
                 label={RestaurantsStore.removeWishLoading(restaurant.id) ? 'Suppression...' : 'Retirer de mes envies'}
-                icon={require('../../assets/img/unlike.png')}
+                icon={require('../../assets/img/actions/icons/unlike.png')}
                 onPress={() => {
                   if (RestaurantsStore.removeWishLoading(restaurant.id)) {
                     return;
@@ -391,12 +391,12 @@ class Restaurant extends Page {
             ]
             :
             [
-              <Option label="Modifier ma reco" icon={require('../../assets/img/modify.png')} onPress={() => {
+              <Option label="Modifier ma reco" icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
                 this.approuve(true);
               }} />,
               <Option
                 label={RestaurantsStore.removeRecoLoading(restaurant.id) ? 'Suppression...' : 'Supprimer ma reco'}
-                icon={require('../../assets/img/poubelle.png')}
+                icon={require('../../assets/img/actions/icons/poubelle.png')}
                 onPress={() => {
                   if (RestaurantsStore.removeRecoLoading(restaurant.id)) {
                     return;

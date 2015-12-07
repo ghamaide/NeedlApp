@@ -34,6 +34,10 @@ export class RestaurantsStore extends CachedStore {
       ambiance: {
         id: null,
         value: 'Tous'
+      },
+      occasion: {
+        id: null,
+        value: 'Tous'
       }
     };
 
@@ -228,10 +232,8 @@ export class RestaurantsStore extends CachedStore {
 // one by one
 
   handleFetchRestaurant(id) {
-    console.log('2');
     this.status.restaurantsLoading.push(id);
     delete this.status.restaurantsLoadingError[id];
-    console.log('3');
   }
 
   handleRestaurantFetched(restaurant) {
@@ -249,8 +251,6 @@ export class RestaurantsStore extends CachedStore {
     });
     this.status.restaurantsLoadingError[data.id] = data.err;
   }
-
-//
 
   static error(id) {
     if (!id) {
@@ -404,131 +404,141 @@ export class RestaurantsStore extends CachedStore {
     }));
   }
 
+  static searchableOccasions() {
+    return _.sortBy(_.remove(_.uniq(_.flatten(_.pluck(this.searchable(), 'occasions'))), function(occasion) {
+      return !!occasion;
+    }));
+  }
+
   static MAP_AMBIANCES = {
     1: {
       label: 'Chic',
-      icon: require('../assets/img/chic.png')
+      icon: require('../assets/img/ambiances/icons/chic.png')
     },
     2: {
       label: 'Festif',
-      icon: require('../assets/img/festif.png')
+      icon: require('../assets/img/ambiances/icons/festif.png')
     },
     6: {
       label: 'Casual',
-      icon: require('../assets/img/casual.png')
+      icon: require('../assets/img/ambiances/icons/casual.png')
     },
     4: {
       label: 'Ensoleillé',
-      icon: require('../assets/img/ensoleille.png')
+      icon: require('../assets/img/ambiances/icons/ensoleille.png')
     },
     5: {
       label: 'Fast',
-      icon: require('../assets/img/fast.png')
+      icon: require('../assets/img/ambiances/icons/fast.png')
     },
     3: {
       label: 'Typique',
-      icon: require('../assets/img/typique.png')
+      icon: require('../assets/img/ambiances/icons/typique.png')
     }
   }
 
   static MAP_AMBIANCES_2 = {
     1: {
       label: 'Chic',
-      icon: require('../assets/img/chic.jpg')
+      icon: require('../assets/img/ambiances/icons/chic.png')
     },
     2: {
       label: 'Festif',
-      icon: require('../assets/img/festif.jpg')
+      icon: require('../assets/img/ambiances/icons/festif.png')
     },
+    //////
     3: {
       label: 'Terrasse',
-      icon: require('../assets/img/terrasse.jpg')
+      icon: require('../assets/img/ambiances/images/terrasse.jpg')
     },
+    ///////
     4: {
       label: 'Bonne Franquette',
-      icon: require('../assets/img/bonne_franquette.jpg')
+      icon: require('../assets/img/ambiances/images/bonne_franquette.jpg')
     },
     5: {
-      label: 'Traditionnel',
-      icon: require('../assets/img/traditionnel.jpg')
-    },
-    6: {
       label: 'Fast',
-      icon: require('../assets/img/fast.jpg')
+      icon: require('../assets/img/ambiances/icons/fast.png')
     },
+    ///////
+    6: {
+      label: 'Traditionnel',
+      icon: require('../assets/img/ambiances/images/traditionnel.jpg')
+    },
+    ////////
     7: {
       label: 'Romantique',
-      icon: require('../assets/img/romantique.jpg')
+      icon: require('../assets/img/ambiances/images/romantique.jpg')
     },
     8: {
       label: 'Autres',
-      icon: require('../assets/img/autre.jpg')
+      icon: require('../assets/img/ambiances/icons/autre.png')
     }
   }
 
   static MAP_OCCASIONS = {
     1: {
       label: 'Business',
-      icon: require('../assets/img/dej_business.jpg')
+      icon: require('../assets/img/occasions/icons/dej_business.png')
     },
     2: {
       label: 'En Couple',
-      icon: require('../assets/img/en_couple.jpg')
+      icon: require('../assets/img/occasions/icons/en_couple.png')
     },
     3: {
       label: 'En Famille',
-      icon: require('../assets/img/en_famille.jpg')
+      icon: require('../assets/img/occasions/icons/en_famille.png')
     },
     4: {
       label: 'Entre amis',
-      icon: require('../assets/img/entre_amis.jpg')
+      icon: require('../assets/img/occasions/icons/entre_amis.png')
     },
     5: {
       label: 'Grandes tablees',
-      icon: require('../assets/img/grandes_tablees.jpg')
+      icon: require('../assets/img/occasions/icons/grandes_tablees.png')
     },
     6: {
       label: 'Pour un date',
-      icon: require('../assets/img/date.jpg')
+      icon: require('../assets/img/occasions/icons/date.png')
     },
     7: {
       label: 'Brunch',
-      icon: require('../assets/img/brunch.jpg')
+      icon: require('../assets/img/occasions/icons/brunch.png')
     },
     8: {
       label: 'Autres',
-      icon: require('../assets/img/autre.jpg')
+      icon: require('../assets/img/occasions/icons/autre.png')
     },
   }
 
   static MAP_STRENGTHS = {
     1: {
       label: 'Cuisine',
-      icon: require('../assets/img/cuisine.png')
+      icon: require('../assets/img/points_forts/icons/cuisine.png')
     },
     2: {
       label: 'Service',
-      icon: require('../assets/img/service.png')
+      icon: require('../assets/img/points_forts/icons/service.png')
     },
     3: {
       label: 'Cadre',
-      icon: require('../assets/img/cadre.png')
+      icon: require('../assets/img/points_forts/icons/cadre.png')
     },
     4: {
       label: 'Original',
-      icon: require('../assets/img/original.png')
+      icon: require('../assets/img/points_forts/icons/original.png')
     },
     5: {
       label: 'Copieux',
-      icon: require('../assets/img/copieux.png')
+      icon: require('../assets/img/points_forts/icons/copieux.png')
     },
     6: {
       label: 'Vins',
-      icon: require('../assets/img/vins.png')
+      icon: require('../assets/img/points_forts/icons/vins.png')
     },
     7: {
       label: 'Qté Prix',
-      icon: require('../assets/img/qtiteprix.png')
+      icon: require('../assets/img/points_forts/icons/qtiteprix.png')
     }
   }
 
@@ -582,6 +592,7 @@ export class RestaurantsStore extends CachedStore {
   }
 
   static filterActive() {
+    //console.log(this.getState().filters);
     return _.some(this.getState().filters, (filter) => {
       return !!filter.id;
     });

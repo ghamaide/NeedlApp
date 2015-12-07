@@ -144,7 +144,7 @@ class InviteFriend extends Page {
               [
                 <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendSms(contact.phoneNumbers[0].number)}>
                   <Image
-                    source={require('../../assets/img/send_sms.png')}
+                    source={require('../../assets/img/actions/icons/send_sms.png')}
                     style={styles.imageSMS} />
                 </TouchableHighlight>
               ] : [
@@ -157,7 +157,7 @@ class InviteFriend extends Page {
               [
                 <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendMail([contact.emailAddresses[0].email])}>
                   <Image
-                    source={require('../../assets/img/send_mail.png')}
+                    source={require('../../assets/img/actions/icons/send_mail.png')}
                     style={styles.imageMail} />
                 </TouchableHighlight>
               ] : [

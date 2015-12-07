@@ -71,6 +71,9 @@ export class RecoActions {
           ambiances: _.map(res.ambiences, (id) => {
             return parseInt(id);
           }),
+          occasions: _.map(res.occasions, (id) => {
+            return parseInt(id);
+          }),
           strengths: _.map(res.strengths, (id) => {
             return parseInt(id);
           }),

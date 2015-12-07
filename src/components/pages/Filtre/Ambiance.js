@@ -23,6 +23,7 @@ class Ambiance extends Component {
   }
 
   ambianceState() {
+    console.log(RestaurantsStore.searchableAmbiances());
     var ambiances = _.map(RestaurantsStore.searchableAmbiances(), function(ambiance) {
       return {
         value: RestaurantsStore.MAP_AMBIANCES[ambiance].label,
@@ -87,12 +88,12 @@ var styles = StyleSheet.create({
   title: {
     color: '#000000',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 14,
     marginBottom: 5
   },
   value: {
     color: '#444444',
-    fontSize: 14
+    fontSize: 13
   }
 });
 

@@ -52,14 +52,14 @@ class RecoStep2 extends Component {
                 <Toggle
                   size={60}
                   style={styles.pastille}
-                  icon={require('../../../assets/img/japprouve.png')}
+                  icon={require('../../../assets/img/actions/icons/japprouve.png')}
                   activeInitial={false}
                   label="Je recommande"
                   value={'approved'} />
                 <Toggle
                   size={60}
                   style={styles.pastille}
-                  icon={require('../../../assets/img/aessayer.png')}
+                  icon={require('../../../assets/img/actions/icons/aessayer.png')}
                   activeInitial={false}
                   label="Sur ma wishlist"
                   value={'totry'} />
@@ -82,7 +82,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  fontSize: 14,
+  fontSize: 13,
   color: '#888888',
   textAlign: 'center'
  },

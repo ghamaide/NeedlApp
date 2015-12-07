@@ -10,6 +10,7 @@ import Type from './Type';
 import Friends from './Friends';
 import Metro from './Metro';
 import Ambiance from './Ambiance';
+import Occasion from './Occasion';
 
 let filtersSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -68,6 +69,13 @@ class Filtre extends Component {
             this.props.navigator.push(Ambiance.route());
           },
           value: RestaurantsStore.getState().filters.ambiance.value
+        },
+        {
+          title: 'Occasion',
+          action: () => {
+            this.props.navigator.push(Occasion.route());
+          },
+          value: RestaurantsStore.getState().filters.occasion.value
         }
       ])
     };
@@ -87,6 +95,10 @@ class Filtre extends Component {
 
   clearFilters() {
     RestaurantsActions.setFilter('ambiance', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('occasion', {
       value: 'Tous',
       id: null
     });
@@ -112,7 +124,7 @@ class Filtre extends Component {
 
   renderRow = (row) => {
     return (
-      <TouchableHighlight style={styles.rowWrapper} underlayColor="#FFFFFF" onPress={row.action}>
+      <TouchableHighlight style={styles.rowWrapper} underlayColor="#DDDDDD" onPress={row.action}>
         <View style={styles.row}>
           <Text style={styles.title}>{row.title}</Text>
           <Text style={styles.value}>{row.value}</Text>
@@ -131,7 +143,7 @@ class Filtre extends Component {
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
-        <TouchableHighlight style={styles.clearButton} underlayColor="#FFFFFF" onPress={() => this.clearFilters()}>
+        <TouchableHighlight style={styles.clearButton} onPress={() => this.clearFilters()}>
           <Text style={styles.clear}>Réinitialiser les filters</Text>
         </TouchableHighlight>
       </View>
@@ -143,7 +155,6 @@ var styles = StyleSheet.create({
   rowWrapper: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
     borderColor: '#EF582D'
   },
   row: {
@@ -162,7 +173,6 @@ var styles = StyleSheet.create({
   clearButton: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
     borderColor: '#EF582D'
   },
   clear: {

@@ -196,7 +196,7 @@ class Carte extends Page {
             <View style={styles.targetContainer}>
               <View style={[styles.fillRectangleTop, {width: windowWidth}]} />
               <Image
-                source={require('../../assets/img/target.png')}
+                source={require('../../assets/img/other/images/target.png')}
                 style={[styles.targetImage, {width: windowWidth, height: windowWidth}]} />
               <View style={styles.fillRectangleBottom} />
             </View>

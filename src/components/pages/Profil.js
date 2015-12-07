@@ -194,18 +194,18 @@ class Profil extends Page {
 					 			label="Envoyer une liste"
 					 			key={"list send " + profil.id}
 					 			onPress={this.pickImage}
-								icon={require('../../assets/img/import_list.png')} />,
+								icon={require('../../assets/img/actions/icons/import_list.png')} />,
               <Option
 					 			key={"edit " + profil.id}
 								label="Modifier"
-								icon={require('../../assets/img/modify.png')}
+								icon={require('../../assets/img/actions/icons/modify.png')}
 								onPress={() => {
                 	this.props.navigator.push(EditMe.route());
               	}} />,
               <Option
 					 			key={"logout " + profil.id}
 								label="Me Déconnecter"
-								icon={require('../../assets/img/signout.png')}
+								icon={require('../../assets/img/actions/icons/signout.png')}
 								onPress={LoginActions.logout} />
             ]
             :
@@ -214,7 +214,7 @@ class Profil extends Page {
                 <Option
 									key={profil.id}
                   label={ProfilStore.maskProfilLoading(profil.id) ? 'Masque...' : 'Masquer ses recos'}
-                  icon={require('../../assets/img/masquer.png')}
+                  icon={require('../../assets/img/actions/icons/masquer.png')}
                   onPress={() => {
                     if (ProfilStore.maskProfilLoading(profil.id)) {
                       return;
@@ -224,7 +224,7 @@ class Profil extends Page {
                 <Option
 									key={'showReco' + profil.id}
                   label={ProfilStore.displayProfilLoading(profil.id) ? 'Affichage...' : 'Afficher ses recos'}
-                  icon={require('../../assets/img/afficher.png')}
+                  icon={require('../../assets/img/actions/icons/afficher.png')}
                   onPress={() => {
                     if (ProfilStore.displayProfilLoading(profil.id)) {
                       return;
@@ -234,7 +234,7 @@ class Profil extends Page {
               <Option
 								key={'deleteFriend' + profil.id}
                 label={FriendsStore.removeFriendshipLoading(profil.id) ? 'Suppression...' : 'Retirer de mes amis'}
-                icon={require('../../assets/img/retirer.png')}
+                icon={require('../../assets/img/actions/icons/retirer.png')}
                 onPress={() => {
                   if (FriendsStore.removeFriendshipLoading(profil.id)) {
                     return;

@@ -25,7 +25,7 @@ class Restaurant extends Component {
             {this.props.subway ?
               <View style={styles.restaurantSubway}>
                 <Image
-                  source={require('../../assets/img/subway.png')}
+                  source={require('../../assets/img/other/icons/subway.png')}
                   style={styles.restaurantSubwayImage} />
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>

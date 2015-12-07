@@ -86,7 +86,7 @@ var styles = StyleSheet.create({
   marginTop: 10,
   marginBottom: 20,
   color: '#000000',
-  fontSize: 14,
+  fontSize: 13,
   textAlign: 'center'
  },
  reviewInput: {

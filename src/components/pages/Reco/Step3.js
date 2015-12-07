@@ -82,10 +82,10 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne 1 ou 2 ambiances</Text>
+        <Text style={styles.title}>Sélectionne 1 à 3 ambiances</Text>
         <ToggleGroup
           ref="togglegroup"
-          maxSelection={2}
+          maxSelection={3}
           fifo={true}
           selectedInitial={reco.ambiances}
           onSelect={(v, selected) => {
@@ -95,16 +95,20 @@ class RecoStep3 extends Component {
             reco.ambiances = selected;
           }}>
           {(Toggle) => {
-            return <View>
+            return <View style={{alignItems: 'center'}}>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/chic.png')} activeInitial={false} label="Chic" value={1} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/festif.png')} activeInitial={false} label="Festif" value={2} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/casual.png')} activeInitial={false} label="Casual" value={6} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={3} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ensoleille.png')} activeInitial={false} label="Ensoleillé" value={4} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/fast.png')} activeInitial={false} label="Fast" value={5} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/typique.png')} activeInitial={false} label="Typique" value={3} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/bonne_franquette.png')} activeInitial={false} label="Bonne Franquette" value={4} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Fast" value={5} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Traditionnel" value={6} />
+              </View>
+              <View style={styles.pastilleContainer}>
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={7} />
+                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Autres" value={8} />
               </View>
             </View>;
           }}
@@ -125,7 +129,7 @@ var styles = StyleSheet.create({
  title: {
   marginBottom: 30,
   color: '#000000',
-  fontSize: 14,
+  fontSize: 13,
   textAlign: 'center'
  },
  pastilleContainer: {
@@ -133,7 +137,10 @@ var styles = StyleSheet.create({
   alignItems: 'center'
  },
  pastille: {
-  margin: 10
+  marginLeft: 15,
+  marginRight: 15,
+  marginTop: 10,
+  marginBottom: 10
  }
 });
 

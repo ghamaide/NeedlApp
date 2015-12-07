@@ -33,38 +33,38 @@ class BoxesRestaurants extends Page {
       // we want the map even if it is still loading
       data: [
         [
-          {name: "Brunch", image: require('../../assets/img/brunch.jpg')},
-          {name: "Business", image: require('../../assets/img/dej_business.jpg')},
-          {name: "En Couple", image: require('../../assets/img/en_couple.jpg')},
-          {name: "En Famille", image: require('../../assets/img/en_famille.jpg')},
-          {name: "Entre amis", image: require('../../assets/img/entre_amis.jpg')},
-          {name: "Grandes tablees", image: require('../../assets/img/grandes_tablees.jpg')},
-          {name: "Pour un date", image: require('../../assets/img/date.jpg')},
-          {name: "Autres", image: require('../../assets/img/autre.jpg')},
+          {id: "1", label: "Business", icon: require('../../assets/img/occasions/images/dej_business.jpg')},
+          {id: "2", label: "En Couple", icon: require('../../assets/img/occasions/images/en_couple.jpg')},
+          {id: "3", label: "En Famille", icon: require('../../assets/img/occasions/images/en_famille.jpg')},
+          {id: "4", label: "Entre amis", icon: require('../../assets/img/occasions/images/entre_amis.jpg')},
+          {id: "5", label: "Grandes tablees", icon: require('../../assets/img/occasions/images/grandes_tablees.jpg')},
+          {id: "6", label: "Pour un date", icon: require('../../assets/img/occasions/images/date.jpg')},
+          {id: "7", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
+          {id: "8", label: "Autres", icon: require('../../assets/img/occasions/images/autre.jpg')},
         ],
         [
-          {name: "Terrasse", image: require('../../assets/img/terrasse.jpg')},
-          {name: "Bonne Franquette", image: require('../../assets/img/bonne_franquette.jpg')},
-          {name: "Festif", image: require('../../assets/img/festif.jpg')},
-          {name: "Chic", image: require('../../assets/img/chic.jpg')},
-          {name: "Traditionnel", image: require('../../assets/img/traditionnel.jpg')},
-          {name: "Fast", image: require('../../assets/img/fast.jpg')},
-          {name: "Romantique", image: require('../../assets/img/romantique.jpg')},
-          {name: "Autres", image: require('../../assets/img/autre.jpg')},
+          {id: "1", label: "Chic", icon: require('../../assets/img/ambiances/images/chic.jpg')},
+          {id: "2", label: "Festif", icon: require('../../assets/img/ambiances/images/festif.jpg')},
+          {id: "3", label: "Terrasse", icon: require('../../assets/img/ambiances/images/terrasse.jpg')},
+          {id: "4", label: "Bonne Franquette", icon: require('../../assets/img/ambiances/images/bonne_franquette.jpg')},
+          {id: "5", label: "Fast", icon: require('../../assets/img/ambiances/images/fast.jpg')},
+          {id: "6", label: "Traditionnel", icon: require('../../assets/img/ambiances/images/traditionnel.jpg')},
+          {id: "7", label: "Romantique", icon: require('../../assets/img/ambiances/images/romantique.jpg')},
+          {id: "8", label: "Autres", icon: require('../../assets/img/ambiances/images/autre.jpg')},
         ],
         [
-          {name: "€", image: require('../../assets/img/prix_1.jpg')},
-          {name: "€€", image: require('../../assets/img/prix_2.jpg')},
-          {name: "€€€", image: require('../../assets/img/prix_3.jpg')},
-          {name: "€€€+", image: require('../../assets/img/prix_4.jpg')},
+          {label: "€", icon: require('../../assets/img/prix/images/prix_1.jpg')},
+          {label: "€€", icon: require('../../assets/img/prix/images/prix_2.jpg')},
+          {label: "€€€", icon: require('../../assets/img/prix/images/prix_3.jpg')},
+          {label: "€€€+", icon: require('../../assets/img/prix/images/prix_4.jpg')},
         ]
       ],
       dataFilters: [
-        {id: 0, name: "Occasions"},
-        {id: 1, name: "Ambiances"},
-        {id: 2, name: "Prix"},
-        {id: 3, name: "Points forts"},
-      ],
+        {id: 0, name: "Occasions", label: "occasion"},
+        {id: 1, name: "Ambiances", label: "ambiance"},
+        {id: 2, name: "Prix", label: "prix"},
+        {id: 3, name: "Points forts", label: "type"},
+      ]
       
       // Images to change
       // Put the list in restaurants stores
@@ -82,12 +82,9 @@ class BoxesRestaurants extends Page {
   
   componentWillMount() {
     // on mount 
-    console.log(RestaurantsStore.MAP_AMBIANCES_2);   
-    console.log(RestaurantsStore.MAP_OCCASIONS);   
   }
 
   componentWillUnmount() {
-    console.log('1');
     // on unmount
   }
 
@@ -111,13 +108,15 @@ class BoxesRestaurants extends Page {
   renderData = (data) => {
   	return (
       <Box 
-        image={data.image} 
-        label={data.name} 
-        occasion={data.page} 
+        image={data.icon} 
+        label={data.label} 
         onPress={
           () => {
-            //RestaurantsActions.setFilter('ambiance', {value: "Typique", id: "3"});
-            this.props.navigator.push(Liste.route(data.name));
+            //console.log(this.state.dataFilters[this.state.filterChosen].label);
+            var temp = {value: data.label, id: data.id};
+            //console.log(temp);
+            RestaurantsActions.setFilter(this.state.dataFilters[this.state.filterChosen].label, {value: data.label, id: data.id});
+            this.props.navigator.push(Liste.route(data.label));
           }
         } />
   	);
