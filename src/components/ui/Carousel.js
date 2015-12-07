@@ -35,19 +35,34 @@ class Carousel extends Component{
   }
 
   goForward = (i, from) => {
+
     var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-    this.setState({
-      offset: this.state.offset + size * i
-    });
-    this.pageChange(this.state.page + i, from);
+    if (typeof i === 'number') {
+      this.setState({
+        offset: this.state.offset + size * i
+      });
+      this.pageChange(this.state.page + i, from);
+    } else {
+      this.setState({
+        offset: this.state.offset + size
+      });
+      this.pageChange(this.state.page + 1, from);
+    }
   }
 
   goBackward = (i, from) => {
     var size = this.state.width - ((this.props.insetMargin || 0) * 2);
-    this.setState({
-      offset: this.state.offset - size * i
-    });
-    this.pageChange(this.state.page - i, from);
+    if (typeof i === 'number') {
+      this.setState({
+        offset: this.state.offset - size * i
+      });
+      this.pageChange(this.state.page - i, from);
+    } else {
+      this.setState({
+        offset: this.state.offset - size
+      });
+      this.pageChange(this.state.page - 1, from);
+    }
   }
 
   render() {

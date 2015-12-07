@@ -100,10 +100,10 @@ class Restaurant extends Page {
     ProfilStore.unlisten(this.onProfilStoreUpdate);
   }
 
-  getToggle (map, v) {
+  getToggle (map, v, color) {
     return <Toggle
       style={styles.toggle}
-      labelColor="#AAA"
+      labelColor={color}
       label={map[v].label}
       icon={map[v].icon}
       active={false}
@@ -154,15 +154,12 @@ class Restaurant extends Page {
         contentContainerStyle={styles.container}>
 
         <View style={styles.header}>
-          <Image 
-            source={{uri: restaurant.pictures[0]}} 
-            style={styles.restaurantImage}>
-            <View style={styles.restaurantInfos}>
-              <Text style={styles.restaurantName}>{restaurant.name}</Text>
-              <Text style={styles.restaurantType}>{restaurant.food[1]}</Text>
-              <Text style={styles.restaurantPrice}>{budget}</Text>
-            </View>
-          </Image>
+          <RestaurantElement
+            name={restaurant.name}
+            pictures={restaurant.pictures}
+            type={restaurant.food[1]}
+            height={250}
+            budget={restaurant.price_range} />
         </View>
 
         <View style={[styles.callContainer]}>
@@ -200,7 +197,7 @@ class Restaurant extends Page {
               </View>
             </View>
             :
-            <Text style={styles.containerTitle}>Aucun ami ne l'a recommendé</Text>
+            <Text style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
           }
           {(RestaurantsStore.recommenders(restaurant.id).length  && _.keys(restaurant.reviews).length && restaurant.reviews[this.state.reviewSelected]) ?
             <View style={styles.reviewBox}>
@@ -226,12 +223,12 @@ class Restaurant extends Page {
             <Text style={styles.containerTitle}>Ambiances</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance);
+                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
               })}
             </View>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance);
+                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
               })}
             </View>
           </View>
@@ -242,17 +239,17 @@ class Restaurant extends Page {
             <Text style={styles.containerTitle}>Points forts</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(0, 3), (strength) => {
-              	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+              	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
               })}
             </View>
             <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(3), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#888888");
               })}
             </View>
              <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(6), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength);
+								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
               })}
             </View>
           </View>
@@ -267,7 +264,8 @@ class Restaurant extends Page {
                 height: 80,
                 width: 240,
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                backgroundColor: 'transparent'
               }} elemSize={80} insetMargin={80} leftFlecheStyle={{marginLeft: -35}} rightFlecheStyle={{right: 0}}>
                 {_.map(RestaurantsStore.wishers(restaurant.id), (userId) => {
                   var profil = ProfilStore.profil(userId);
@@ -468,7 +466,7 @@ var styles = StyleSheet.create({
     color: '#FFFFFF'
   },
   callContainer: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: '#E0E0E0',
     padding: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -487,7 +485,8 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF'
   },
   wishContainer: {
-    padding: 20
+    padding: 20,
+    backgroundColor: '#E0E0E0'
   },
   containerTitle: {
     fontSize: 16,
@@ -541,7 +540,7 @@ var styles = StyleSheet.create({
     marginTop: -10
   },
   reviewBox: {
-    backgroundColor: '#CCCCCC',
+    backgroundColor: '#E0E0E0',
     borderRadius: 5,
     marginTop: 10,
     marginBottom: 10,
@@ -558,7 +557,7 @@ var styles = StyleSheet.create({
     top: -7,
     left: -7,
     position: 'absolute',
-    backgroundColor: '#EF582D',
+    backgroundColor: '#E0E0E0',
     transform: [
       {rotate: '45deg'}
     ]
@@ -580,7 +579,8 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   toggle: {
-    margin: 10
+    margin: 10,
+    backgroundColor: "#EF582D"
   },
   menuInnerContainer: {
     alignItems: 'center',

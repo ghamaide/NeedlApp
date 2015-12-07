@@ -431,6 +431,76 @@ export class RestaurantsStore extends CachedStore {
     }
   }
 
+  static MAP_AMBIANCES_2 = {
+    1: {
+      label: 'Chic',
+      icon: require('../assets/img/chic.jpg')
+    },
+    2: {
+      label: 'Festif',
+      icon: require('../assets/img/festif.jpg')
+    },
+    3: {
+      label: 'Terrasse',
+      icon: require('../assets/img/terrasse.jpg')
+    },
+    4: {
+      label: 'Bonne Franquette',
+      icon: require('../assets/img/bonne_franquette.jpg')
+    },
+    5: {
+      label: 'Traditionnel',
+      icon: require('../assets/img/traditionnel.jpg')
+    },
+    6: {
+      label: 'Fast',
+      icon: require('../assets/img/fast.jpg')
+    },
+    7: {
+      label: 'Romantique',
+      icon: require('../assets/img/romantique.jpg')
+    },
+    8: {
+      label: 'Autres',
+      icon: require('../assets/img/autre.jpg')
+    }
+  }
+
+  static MAP_OCCASIONS = {
+    1: {
+      label: 'Business',
+      icon: require('../assets/img/dej_business.jpg')
+    },
+    2: {
+      label: 'En Couple',
+      icon: require('../assets/img/en_couple.jpg')
+    },
+    3: {
+      label: 'En Famille',
+      icon: require('../assets/img/en_famille.jpg')
+    },
+    4: {
+      label: 'Entre amis',
+      icon: require('../assets/img/entre_amis.jpg')
+    },
+    5: {
+      label: 'Grandes tablees',
+      icon: require('../assets/img/grandes_tablees.jpg')
+    },
+    6: {
+      label: 'Pour un date',
+      icon: require('../assets/img/date.jpg')
+    },
+    7: {
+      label: 'Brunch',
+      icon: require('../assets/img/brunch.jpg')
+    },
+    8: {
+      label: 'Autres',
+      icon: require('../assets/img/autre.jpg')
+    },
+  }
+
   static MAP_STRENGTHS = {
     1: {
       label: 'Cuisine',

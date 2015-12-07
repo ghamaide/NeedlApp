@@ -43,6 +43,7 @@
 		A3A0973D1C0A176B00E5DBE1 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */; };
 		A3A0973E1C0A176B00E5DBE1 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0973A1C0A176B00E5DBE1 /* FBSDKShareKit.framework */; };
 		A3A097451C0A1DC700E5DBE1 /* libRCTFBSDKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097441C0A19A400E5DBE1 /* libRCTFBSDKCore.a */; };
+		A3D070331C158A6C00BB5FBD /* libRNMessageComposer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3D070311C158A5200BB5FBD /* libRNMessageComposer.a */; };
 		A3FFD7101C10AB4F00AB1038 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3FFD70F1C10AB4F00AB1038 /* LaunchScreen.storyboard */; };
 		A3FFD7121C10AE4800AB1038 /* Default-667h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FFD7111C10AE4800AB1038 /* Default-667h@2x.png */; };
 /* End PBXBuildFile section */
@@ -181,6 +182,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTFBSDKCore;
 		};
+		A3D070301C158A5200BB5FBD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C23F08041AFAB5C100312C72;
+			remoteInfo = RNMessageComposer;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -227,6 +235,7 @@
 		A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
 		A3A0973A1C0A176B00E5DBE1 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		A3A0973F1C0A19A400E5DBE1 /* RCTFBSDKCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDKCore.xcodeproj; path = "../node_modules/react-native-fbsdkcore/RCTFBSDKCore.xcodeproj"; sourceTree = "<group>"; };
+		A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMessageComposer.xcodeproj; path = "../node_modules/react-native-message-composer/RNMessageComposer.xcodeproj"; sourceTree = "<group>"; };
 		A3FFD70F1C10AB4F00AB1038 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A3FFD7111C10AE4800AB1038 /* Default-667h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-667h@2x.png"; path = "NeedlIOS/Default-667h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -243,6 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3D070331C158A6C00BB5FBD /* libRNMessageComposer.a in Frameworks */,
 				A30EF9D91C1103BE009CA6C0 /* libRCTFBLogin.a in Frameworks */,
 				A3A097451C0A1DC700E5DBE1 /* libRCTFBSDKCore.a in Frameworks */,
 				A3A0973B1C0A176B00E5DBE1 /* FBSDKCoreKit.framework in Frameworks */,
@@ -377,6 +387,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */,
 				A30EF9D31C1103B6009CA6C0 /* RCTFBLogin.xcodeproj */,
 				A3A0973F1C0A19A400E5DBE1 /* RCTFBSDKCore.xcodeproj */,
 				A315FF871C0A160C00AF588F /* RCTFBSDKLogin.xcodeproj */,
@@ -513,6 +524,14 @@
 			isa = PBXGroup;
 			children = (
 				A3A097441C0A19A400E5DBE1 /* libRCTFBSDKCore.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A3D0701C1C158A5200BB5FBD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A3D070311C158A5200BB5FBD /* libRNMessageComposer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -660,6 +679,10 @@
 					ProjectRef = A32E07911C075B5B0075E6E8 /* RNKeyboardEvents.xcodeproj */;
 				},
 				{
+					ProductGroup = A3D0701C1C158A5200BB5FBD /* Products */;
+					ProjectRef = A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */;
+				},
+				{
 					ProductGroup = A32E081E1C08F9B90075E6E8 /* Products */;
 					ProjectRef = A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */;
 				},
@@ -797,6 +820,13 @@
 			fileType = archive.ar;
 			path = libRCTFBSDKCore.a;
 			remoteRef = A3A097431C0A19A400E5DBE1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A3D070311C158A5200BB5FBD /* libRNMessageComposer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNMessageComposer.a;
+			remoteRef = A3D070301C158A5200BB5FBD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

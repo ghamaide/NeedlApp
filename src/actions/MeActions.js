@@ -29,6 +29,7 @@ export class FriendsActions {
   }
 
   editSuccess(data) {
+    console.log(data);
     this.dispatch(data);
   }
 

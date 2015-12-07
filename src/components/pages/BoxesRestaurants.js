@@ -12,6 +12,7 @@ import Liste from './Liste';
 import BoxesBars from './BoxesBars';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
+import RestaurantsStore from '../../stores/Restaurants';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -80,7 +81,9 @@ class BoxesRestaurants extends Page {
   }
   
   componentWillMount() {
-    // on mount    
+    // on mount 
+    console.log(RestaurantsStore.MAP_AMBIANCES_2);   
+    console.log(RestaurantsStore.MAP_OCCASIONS);   
   }
 
   componentWillUnmount() {
