@@ -52,11 +52,10 @@ class RecoStep5 extends Component {
                 <View style={styles.pastilleContainer}>
                   <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
                   <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Nombreux" value={5} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={6} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={7} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/autre.png')} activeInitial={false} label="Autres" value={8} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/autre.png')} activeInitial={false} label="Autres" value={7} />
                 </View>
               </View>
             );

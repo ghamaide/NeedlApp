@@ -191,34 +191,20 @@ class App extends Component {
         </Overlay>
 
         <Overlay isVisible={!this.state.selectingPhoto && !this.state.uploadingList && !this.state.hasBeenUploadWelcomed}>
-          <Swiper showsButtons={false} showsPagination={true} loop={false} style={styles.swiper}>
-            <View style={styles.containerSwiper}>
-              <ScrollView
-                style={{flex: 1, backgroundColor: 'white'}}
-                contentInset={{top: 0}}
-                automaticallyAdjustContentInsets={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.containerCEOMessage}>
-                <Text style={[styles.messageCEO, {marginBottom: 10}]}>Tu peux désormais accéder à ta carte personnalisée de Paris comprenant toutes tes recommandations ainsi que celles de tes amis.</Text>
-                <Text style={[styles.messageCEO, {marginBottom: 20}]}>En attendant qu'ils s'inscrivent, tu peux compter sur ma sélection de burgers, pizzas et restaurants thaïs! Ce sont mes 3 passions culinaires, et ces adresses sont de loin mes préférées!</Text>
-                <Text style={[styles.messageCEO, {marginBottom: 20}]}>Valentin, CEO Needl</Text>
-                <Image style={styles.avatarCEO} source={{uri: 'http://needl.s3.amazonaws.com/production/users/pictures/000/000/125/original/picture?1435579332'}} />
-              </ScrollView>
-            </View>
-
-            <Onboard_Friends />
-
-            <View style={styles.containerSwiper}>
-              <Text style={[styles.titleImportList, {marginBottom: 40}]}>Importe ta liste de restos</Text>
-              <Text style={[styles.messageImportList, {marginBottom: 40}]}>{uploadText}</Text>
-              <View style={{flexDirection: 'row'}}>
-                <Button label="Envoyer une liste" onPress={this.pickImage} style={{margin: 5}}/>
-                <Button label="Passer" onPress={() => {
-                  MeActions.hasBeenUploadWelcomed();
-                }} style={{margin: 5}}/>
-              </View>
-            </View>
-          </Swiper>
+          <ScrollView
+            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+            contentInset={{top: 0}}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.containerCEOMessage}>
+            <Text style={[styles.messageCEO, {marginBottom: 10}]}>Tu peux désormais accéder à ta carte personnalisée de Paris comprenant toutes tes recommandations ainsi que celles de tes amis.</Text>
+            <Text style={[styles.messageCEO, {marginBottom: 20}]}>En attendant qu'ils s'inscrivent, tu peux compter sur ma sélection de burgers, pizzas et restaurants thaïs! Ce sont mes 3 passions culinaires, et ces adresses sont de loin mes préférées!</Text>
+            <Text style={[styles.messageCEO, {marginBottom: 20}]}>Valentin, CEO Needl</Text>
+            <Image style={styles.avatarCEO} source={{uri: 'http://needl.s3.amazonaws.com/production/users/pictures/000/000/125/original/picture?1435579332'}} />
+            <Button label="Passer" onPress={() => {
+              MeActions.hasBeenUploadWelcomed();
+            }} style={{margin: 5}}/>
+          </ScrollView>
         </Overlay>
 
         <TabView 
@@ -236,7 +222,7 @@ class App extends Component {
               component: Friends,
               name: 'Amis',
               icon: require('../assets/img/tabs/icons/friend.png'),
-              pastille: this.state.friendsPastille <= 10 ? this.state.friendsPastille : '9+'
+              pastille: this.state.friendsPastille < 10 ? this.state.friendsPastille : '9+'
             },
             {
               component: RecoStep1,
@@ -246,7 +232,7 @@ class App extends Component {
               component: Notifs,
               name: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
-              pastille: this.state.notifsPastille <= 10 ? this.state.notifsPastille : '9+'
+              pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
               component: Profil,

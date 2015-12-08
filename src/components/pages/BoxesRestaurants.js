@@ -38,7 +38,7 @@ class BoxesRestaurants extends Page {
           {id: "3", label: "En Famille", icon: require('../../assets/img/occasions/images/en_famille.jpg')},
           {id: "4", label: "Entre amis", icon: require('../../assets/img/occasions/images/entre_amis.jpg')},
           {id: "5", label: "Grandes tablees", icon: require('../../assets/img/occasions/images/grandes_tablees.jpg')},
-          {id: "6", label: "Pour un date", icon: require('../../assets/img/occasions/images/date.jpg')},
+          //{id: "6", label: "Pour un date", icon: require('../../assets/img/occasions/images/date.jpg')},
           {id: "7", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
           {id: "8", label: "Autres", icon: require('../../assets/img/occasions/images/autre.jpg')},
         ],
@@ -88,6 +88,33 @@ class BoxesRestaurants extends Page {
     // on unmount
   }
 
+  clearFilters() {
+    RestaurantsActions.setFilter('ambiance', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('occasion', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('friend', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('metro', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('food', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('prix', {
+      value: 'Tous',
+      id: null
+    });
+  }
+
   showFilters = () => {
     if (this.state.isOpened) {
       Animated.timing(this.state.heightFiltersList, {
@@ -112,9 +139,7 @@ class BoxesRestaurants extends Page {
         label={data.label} 
         onPress={
           () => {
-            //console.log(this.state.dataFilters[this.state.filterChosen].label);
-            var temp = {value: data.label, id: data.id};
-            //console.log(temp);
+            this.clearFilters();
             RestaurantsActions.setFilter(this.state.dataFilters[this.state.filterChosen].label, {value: data.label, id: data.id});
             this.props.navigator.push(Liste.route(data.label));
           }

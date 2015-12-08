@@ -446,29 +446,25 @@ export class RestaurantsStore extends CachedStore {
       label: 'Festif',
       icon: require('../assets/img/ambiances/icons/festif.png')
     },
-    //////
     3: {
-      label: 'Terrasse',
-      icon: require('../assets/img/ambiances/images/terrasse.jpg')
+      label: 'Traditionnel',
+      icon: require('../assets/img/ambiances/icons/typique.png')
     },
-    ///////
     4: {
-      label: 'Bonne Franquette',
-      icon: require('../assets/img/ambiances/images/bonne_franquette.jpg')
+      label: 'Terrasse',
+      icon: require('../assets/img/ambiances/icons/terrasse.png')
     },
     5: {
       label: 'Fast',
       icon: require('../assets/img/ambiances/icons/fast.png')
     },
-    ///////
     6: {
-      label: 'Traditionnel',
-      icon: require('../assets/img/ambiances/images/traditionnel.jpg')
+      label: 'Bonne Franquette',
+      icon: require('../assets/img/ambiances/icons/bonne_franquette.png')
     },
-    ////////
     7: {
       label: 'Romantique',
-      icon: require('../assets/img/ambiances/images/romantique.jpg')
+      icon: require('../assets/img/ambiances/icons/romantique.png')
     },
     8: {
       label: 'Autres',
@@ -498,14 +494,10 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/occasions/icons/grandes_tablees.png')
     },
     6: {
-      label: 'Pour un date',
-      icon: require('../assets/img/occasions/icons/date.png')
-    },
-    7: {
       label: 'Brunch',
       icon: require('../assets/img/occasions/icons/brunch.png')
     },
-    8: {
+    7: {
       label: 'Autres',
       icon: require('../assets/img/occasions/icons/autre.png')
     },

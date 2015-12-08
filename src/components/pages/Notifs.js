@@ -37,16 +37,10 @@ class Notifs extends Page {
 
   onFocus = (event) => {
     if (event.data.route.component === Notifs && event.data.route.fromTabs) {
-     NotifsActions.fetchNotifs();
-     if (event.data.route.skipCache) {
-      this.setState({data: null});
-     }
-     this.IS_FOCUS = true;
-     return;
-    }
-
-    if (this.IS_FOCUS) {
-      this.IS_FOCUS = false;
+      NotifsActions.fetchNotifs();
+      if (event.data.route.skipCache) {
+        this.setState({data: null});
+      }
       NotifsActions.notifsSeen();
     }
   }
@@ -135,10 +129,14 @@ class Notifs extends Page {
 
 var styles = StyleSheet.create({
   notifsList: {
-    paddingTop: 20
+    paddingTop: 20,
+    backgroundColor: '#EEEEEE'
   },
   notifRow: {
-    padding: 0,
+    paddingLeft: 0,
+    paddingTop: 0,
+    paddingRight: 0,
+    paddingBottom: 15,
     backgroundColor: 'transparent',
     position: 'relative',
   },
