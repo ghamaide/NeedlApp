@@ -41,6 +41,12 @@ class Notifs extends Page {
       if (event.data.route.skipCache) {
         this.setState({data: null});
       }
+      this.IS_FOCUS = true;
+      return;
+    }
+
+    if (this.IS_FOCUS) {
+      this.IS_FOCUS = false;
       NotifsActions.notifsSeen();
     }
   }

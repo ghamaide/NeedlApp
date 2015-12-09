@@ -38,9 +38,8 @@ class BoxesRestaurants extends Page {
           {id: "3", label: "En Famille", icon: require('../../assets/img/occasions/images/en_famille.jpg')},
           {id: "4", label: "Entre amis", icon: require('../../assets/img/occasions/images/entre_amis.jpg')},
           {id: "5", label: "Grandes tablees", icon: require('../../assets/img/occasions/images/grandes_tablees.jpg')},
-          //{id: "6", label: "Pour un date", icon: require('../../assets/img/occasions/images/date.jpg')},
-          {id: "7", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
-          {id: "8", label: "Autres", icon: require('../../assets/img/occasions/images/autre.jpg')},
+          {id: "6", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
+          {id: "7", label: "Autres", icon: require('../../assets/img/occasions/images/autre.jpg')},
         ],
         [
           {id: "1", label: "Chic", icon: require('../../assets/img/ambiances/images/chic.jpg')},
@@ -61,9 +60,9 @@ class BoxesRestaurants extends Page {
       ],
       dataFilters: [
         {id: 0, name: "Occasions", label: "occasion"},
-        {id: 1, name: "Ambiances", label: "ambiance"},
+        {id: 1, name: "Ambiances", label: "ambiance"},/*
         {id: 2, name: "Prix", label: "prix"},
-        {id: 3, name: "Points forts", label: "type"},
+        {id: 3, name: "Points forts", label: "type"},*/
       ]
       
       // Images to change

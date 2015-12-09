@@ -16,6 +16,7 @@ class PatchedNavigatorIOS extends Component {
   resetToTab = (selected) => {
     this.props.tabsMaster.resetToTab(selected);
   }
+
   resetTo = (route) => {
     if (this.refs.nav.state.routeStack.length === 1) {
       if (this.refs.nav.state.routeStack[0].component === this.props.initialRoute.component) {
@@ -28,9 +29,11 @@ class PatchedNavigatorIOS extends Component {
     this.refs.nav.replaceAtIndex(this.patchRoute(route), 0);
     this.refs.nav.popN(this.refs.nav.state.routeStack.length - 1);
   }
+
   push = (route) => {
     this.refs.nav.push(this.patchRoute(route));
   }
+
   replace = (route) => {
     this.refs.nav.replace(this.patchRoute(route));
   }
@@ -59,6 +62,7 @@ class PatchedNavigatorIOS extends Component {
     }
     return newRoute;
   }
+
   componentDidMount() {
     var ref = {};
     ref[this.props.index] = this.refs.nav.navigator;
@@ -70,9 +74,11 @@ class PatchedNavigatorIOS extends Component {
     this.refs.nav.navigator.parent = this.refs.nav;
 
     if (this.props.fireFromTabs) {
+      console.log('2');
       this.refs.nav._emitDidFocus(_.extend({fromTabs: true, skipCache: this.props.initialSkipCache}, this.refs.nav.state.routeStack[this.refs.nav.state.observedTopOfStack]));
     }
   }
+
   componentDidUpdate() {
     this.refs.nav.navigator.resetTo = this.resetTo;
     this.refs.nav.navigator.replace = this.replace;

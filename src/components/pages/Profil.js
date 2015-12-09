@@ -74,6 +74,7 @@ class Profil extends Page {
   }
 
   onFocus = (event) => {
+    console.log('lol');
     if (event.data.route.component === Profil) {
       ProfilActions.fetchProfil(this.currentProfil());
     }
@@ -125,13 +126,13 @@ class Profil extends Page {
 
   pickImage = () => {
     var options = {
-      title: 'Choisis ta photo', // specify null or empty string to remove the title
+      title: 'Choisis ta photo',
       cancelButtonTitle: 'Annuler',
-      takePhotoButtonTitle: 'Prendre une photo...', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...', // specify null or empty string to remove this button
+      takePhotoButtonTitle: 'Prendre une photo...',
+      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...',
       quality: 0.2,
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
-      noData: false // Disables the base64 `data` field from being generated (greatly improves performance on large photos)
+      allowsEditing: false,
+      noData: false
     }
     
     NativeModules.UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
