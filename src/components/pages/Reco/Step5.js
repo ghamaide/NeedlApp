@@ -30,9 +30,9 @@ class RecoStep5 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne les occasions correspondant au restaurant</Text>
+        <Text style={styles.title}>Sélectionne une ou plusieurs occasions correspondant au restaurant</Text>
         <ToggleGroup
-          maxSelection={3}
+          maxSelection={8}
           fifo={true}
           selectedInitial={reco.occasions}
           onSelect={(v, selected) => {
@@ -51,11 +51,12 @@ class RecoStep5 extends Component {
                 </View>
                 <View style={styles.pastilleContainer}>
                   <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Nombreux" value={5} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Grandes tablees" value={5} />
                   <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/autre.png')} activeInitial={false} label="Autres" value={7} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/terrasse.png')} activeInitial={false} label="Déjeuner en terrasse" value={7} />
+                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Déjeuner rapide" value={7} />
                 </View>
               </View>
             );

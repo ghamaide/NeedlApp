@@ -94,7 +94,7 @@ class Carte extends Page {
     var westLongitude = region.longitude - radius * region.longitudeDelta / 2;
     var eastLongitude = region.longitude + radius * region.longitudeDelta / 2;
     var northLatitude = region.latitude + radius * region.latitudeDelta / 2;
-    var bottomLatitude = region.latitude - radius * region.latitudeDelta / 2;
+    var southLatitude = region.latitude - radius * region.latitudeDelta / 2;
     var distanceToCenter = this.getDistance(region.latitude, region.longitude, northLatitude, region.longitude);
     // bof pour le calcul, réponse en km
   }
@@ -152,8 +152,8 @@ class Carte extends Page {
               latitude: restaurant.latitude,
               longitude: restaurant.longitude,
               title: restaurant.name,
-              subtitle: restaurant.food[1]
-              /*rightCallout: {
+              /*subtitle: restaurant.food[1]
+              rightCallout: {
                 type: 'button',
                 onPress: () => {
                   this.props.navigator.push(Restaurant.route({id: restaurant.id}));

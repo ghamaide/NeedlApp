@@ -38,6 +38,7 @@
 		A32E07B71C075DA20075E6E8 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A32E07B51C075DA20075E6E8 /* Default@2x.png */; };
 		A32E07BD1C08AB5B0075E6E8 /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */; };
 		A32E08231C08F9C70075E6E8 /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A32E08221C08F9B90075E6E8 /* libRNOverlay.a */; };
+		A34313011C1975D7001255CF /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A34313001C1975CF001255CF /* libRNSearchBar.a */; };
 		A3A0973B1C0A176B00E5DBE1 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097371C0A176B00E5DBE1 /* FBSDKCoreKit.framework */; };
 		A3A0973C1C0A176B00E5DBE1 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097381C0A176B00E5DBE1 /* Bolts.framework */; };
 		A3A0973D1C0A176B00E5DBE1 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */; };
@@ -175,6 +176,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNOverlay;
 		};
+		A34312FF1C1975CF001255CF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNSearchBar;
+		};
 		A3A097431C0A19A400E5DBE1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A3A0973F1C0A19A400E5DBE1 /* RCTFBSDKCore.xcodeproj */;
@@ -230,6 +238,7 @@
 		A32E07BB1C08AB5B0075E6E8 /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
 		A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
+		A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/react-native-search-bar/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
 		A3A097371C0A176B00E5DBE1 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		A3A097381C0A176B00E5DBE1 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/Bolts.framework"; sourceTree = "<group>"; };
 		A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
@@ -252,6 +261,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A34313011C1975D7001255CF /* libRNSearchBar.a in Frameworks */,
 				A3D070331C158A6C00BB5FBD /* libRNMessageComposer.a in Frameworks */,
 				A30EF9D91C1103BE009CA6C0 /* libRCTFBLogin.a in Frameworks */,
 				A3A097451C0A1DC700E5DBE1 /* libRCTFBSDKCore.a in Frameworks */,
@@ -387,6 +397,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */,
 				A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */,
 				A30EF9D31C1103B6009CA6C0 /* RCTFBLogin.xcodeproj */,
 				A3A0973F1C0A19A400E5DBE1 /* RCTFBSDKCore.xcodeproj */,
@@ -516,6 +527,14 @@
 			isa = PBXGroup;
 			children = (
 				A32E08221C08F9B90075E6E8 /* libRNOverlay.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A34312E91C1975CE001255CF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A34313001C1975CF001255CF /* libRNSearchBar.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -686,6 +705,10 @@
 					ProductGroup = A32E081E1C08F9B90075E6E8 /* Products */;
 					ProjectRef = A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */;
 				},
+				{
+					ProductGroup = A34312E91C1975CE001255CF /* Products */;
+					ProjectRef = A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -813,6 +836,13 @@
 			fileType = archive.ar;
 			path = libRNOverlay.a;
 			remoteRef = A32E08211C08F9B90075E6E8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		A34313001C1975CF001255CF /* libRNSearchBar.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSearchBar.a;
+			remoteRef = A34312FF1C1975CF001255CF /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		A3A097441C0A19A400E5DBE1 /* libRCTFBSDKCore.a */ = {

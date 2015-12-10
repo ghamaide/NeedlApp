@@ -74,7 +74,6 @@ class PatchedNavigatorIOS extends Component {
     this.refs.nav.navigator.parent = this.refs.nav;
 
     if (this.props.fireFromTabs) {
-      console.log('2');
       this.refs.nav._emitDidFocus(_.extend({fromTabs: true, skipCache: this.props.initialSkipCache}, this.refs.nav.state.routeStack[this.refs.nav.state.observedTopOfStack]));
     }
   }

@@ -29,10 +29,10 @@ class RecoStep4 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>        
-        <Text style={styles.title}>Sélectionne 1 à 3 points forts</Text>
+        <Text style={styles.title}>Sélectionne une ou plusieurs points forts</Text>
          <ToggleGroup
           ref="togglegroup"
-          maxSelection={3}
+          maxSelection={7}
           fifo={true}
           selectedInitial={reco.strengths}
           onSelect={(v, selected) => {

@@ -41,6 +41,10 @@ class RecoStep1 extends Component {
     this.setState(RecoStep1.getRecoState());
   }
 
+  closeKeyboard = () => {
+    this.refs.searchRestaurants.blur();
+  }
+
   renderRestaurant = (restaurant) => {
     return (
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
@@ -68,6 +72,7 @@ class RecoStep1 extends Component {
       dataSource={this.state.restaurants}
       renderRow={this.renderRestaurant}
       contentInset={{top: 0}}
+      onScroll={this.closeKeyboard}
       automaticallyAdjustContentInsets={false}
       showsVerticalScrollIndicator={false} />;
   }
@@ -107,8 +112,9 @@ class RecoStep1 extends Component {
         </View>
       : null}
       <TextInput
+        ref='searchRestaurants'
         style={styles.restaurantQueryInput}
-        autoCorrent={false}
+        autoCorrect={false}
         onChangeText={this.onRestaurantQuery}
         value={this.state.query}
         placeholder="Sélectionne le bon restaurant"/>
@@ -134,19 +140,20 @@ var styles = StyleSheet.create({
     padding: 10
   },
   firstMessageText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '500',
     textAlign: 'center'
   },
   restaurantQueryInput: {
     height: 30,
-    backgroundColor: '#DDD',
+    backgroundColor: '#DDDDDD',
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
     margin: 10,
-    fontSize: 13
+    fontSize: 13,
+    color: '#444444'
   },
   restaurantsList: {
     flex: 1,
@@ -157,7 +164,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 10,
     borderBottomWidth: 0.5,
-    borderColor: '#EF582D'
+    borderColor: '#DDDDDD'
   },
   viewContainer: {
     backgroundColor: '#FFFFFF',

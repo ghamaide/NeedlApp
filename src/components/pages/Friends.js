@@ -3,6 +3,7 @@
 import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight} from 'react-native';
 import _ from 'lodash';
 import SGListView from 'react-native-sglistview';
+import SearchBar from 'react-native-search-bar';
 
 import FriendsActions from '../../actions/FriendsActions';
 import FriendsStore from '../../stores/Friends';
@@ -30,7 +31,8 @@ class Friends extends Page {
   friendsState() {
     return {
       data: (FriendsStore.getState().data.friends.length || !FriendsStore.loading()) && {
-        friends: friendsSource.cloneWithRows(FriendsStore.getState().data.friends)
+        friends: FriendsStore.getState().data.friends,
+        filteredFriends : FriendsStore.getState().data.friends
       },
       loading: FriendsStore.loading(),
       error: FriendsStore.error(),
@@ -68,6 +70,23 @@ class Friends extends Page {
     this.setState(this.friendsState());
   }
 
+  searchFriends = (searchedText) => {
+    var newFilteredFriends = _.filter(this.state.data.friends, function(friend) {
+      return friend.name.indexOf(searchedText) > -1;
+    });
+
+    var filteredData = {
+      friends: this.state.data.friends,
+      filteredFriends: newFilteredFriends
+    }
+
+    this.setState({data: filteredData});
+  }
+
+  closeKeyboard = () => {
+    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+  }
+
   renderFriend = (friend) => {
     return (
       <TouchableHighlight style={styles.friendRowWrapper} underlayColor="#FFFFFF" onPress={() => {
@@ -97,26 +116,35 @@ class Friends extends Page {
   }
 
   renderPage() {
-    return <View style={{flex: 1}}>
-      {this.state.nbRequests ?
-        <TouchableHighlight onPress={() => {
-          this.props.navigator.push(FriendsRequests.route());
-        }}>
-          <View style={styles.nbRequestsContainer}>
-            <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
-          </View>
-        </TouchableHighlight>
-        : null}
-      <SGListView
-        style={styles.friendsList}
-        dataSource={this.state.data.friends}
-        renderRow={this.renderFriend}
-        renderHeader={this.renderHeader}
-        contentInset={{top: 0}}
-        scrollRenderAheadDistance={150}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false} />
-    </View>;
+    return (
+      <View style={{flex: 1}}>
+        {this.state.nbRequests ?
+          <TouchableHighlight onPress={() => {
+            this.props.navigator.push(FriendsRequests.route());
+          }}>
+            <View style={styles.nbRequestsContainer}>
+              <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
+            </View>
+          </TouchableHighlight>
+          : null}
+        <SearchBar
+          ref='searchBar'
+          placeholder='Search'
+          hideBackground={true}
+          textFieldBackgroundColor='#DDDDDD'
+          onChangeText={this.searchFriends} />
+        <SGListView
+          style={styles.friendsList}
+          dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
+          renderRow={this.renderFriend}
+          renderHeader={this.renderHeader}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          onScroll={this.closeKeyboard}
+          showsVerticalScrollIndicator={false} />
+      </View>
+    );
   }
 }
 
@@ -128,7 +156,7 @@ var styles = StyleSheet.create({
   friendRowWrapper: {
     backgroundColor: 'white',
     borderBottomWidth: 0.5,
-    borderColor: '#EF582D',
+    borderColor: '#DDDDDD',
   },
   friendRow: {
     padding: 20,

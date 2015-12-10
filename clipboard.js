@@ -1,41 +1,32 @@
-<MapView
-  style={styles.restaurantsMap}
-  showsUserLocation={this.state.showsUserLocation}
-  annotations={_.map(this.state.data, (restaurant) => {
-    var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
-    myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
-    return {
-      latitude: restaurant.latitude,
-      longitude: restaurant.longitude,
-      title: restaurant.name,
-      subtitle: restaurant.food[1],
-      color: myRestaurant ? 'green' : 'red',
-      rightCallout: {
-        type: 'button',
-        onPress: () => {
-          this.props.navigator.push(Restaurant.route({id: restaurant.id}));
-        }
-      },
-      leftCallout: {
-        type: 'image',
-        config: {
-          image: restaurant.pictures[0]
-        }
-      }
-    };
-  })}
-  region={{
-    latitude: 48.8534100,
-    longitude: 2.3378000,
-    latitudeDelta: 0.12,
-    longitudeDelta: 0.065
-  }}
-  onRegionChangeComplete={this.onRegionChangeComplete} />
+          <View style={styles.contactActionWrapper}>
+            <Text style={styles.contactNumber}>{contact.phoneNumbers[0] ? contact.phoneNumbers[0].number : ""}</Text>
+            {contact.phoneNumbers[0] ? 
+              [
+                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendSms(contact.phoneNumbers[0].number)}>
+                  <Image
+                    source={require('../../assets/img/actions/icons/send_sms.png')}
+                    style={styles.imageSMS} />
+                </TouchableHighlight>
+              ] : [
+              ]
+            }
+          </View>
+          <View style={styles.contactActionWrapper}>
+            <Text style={styles.contactMail}>{contact.emailAddresses[0] ? contact.emailAddresses[0].email : ""}</Text>          
+            {contact.emailAddresses[0] ? 
+              [
+                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendMail([contact.emailAddresses[0].email])}>
+                  <Image
+                    source={require('../../assets/img/actions/icons/send_mail.png')}
+                    style={styles.imageMail} />
+                </TouchableHighlight>
+              ] : [
+              ]
+            }
+          </View>
 
 
-  onRegionChangeComplete(region) {
-    console.log(region);
-  }
+
 
 
 <View key="areaIndicator" style={styles.areaIndicator}>
@@ -45,12 +36,19 @@
 </View>
 
 
-
-          <ScrollView
-            automaticallyAdjustContentInsets={false}>
-            <GridView
-              style={styles.list}
-              items={this.state.data}
-              itemsPerRow={2}
-              renderItem={this.renderData} />
-          </ScrollView>
+<SwitchIOS
+            style={styles.contactSwitch}
+            ref={() => {return "switch" + contact.recordId}}
+            value={(typeof this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))] === 'undefined') ? false : this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].switchIsOn}
+            onValueChange={(value) => {
+              var updatedContacts = _.map(this.state.contacts, (row) => {
+                if (contact.recordID === row.recordID) {
+                  row.switchIsOn = value
+                  return row;
+                } else {
+                  return row;
+                }
+              });
+              this.setState({contacts: updatedContacts});
+              MeActions.updateContact(contact.recordID, this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].switchIsOn);
+            }} />

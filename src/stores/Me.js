@@ -22,6 +22,12 @@ export class MeStore extends CachedStore {
     this.status.uploadingList = false;
     this.status.uploadingListError = null;
 
+    this.status.uploadingContacts = false;
+    this.status.uploadingContactsError = null;
+
+    this.status.sendingMessage = false;
+    this.status.sendingMessageError = null;
+
     this.bindListeners({
       handleRecoSaved: [RecoActions.RECO_SAVED, RestaurantsActions.ADD_WISH],
 
@@ -40,9 +46,13 @@ export class MeStore extends CachedStore {
       handleUploadListSuccess: MeActions.UPLOAD_LIST_SUCCESS,
       handleUploadListFailed: MeActions.UPLOAD_LIST_FAILED,
 
-      hanldleUploadContacts : MeActions.UPLOAD_CONTACTS,
-      hanldleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
-      hanldleUploadContactsFailed : MeActions.UPLOAD_CONTACTS_FAILED,
+      handleUploadContacts : MeActions.UPLOAD_CONTACTS,
+      handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
+      handleUploadContactsFailed : MeActions.UPLOAD_CONTACTS_FAILED,
+
+      handleSendMessageContact : MeActions.SEND_MESSAGE_CONTACT,
+      handleSendMessageContactSuccess : MeActions.SEND_MESSAGE_CONTACT_SUCCESS,
+      handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
 
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED
     });
@@ -123,18 +133,48 @@ export class MeStore extends CachedStore {
     this.hasBeenUploadWelcomed = true;
   }
 
-  hanldleUploadContacts() {
+  handleUploadContacts() {
     this.status.uploadingContacts = true;
     this.status.uploadingContactsError = null;
   }
 
-  hanldleUploadContactsFailed(err) {
+  handleUploadContactsFailed(err) {
     this.status.uploadingContacts = false;
     this.status.uploadingContactsError = err;
   }
 
-  hanldleUploadContactsSuccess() {
+  handleUploadContactsSuccess() {
     this.status.uploadingContacts = false;
+  }
+
+  handleSendMessageContact() {
+    this.status.sendingMessage = true;
+    this.status.sendingMessageError = null;
+  }
+
+  handleSendMessageContactFailed(err) {
+    this.status.sendingMessage = false;
+    this.status.sendingMessageError = err;
+  }
+
+  handleSendMessageContactSuccess() {
+    this.status.sendingMessage = false;
+  }
+
+  static uploadingContactsError() {
+    return this.getState().status.uploadingContactsError;
+  }
+
+  static uploadingContacts() {
+    return this.getState().status.uploadingContacts;
+  }
+
+  static sendingMessageError() {
+    return this.getState().status.sendingMessageError;
+  }
+
+  static sendingMessage() {
+    return this.getState().status.sendingMessage;
   }
 
   static uploadingList() {

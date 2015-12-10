@@ -2,6 +2,7 @@
 
 import React, {StyleSheet, ImagePickerIOS, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
+import Overlay from 'react-native-overlay';
 
 import LoginActions from '../../actions/LoginActions';
 import MeActions from '../../actions/MeActions';
@@ -20,8 +21,6 @@ import Options from '../elements/Options';
 import Option from '../elements/Option';
 import EditMe from './EditMe';
 import Friends from './Friends';
-
-import Overlay from 'react-native-overlay';
 
 class Profil extends Page {
   static route(props, title) {
@@ -74,7 +73,6 @@ class Profil extends Page {
   }
 
   onFocus = (event) => {
-    console.log('lol');
     if (event.data.route.component === Profil) {
       ProfilActions.fetchProfil(this.currentProfil());
     }
