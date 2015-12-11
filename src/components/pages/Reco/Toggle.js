@@ -43,7 +43,7 @@ class Toggle extends Component {
       content = <Image source={this.props.icon} />;
     }
     return (
-      <View style={{alignItems: 'center'}}>
+      <View style={{alignItems: 'center', width: this.props.width}}>
         <TouchableHighlight style={[{
           width: this.props.size,
           height: this.props.size,
@@ -61,7 +61,7 @@ class Toggle extends Component {
             width: this.props.size,
             height: this.props.size,
             borderRadius: this.props.size / 2,
-            backgroundColor: this.props.active ? '#EF582D' : '#888888',
+            backgroundColor: this.props.active ? '#38E1B2' : '#888888',
             alignItems: 'center',
             justifyContent: 'center',
             transform: [
@@ -73,7 +73,7 @@ class Toggle extends Component {
         </TouchableHighlight>
         <Text style={{
           margin: 10,
-          color: this.props.labelColor ? this.props.labelColor : (this.props.active ? '#EF582D' : '#888888'),
+          color: this.props.labelColor ? this.props.labelColor : (this.props.active ? '#38E1B2' : '#888888'),
           textAlign: 'center'
         }}>{this.props.label}</Text>
       </View>

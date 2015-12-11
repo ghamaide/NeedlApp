@@ -1,7 +1,8 @@
 'use strict';
 
-import React, {View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight} from 'react-native';
+import React, {View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight, Dimensions} from 'react-native';
 import _ from 'lodash';
+import SearchBar from 'react-native-search-bar';
 
 import RecoActions from '../../../actions/RecoActions';
 import RecoStore from '../../../stores/Reco';
@@ -111,13 +112,12 @@ class RecoStep1 extends Component {
           <Text style={styles.firstMessageText}>Partage ta première reco avant de découvrir celles de tes amis !</Text>
         </View>
       : null}
-      <TextInput
-        ref='searchRestaurants'
-        style={styles.restaurantQueryInput}
-        autoCorrect={false}
-        onChangeText={this.onRestaurantQuery}
-        value={this.state.query}
-        placeholder="Sélectionne le bon restaurant"/>
+      <SearchBar
+        ref='searchBar'
+        placeholder='Sélectionne ton restaurant'
+        hideBackground={true}
+        textFieldBackgroundColor='#DDDDDD'
+        onChangeText={this.onRestaurantQuery} />
 
         {content}
 
@@ -146,14 +146,14 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   restaurantQueryInput: {
-    height: 30,
+    height: 50,
     backgroundColor: '#DDDDDD',
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
     margin: 10,
-    fontSize: 13,
-    color: '#444444'
+    fontSize: 14,
+    color: '#222222'
   },
   restaurantsList: {
     flex: 1,

@@ -5,6 +5,7 @@ import React, {StyleSheet, Component, Text, View} from 'react-native';
 import ToggleGroup from './ToggleGroup';
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
+import RecoActions from '../../../actions/RecoActions';
 import StepSave from './StepSave';
 import Step3 from './Step3';
 
@@ -51,6 +52,7 @@ class RecoStep2 extends Component {
               <View style={styles.pastilleContainer}>
                 <Toggle
                   size={60}
+                  width={140}
                   style={styles.pastille}
                   icon={require('../../../assets/img/actions/icons/japprouve.png')}
                   activeInitial={false}
@@ -58,6 +60,7 @@ class RecoStep2 extends Component {
                   value={'approved'} />
                 <Toggle
                   size={60}
+                  width={140}
                   style={styles.pastille}
                   icon={require('../../../assets/img/actions/icons/aessayer.png')}
                   activeInitial={false}

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TextInput} from 'react-native';
+import React, {StyleSheet, Component, Text, View, TextInput, Dimensions} from 'react-native';
 import KeyboardEvents from 'react-native-keyboardevents';
 
 import MeStore from '../../../stores/Me';
@@ -9,6 +9,7 @@ import RecoStore from '../../../stores/Reco';
 import StepSave from './StepSave';
 
 var KeyboardEventEmitter = KeyboardEvents.Emitter;
+var windowWidth = Dimensions.get('window').width;
 
 class RecoStep6 extends Component {
   static route() {
@@ -58,9 +59,10 @@ class RecoStep6 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={styles.title}>En {this.state.characterNbRemaining} caractères... </Text>
-          <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={[styles.reviewInput, {marginBottom: Math.max(0, /*this.state.keyboardSpace - 60*/)}]}
+        <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+          <Text style={styles.title}>Taille d'un tweet</Text>
+          <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
+          <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
             maxLength={140}
             multiline={true}
             value={reco.review}
@@ -70,7 +72,9 @@ class RecoStep6 extends Component {
               this.handleChange(reco.review.length);
             }} />
         </View>
-        <View style={{flex: 1}} />
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarCompleted} />
+        </View>
       </View>
     );
   }
@@ -79,22 +83,47 @@ class RecoStep6 extends Component {
 var styles = StyleSheet.create({
  container: {
   backgroundColor: 'transparent',
-  padding: 10,
-  flex: 1
+  paddingTop: 30,
+  paddingBottom: 10
  },
  title: {
+  width: windowWidth,
   marginTop: 10,
-  marginBottom: 20,
   color: '#000000',
-  fontSize: 13,
+  fontSize: 15,
+  textAlign: 'center'
+ },
+ character: {
+  width: windowWidth,
+  marginTop: 5,
+  marginBottom: 15,
+  color: '#000000',
+  fontSize: 12,
   textAlign: 'center'
  },
  reviewInput: {
-  flex: 1,
   padding: 10,
+  margin: 5,
+  height: 100,
   borderWidth: 1,
   borderColor: '#ccc',
   color: '#444444'
+ },
+progressBar: {
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 10,
+  position: 'absolute',
+  backgroundColor: '#DDDDDD'
+ },
+progressBarCompleted: {
+  backgroundColor: 'green',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: windowWidth,
+  height: 10
  }
 });
 

@@ -12,7 +12,7 @@ import Profil from './pages/Profil';
 import Onboard_Friends from './pages/Onboard_Friends';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
-import BoxesRestaurants from './pages/BoxesRestaurants';
+import Liste from './pages/Liste';
 import RecoStep1 from './pages/Reco/Step1';
 
 import MeStore from '../stores/Me';
@@ -214,7 +214,7 @@ class App extends Component {
           }}
           tabs={[
             {
-              component: BoxesRestaurants,
+              component: Liste,
               name: 'Accueil',
               icon: require('../assets/img/tabs/icons/home.png')
             },

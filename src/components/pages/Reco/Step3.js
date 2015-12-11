@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS, Dimensions} from 'react-native';
 import _ from 'lodash';
 
 import request from '../../../utils/api';
@@ -10,6 +10,8 @@ import RecoStore from '../../../stores/Reco';
 import RecoActions from '../../../actions/RecoActions';
 import Step4 from './Step4';
 import Button from '../../elements/Button';
+
+var windowWidth = Dimensions.get('window').width;
 
 class RecoStep3 extends Component {
   static route(props) {
@@ -51,6 +53,8 @@ class RecoStep3 extends Component {
   }
 
   render() {
+    console.log(Dimensions.get('window').width);
+
     if (this.state.err || this.state.loading) {
       var content;
 
@@ -97,17 +101,20 @@ class RecoStep3 extends Component {
           {(Toggle) => {
             return <View style={{alignItems: 'center'}}>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="En toute simplicité" value={3} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Convivial" value={3} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={5} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={5} />
               </View>
             </View>;
           }}
         </ToggleGroup>
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarCompleted} />
+        </View>
       </View>
     );
   }
@@ -129,13 +136,32 @@ var styles = StyleSheet.create({
  },
  pastilleContainer: {
   flexDirection: 'row',
-  alignItems: 'center'
+  alignItems: 'flex-start',
  },
  pastille: {
   marginLeft: 15,
   marginRight: 15,
   marginTop: 10,
   marginBottom: 10
+ },
+ progressBar: {
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 10,
+  position: 'absolute',
+  backgroundColor: '#DDDDDD',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'row'
+ },
+ progressBarCompleted: {
+  backgroundColor: 'green',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: windowWidth / 4,
+  height: 10
  }
 });
 

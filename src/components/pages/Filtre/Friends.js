@@ -99,7 +99,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
-    borderColor: '#EF582D',
+    borderColor: '#DDDDDD',
   },
   friendRow: {
     padding: 20,

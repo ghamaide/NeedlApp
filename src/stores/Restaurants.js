@@ -447,21 +447,9 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/ambiances/icons/festif.png')
     },
     3: {
-      label: 'En toute simplicité',
+      label: 'Convivial',
       icon: require('../assets/img/ambiances/icons/typique.png')
     },
-    // 4: {
-    //   label: 'Terrasse',
-    //   icon: require('../assets/img/ambiances/icons/terrasse.png')
-    // },
-    // 5: {
-    //   label: 'Fast',
-    //   icon: require('../assets/img/ambiances/icons/fast.png')
-    // },
-    // 6: {
-    //   label: 'Bonne Franquette',
-    //   icon: require('../assets/img/ambiances/icons/bonne_franquette.png')
-    // },
     4: {
       label: 'Romantique',
       icon: require('../assets/img/ambiances/icons/romantique.png')
@@ -498,11 +486,11 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/occasions/icons/brunch.png')
     },
     7: {
-      label: 'Déjeuner en terrasse',
+      label: 'Terrasse',
       icon: require('../assets/img/ambiances/icons/terrasse.png')
     },
     8: {
-      label: 'Déjeuner rapide',
+      label: 'Fast',
       icon: require('../assets/img/ambiances/icons/fast.png')
     }
   }
@@ -583,12 +571,15 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
+      if (filters.occasion.id && !_.contains(restaurant.occasions, filters.occasion.id)) {
+        return false;
+      }
+
       return true;
     });
   }
 
   static filterActive() {
-    //console.log(this.getState().filters);
     return _.some(this.getState().filters, (filter) => {
       return !!filter.id;
     });

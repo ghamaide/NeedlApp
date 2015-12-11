@@ -17,10 +17,10 @@ import Restaurant from './Restaurant';
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class Liste extends Page {
-  static route(title) {
+  static route() {
     return {
       component: Liste,
-      title: title,
+      title: 'Restaurants',
       rightButtonIcon: require('../../assets/img/tabs/icons/home.png'),
       onRightButtonPress() {
 				this.replace(Carte.route("Carte"));

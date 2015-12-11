@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
 import _ from 'lodash';
 import SGListView from 'react-native-sglistview';
 import SearchBar from 'react-native-search-bar';

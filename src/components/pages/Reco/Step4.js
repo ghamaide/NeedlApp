@@ -1,11 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ScrollView} from 'react-native';
+import React, {StyleSheet, Component, Text, View, ScrollView, Dimensions} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 import Step5 from './Step5';
 import RecoStore from '../../../stores/Reco';
 
+var windowWidth = Dimensions.get('window').width;
 
 class RecoStep4 extends Component {
   static route() {
@@ -44,21 +45,24 @@ class RecoStep4 extends Component {
           {(Toggle) => {
             return <View style={{alignItems: 'center'}}>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cuisine.png')} activeInitial={false} label="Cuisine" value={1} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/service.png')} activeInitial={false} label="Service" value={2} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cadre.png')} activeInitial={false} label="Cadre" value={3} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cuisine.png')} activeInitial={false} label="Cuisine" value={1} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/service.png')} activeInitial={false} label="Service" value={2} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cadre.png')} activeInitial={false} label="Cadre" value={3} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/original.png')} activeInitial={false} label="Original" value={4} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/copieux.png')} activeInitial={false} label="Copieux" value={5} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/vins.png')} activeInitial={false} label="Vins" value={6} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/original.png')} activeInitial={false} label="Original" value={4} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/copieux.png')} activeInitial={false} label="Copieux" value={5} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/vins.png')} activeInitial={false} label="Vins" value={6} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/qtiteprix.png')} activeInitial={false} label="Qté Prix" value={7} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/qtiteprix.png')} activeInitial={false} label="Qté Prix" value={7} />
               </View>
             </View>;
           }}
         </ToggleGroup>
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarCompleted} />
+        </View>
       </View>
     );
   }
@@ -81,13 +85,29 @@ var styles = StyleSheet.create({
  },
  pastilleContainer: {
   flexDirection: 'row',
-  alignItems: 'center'
+  alignItems: 'flex-start'
  },
  pastille: {
   marginLeft: 15,
   marginRight: 15,
   marginTop: 10,
   marginBottom: 10
+ },
+progressBar: {
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 10,
+  position: 'absolute',
+  backgroundColor: '#DDDDDD'
+ },
+progressBarCompleted: {
+  backgroundColor: 'green',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: windowWidth / 2,
+  height: 10
  }
 });
 

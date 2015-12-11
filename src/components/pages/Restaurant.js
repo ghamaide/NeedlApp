@@ -580,7 +580,7 @@ var styles = StyleSheet.create({
   },
   toggle: {
     margin: 10,
-    backgroundColor: "#EF582D"
+    backgroundColor: "#38E1B2"
   },
   menuInnerContainer: {
     alignItems: 'center',
