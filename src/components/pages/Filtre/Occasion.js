@@ -23,7 +23,6 @@ class Occasion extends Component {
   }
 
   occasionState() {
-    console.log(RestaurantsStore.searchableOccasions());
     var occasions = _.map(RestaurantsStore.searchableOccasions(), function(occasion) {
       return {
         value: RestaurantsStore.MAP_OCCASIONS[occasion].label,

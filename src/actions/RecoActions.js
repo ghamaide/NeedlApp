@@ -77,7 +77,7 @@ export class RecoActions {
           strengths: _.map(res.strengths, (id) => {
             return parseInt(id);
           }),
-          'price_range': parseInt(res.price_range[0]),
+          //'price_range': parseInt(res.price_range[0]),
           review: res.review,
           approved: true
         };

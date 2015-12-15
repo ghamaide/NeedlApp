@@ -2,8 +2,10 @@
 
 import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
 import _ from 'lodash';
-import SGListView from 'react-native-sglistview';
+//import SGListView from 'react-native-sglistview';
+import RefreshableListView from 'react-native-refreshable-listview';
 import SearchBar from 'react-native-search-bar';
+import Animatable from 'react-native-animatable';
 
 import FriendsActions from '../../actions/FriendsActions';
 import FriendsStore from '../../stores/Friends';
@@ -87,6 +89,10 @@ class Friends extends Page {
     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
   }
 
+  onRefresh = () => {
+    FriendsActions.fetchFriends();
+  }
+
   renderFriend = (friend) => {
     return (
       <TouchableHighlight style={styles.friendRowWrapper} underlayColor="#FFFFFF" onPress={() => {
@@ -103,16 +109,23 @@ class Friends extends Page {
     );
   }
 
-  renderHeader = () => {
+  renderHeader = (refreshingIndicator) => {
     var nbPot = FriendsStore.getState().data.friends.length;
 
     if (nbPot) {
-      return null;
+      return ({refreshingIndicator});
     }
 
-    return <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, ajoutes en !</Text>
-    </View>;
+    return (
+      <View style={styles.emptyContainer}>
+        <View style={styles.textContainerWrapper}>
+          <TouchableHighlight style={styles.textContainer} underlayColor='rgba((239, 88, 45, 0.4)' onPress={() => this.props.navigator.push(InviteFriend.route())}>
+            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
+          </TouchableHighlight>
+        </View>
+        {refreshingIndicator}
+      </View>
+    );
   }
 
   renderPage() {
@@ -133,16 +146,18 @@ class Friends extends Page {
           hideBackground={true}
           textFieldBackgroundColor='#DDDDDD'
           onChangeText={this.searchFriends} />
-        <SGListView
+        <RefreshableListView
           style={styles.friendsList}
           dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
           renderRow={this.renderFriend}
-          renderHeader={this.renderHeader}
+          renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          loadData={this.onRefresh}
           onScroll={this.closeKeyboard}
-          showsVerticalScrollIndicator={false} />
+          refreshDescription="Refreshing..." />
       </View>
     );
   }
@@ -193,13 +208,39 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   emptyContainer: {
+    flex: 1,
     alignItems: 'center',
-    padding: 20
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    backgroundColor: '#FFFFFF'
+  },
+  textContainerWrapper: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 10,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textContainer: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyText: {
+    width: 175,
     textAlign: 'center',
-    fontSize: 14,
-    color: 'white'
+    fontSize: 15,
+    color: '#EF582D',
   }
 });
 

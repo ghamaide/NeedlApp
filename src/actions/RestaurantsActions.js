@@ -123,8 +123,12 @@ export class RestaurantsActions {
     this.dispatch(restaurant);
   }
 
-  setFilter(type, filter) {
-    this.dispatch({type: type, filter: filter});
+  setFilter(label, ids) {
+    this.dispatch({label: label, ids: ids});
+  }
+
+  setRegion(radius, long, lat, deltaLong, deltaLat, longCentre, latCentre, width, mapHeight) {
+    this.dispatch({radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight});
   }
 
   clearFilters() {

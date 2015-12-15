@@ -12,16 +12,35 @@ class Restaurant extends Component {
       return '€';
     }).join('') + (this.props.budget > 3 ? '+' : '');
 
+    if (budget === '€') {
+      emptyBudget = '€€+';
+    } else if (budget === '€€') {
+      emptyBudget = '€+';
+    } else if (budget ==='€€€') {
+      emptyBudget = '+';
+    } else if (budget === '€€€+') {
+      emptyBudget = '';
+    }
+
     var content = (
       <View style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.pictures[0]} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.pictures[0]}}>
           <LinearGradient colors={[processColor('#FFFFFF'), processColor('#000000')]} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
             <Text style={styles.restaurantName}>{this.props.name}</Text>
-            <Text style={styles.restaurantType}>{this.props.type}</Text>
-            {budget ?
-              <Text style={styles.restaurantPrice}>{budget}</Text>
-              : null}
+            {budget ? [
+              <Text style={styles.restaurantType}>
+                {this.props.type}
+                <Text style={{color: '#FFFFFF'}}>
+                   , {budget}
+                </Text>
+                <Text style={{color: '#999999'}}>
+                  {emptyBudget}
+                </Text>
+              </Text>
+            ] : [
+              <Text style={styles.restaurantType}>{this.props.type}</Text>
+            ]}
             {this.props.subway ?
               <View style={styles.restaurantSubway}>
                 <Image
@@ -56,7 +75,7 @@ var styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     top: 0,
-    opacity: 0.2
+    opacity: 0.3
   },
   restaurantInfos: {
     flex: 1,

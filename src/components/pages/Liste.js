@@ -1,15 +1,18 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, PushNotificationIOS, TouchableHighlight, Image} from 'react-native';
+import React, {StyleSheet, ListView, View, Text, PushNotificationIOS, TouchableHighlight, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
+import MeActions from '../../actions/MeActions';
 
 import Page from '../ui/Page';
 import RestaurantElement from '../elements/Restaurant';
-import Filtre from './Filtre/List';
+//import Filtre from './Filtre/List';
+import Filtre from './Filtre';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
 import Restaurant from './Restaurant';
@@ -21,9 +24,9 @@ class Liste extends Page {
     return {
       component: Liste,
       title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/tabs/icons/home.png'),
+      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
       onRightButtonPress() {
-				this.replace(Carte.route("Carte"));
+				this.replace(Carte.route());
       }
     };
   }
@@ -52,6 +55,8 @@ class Liste extends Page {
   }
 
   componentWillMount() {
+  	console.log(NativeModules.getVersion.version);
+  	MeActions.displayTabBar(true);
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   }
@@ -62,6 +67,10 @@ class Liste extends Page {
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
+  }
+
+  onRefresh = () => {
+  	RestaurantsActions.fetchRestaurants();
   }
 
 	renderRestaurant = (restaurant) => {
@@ -87,25 +96,19 @@ class Liste extends Page {
 				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route());
 				}}>
-					<View style={styles.filterContainer}>
-						{RestaurantsStore.filterActive() ? 
-							[
-								<View key={'opened'} style={styles.triangleDown} />
-							] : [
-								<View key={'closed'} style={styles.triangleRight} />
-							]
-						}
 						<Text style={styles.filterMessageText}>
-							{RestaurantsStore.filterActive() ? 'Filtre activé - ' + this.state.data.length + ' résultat' + (this.state.data.length > 1 ? 's' : '') : 'Filtre désactivé'}
+							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
 						</Text>
-					</View>
 				</TouchableHighlight>
-				<ListView
+				<RefreshableListView
 					dataSource={this.state.dataSource}
 					renderRow={this.renderRestaurant}
 					contentInset={{top: 0}}
-					automaticallyAdjustContentInsets={false}
-					showsVerticalScrollIndicator={false} />
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          loadData={this.onRefresh}
+          refreshDescription="Refreshing..." />
 			</View>
 		);
   }
@@ -185,8 +188,8 @@ var styles = StyleSheet.create({
 		left: 5
 	},
 	filterMessageText: {
-		color: '#000000',
-    fontSize: 13,
+		color: '#EF582D',
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
@@ -195,46 +198,16 @@ var styles = StyleSheet.create({
 	},
 	filterContainerWrapper: {
 		backgroundColor: '#FFFFFF',
+		borderColor: '#EF582D',
+		borderWidth: 1,
+		borderRadius: 1,
+		margin: 5,
 	},
 	filterContainer: {
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center'
-	},
-	triangleRight: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '90deg'}
-    ]
-  },
-  	triangleDown: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '180deg'}
-    ]
   }
 });
 

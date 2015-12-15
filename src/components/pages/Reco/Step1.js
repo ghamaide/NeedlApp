@@ -1,8 +1,9 @@
 'use strict';
 
-import React, {View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight, Dimensions} from 'react-native';
+import React, {NativeModules, View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight, Dimensions, Image} from 'react-native';
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
+import Animatable from 'react-native-animatable';
 
 import RecoActions from '../../../actions/RecoActions';
 import RecoStore from '../../../stores/Reco';
@@ -43,7 +44,7 @@ class RecoStep1 extends Component {
   }
 
   closeKeyboard = () => {
-    this.refs.searchRestaurants.blur();
+    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
   }
 
   renderRestaurant = (restaurant) => {
@@ -68,14 +69,16 @@ class RecoStep1 extends Component {
   }
 
   renderRestaurants() {
-    return <ListView
-      style={styles.restaurantsList}
-      dataSource={this.state.restaurants}
-      renderRow={this.renderRestaurant}
-      contentInset={{top: 0}}
-      onScroll={this.closeKeyboard}
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false} />;
+    return (
+      <ListView
+        style={styles.restaurantsList}
+        dataSource={this.state.restaurants}
+        renderRow={this.renderRestaurant}
+        contentInset={{top: 0}}
+        onScroll={this.closeKeyboard}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false} />
+    );
   }
 
   renderBlankScreen(content) {
@@ -107,17 +110,27 @@ class RecoStep1 extends Component {
 
     return (
      <View style={styles.container}>
-      {!MeStore.getState().me.HAS_SHARED ?
-        <View style={styles.firstMessage}>
-          <Text style={styles.firstMessageText}>Partage ta première reco avant de découvrir celles de tes amis !</Text>
-        </View>
-      : null}
       <SearchBar
         ref='searchBar'
         placeholder='Sélectionne ton restaurant'
         hideBackground={true}
         textFieldBackgroundColor='#DDDDDD'
         onChangeText={this.onRestaurantQuery} />
+
+      {!MeStore.getState().me.HAS_SHARED && !this.state.query ?
+        <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Animatable.Image
+              animation="slideInDown"
+              iterationCount="infinite"
+              direction="alternate"
+              duration={1000}
+              style={styles.arrowUp}
+              source={require('../../../assets/img/other/icons/arrow_up.png')} />
+            <Text style={styles.firstMessageText}>Partage ta première reco !</Text>
+          </View>
+        </TouchableHighlight>
+      : null}
 
         {content}
 
@@ -133,17 +146,8 @@ class RecoStep1 extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF'
-  },
-  firstMessage: {
-    backgroundColor: '#38E1B2',
-    padding: 10
-  },
-  firstMessageText: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '500',
-    textAlign: 'center'
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 10
   },
   restaurantQueryInput: {
     height: 50,
@@ -170,11 +174,31 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     flex: 1,
     alignItems: 'center',
-    padding: 10
+    padding: 10,
+    height: 100
   },
   noResultText: {
     fontWeight: 'bold',
     color: '#000000'
+  },
+  firstMessage: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  firstMessageText: {
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 20
+  },
+  arrowUp: {
+    width: 50,
+    height: 50,
+    margin: 5
   }
 });
 

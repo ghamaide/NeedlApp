@@ -22,6 +22,8 @@ import Option from '../elements/Option';
 import EditMe from './EditMe';
 import Friends from './Friends';
 
+var windowWidth = Dimensions.get('window').width;
+
 class Profil extends Page {
   static route(props, title) {
     return {
@@ -107,15 +109,17 @@ class Profil extends Page {
         <Text style={styles.restaurantsWrapperTitle}>{title}</Text>
         <Carousel style={styles.restaurantsCarousel}>
           {_.map(restaurants, (restaurant) => {
-            return <RestaurantElement
-                    key={restaurant.id}
-                    name={restaurant.name}
-                    pictures={[restaurant.picture]}
-                    type={restaurant.type}
-                    budget={restaurant.price_range}
-                    onPress={() => {
-                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                    }}/>;
+            return (
+              <RestaurantElement
+                key={restaurant.id}
+                name={restaurant.name}
+                pictures={[restaurant.picture]}
+                type={restaurant.type}
+                budget={restaurant.price_range}
+                onPress={() => {
+                  this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                }}/>
+              );
           })}
         </Carousel>
       </View>
@@ -189,11 +193,11 @@ class Profil extends Page {
         <Options>
           {MeStore.getState().me.id === profil.id ?
             [	
-              <Option 
+              /*<Option 
 					 			label="Envoyer une liste"
 					 			key={"list send " + profil.id}
 					 			onPress={this.pickImage}
-								icon={require('../../assets/img/actions/icons/import_list.png')} />,
+								icon={require('../../assets/img/actions/icons/import_list.png')} />,*/
               <Option
 					 			key={"edit " + profil.id}
 								label="Modifier"
@@ -288,7 +292,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   restaurantsWrapper: {
-    padding: 20
+    padding: 10
   },
   restaurantsWrapperTitle: {
     marginBottom: 10,
@@ -299,7 +303,9 @@ var styles = StyleSheet.create({
   },
   restaurantsCarousel: {
     height: 150,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    width: windowWidth - 30,
+    margin: 5
   },
   uploadConfirmationContainer: {
     backgroundColor: '#38E1B2',

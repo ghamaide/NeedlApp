@@ -36,7 +36,7 @@ class RecoStepSave extends Component {
   onRecoChange = () => {
     if (RecoStore.getState().saved) {
       if (!this.state.hasShared) {
-        return this.props.navigator.resetTo(BoxesRestaurants.route());
+        return this.props.navigator.resetTo(Liste.route());
       }
       return this.goToRestaurant();
     }
@@ -76,7 +76,6 @@ class RecoStepSave extends Component {
     }
 
     if (this.state.err && !this.state.err.notice) {
-      console.log(this.state.err);
       content = <View style={styles.errorBlock}>
         <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}

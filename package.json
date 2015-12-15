@@ -10,6 +10,7 @@
     "lodash": "^3.10.1",
     "qs": "^4.0.0",
     "react-native": "^0.15.0",
+    "react-native-animatable": "^0.4.0",
     "react-native-carousel": "^0.4.2",
     "react-native-communications": "^0.0.5",
     "react-native-contacts": "^0.1.5",

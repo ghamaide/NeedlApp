@@ -96,7 +96,6 @@ export class FriendsActions {
       .set('Accept', 'application/json')
       .end((err) => {
         if(err) {
-          console.log(err);
           return this.actions.uploadContactsFailed(err);
         }
 
@@ -134,6 +133,10 @@ export class FriendsActions {
 
   sendMessageContactSuccess() {
     this.dispatch();
+  }
+
+  displayTabBar(display) {
+    this.dispatch(display);
   }
 }
 

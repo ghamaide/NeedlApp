@@ -83,7 +83,7 @@ class EditMe extends Component {
             value={this.state.email} />
           <TouchableHighlight style={styles.submitWrapper} onPress={this.onSubmit}>
             <View style={styles.submit}>
-              <Text style={styles.submitText}>{this.state.me.status.editing ? 'Modif...' : 'Modifier'}</Text>
+              <Text style={styles.submitText}>{this.state.me.status.editing ? 'Validation...' : 'Valider'}</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -110,7 +110,7 @@ var styles = StyleSheet.create({
     height: 34,
     borderRadius: 4,
     padding: 5,
-    backgroundColor: 'white',
+    backgroundColor: '#DDDDDD',
     marginBottom: 15
   },
   submitWrapper: {
@@ -120,15 +120,16 @@ var styles = StyleSheet.create({
   },
   submit: {
     backgroundColor: '#38E1B2',
-    borderColor: '#22dea9',
+    borderColor: '#22DEA9',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 2,
-    padding: 6
+    padding: 6,
+    width: 130
   },
   submitText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontWeight: 'bold'
   }
 });

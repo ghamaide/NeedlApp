@@ -40,8 +40,9 @@ class Toggle extends Component {
     }
 
     if (this.props.icon) {
-      content = <Image source={this.props.icon} />;
+      content = <Image source={this.props.icon} style={{tintColor : this.props.active ? (this.props.tintColorActive ? this.props.tintColorActive : '#FFFFFF') : (this.props.tintColor ? this.props.tintColor : '#FFFFFF')}} />;
     }
+      
     return (
       <View style={{alignItems: 'center', width: this.props.width}}>
         <TouchableHighlight style={[{
@@ -61,7 +62,7 @@ class Toggle extends Component {
             width: this.props.size,
             height: this.props.size,
             borderRadius: this.props.size / 2,
-            backgroundColor: this.props.active ? '#38E1B2' : '#888888',
+            backgroundColor: this.props.active ? (this.props.backgroundColorActive ? this.props.backgroundColorActive : '#38E1B2') : (this.props.backgroundColor ? this.props.backgroundColor : '#888888'),
             alignItems: 'center',
             justifyContent: 'center',
             transform: [
@@ -71,11 +72,17 @@ class Toggle extends Component {
             {content}
           </Animated.View>
         </TouchableHighlight>
-        <Text style={{
-          margin: 10,
-          color: this.props.labelColor ? this.props.labelColor : (this.props.active ? '#38E1B2' : '#888888'),
-          textAlign: 'center'
-        }}>{this.props.label}</Text>
+        {this.props.label ? [
+          <Text style={{
+            fontSize: this.props.fontSize ? this.props.fontSize : 13,
+            marginLeft: this.props.marginLeft ? this.props.marginLeft : 5,
+            marginTop: 0,
+            marginBottom: this.props.marginBottom ? this.props.marginBottom : 5,
+            marginRight: this.props.marginRight ? this.props.marginRight : 5,
+            color: this.props.active ? (this.props.labelColorActive ? this.props.labelColorActive : '#38E1B2') : (this.props.labelColor ? this.props.labelColor : '#888888'),
+            textAlign: 'center'
+          }}>{this.props.label}</Text>
+        ] : []}
       </View>
     );
   }

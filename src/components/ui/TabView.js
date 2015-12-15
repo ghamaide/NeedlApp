@@ -2,6 +2,7 @@
 
 import React, {StyleSheet, View, Component, Image, Text, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
 import _ from 'lodash';
+import MeStore from '../../stores/Me';
 
 class PatchedNavigatorIOS extends Component {
   constructor(props) {
@@ -107,7 +108,7 @@ class TabView extends Component {
     };
   }
 
-  renderTab(index, name, icon, pastille) {
+  renderTab(index, name, icon, pastille, hasShared) {
     var opacityStyle = {opacity: index === this.state.selected ? 1 : 0.3};
 
     return (
@@ -129,13 +130,31 @@ class TabView extends Component {
               <Text style={styles.pastilleText}>{pastille}</Text>
             </View>
             : null}
+
+          {!hasShared && typeof hasShared !== 'undefined' ?
+            <View style={styles.pastilleContainer}>
+              <Text style={styles.pastilleText}>!</Text>
+            </View>
+            : null}
         </View>
       </TouchableWithoutFeedback>
     );
   }
 
+  onMeChange = () => {
+    this.setState({showTabBar: MeStore.getState().showTabBar});
+  }
+
   componentDidMount() {
     this.props.onTab(this.state.selected);
+  }
+
+  componentWillMount() {
+    MeStore.listen(this.onMeChange);
+  }
+
+  componentWillUnmount() {
+    MeStore.unlisten(this.onMeChange);
   }
 
   resetToTab(index, opts) {
@@ -192,11 +211,13 @@ class TabView extends Component {
               };
             }} />
 
-					<View style={styles.tabbarTabs}>
-          	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.name, tab.icon, tab.pastille);
-          	})}
-        	</View>
+          {this.state.showTabBar ? [
+  					<View style={styles.tabbarTabs}>
+            	{_.map(this.props.tabs, (tab, index) => {
+              	return this.renderTab(index, tab.name, tab.icon, tab.pastille, tab.hasShared);
+            	})}
+          	</View>
+          ] : []}
       	</View>
     );
   }

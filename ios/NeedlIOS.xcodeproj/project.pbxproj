@@ -45,6 +45,7 @@
 		A3A0973E1C0A176B00E5DBE1 /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0973A1C0A176B00E5DBE1 /* FBSDKShareKit.framework */; };
 		A3A097451C0A1DC700E5DBE1 /* libRCTFBSDKCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097441C0A19A400E5DBE1 /* libRCTFBSDKCore.a */; };
 		A3D070331C158A6C00BB5FBD /* libRNMessageComposer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3D070311C158A5200BB5FBD /* libRNMessageComposer.a */; };
+		A3D85A811C20A8B80013A075 /* GetVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = A3D85A801C20A8B80013A075 /* GetVersion.m */; };
 		A3FFD7101C10AB4F00AB1038 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A3FFD70F1C10AB4F00AB1038 /* LaunchScreen.storyboard */; };
 		A3FFD7121C10AE4800AB1038 /* Default-667h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FFD7111C10AE4800AB1038 /* Default-667h@2x.png */; };
 /* End PBXBuildFile section */
@@ -245,6 +246,8 @@
 		A3A0973A1C0A176B00E5DBE1 /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKShareKit.framework"; sourceTree = "<group>"; };
 		A3A0973F1C0A19A400E5DBE1 /* RCTFBSDKCore.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBSDKCore.xcodeproj; path = "../node_modules/react-native-fbsdkcore/RCTFBSDKCore.xcodeproj"; sourceTree = "<group>"; };
 		A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMessageComposer.xcodeproj; path = "../node_modules/react-native-message-composer/RNMessageComposer.xcodeproj"; sourceTree = "<group>"; };
+		A3D85A6B1C20A88E0013A075 /* GetVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GetVersion.h; sourceTree = "<group>"; };
+		A3D85A801C20A8B80013A075 /* GetVersion.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetVersion.m; sourceTree = "<group>"; };
 		A3FFD70F1C10AB4F00AB1038 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A3FFD7111C10AE4800AB1038 /* Default-667h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-667h@2x.png"; path = "NeedlIOS/Default-667h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -374,6 +377,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				A3D85A6B1C20A88E0013A075 /* GetVersion.h */,
+				A3D85A801C20A8B80013A075 /* GetVersion.m */,
 			);
 			name = NeedlIOS;
 			sourceTree = "<group>";
@@ -921,6 +926,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				A3D85A811C20A8B80013A075 /* GetVersion.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				A32E07BD1C08AB5B0075E6E8 /* UIImagePickerManager.m in Sources */,
 			);

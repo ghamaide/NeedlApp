@@ -53,8 +53,6 @@ class RecoStep3 extends Component {
   }
 
   render() {
-    console.log(Dimensions.get('window').width);
-
     if (this.state.err || this.state.loading) {
       var content;
 
@@ -84,6 +82,7 @@ class RecoStep3 extends Component {
     }
 
     var reco = RecoStore.getReco();
+    console.log(reco.ambiances);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
@@ -156,7 +155,7 @@ var styles = StyleSheet.create({
   flexDirection: 'row'
  },
  progressBarCompleted: {
-  backgroundColor: 'green',
+  backgroundColor: '#38E1B2',
   position: 'absolute',
   top: 0,
   left: 0,

@@ -19,6 +19,8 @@ export class MeStore extends CachedStore {
 
     this.hasBeenUploadWelcomed = false;
 
+    this.showTabBar = true;
+
     this.status.uploadingList = false;
     this.status.uploadingListError = null;
 
@@ -54,7 +56,9 @@ export class MeStore extends CachedStore {
       handleSendMessageContactSuccess : MeActions.SEND_MESSAGE_CONTACT_SUCCESS,
       handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
 
-      handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED
+      handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
+      
+      handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR
     });
   }
 
@@ -159,6 +163,10 @@ export class MeStore extends CachedStore {
 
   handleSendMessageContactSuccess() {
     this.status.sendingMessage = false;
+  }
+
+  handleDisplayTabBar(display) {
+    this.showTabBar = display;
   }
 
   static uploadingContactsError() {

@@ -9,7 +9,6 @@ import TabView from './ui/TabView';
 import ErrorToast from './ui/ErrorToast';
 
 import Profil from './pages/Profil';
-import Onboard_Friends from './pages/Onboard_Friends';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
 import Liste from './pages/Liste';
@@ -18,8 +17,10 @@ import RecoStep1 from './pages/Reco/Step1';
 import MeStore from '../stores/Me';
 import FriendsStore from '../stores/Friends';
 import NotifsStore from '../stores/Notifs';
+import RestaurantsStore from '../stores/Restaurants';
 
 import FriendsActions from '../actions/FriendsActions';
+import RestaurantsActions from '../actions/RestaurantsActions';
 import NotifsActions from '../actions/NotifsActions';
 import MeActions from '../actions/MeActions';
 
@@ -55,7 +56,8 @@ class App extends Component {
     this.setState({
       uploadingList: MeStore.uploadingList(),
       errors: errors,
-      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed()
+      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
+      showTabBar: MeStore.getState().showTabBar
     });
   }
 
@@ -100,6 +102,16 @@ class App extends Component {
   }
 
   componentWillMount() {
+    console.log('aaa');
+    if (typeof RestaurantsStore.getState().filters.prix.value === 'string') {
+      console.log('lol');
+      RestaurantsActions.setFilter('prices', []);
+      RestaurantsActions.setFilter('ambiences', []);
+      RestaurantsActions.setFilter('occasions', []);
+      RestaurantsActions.setFilter('types', []);
+    }
+
+    MeStore.listen(this.onMeChange);
     FriendsStore.listen(this.onPastillesChange);
     NotifsStore.listen(this.onPastillesChange);
 
@@ -111,8 +123,6 @@ class App extends Component {
     if (coldNotif) {
       this.notifLaunchTab = this.getNotifTab(coldNotif);
     }
-
-    MeStore.listen(this.onMeChange);
 
     this.startActions();
   }
@@ -226,7 +236,8 @@ class App extends Component {
             },
             {
               component: RecoStep1,
-              icon: require('../assets/img/tabs/icons/add.png')
+              icon: require('../assets/img/tabs/icons/add.png'),
+              hasShared: MeStore.getState().me.HAS_SHARED
             },
             {
               component: Notifs,
@@ -241,8 +252,8 @@ class App extends Component {
             }
           ]}
           initialSkipCache={!!this.notifLaunchTab}
-          initialSelected={this.notifLaunchTab || (!MeStore.getState().me.HAS_SHARED ? 2 : 0)}
-          tabsBlocked={!MeStore.getState().me.HAS_SHARED} />
+          initialSelected={this.notifLaunchTab || 0}
+          tabsBlocked={false} />
       </View>
     );
   }

@@ -118,7 +118,7 @@ progressBar: {
   backgroundColor: '#DDDDDD'
  },
 progressBarCompleted: {
-  backgroundColor: 'green',
+  backgroundColor: '#38E1B2',
   position: 'absolute',
   top: 0,
   left: 0,

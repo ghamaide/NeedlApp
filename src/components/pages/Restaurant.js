@@ -101,13 +101,17 @@ class Restaurant extends Page {
   }
 
   getToggle (map, v, color) {
-    return <Toggle
-      style={styles.toggle}
-      labelColor={color}
-      label={map[v].label}
-      icon={map[v].icon}
-      active={false}
-      size={60}/>;
+    if (v < map.length) {
+      return <Toggle
+        style={styles.toggle}
+        labelColor={color}
+        label={map[v].label}
+        icon={map[v].icon}
+        active={false}
+        size={60}/>;
+    } else {
+      return ;
+    }
   }
 
   approuve = (editing) => {
@@ -144,7 +148,6 @@ class Restaurant extends Page {
     var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
       return '€';
     }).join('') + (restaurant.price_range > 3 ? '+' : '');
-
     return (
       <ScrollView
         style={{flex: 1}}
@@ -223,12 +226,12 @@ class Restaurant extends Page {
             <Text style={styles.containerTitle}>Ambiances</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
+                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, "#444444");
               })}
             </View>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIANCES, ambiance, "#444444");
+                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, "#444444");
               })}
             </View>
           </View>

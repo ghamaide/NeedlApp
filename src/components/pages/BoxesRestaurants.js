@@ -50,10 +50,10 @@ class BoxesRestaurants extends Page {
           {id: "5", label: "Inclassable", icon: require('../../assets/img/ambiances/images/autre.jpg')},
         ],
         [
-          {label: "€", icon: require('../../assets/img/prix/images/prix_1.jpg')},
-          {label: "€€", icon: require('../../assets/img/prix/images/prix_2.jpg')},
-          {label: "€€€", icon: require('../../assets/img/prix/images/prix_3.jpg')},
-          {label: "€€€+", icon: require('../../assets/img/prix/images/prix_4.jpg')},
+          {label: "€", icon: require('../../assets/img/prices/images/prix_1.jpg')},
+          {label: "€€", icon: require('../../assets/img/prices/images/prix_2.jpg')},
+          {label: "€€€", icon: require('../../assets/img/prices/images/prix_3.jpg')},
+          {label: "€€€+", icon: require('../../assets/img/prices/images/prix_4.jpg')},
         ]
       ],
       dataFilters: [

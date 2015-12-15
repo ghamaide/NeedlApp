@@ -9,7 +9,8 @@ import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
 import Page from '../ui/Page';
-import Filtre from './Filtre/List';
+//import Filtre from './Filtre/List';
+import Filtre from './Filtre';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
 
@@ -17,15 +18,17 @@ import Carousel from '../ui/Carousel';
 import RestaurantElement from '../elements/Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
+var radius = 150;
 
 class Carte extends Page {
-  static route(title) {
+  static route() {
     return {
       component: Carte,
-      title: title,
-      rightButtonTitle: 'Liste',
+      title: 'Restaurants',
+      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
       onRightButtonPress() {
-				this.replace(Liste.route());
+        this.replace(Liste.route());
       }
     };
   }
@@ -47,12 +50,21 @@ class Carte extends Page {
     this.state.isChanging = false;
     this.state.showsUserLocation = false;
     this.state.initialPosition = 'unknown';
+    this.state.annotations = [
+      {latitude: 48.8534100, longitude: 2.3378000, title: 'center'},
+      {latitude: 48.8534100, longitude: 2.3378000, title: 'lol'}
+    ];
     this.state.center = {
-      latitude: 48.8534100,
-      longitude: 2.3378000,
-      latitudeDelta: 0.12,
-      longitudeDelta: 0.065
+      latitude: RestaurantsStore.getState().region.lat,
+      longitude: RestaurantsStore.getState().region.long,
+      latitudeDelta: RestaurantsStore.getState().region.deltaLat,
+      longitudeDelta: RestaurantsStore.getState().region.deltaLong,
     };
+
+    console.log(RestaurantsStore.getState().region.lat);
+    console.log(RestaurantsStore.getState().region.long);
+    console.log(RestaurantsStore.getState().region.deltaLat);
+    console.log(RestaurantsStore.getState().region.deltaLong);
   }
 
   onFocus = (event) => {
@@ -90,18 +102,24 @@ class Carte extends Page {
   onRegionChangeComplete = (region) => {
     // to check if in area
     this.setState({isChanging : false});
-    var radius = 300 / windowWidth;
-    var westLongitude = region.longitude - radius * region.longitudeDelta / 2;
-    var eastLongitude = region.longitude + radius * region.longitudeDelta / 2;
-    var northLatitude = region.latitude + radius * region.latitudeDelta / 2;
-    var southLatitude = region.latitude - radius * region.latitudeDelta / 2;
-    var distanceToCenter = this.getDistance(region.latitude, region.longitude, northLatitude, region.longitude);
-    // bof pour le calcul, réponse en km
+    var mapHeight = windowHeight - 144;
+
+    var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - 70) * (region.latitudeDelta / (2 * mapHeight));
+    var centerCircleLongitude = region.longitude;
+    // var deltaCircleLatitude = radius * region.latitudeDelta / mapHeight;
+    // var deltaCircleLongitude = radius * region.longitudeDelta / windowWidth;
+
+    RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
+    this.setState({data: RestaurantsStore.filteredRestaurants()});
+
+    //var center = {latitude: region.latitude, longitude: region.longitude, title: 'center'};
+
+    //this.setState({annotations: [centerCircle, westCircle, eastCircle, northCircle, southCircle]});
   }
 
   onRegionChange = (region) => {
     // to see if the user is changing region
-    //this.setState({isChanging : true});
+    this.setState({isChanging : true});
   }
 
   onAnnotationPress = (annotation) => {
@@ -172,53 +190,48 @@ class Carte extends Page {
           onRegionChange={this.onRegionChange}
           onRegionChangeComplete={this.onRegionChangeComplete} />
 
-        <Carousel
-          style={styles.carousel}
-          ref="carousel"
-          onPageChange={this.carouselOnPageChange}>
-          {_.map(this.state.data, (restaurant) => {
-            return (
-              <RestaurantElement
-                name={restaurant.name}
-                pictures={restaurant.pictures}
-                type={restaurant.food[1]}
-                budget={restaurant.price_range}
-                height={120}
-                onPress={() => {
-                  this.props.navigator.push(Restaurant.route({id: restaurant.id}));
-                }}/>
-            );
-          })}
-        </Carousel>
-        
         {this.state.isChanging ? 
           [
             <View style={styles.targetContainer}>
               <View style={[styles.fillRectangleTop, {width: windowWidth}]} />
               <Image
                 source={require('../../assets/img/other/images/target.png')}
-                style={[styles.targetImage, {width: windowWidth, height: windowWidth}]} />
+                style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
               <View style={styles.fillRectangleBottom} />
             </View>
           ] : [
             null
           ]
         }
+
+        {this.state.data.length ? [
+          <Carousel
+            style={styles.carousel}
+            ref="carousel"
+            onPageChange={this.carouselOnPageChange}>
+            {_.map(this.state.data, (restaurant) => {
+              return (
+                <RestaurantElement
+                  name={restaurant.name}
+                  pictures={restaurant.pictures}
+                  type={restaurant.food[1]}
+                  budget={restaurant.price_range}
+                  height={120}
+                  onPress={() => {
+                    this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+                  }}/>
+              );
+            })}
+          </Carousel>
+        ] : []}
         
-				<TouchableHighlight style={styles.filterMessage} underlayColor='#DDDDDD' onPress={() => this.props.navigator.push(Filtre.route())}>
-						<View style={styles.filterContainer}>
-              {RestaurantsStore.filterActive() ? 
-                [
-                  <View key={'opened'} style={styles.triangleDown} />
-                ] : [
-                  <View key={'closed'} style={styles.triangleRight} />
-                ]
-              }
-              <Text style={styles.filterMessageText}>
-                {RestaurantsStore.filterActive() ? 'Filtre activé - ' + this.state.data.length + ' résultat' + (this.state.data.length > 1 ? 's' : '') : 'Filtre désactivé'}
-              </Text>
-            </View>
-				</TouchableHighlight>
+				<TouchableHighlight style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
+          this.props.navigator.push(Filtre.route());
+        }}>
+            <Text style={styles.filterMessageText}>
+              {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
+            </Text>
+        </TouchableHighlight>
 			</View>
 		);
   }
@@ -233,55 +246,19 @@ var styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.7)',
     padding: 12,
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0
+    top: 5,
+    left: 5,
+    right: 5,
+    height: 45,
+    borderColor: '#EF582D',
+    borderWidth: 1,
+    borderRadius: 1
   },
   filterMessageText: {
-    color: '#000000',
-    fontSize: 14,
-    fontWeight: '500',
+    color: '#EF582D',
+    fontSize: 15,
+    fontWeight: '700',
     textAlign: 'center'
-  },
-  filterContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  triangleRight: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '90deg'}
-    ]
-  },
-  triangleDown: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '180deg'}
-    ]
   },
   imageRestaurant: {
     flex: 1,
@@ -324,12 +301,11 @@ var styles = StyleSheet.create({
   },
   fillRectangleBottom: {
     flex: 1,
-    backgroundColor: 'rgba(239, 88, 45, 0.4)',
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
   },
   fillRectangleTop: {
-    backgroundColor: 'rgba(239, 88, 45, 0.2)',
-    height: 40,
-
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    height: 35
   }
 });
 

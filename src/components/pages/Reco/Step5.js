@@ -16,7 +16,6 @@ class RecoStep5 extends Component {
       rightButtonTitle: 'Valider',
       onRightButtonPress() {
         var reco = RecoStore.getReco();
-        console.log(reco);
         if (!reco.occasions || !reco.occasions.length) {
           return;
         }
@@ -57,7 +56,7 @@ class RecoStep5 extends Component {
                 </View>
                 <View style={styles.pastilleContainer}>
                   <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Fast" value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Fast" value={8} />
                 </View>
               </View>
             );
@@ -104,7 +103,7 @@ progressBar: {
   backgroundColor: '#DDDDDD'
  },
 progressBarCompleted: {
-  backgroundColor: 'green',
+  backgroundColor: '#38E1B2',
   position: 'absolute',
   top: 0,
   left: 0,
