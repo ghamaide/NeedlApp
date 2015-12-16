@@ -6,7 +6,7 @@ import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
 import RecoActions from '../../../actions/RecoActions';
 import Restaurant from '../Restaurant';
-import BoxesRestaurants from '../BoxesRestaurants';
+import Liste from '../Liste';
 import Button from '../../elements/Button';
 
 class RecoStepSave extends Component {

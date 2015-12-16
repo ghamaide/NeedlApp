@@ -55,10 +55,10 @@ class Liste extends Page {
   }
 
   componentWillMount() {
-  	console.log(NativeModules.getVersion.version);
   	MeActions.displayTabBar(true);
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
+    console.log(MeStore.getState().version < '1.4.0');
   }
 
   componentWillUnmount() {

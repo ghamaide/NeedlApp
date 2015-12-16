@@ -2,7 +2,6 @@
 
 import React, {Component, AppStateIOS, View, PushNotificationIOS, NativeModules, Text, Image, StyleSheet, ActivityIndicatorIOS, ScrollView, StatusBarIOS} from 'react-native';
 import Overlay from 'react-native-overlay';
-import Swiper from 'react-native-swiper';
 import _ from 'lodash';
 
 import TabView from './ui/TabView';
@@ -102,15 +101,6 @@ class App extends Component {
   }
 
   componentWillMount() {
-    console.log('aaa');
-    if (typeof RestaurantsStore.getState().filters.prix.value === 'string') {
-      console.log('lol');
-      RestaurantsActions.setFilter('prices', []);
-      RestaurantsActions.setFilter('ambiences', []);
-      RestaurantsActions.setFilter('occasions', []);
-      RestaurantsActions.setFilter('types', []);
-    }
-
     MeStore.listen(this.onMeChange);
     FriendsStore.listen(this.onPastillesChange);
     NotifsStore.listen(this.onPastillesChange);
@@ -287,13 +277,6 @@ var styles = StyleSheet.create({
     fontSize: 18,
     color: '#EF582D',
     fontWeight: 'bold'
-  },
-
-  containerSwiper: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 50,
-    alignItems: 'center'
   },
   containerCEOMessage: {
     padding: 20,

@@ -82,7 +82,6 @@ class RecoStep3 extends Component {
     }
 
     var reco = RecoStore.getReco();
-    console.log(reco.ambiances);
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>

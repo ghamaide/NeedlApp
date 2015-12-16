@@ -138,6 +138,10 @@ export class FriendsActions {
   displayTabBar(display) {
     this.dispatch(display);
   }
+
+  setVersion(version) {
+    this.dispatch(version);
+  }
 }
 
 export default alt.createActions(FriendsActions);

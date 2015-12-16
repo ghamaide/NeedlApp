@@ -645,7 +645,7 @@ export class RestaurantsStore extends CachedStore {
       var deltaX = (region.width / region.deltaLong) * (region.longCentre - restaurant.longitude);
       var deltaY = (region.mapHeight / region.deltaLat) * (region.latCentre - restaurant.latitude);
 
-      if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 10 > region.radius) {
+      if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 15 > region.radius) {
         return false;
       }
 
@@ -657,7 +657,6 @@ export class RestaurantsStore extends CachedStore {
 
   static filterActive() {
     var filters = this.getState().filters;
-    console.log(filters);
     return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0);
   }
 }

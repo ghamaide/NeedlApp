@@ -166,7 +166,9 @@ class Profil extends Page {
       	}}
         contentInset={{top: 0}}
         automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        onScroll={this.onScroll}
+        scrollEventThrottle={16}>
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>

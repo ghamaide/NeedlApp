@@ -188,7 +188,7 @@ class Filtre extends Component {
             {(Toggle) => {
               return (
                 <View style={{flex: 1, position: 'absolute', top: 0, bottom: -70, left: 0, right: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
-                  <Text style={[styles.filtreTitleOverlay, {marginTop: 40, marginBottom: 10}]}>Types</Text>
+                  <Text style={[styles.filtreTitleOverlay, {marginTop: 20, marginBottom: 10}]}>Types</Text>
                   <ScrollView style={styles.pastilleWrapperOverlayScroll} automaticallyAdjustContentInsets={false} alignItems='center'>
                     <View style={styles.pastilleContainerOverlayScroll}>
                       <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/korean.png')} activeInitial={false} label="Coréen" value={1} />
@@ -228,7 +228,7 @@ class Filtre extends Component {
                   </ScrollView>
                   <TouchableHighlight
                     underlayColor='rgba(0, 0, 0, 0.3)'
-                    style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 10, width: 160, left: (windowWidth - 200) / 2}]}
+                    style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 11, width: 160, left: (windowWidth - 200) / 2}]}
                     onPress={() => this.setState({showOverlayTypes: false})}>
                     <Text style={styles.submitText}>Valider</Text>
                   </TouchableHighlight>
@@ -256,10 +256,10 @@ class Filtre extends Component {
                   <Text style={styles.filtreTitle}>Prix</Text>
                   <View style={styles.pastilleWrapper}>
                     <View style={styles.pastilleContainer}>
-                      <Toggle size={40} width={82} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_1.png')} value={1} />
-                      <Toggle size={40} width={82} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_2.png')} value={2} />
-                      <Toggle size={40} width={82} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_3.png')} value={3} />
-                      <Toggle size={40} width={82} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_4.png')} value={4} />
+                      <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_1.png')} value={1} />
+                      <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_2.png')} value={2} />
+                      <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_3.png')} value={3} />
+                      <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_4.png')} value={4} />
                     </View>
                   </View>
                 </View>

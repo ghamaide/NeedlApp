@@ -20,6 +20,7 @@ import RestaurantElement from '../elements/Restaurant';
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 var radius = 150;
+var topSize = (windowHeight === 667 ? 35 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
 
 class Carte extends Page {
   static route() {
@@ -60,11 +61,6 @@ class Carte extends Page {
       latitudeDelta: RestaurantsStore.getState().region.deltaLat,
       longitudeDelta: RestaurantsStore.getState().region.deltaLong,
     };
-
-    console.log(RestaurantsStore.getState().region.lat);
-    console.log(RestaurantsStore.getState().region.long);
-    console.log(RestaurantsStore.getState().region.deltaLat);
-    console.log(RestaurantsStore.getState().region.deltaLong);
   }
 
   onFocus = (event) => {
@@ -102,9 +98,9 @@ class Carte extends Page {
   onRegionChangeComplete = (region) => {
     // to check if in area
     this.setState({isChanging : false});
-    var mapHeight = windowHeight - 144;
+    var mapHeight = windowHeight - 124;
 
-    var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - 70) * (region.latitudeDelta / (2 * mapHeight));
+    var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - (topSize * 2)) * (region.latitudeDelta / (2 * mapHeight));
     var centerCircleLongitude = region.longitude;
     // var deltaCircleLatitude = radius * region.latitudeDelta / mapHeight;
     // var deltaCircleLongitude = radius * region.longitudeDelta / windowWidth;
@@ -305,7 +301,7 @@ var styles = StyleSheet.create({
   },
   fillRectangleTop: {
     backgroundColor: 'rgba(0, 0, 0, 0.12)',
-    height: 35
+    height: topSize
   }
 });
 
