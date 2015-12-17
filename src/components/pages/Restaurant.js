@@ -91,7 +91,7 @@ class Restaurant extends Page {
   }
 
   componentWillMount() {
-    //Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
     RestaurantsStore.listen(this.onRestaurantsChange);
     ProfilStore.listen(this.onProfilStoreUpdate);
     RestaurantsActions.fetchRestaurant(this.props.id);
@@ -143,7 +143,7 @@ class Restaurant extends Page {
   }
 
   call = () => {
-    //Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id});
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id});
     RNComm.phonecall(this.state.data.phone_number, false);
   }
 

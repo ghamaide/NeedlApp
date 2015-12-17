@@ -11,7 +11,7 @@
 
 #import "RCTRootView.h"
 #import "RCTUtils.h"
-//#import "Mixpanel.h"
+#import "Mixpanel.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
@@ -23,7 +23,7 @@ Class RCTPushNotificationManager = nil;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
-  //[Mixpanel sharedInstanceWithToken:@"1637bf7dde195b7909f4c3efd151e26d"];
+  [Mixpanel sharedInstanceWithToken:@"1637bf7dde195b7909f4c3efd151e26d"];
 
   /**
    * Loading JavaScript code - uncomment the one you want.
