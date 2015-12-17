@@ -93,7 +93,7 @@ class Carousel extends Component{
     }
 
     return (
-      <View ref="view" style={[{position: 'relative', backgroundColor: 'black'}, this.props.style]} onLayout={(e) => {
+      <View ref="view" style={[{position: 'relative', backgroundColor: 'transparent'}, this.props.style]} onLayout={(e) => {
         this.setState({width: e.nativeEvent.layout.width});
       }}>
         {this.state.width ?
@@ -117,7 +117,7 @@ class Carousel extends Component{
               x: this.state.offset,
               y: 0
             }}
-            scrollEnabled={!this.props.insetMargin} /* insetMargin is not the good way
+            scrollEnabled={true} /* insetMargin is not the good way
             to get custom page paging. need to use https://github.com/facebook/react-native/pull/1532 */
           >
             {content}

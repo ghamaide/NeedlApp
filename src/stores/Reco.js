@@ -44,7 +44,6 @@ export class RecoStore {
   }
 
   handleGetRecoFailed(data) {
-    console.log("Error");
     if (this.status.getRecoLoading !== data.restaurantId) {
       return;
     }

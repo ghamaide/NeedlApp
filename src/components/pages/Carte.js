@@ -7,9 +7,9 @@ import Dimensions from 'Dimensions';
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
+import MeActions from '../../actions/MeActions';
 
 import Page from '../ui/Page';
-//import Filtre from './Filtre/List';
 import Filtre from './Filtre';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
@@ -20,7 +20,7 @@ import RestaurantElement from '../elements/Restaurant';
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 var radius = 150;
-var topSize = (windowHeight === 667 ? 35 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
+var topSize = (windowHeight === 667 ? 40 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
 
 class Carte extends Page {
   static route() {
@@ -51,10 +51,10 @@ class Carte extends Page {
     this.state.isChanging = false;
     this.state.showsUserLocation = false;
     this.state.initialPosition = 'unknown';
-    this.state.annotations = [
-      {latitude: 48.8534100, longitude: 2.3378000, title: 'center'},
-      {latitude: 48.8534100, longitude: 2.3378000, title: 'lol'}
-    ];
+    this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
+    this.state.defaultLatitudeDelta = 3 / 110.574;
+    this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
+
     this.state.center = {
       latitude: RestaurantsStore.getState().region.lat,
       longitude: RestaurantsStore.getState().region.long,
@@ -75,7 +75,14 @@ class Carte extends Page {
       );
 
       navigator.geolocation.getCurrentPosition(
-        (initialPosition) => this.setState({initialPosition}),
+        (initialPosition) => {
+          if (!MeStore.getState().showedCurrentPosition) {
+            this.setState({
+              center: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
+            });
+            MeActions.showedCurrentPosition(true);
+          }
+        },
         (error) => console.log(error.message),
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
       );
@@ -96,21 +103,14 @@ class Carte extends Page {
   }
 
   onRegionChangeComplete = (region) => {
-    // to check if in area
-    this.setState({isChanging : false});
     var mapHeight = windowHeight - 124;
 
     var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - (topSize * 2)) * (region.latitudeDelta / (2 * mapHeight));
     var centerCircleLongitude = region.longitude;
-    // var deltaCircleLatitude = radius * region.latitudeDelta / mapHeight;
-    // var deltaCircleLongitude = radius * region.longitudeDelta / windowWidth;
 
     RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
     this.setState({data: RestaurantsStore.filteredRestaurants()});
-
-    //var center = {latitude: region.latitude, longitude: region.longitude, title: 'center'};
-
-    //this.setState({annotations: [centerCircle, westCircle, eastCircle, northCircle, southCircle]});
+    this.setState({isChanging : false});
   }
 
   onRegionChange = (region) => {
@@ -137,24 +137,11 @@ class Carte extends Page {
     }
   }
 
-  getDistance = (lat1,lon1,lat2,lon2) => {
-    var R = 6371; // Radius of the earth in km
-    var dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
-    var dLon = this.deg2rad(lon2 - lon1); 
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *  Math.sin(dLon/2) * Math.sin(dLon/2); 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    var d = R * c; // Distance in km
-    return d;
-  }
-
-  deg2rad(deg) {
-    return deg * (Math.PI/180);
-  }
-
   renderPage() {
     return (
   		<View style={{flex: 1, position: 'relative'}}>
         <MapView
+          key="map"
           ref="mapview"
           style={styles.restaurantsMap}
           showsUserLocation={this.state.showsUserLocation}
@@ -165,20 +152,7 @@ class Carte extends Page {
             return {
               latitude: restaurant.latitude,
               longitude: restaurant.longitude,
-              title: restaurant.name,
-              /*subtitle: restaurant.food[1]
-              rightCallout: {
-                type: 'button',
-                onPress: () => {
-                  this.props.navigator.push(Restaurant.route({id: restaurant.id}));
-                }
-              },
-              leftCallout: {
-                type: 'image',
-                config: {
-                  image: restaurant.pictures[0]
-                }
-              }*/
+              title: restaurant.name
             };
           })}
           region={this.state.center}
@@ -188,26 +162,26 @@ class Carte extends Page {
 
         {this.state.isChanging ? 
           [
-            <View style={styles.targetContainer}>
-              <View style={[styles.fillRectangleTop, {width: windowWidth}]} />
+            <View key="target_container" style={styles.targetContainer}>
+              <View key="target_top_container" style={[styles.fillRectangleTop, {width: windowWidth}]} />
               <Image
+                key="target_image"
                 source={require('../../assets/img/other/images/target.png')}
                 style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
-              <View style={styles.fillRectangleBottom} />
+              <View key="target_bottom_container" style={styles.fillRectangleBottom} />
             </View>
-          ] : [
-            null
-          ]
-        }
+          ] : []}
 
         {this.state.data.length ? [
           <Carousel
+            key="carousel"
             style={styles.carousel}
             ref="carousel"
             onPageChange={this.carouselOnPageChange}>
             {_.map(this.state.data, (restaurant) => {
               return (
                 <RestaurantElement
+                  key={restaurant.id}
                   name={restaurant.name}
                   pictures={restaurant.pictures}
                   type={restaurant.food[1]}
@@ -220,8 +194,14 @@ class Carte extends Page {
             })}
           </Carousel>
         ] : []}
+
+        {!this.state.data.length && !this.state.isChanging ? [        
+          <View key="no_restaurants" style={styles.emptyTextContainer}>
+            <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
+          </View>
+        ] : []}
         
-				<TouchableHighlight style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
+				<TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
           this.props.navigator.push(Filtre.route());
         }}>
             <Text style={styles.filterMessageText}>
@@ -268,6 +248,19 @@ var styles = StyleSheet.create({
     left: 5,
     right: 5,
   },
+  emptyTextContainer: {
+    position: 'absolute',
+    bottom: (windowHeight - 134) / 2,
+    left: 0,
+    width: windowWidth,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  emptyText: {
+    padding: 10,
+    color: '#FFFFFF'
+  },
   imageRestaurantInfos: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0)'    
@@ -297,10 +290,10 @@ var styles = StyleSheet.create({
   },
   fillRectangleBottom: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    backgroundColor: 'rgba(0, 0, 0, 0.16)',
   },
   fillRectangleTop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    backgroundColor: 'rgba(0, 0, 0, 0.16)',
     height: topSize
   }
 });

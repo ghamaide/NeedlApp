@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ImagePickerIOS, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 
@@ -107,53 +107,31 @@ class Profil extends Page {
     return (
       <View style={[styles.restaurantsWrapper, {backgroundColor: backgroundColor}]}>
         <Text style={styles.restaurantsWrapperTitle}>{title}</Text>
-        <Carousel style={styles.restaurantsCarousel}>
+        <ScrollView 
+          style={styles.restaurantsCarousel} 
+          scrollEnabled={true}
+          automaticallyAdjustContentInsets={false}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}>
           {_.map(restaurants, (restaurant) => {
             return (
               <RestaurantElement
+                height={150}
+                style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 60}}
                 key={restaurant.id}
                 name={restaurant.name}
                 pictures={[restaurant.picture]}
                 type={restaurant.type}
                 budget={restaurant.price_range}
+                underlayColor='#EEEEEE'
                 onPress={() => {
                   this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
                 }}/>
               );
           })}
-        </Carousel>
+        </ScrollView>
       </View>
     );
-  }
-
-  pickImage = () => {
-    var options = {
-      title: 'Choisis ta photo',
-      cancelButtonTitle: 'Annuler',
-      takePhotoButtonTitle: 'Prendre une photo...',
-      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...',
-      quality: 0.2,
-      allowsEditing: false,
-      noData: false
-    }
-    
-    NativeModules.UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
-      console.log('Response = ', response);
-
-      if (didCancel) {
-        console.log('User cancelled image picker');
-      }
-
-      else {
-        var uri = 'data:image/jpeg;base64,' + response.data;
-        MeActions.uploadList(uri, () => {
-          this.setState({showUploadConfirmation: true});
-          setTimeout(() => {
-            this.setState({showUploadConfirmation: false});
-          }, 4000);
-        });
-      }
-    });
   }
 
   renderPage() {
@@ -161,9 +139,6 @@ class Profil extends Page {
 
     return (
       <ScrollView
-      	onFocus={(e) => {
-        	console.log('coucou', e.nativeEvent);
-      	}}
         contentInset={{top: 0}}
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
@@ -194,12 +169,7 @@ class Profil extends Page {
 
         <Options>
           {MeStore.getState().me.id === profil.id ?
-            [	
-              /*<Option 
-					 			label="Envoyer une liste"
-					 			key={"list send " + profil.id}
-					 			onPress={this.pickImage}
-								icon={require('../../assets/img/actions/icons/import_list.png')} />,*/
+            [
               <Option
 					 			key={"edit " + profil.id}
 								label="Modifier"
@@ -305,6 +275,7 @@ var styles = StyleSheet.create({
   },
   restaurantsCarousel: {
     height: 150,
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     width: windowWidth - 30,
     margin: 5
@@ -315,7 +286,7 @@ var styles = StyleSheet.create({
     marginTop: 60
   },
   uploadConfirmationText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontWeight: '500',
     textAlign: 'center'
   }

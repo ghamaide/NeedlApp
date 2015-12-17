@@ -23,13 +23,13 @@ class Restaurant extends Component {
     }
 
     var content = (
-      <View style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
+      <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.pictures[0]} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.pictures[0]}}>
           <LinearGradient colors={[processColor('#FFFFFF'), processColor('#000000')]} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
-            <Text style={styles.restaurantName}>{this.props.name}</Text>
+            <Text key="restaurant_name" style={styles.restaurantName}>{this.props.name}</Text>
             {budget ? [
-              <Text style={styles.restaurantType}>
+              <Text key="restaurant_budget" style={styles.restaurantType}>
                 {this.props.type}
                 <Text style={{color: '#FFFFFF'}}>
                    , {budget}
@@ -39,7 +39,7 @@ class Restaurant extends Component {
                 </Text>
               </Text>
             ] : [
-              <Text style={styles.restaurantType}>{this.props.type}</Text>
+              <Text key="restaurant_budget" style={styles.restaurantType}>{this.props.type}</Text>
             ]}
             {this.props.subway ?
               <View style={styles.restaurantSubway}>
@@ -49,6 +49,9 @@ class Restaurant extends Component {
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>
               : null}
+            {this.props.isNeedl ? 
+              <Image style={styles.imageNeedl} source={require('../../assets/img/other/images/logo.png')} />
+             : null}
           </View>
         </Image>
       </View>
@@ -132,6 +135,14 @@ var styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     backgroundColor: 'rgba(0,0,0,0)',
+  },
+  imageNeedl: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    position: 'absolute',
+    top: 5,
+    right: 5
   }
 });
 

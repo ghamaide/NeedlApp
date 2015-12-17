@@ -123,36 +123,6 @@ class App extends Component {
     MeStore.unlisten(this.onMeChange);
   }
 
-  pickImage() {
-    var options = {
-      title: 'Choisis ta photo', // specify null or empty string to remove the title
-      cancelButtonTitle: 'Annuler',
-      takePhotoButtonTitle: 'Prendre une photo...', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...', // specify null or empty string to remove this button
-      quality: 0.2,
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
-      noData: false // Disables the base64 `data` field from being generated (greatly improves performance on large photos)
-    }
-    
-    NativeModules.UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
-      console.log('Response = ', response);
-
-      if (didCancel) {
-        console.log('User cancelled image picker');
-      }
-
-      else {
-        var uri = 'data:image/jpeg;base64,' + response.data;
-        MeActions.uploadList(uri, () => {
-          this.setState({showUploadConfirmation: true});
-          setTimeout(() => {
-            this.setState({showUploadConfirmation: false});
-          }, 4000);
-        });
-      }
-    });
-  }
-
   render() {
     var uploadText = "Si toi aussi tu stockes tes restaurants à tester dans des notes ou quoi que ce soit d'autres, prends des screenshots et importe-les! Tu pourras également le faire à tout autre moment sur ta page profil. Les restaurants seront alors automatiquement ajoutés à ta wishlist sous 24h.";
 

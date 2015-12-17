@@ -69,7 +69,7 @@ class Notifs extends Page {
   }
 
   onRefresh() {
-    // reload the list here
+    NotifsActions.fetchNotifs();
   }
 
   renderHeader = (refreshingIndicator) => {
@@ -81,12 +81,12 @@ class Notifs extends Page {
 
     return (
       <View style={styles.emptyContainer}>
+        {refreshingIndicator}
         <View style={styles.textContainerWrapper}>
           <TouchableHighlight style={styles.textContainer} underlayColor='#FFFFFF' onPress={() => this.props.navigator.push(InviteFriend.route())}>
             <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
           </TouchableHighlight>
         </View>
-        {refreshingIndicator}
       </View>
     );
   }

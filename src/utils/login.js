@@ -1,12 +1,11 @@
 'use strict';
 
-import {FBLoginManager} from 'NativeModules';
-//import FBSDKLogin, {FBSDKLoginManager} from 'react-native-fbsdklogin';
-//import FBSDKCore, {FBSDKAccessToken} from 'react-native-fbsdkcore';
+//import {FBLoginManager} from 'NativeModules';
+import FBSDKLogin, {FBSDKLoginManager} from 'react-native-fbsdklogin';
+import FBSDKCore, {FBSDKAccessToken} from 'react-native-fbsdkcore';
 
 import request from './api';
 
-/*
 class Login {
   facebook(callback) {
     FBSDKLoginManager.logInWithReadPermissions(['email', 'user_friends'], (err, data) => {
@@ -27,7 +26,7 @@ class Login {
   }
 }
 
-*/
+/*
 class Login {
   facebook(callback) {
     FBLoginManager.loginWithPermissions(['email', 'user_friends'], function(err, data){
@@ -41,5 +40,5 @@ class Login {
     });
   }
 }
-
+*/
 export default new Login();

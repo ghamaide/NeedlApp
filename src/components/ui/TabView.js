@@ -179,46 +179,46 @@ class TabView extends Component {
 
   render() {
     return (
-     <View
-        style={styles.tabbarContainer}>
-        	<Navigator
-            style={{backgroundColor: '#FFFFFF', paddingTop: 20}}
-            initialRouteStack={this.props.tabs}
-            initialRoute={this.props.tabs[this.props.initialSelected || 0]}
-            ref="tabs"
-            renderScene={(tab, navigator) => {
-              var index = navigator.getCurrentRoutes().indexOf(tab);
-              return (
-                <PatchedNavigatorIOS
-                  style={styles.tabbarContent}
-                  navigator={navigator}
-                  tabsMaster={this}
-                  key={index}
-                  index={index}
-                  fireFromTabs={index === this.state.selected}
-                  translucent={false}
-                  titleStyle={{fontFamily: 'Quicksand-Bold', fontSize: 12}}
-                  itemWrapperStyle={styles.tabbarContentWrapper}
-                  initialRoute={tab.component.route()}
-                  initialSkipCache={this.props.initialSkipCache} />
-                );
-            }}
-            configureScene={() => {
-              return {
-                ...Navigator.SceneConfigs.FadeAndroid,
-                defaultTransitionVelocity: 10000,
-                gestures: {}
-              };
-            }} />
+     <View style={styles.tabbarContainer}>
+      	<Navigator
+          style={{backgroundColor: '#FFFFFF', paddingTop: 20}}
+          initialRouteStack={this.props.tabs}
+          initialRoute={this.props.tabs[this.props.initialSelected || 0]}
+          ref="tabs"
+          key="navigator"
+          renderScene={(tab, navigator) => {
+            var index = navigator.getCurrentRoutes().indexOf(tab);
+            return (
+              <PatchedNavigatorIOS
+                style={styles.tabbarContent}
+                navigator={navigator}
+                tabsMaster={this}
+                key={index}
+                index={index}
+                fireFromTabs={index === this.state.selected}
+                translucent={false}
+                titleStyle={{fontFamily: 'Quicksand-Bold', fontSize: 12}}
+                itemWrapperStyle={styles.tabbarContentWrapper}
+                initialRoute={tab.component.route()}
+                initialSkipCache={this.props.initialSkipCache} />
+              );
+          }}
+          configureScene={() => {
+            return {
+              ...Navigator.SceneConfigs.FadeAndroid,
+              defaultTransitionVelocity: 10000,
+              gestures: {}
+            };
+          }} />
 
-          {this.state.showTabBar ? [
-  					<View style={styles.tabbarTabs}>
-            	{_.map(this.props.tabs, (tab, index) => {
-              	return this.renderTab(index, tab.name, tab.icon, tab.pastille, tab.hasShared);
-            	})}
-          	</View>
-          ] : []}
-      	</View>
+        {this.state.showTabBar ? [
+					<View key="tabBar" style={styles.tabbarTabs}>
+          	{_.map(this.props.tabs, (tab, index) => {
+            	return this.renderTab(index, tab.name, tab.icon, tab.pastille, tab.hasShared);
+          	})}
+        	</View>
+        ] : []}
+    	</View>
     );
   }
 }

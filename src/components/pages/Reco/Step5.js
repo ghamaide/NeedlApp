@@ -55,8 +55,9 @@ class RecoStep5 extends Component {
                   <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Fast" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/fast.png')} activeInitial={false} label="Fast" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={9} />
                 </View>
               </View>
             );

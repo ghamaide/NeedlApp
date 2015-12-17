@@ -11,7 +11,7 @@ import MeActions from '../../actions/MeActions';
 
 import Page from '../ui/Page';
 import RestaurantElement from '../elements/Restaurant';
-//import Filtre from './Filtre/List';
+import ErrorToast from '../ui/ErrorToast';
 import Filtre from './Filtre';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
@@ -36,7 +36,7 @@ class Liste extends Page {
       // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),
+      errors: RestaurantsStore.error(),
 			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
   }
@@ -76,6 +76,7 @@ class Liste extends Page {
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
+      	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         pictures={restaurant.pictures}
         subway={restaurant.subways[1][0]}
@@ -84,16 +85,33 @@ class Liste extends Page {
         marginTop={5}
         marginBottom={5}
         underlayColor={"#FFFFFF"}
+        key={restaurant.id}
         onPress={() => {
           this.props.navigator.push(Restaurant.route({id: restaurant.id}));
         }}/>
     );
   }
 
+  renderHeaderWrapper = (refreshingIndicator) => {
+  	console.log(this.state.data.length);
+  	if (!this.state.data.length) {
+  		return(
+  			<View>
+	 				{refreshingIndicator}
+	  			<View style={styles.emptyTextContainer}>
+	  				<Text style={styles.emptyText}>Tu n'as pas de restaurants avec ces critères. Essaie de modifier les filtres ou de changer de lieu sur la carte.</Text>
+	  			</View>
+	  		</View>
+  		);
+  	} else {
+  		return {refreshingIndicator};
+  	}
+  }
+
   renderPage() {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route());
 				}}>
 						<Text style={styles.filterMessageText}>
@@ -101,14 +119,20 @@ class Liste extends Page {
 						</Text>
 				</TouchableHighlight>
 				<RefreshableListView
+					key="list_restaurants"
 					dataSource={this.state.dataSource}
 					renderRow={this.renderRestaurant}
+					renderHeaderWrapper={this.renderHeaderWrapper}
 					contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
           loadData={this.onRefresh}
           refreshDescription="Refreshing..." />
+
+        {_.map(this.state.errors, (err) => {
+          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
+        })}
 			</View>
 		);
   }
@@ -208,6 +232,19 @@ var styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center'
+  },
+  emptyTextContainer: {
+  	flex: 1,
+  	marginTop: 40,
+  	alignItems: 'center',
+  	justifyContent: 'center'
+  },
+  emptyText: {
+  	flex: 1,
+  	textAlign: 'center',
+  	padding: 20,
+  	fontSize: 15,
+  	fontWeight: '600'
   }
 });
 

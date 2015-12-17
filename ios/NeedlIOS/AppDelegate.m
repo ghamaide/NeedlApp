@@ -11,6 +11,7 @@
 
 #import "RCTRootView.h"
 #import "RCTUtils.h"
+//#import "Mixpanel.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
@@ -22,6 +23,7 @@ Class RCTPushNotificationManager = nil;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
+  //[Mixpanel sharedInstanceWithToken:@"1637bf7dde195b7909f4c3efd151e26d"];
 
   /**
    * Loading JavaScript code - uncomment the one you want.
@@ -47,9 +49,13 @@ Class RCTPushNotificationManager = nil;
 
 //   jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
+  NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
+
+  NSDictionary *props = @{@"version" : version};
+
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"NeedlIOS"
-                                               initialProperties:nil
+                                               initialProperties:props
                                                    launchOptions:launchOptions];
   
   // Get launch image

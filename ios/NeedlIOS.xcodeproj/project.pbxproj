@@ -39,6 +39,15 @@
 		A32E07BD1C08AB5B0075E6E8 /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */; };
 		A32E08231C08F9C70075E6E8 /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A32E08221C08F9B90075E6E8 /* libRNOverlay.a */; };
 		A34313011C1975D7001255CF /* libRNSearchBar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A34313001C1975CF001255CF /* libRNSearchBar.a */; };
+		A34EDEB31C233303001C9556 /* Mixpanel in Resources */ = {isa = PBXBuildFile; fileRef = A34EDEB21C233303001C9556 /* Mixpanel */; };
+		A34EDEC91C23337C001C9556 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDEC81C23337C001C9556 /* UIKit.framework */; };
+		A34EDECB1C233385001C9556 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDECA1C233385001C9556 /* Foundation.framework */; };
+		A34EDECD1C23338F001C9556 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDECC1C23338F001C9556 /* SystemConfiguration.framework */; };
+		A34EDECF1C23339A001C9556 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDECE1C23339A001C9556 /* CoreTelephony.framework */; };
+		A34EDED11C23339F001C9556 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDED01C23339F001C9556 /* CoreGraphics.framework */; };
+		A34EDED31C2333A5001C9556 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDED21C2333A5001C9556 /* Accelerate.framework */; };
+		A34EDED51C2333AB001C9556 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDED41C2333AB001C9556 /* QuartzCore.framework */; };
+		A34EDED71C2333BB001C9556 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A34EDED61C2333BB001C9556 /* libicucore.tbd */; };
 		A3A0973B1C0A176B00E5DBE1 /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097371C0A176B00E5DBE1 /* FBSDKCoreKit.framework */; };
 		A3A0973C1C0A176B00E5DBE1 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097381C0A176B00E5DBE1 /* Bolts.framework */; };
 		A3A0973D1C0A176B00E5DBE1 /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */; };
@@ -239,6 +248,15 @@
 		A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
 		A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSearchBar.xcodeproj; path = "../node_modules/react-native-search-bar/RNSearchBar.xcodeproj"; sourceTree = "<group>"; };
+		A34EDEB21C233303001C9556 /* Mixpanel */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Mixpanel; sourceTree = "<group>"; };
+		A34EDEC81C23337C001C9556 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A34EDECA1C233385001C9556 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A34EDECC1C23338F001C9556 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		A34EDECE1C23339A001C9556 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		A34EDED01C23339F001C9556 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A34EDED21C2333A5001C9556 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		A34EDED41C2333AB001C9556 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		A34EDED61C2333BB001C9556 /* libicucore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.tbd; path = usr/lib/libicucore.tbd; sourceTree = SDKROOT; };
 		A3A097371C0A176B00E5DBE1 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		A3A097381C0A176B00E5DBE1 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Bolts.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/Bolts.framework"; sourceTree = "<group>"; };
 		A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = "../node_modules/react-native-fbsdklogin/FacebookSDK/FBSDKLoginKit.framework"; sourceTree = "<group>"; };
@@ -261,6 +279,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A34EDED71C2333BB001C9556 /* libicucore.tbd in Frameworks */,
+				A34EDED51C2333AB001C9556 /* QuartzCore.framework in Frameworks */,
+				A34EDED31C2333A5001C9556 /* Accelerate.framework in Frameworks */,
+				A34EDED11C23339F001C9556 /* CoreGraphics.framework in Frameworks */,
+				A34EDECF1C23339A001C9556 /* CoreTelephony.framework in Frameworks */,
+				A34EDECD1C23338F001C9556 /* SystemConfiguration.framework in Frameworks */,
+				A34EDECB1C233385001C9556 /* Foundation.framework in Frameworks */,
+				A34EDEC91C23337C001C9556 /* UIKit.framework in Frameworks */,
 				A34313011C1975D7001255CF /* libRNSearchBar.a in Frameworks */,
 				A3D070331C158A6C00BB5FBD /* libRNMessageComposer.a in Frameworks */,
 				A30EF9D91C1103BE009CA6C0 /* libRCTFBLogin.a in Frameworks */,
@@ -433,6 +459,14 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				A34EDED61C2333BB001C9556 /* libicucore.tbd */,
+				A34EDED41C2333AB001C9556 /* QuartzCore.framework */,
+				A34EDED21C2333A5001C9556 /* Accelerate.framework */,
+				A34EDED01C23339F001C9556 /* CoreGraphics.framework */,
+				A34EDECE1C23339A001C9556 /* CoreTelephony.framework */,
+				A34EDECC1C23338F001C9556 /* SystemConfiguration.framework */,
+				A34EDECA1C233385001C9556 /* Foundation.framework */,
+				A34EDEC81C23337C001C9556 /* UIKit.framework */,
 				A3A097371C0A176B00E5DBE1 /* FBSDKCoreKit.framework */,
 				A3A097381C0A176B00E5DBE1 /* Bolts.framework */,
 				A3A097391C0A176B00E5DBE1 /* FBSDKLoginKit.framework */,
@@ -447,6 +481,7 @@
 				A32E076A1C0749CF0075E6E8 /* Quicksand-Light.otf */,
 				A32E076B1C0749CF0075E6E8 /* Quicksand-LightItalic.otf */,
 				A32E076C1C0749CF0075E6E8 /* Quicksand-Regular.otf */,
+				A34EDEB21C233303001C9556 /* Mixpanel */,
 				13B07FAE1A68108700A75B9A /* NeedlIOS */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* NeedlIOSTests */,
@@ -882,6 +917,7 @@
 				A32E07701C0749CF0075E6E8 /* Quicksand-Italic.otf in Resources */,
 				A32E07711C0749CF0075E6E8 /* Quicksand-Light.otf in Resources */,
 				A32E07721C0749CF0075E6E8 /* Quicksand-LightItalic.otf in Resources */,
+				A34EDEB31C233303001C9556 /* Mixpanel in Resources */,
 				A32E07731C0749CF0075E6E8 /* Quicksand-Regular.otf in Resources */,
 				A3FFD7101C10AB4F00AB1038 /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -994,11 +1030,15 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(PROJECT_DIR)/Mixpanel",
 				);
 				INFOPLIST_FILE = NeedlIOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = NeedlIOS;
 				PROVISIONING_PROFILE = "";
@@ -1022,6 +1062,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(PROJECT_DIR)/Mixpanel",
 				);
 				INFOPLIST_FILE = NeedlIOS/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

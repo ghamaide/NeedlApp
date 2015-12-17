@@ -142,6 +142,10 @@ export class FriendsActions {
   setVersion(version) {
     this.dispatch(version);
   }
+
+  showedCurrentPosition(showed) {
+    this.dispatch(showed);
+  }
 }
 
 export default alt.createActions(FriendsActions);

@@ -44,8 +44,8 @@ class Toggle extends Component {
     }
       
     return (
-      <View style={{alignItems: 'center', width: this.props.width}}>
-        <TouchableHighlight style={[{
+      <View key={this.props.key} style={{alignItems: 'center', width: this.props.width}}>
+        <TouchableHighlight key="toggle_button" style={[{
           width: this.props.size,
           height: this.props.size,
           borderRadius: this.props.size / 2,
@@ -73,7 +73,7 @@ class Toggle extends Component {
           </Animated.View>
         </TouchableHighlight>
         {this.props.label ? [
-          <Text style={{
+          <Text key="toggle_text" style={{
             fontSize: this.props.fontSize ? this.props.fontSize : 13,
             marginLeft: this.props.marginLeft ? this.props.marginLeft : 5,
             marginTop: 0,

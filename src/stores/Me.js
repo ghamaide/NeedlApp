@@ -19,6 +19,8 @@ export class MeStore extends CachedStore {
 
     this.hasBeenUploadWelcomed = false;
 
+    this.showedCurrentPosition = false;
+
     this.showTabBar = true;
 
     this.version = 0;
@@ -61,6 +63,8 @@ export class MeStore extends CachedStore {
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
       
       handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
+
+      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
 
       handleSetVersion: MeActions.SET_VERSION
     });
@@ -175,6 +179,10 @@ export class MeStore extends CachedStore {
 
   handleSetVersion(version) {
     this.version = version;
+  }
+
+  handleShowedCurrentPosition(showed) {
+    this.showedCurrentPosition = showed;
   }
 
   static uploadingContactsError() {

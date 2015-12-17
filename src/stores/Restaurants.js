@@ -413,11 +413,23 @@ export class RestaurantsStore extends CachedStore {
     },
     {
       label: 'Convivial',
-      icon: require('../assets/img/ambiances/icons/typique.png')
+      icon: require('../assets/img/ambiances/icons/convivial.png')
     },
     {
       label: 'Romantique',
       icon: require('../assets/img/ambiances/icons/romantique.png')
+    },
+    {
+      label: 'Branché',
+      icon: require('../assets/img/ambiances/icons/branche.png')
+    },
+    {
+      label: 'Typique',
+      icon: require('../assets/img/ambiances/icons/typique.png')
+    },
+    {
+      label: 'Cosy',
+      icon: require('../assets/img/ambiances/icons/cosy.png')
     },
     {
       label: 'Inclassable',
@@ -443,7 +455,7 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/occasions/icons/entre_amis.png')
     },
     {
-      label: 'Grandes tablees',
+      label: 'Groupe',
       icon: require('../assets/img/occasions/icons/grandes_tablees.png')
     },
     {
@@ -452,11 +464,15 @@ export class RestaurantsStore extends CachedStore {
     },
     {
       label: 'Terrasse',
-      icon: require('../assets/img/ambiances/icons/terrasse.png')
+      icon: require('../assets/img/occasions/icons/terrasse.png')
     },
     {
       label: 'Fast',
-      icon: require('../assets/img/ambiances/icons/fast.png')
+      icon: require('../assets/img/occasions/icons/fast.png')
+    },
+    {
+      label: 'Date',
+      icon: require('../assets/img/occasions/icons/date.png')
     }
   ];
 
@@ -652,7 +668,7 @@ export class RestaurantsStore extends CachedStore {
       return true;
     });
 
-    return filteredRestaurants;
+    return _.sortByOrder(filteredRestaurants, ['score'], ['desc']);
   }
 
   static filterActive() {

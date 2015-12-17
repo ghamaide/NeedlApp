@@ -118,12 +118,12 @@ class Friends extends Page {
 
     return (
       <View style={styles.emptyContainer}>
+        {refreshingIndicator}
         <View style={styles.textContainerWrapper}>
-          <TouchableHighlight style={styles.textContainer} underlayColor='rgba((239, 88, 45, 0.4)' onPress={() => this.props.navigator.push(InviteFriend.route())}>
+          <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriend.route())}>
             <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
           </TouchableHighlight>
         </View>
-        {refreshingIndicator}
       </View>
     );
   }
