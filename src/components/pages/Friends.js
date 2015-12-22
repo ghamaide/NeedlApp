@@ -2,7 +2,7 @@
 
 import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
 import _ from 'lodash';
-//import SGListView from 'react-native-sglistview';
+
 import RefreshableListView from 'react-native-refreshable-listview';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
@@ -12,7 +12,6 @@ import FriendsStore from '../../stores/Friends';
 
 import Page from '../ui/Page';
 import Profil from './Profil';
-import AddFriend from './AddFriend';
 import InviteFriend from './InviteFriend';
 import FriendsRequests from './FriendsRequests';
 
@@ -131,6 +130,9 @@ class Friends extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
+        {_.map(this.state.errors, (err) => {
+          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
+        })}
         {this.state.nbRequests ?
           <TouchableHighlight onPress={() => {
             this.props.navigator.push(FriendsRequests.route());

@@ -55,7 +55,9 @@ class Liste extends Page {
   }
 
   componentWillMount() {
-  	MeActions.displayTabBar(true);
+  	if (!MeStore.getState().showTabBar) {
+  		MeActions.displayTabBar(true);
+  	}
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   }
@@ -75,7 +77,8 @@ class Liste extends Page {
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
-      	isNeedl={restaurant.score <= 15}
+      	rank={_.findIndex(this.state.data, restaurant) + 1}
+      	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         pictures={restaurant.pictures}
         subway={restaurant.subways[1][0]}
@@ -92,7 +95,6 @@ class Liste extends Page {
   }
 
   renderHeaderWrapper = (refreshingIndicator) => {
-  	console.log(this.state.data.length);
   	if (!this.state.data.length) {
   		return(
   			<View>

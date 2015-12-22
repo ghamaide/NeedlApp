@@ -52,6 +52,15 @@ class Restaurant extends Component {
             {this.props.isNeedl ? 
               <Image style={styles.imageNeedl} source={require('../../assets/img/other/images/logo.png')} />
              : null}
+            {!this.props.isNeedl && this.props.rank === 1 ?
+              <Image style={[styles.imageRank, {tintColor: 'gold'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
+            {!this.props.isNeedl && this.props.rank === 2 ?
+              <Image style={[styles.imageRank, {tintColor: 'silver'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
+            {!this.props.isNeedl && this.props.rank === 3 ?
+              <Image style={[styles.imageRank, {tintColor: 'brown'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
           </View>
         </Image>
       </View>
@@ -143,6 +152,13 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: 5,
     right: 5
+  },
+  imageRank: {
+    width: 12,
+    height: 30,
+    position: 'absolute',
+    top: 0,
+    right: 10
   }
 });
 

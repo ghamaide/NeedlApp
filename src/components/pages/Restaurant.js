@@ -162,6 +162,7 @@ class Restaurant extends Page {
 
         <View key="restaurant_image" style={styles.header}>
           <RestaurantElement
+            isNeedl={restaurant.score <= 5}
             key={restaurant.id}
             name={restaurant.name}
             pictures={restaurant.pictures}

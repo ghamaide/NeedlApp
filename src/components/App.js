@@ -94,7 +94,6 @@ class App extends Component {
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
     MeActions.resetBadgeNumber();
-
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();
     StatusBarIOS.setStyle('default');

@@ -52,7 +52,7 @@ class Carte extends Page {
     this.state.showsUserLocation = false;
     this.state.initialPosition = 'unknown';
     this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
-    this.state.defaultLatitudeDelta = 3 / 110.574;
+    this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
 
     this.state.center = {
@@ -181,6 +181,7 @@ class Carte extends Page {
             {_.map(this.state.data, (restaurant) => {
               return (
                 <RestaurantElement
+                  isNeedl={restaurant.score <= 5}
                   key={restaurant.id}
                   name={restaurant.name}
                   pictures={restaurant.pictures}
