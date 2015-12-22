@@ -6,153 +6,165 @@ import request from '../utils/api';
 export class FriendsActions {
 
   fetchFriends() {
-    //this.dispatch();
+    return (dispatch) => {
+      //dispatch();
+      request('GET', '/api/friendships')
+        .end((err, result) => {
+          if (err) {
+            return this.friendsFetchFailed(err);
+          }
 
-    request('GET', '/api/friendships')
-      .end((err, result) => {
-        if (err) {
-          return this.actions.friendsFetchFailed(err);
-        }
-
-        this.actions.friendsFetched(result);
-      });
+          this.friendsFetched(result);
+        });
+    }
   }
 
   friendsFetched(friends) {
-    this.dispatch(friends);
+    return friends;
   }
 
   friendsFetchFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   fetchPotentialFriends() {
-    //this.dispatch();
+    return (dispatch) => {
+      //dispatch();
 
-    request('GET', '/api/friendships/new')
-      .end((err, result) => {
-        if (err) {
-          return this.actions.friendsFetchFailed(err);
-        }
+      request('GET', '/api/friendships/new')
+        .end((err, result) => {
+          if (err) {
+            return this.friendsFetchFailed(err);
+          }
 
-        this.actions.friendsFetched(result);
-      });
+          this.friendsFetched(result);
+        });
+    }
   }
 
   potentialFriendsFetched(friends) {
-    this.dispatch(friends);
+    return friends;
   }
 
   potentialFriendsFetchFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   removeFriendship(id, callback) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
+    
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          destroy: true
+        })
+        .end((err) => {
+          if (err) {
+            return this.removeFriendshipFailed(id, err);
+          }
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        destroy: true
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.removeFriendshipFailed(id, err);
-        }
+          this.removeFriendshipSuccess(id);
 
-        this.actions.removeFriendshipSuccess(id);
-
-        if (callback) {
-          callback();
-        }
-      });
+          if (callback) {
+            callback();
+          }
+        });
+    }
   }
 
   removeFriendshipSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   removeFriendshipFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 
   proposeFriendship(id) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
+    
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          accepted: false
+        })
+        .end((err) => {
+          if (err) {
+            return this.proposeFriendshipFailed(id, err);
+          }
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        accepted: false
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.proposeFriendshipFailed(id, err);
-        }
-
-        this.actions.proposeFriendshipSuccess(id);
-      });
+          this.proposeFriendshipSuccess(id);
+        });
+    }
   }
 
   proposeFriendshipSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   proposeFriendshipFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 
   ignoreFriendship(id) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          'not_interested': true
+        })
+        .end((err) => {
+          if (err) {
+            return this.ignoreFriendshipFailed(id, err);
+          }
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        'not_interested': true
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.ignoreFriendshipFailed(id, err);
-        }
-
-        this.actions.ignoreFriendshipSuccess(id);
-      });
+          this.ignoreFriendshipSuccess(id);
+        });
+      }
   }
 
   ignoreFriendshipSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   ignoreFriendshipFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 
   acceptFriendship(id) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        accepted: true
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.acceptFriendshipFailed(id, err);
-        }
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          accepted: true
+        })
+        .end((err) => {
+          if (err) {
+            return this.acceptFriendshipFailed(id, err);
+          }
 
-        this.actions.acceptFriendshipSuccess(id);
-      });
+          this.acceptFriendshipSuccess(id);
+        });
+    }
   }
 
   acceptFriendshipSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   acceptFriendshipFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 
   requestsSeen() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 }
 

@@ -105,7 +105,11 @@ class Liste extends Page {
 	  		</View>
   		);
   	} else {
-  		return {refreshingIndicator};
+  		return (
+  			<View>
+	   			{refreshingIndicator}
+	   		</View>
+  		);
   	}
   }
 

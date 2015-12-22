@@ -112,7 +112,11 @@ class Friends extends Page {
     var nbPot = FriendsStore.getState().data.friends.length;
 
     if (nbPot) {
-      return ({refreshingIndicator});
+      return (
+        <View>
+          {refreshingIndicator}
+        </View>
+      );
     }
 
     return (

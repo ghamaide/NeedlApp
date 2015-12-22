@@ -6,133 +6,146 @@ import request from '../utils/api';
 export class RestaurantsActions {
 
   fetchRestaurants() {
-    //this.dispatch();
+    return (dispatch) => {
+      //dispatch();
 
-    request('GET', '/api/restaurants')
-      .end((err, result) => {
-        if (err) {
-          return this.actions.restaurantsFetchFailed(err);
-        }
-        this.actions.restaurantsFetched(result);
-      });
+      request('GET', '/api/restaurants')
+        .end((err, result) => {
+          console.log(err);
+          if (err) {
+            return this.restaurantsFetchFailed(err);
+          }
+          this.restaurantsFetched(result);
+        });
+    }
   }
 
   restaurantsFetched(restaurants) {
-    this.dispatch(restaurants);
+    return restaurants;
   }
 
   restaurantsFetchFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   fetchRestaurant(id) {
-    //this.dispatch(id);
+    return (dispatch) => {
+      //dispatch(id);
 
-    request('GET', '/api/restaurants/' + id)
-      .end((err, result) => {
-        if (err) {
-          return this.actions.restaurantFetchFailed(err, id);
-        }
-        this.actions.restaurantFetched(result);
-      });
+      request('GET', '/api/restaurants/' + id)
+        .end((err, result) => {
+          if (err) {
+            return this.restaurantFetchFailed(err, id);
+          }
+          this.restaurantFetched(result);
+        });
+    }
   }
 
   restaurantFetched(restaurant) {
-    this.dispatch(restaurant);
+    return restaurant;
   }
 
   restaurantFetchFailed(err, id) {
-    this.dispatch({err: err, id: id});
+    return {err: err, id: id};
   }
 
   addWish(restaurant) {
-    this.dispatch(restaurant);
+    return (dispatch) => {
+      dispatch(restaurant);
 
-    request('GET', '/api/wishes')
-      .query({
-        'restaurant_id': restaurant.id
-      })
-      .end((err, restaurantUpdated) => {
-        if (err) {
-          return this.actions.addWishFailed(err, restaurant);
-        }
+      request('GET', '/api/wishes')
+        .query({
+          'restaurant_id': restaurant.id
+        })
+        .end((err, restaurantUpdated) => {
+          if (err) {
+            return this.addWishFailed(err, restaurant);
+          }
 
-        this.actions.addWishSuccess(restaurantUpdated);
-      });
+          this.addWishSuccess(restaurantUpdated);
+        });
+    }
   }
 
   addWishFailed(err, restaurant) {
-    this.dispatch({err: err, restaurant: restaurant});
+    return {err: err, restaurant: restaurant};
   }
 
   addWishSuccess(restaurant) {
-    this.dispatch(restaurant);
+    return restaurant;
   }
 
   removeWish(restaurant, callback) {
-    this.dispatch(restaurant);
+    return (dispatch) => {
+      dispatch(restaurant);
 
-    request('GET', '/api/wishes')
-      .query({
-        'restaurant_id': restaurant.id,
-        destroy: true
-      })
-      .end((err, restaurantUpdated) => {
-        if (err) {
-          return this.actions.removeWishFailed(err, restaurant);
-        }
+      request('GET', '/api/wishes')
+        .query({
+          'restaurant_id': restaurant.id,
+          destroy: true
+        })
+        .end((err, restaurantUpdated) => {
+          if (err) {
+            return this.removeWishFailed(err, restaurant);
+          }
 
-        this.actions.removeWishSuccess(restaurantUpdated);
+          this.removeWishSuccess(restaurantUpdated);
 
-        callback();
-      });
+          callback();
+        });
+    }
   }
 
   removeWishFailed(err, restaurant) {
-    this.dispatch({err: err, restaurant: restaurant});
+    return {err: err, restaurant: restaurant};
   }
 
   removeWishSuccess(restaurant) {
-    this.dispatch(restaurant);
+    return restaurant;
   }
 
   removeReco(restaurant, callback) {
-    this.dispatch(restaurant);
+    return (dispatch) => {
+      dispatch(restaurant);
 
-    request('GET', '/api/recommendations')
-      .query({
-        'restaurant_id': restaurant.id,
-        destroy: true
-      })
-      .end((err, restaurants) => {
-        if (err) {
-          return this.actions.removeRecoFailed(err, restaurant);
-        }
+      request('GET', '/api/recommendations')
+        .query({
+          'restaurant_id': restaurant.id,
+          destroy: true
+        })
+        .end((err, restaurants) => {
+          if (err) {
+            return this.removeRecoFailed(err, restaurant);
+          }
 
-        this.actions.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
+          this.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
 
-        callback();
-      });
+          callback();
+        });
+    }
   }
 
   removeRecoFailed(err, restaurant) {
-    this.dispatch({err: err, restaurant: restaurant});
+    return {err: err, restaurant: restaurant};
   }
 
   removeRecoSuccess(restaurant) {
-    this.dispatch(restaurant);
+    return restaurant;
   }
 
   setFilter(label, ids) {
-    this.dispatch({label: label, ids: ids});
+    return {label: label, ids: ids};
   }
 
   setRegion(radius, long, lat, deltaLong, deltaLat, longCentre, latCentre, width, mapHeight) {
-    this.dispatch({radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight});
+    return {radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight};
   }
 
   clearFilters() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch();
+    }
   }
 }
 

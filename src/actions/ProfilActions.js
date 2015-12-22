@@ -6,74 +6,80 @@ import request from '../utils/api';
 export class ProfilActions {
 
   fetchProfil(id) {
-    //this.dispatch(id);
+    return (dispatch) => {
+      //dispatch(id);
 
-    request('GET', '/api/users/' + id)
-      .end((err, result) => {
-        if (err) {
-          return this.actions.profilFetchFailed(err, id);
-        }
+      request('GET', '/api/users/' + id)
+        .end((err, result) => {
+          if (err) {
+            return this.profilFetchFailed(err, id);
+          }
 
-        this.actions.profilFetched(result);
-      });
+          this.profilFetched(result);
+        });
+    }
   }
 
   profilFetched(profil) {
-    this.dispatch(profil);
+    return profil;
   }
 
   profilFetchFailed(err, id) {
-    this.dispatch({err: err, id: id});
+    return {err: err, id: id};
   }
 
   maskProfil(id) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        invisible: true
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.maskProfilFailed(id, err);
-        }
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          invisible: true
+        })
+        .end((err) => {
+          if (err) {
+            return this.maskProfilFailed(id, err);
+          }
 
-        this.actions.maskProfilSuccess(id);
-      });
+          this.maskProfilSuccess(id);
+        });
+    }
   }
 
   maskProfilSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   maskProfilFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 
   displayProfil(id) {
-    this.dispatch(id);
+    return (dispatch) => {
+      dispatch(id);
 
-    request('GET', '/api/friendships')
-      .query({
-        'friend_id': id,
-        invisible: false
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.displayProfilFailed(id, err);
-        }
+      request('GET', '/api/friendships')
+        .query({
+          'friend_id': id,
+          invisible: false
+        })
+        .end((err) => {
+          if (err) {
+            return this.displayProfilFailed(id, err);
+          }
 
-        this.actions.displayProfilSuccess(id);
-      });
+          this.displayProfilSuccess(id);
+        });
+    }
   }
 
   displayProfilSuccess(id) {
-    this.dispatch(id);
+    return id;
   }
 
   displayProfilFailed(id, err) {
-    this.dispatch({id: id, err: err});
+    return {id: id, err: err};
   }
 }
 

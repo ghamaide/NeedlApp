@@ -6,34 +6,38 @@ import LoginUtils from '../utils/login';
 export class LoginActions {
 
   loginSuccess(me) {
-    this.dispatch(me);
+    return me;
   }
 
   loginFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   loginCancelled() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   logout() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   login() {
-    this.dispatch();
-
-    LoginUtils.facebook((err, me) => {
-      if (err) {
-        return this.actions.loginFailed(err);
-      }
-
-      if (err === 'cancelled') {
-        return this.actions.loginCancelled();
-      }
-      this.actions.loginSuccess(me);
-    });
+    return (dispatch) => {
+      dispatch()
+      LoginUtils.facebook((err, me) => {
+        if (err === 'cancelled') {
+          return this.loginCancelled();
+        }
+        if (err) {
+          return this.loginFailed(err);
+        }
+        this.loginSuccess(me);
+      });
+    }
   }
 }
 
