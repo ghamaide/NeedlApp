@@ -65,10 +65,11 @@ class Notifs extends Page {
   }
 
   onNotifsChange = () => {
-    this.setState(Notifs.notifsState);
+    //this.setState(Notifs.notifsState);
   }
 
   onRefresh() {
+    NotifsActions.notifsSeen();
     NotifsActions.fetchNotifs();
   }
 
@@ -76,7 +77,11 @@ class Notifs extends Page {
     var nbPot = NotifsStore.getState().notifs.length;
 
     if (nbPot) {
-      return ({refreshingIndicator});
+      return (
+        <View>
+          {refreshingIndicator}
+        </View>
+      );
     }
 
     return (

@@ -117,7 +117,7 @@ class Profil extends Page {
             return (
               <RestaurantElement
                 height={150}
-                style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 60}}
+                style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 65}}
                 key={restaurant.id}
                 name={restaurant.name}
                 pictures={[restaurant.picture]}
@@ -143,7 +143,11 @@ class Profil extends Page {
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
         onScroll={this.onScroll}
-        scrollEventThrottle={16}>
+        scrollEventThrottle={16}
+        onRefreshStart={(endRefreshing) => {
+          ProfilActions.fetchProfil(this.currentProfil());
+          endRefreshing();
+        }}>
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>

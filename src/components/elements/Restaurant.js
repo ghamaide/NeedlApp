@@ -13,13 +13,13 @@ class Restaurant extends Component {
     }).join('') + (this.props.budget > 3 ? '+' : '');
 
     if (budget === '€') {
-      emptyBudget = '€€+';
+      var emptyBudget = '€€+';
     } else if (budget === '€€') {
-      emptyBudget = '€+';
+      var emptyBudget = '€+';
     } else if (budget ==='€€€') {
-      emptyBudget = '+';
+      var emptyBudget = '+';
     } else if (budget === '€€€+') {
-      emptyBudget = '';
+      var emptyBudget = '';
     }
 
     var content = (

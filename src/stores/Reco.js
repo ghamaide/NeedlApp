@@ -24,7 +24,6 @@ export class RecoStore {
       handleFetchRestaurants: RecoActions.FETCH_RESTAURANTS,
       handleRestaurantsFetched: RecoActions.RESTAURANTS_FETCHED,
       handleRestaurantsFetchFailed: RecoActions.RESTAURANTS_FETCH_FAILED,
-      handleReset: RecoActions.RESET,
       handleSaveReco: RecoActions.SAVE_RECO,
       handleRecoSaveFailed: RecoActions.RECO_SAVE_FAILED,
       handleRecoSaved: RecoActions.RECO_SAVED,
@@ -71,17 +70,6 @@ export class RecoStore {
 
   handleRecoSaveFailed(data) {
     this.errSave = data.err;
-  }
-
-  handleReset() {
-    this.waitFor(MeStore);
-    this.restaurants = [];
-    this.query = null;
-    this.saved = false;
-    this.status.reco = {};
-    delete this.errSave;
-    this.status.getRecoLoading = false;
-    this.status.getRecoError = null;
   }
 
   handleFetchRestaurants(query) {

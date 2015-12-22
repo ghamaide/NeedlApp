@@ -4,68 +4,78 @@ import alt from '../alt';
 import request from '../utils/api';
 import MeStore from '../stores/Me';
 
-export class FriendsActions {
+export class MeActions {
 
   edit(name, email, success) {
-    this.dispatch();
+    return (dispatch) => {
+      dispatch();
 
-    request('GET', '/api/registrations/' + MeStore.getState().me.id + '/edit')
-      .query({
-        name: name,
-        email: email
-      })
-      .end((err) => {
-        if (err) {
-          return this.actions.editFailed(err);
-        }
-
-        this.actions.editSuccess({
+      request('GET', '/api/registrations/' + MeStore.getState().me.id + '/edit')
+        .query({
           name: name,
           email: email
-        });
+        })
+        .end((err) => {
+          if (err) {
+            return this.editFailed(err);
+          }
 
-        success();
-      });
+          this.editSuccess({
+            name: name,
+            email: email
+          });
+
+          success();
+        });
+    }
   }
 
   editSuccess(data) {
-    this.dispatch(data);
+    return data;
   }
 
   editFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   cleanEditError() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   uploadList(uri, callback) {
-    this.dispatch();
+    return (dispatch) => {
+      dispatch();
 
-    request.uploadPhoto('picture', uri, '/api/user_wishlist_pictures.json', (err) => {
-      if (err) {
-        return this.actions.uploadListFailed(err);
-      }
+      request.uploadPhoto('picture', uri, '/api/user_wishlist_pictures.json', (err) => {
+        if (err) {
+          return this.uploadListFailed(err);
+        }
 
-      this.actions.uploadListSuccess();
+        this.uploadListSuccess();
 
-      if (callback) {
-        callback();
-      }
-    });
+        if (callback) {
+          callback();
+        }
+      });
+    }
   }
 
   uploadListFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   uploadListSuccess() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   hasBeenUploadWelcomed() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch();
+    }
   }
 
   saveDeviceToken(token) {
@@ -80,72 +90,83 @@ export class FriendsActions {
   }
 
   resetBadgeNumber() {
-    request('GET', '/api/users/reset_badge_to_zero')
-      .end((err) => {
-        console.log(err);
-      });
+    return (dispatch) => {
+      //dispatch();
+      request('GET', '/api/users/reset_badge_to_zero')
+        .end((err) => {
+          console.log(err);
+        });
+    }
   }
 
   uploadContacts(data) {
-    this.dispatch();
+    return (dispatch) => {
+      dispatch();
 
-    request('POST', '/api/users/contacts_access')
-      .send({
-        'contact_list': data
-      })
-      .set('Accept', 'application/json')
-      .end((err) => {
-        if(err) {
-          return this.actions.uploadContactsFailed(err);
-        }
+      request('POST', '/api/users/contacts_access')
+        .send({
+          'contact_list': data
+        })
+        .set('Accept', 'application/json')
+        .end((err) => {
+          if(err) {
+            return this.uploadContactsFailed(err);
+          }
 
-        this.actions.uploadContactsSuccess();
-      });
+          this.uploadContactsSuccess();
+        });
+    }
   }
 
   uploadContactsFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   uploadContactsSuccess() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   sendMessageContact(data) {
-    this.dispatch();
+   return (dispatch) => {
+      dispatch();
 
-    request('POST', '/api/users/invite_contact')
-      .send({
-        'contact' : data
-      })
-      .end((err) => {
-        if(err) {
-          return this.actions.sendMessageContactFailed(err);
-        }
+      request('POST', '/api/users/invite_contact')
+        .send({
+          'contact' : data
+        })
+        .end((err) => {
+          if(err) {
+            return this.sendMessageContactFailed(err);
+          }
 
-        this.actions.sendMessageContactSuccess();
-      });
+          this.sendMessageContactSuccess();
+        });
+    }
   }
 
   sendMessageContactFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   sendMessageContactSuccess() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch()
+    }
   }
 
   displayTabBar(display) {
-    this.dispatch(display);
+    return display;
   }
 
   setVersion(version) {
-    this.dispatch(version);
+    return version;
   }
 
   showedCurrentPosition(showed) {
-    this.dispatch(showed);
+    return showed;
   }
 }
 
-export default alt.createActions(FriendsActions);
+export default alt.createActions(MeActions);

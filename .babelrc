@@ -3,6 +3,6 @@
   "compact": true,
   "comments": false,
   "plugins": [],
-  "presets": ["es2015", "stage-0", "react"],
+  "presets": ["stage-0", "react"],
   "sourceMaps": false,
 }

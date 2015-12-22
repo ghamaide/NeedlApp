@@ -32,7 +32,6 @@ class RecoStep1 extends Component {
 
   componentWillMount() {
     RecoStore.listen(this.onRecoChange);
-    RecoActions.reset();
   }
 
   componentWillUnmount() {
@@ -83,9 +82,11 @@ class RecoStep1 extends Component {
 
   renderBlankScreen(content) {
     return (
-      <View style={styles.viewContainer}>
-        {content}
-      </View>
+      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={styles.viewContainer} onPress={this.closeKeyboard}>
+        <View>
+          {content}
+        </View>
+      </TouchableHighlight>
     );
   }
 

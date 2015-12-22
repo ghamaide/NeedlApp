@@ -146,11 +146,9 @@ class TabView extends Component {
   }
 
   componentDidMount() {
-    this.props.onTab(this.state.selected);
-  }
-
-  componentWillMount() {
     MeStore.listen(this.onMeChange);
+    this.setState({showTabBar: MeStore.getState().showTabBar});
+    this.props.onTab(this.state.selected);
   }
 
   componentWillUnmount() {

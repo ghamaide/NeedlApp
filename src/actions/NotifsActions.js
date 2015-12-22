@@ -6,28 +6,32 @@ import request from '../utils/api';
 export class NotifsActions {
 
   fetchNotifs() {
-    //this.dispatch();
+    return (dispatch) => {
+      //dispatch();
 
-    request('GET', '/api/recommendations')
-      .end((err, result) => {
-        if (err) {
-          return this.actions.notifsFetchFailed(err);
-        }
+      request('GET', '/api/recommendations')
+        .end((err, result) => {
+          if (err) {
+            return this.notifsFetchFailed(err);
+          }
 
-        this.actions.notifsFetched(result);
-      });
+          this.notifsFetched(result);
+        });
+    }
   }
 
   notifsFetched(notifs) {
-    this.dispatch(notifs);
+    return notifs;
   }
 
   notifsFetchFailed(err) {
-    this.dispatch(err);
+    return err;
   }
 
   notifsSeen() {
-    this.dispatch();
+    return function (dispatch) {
+      dispatch();
+    }
   }
 }
 

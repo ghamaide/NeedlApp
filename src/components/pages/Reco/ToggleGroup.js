@@ -6,7 +6,7 @@ import _ from 'lodash';
 import Toggle from './Toggle';
 
 function toggle (group) {
-  return class ControllerToggle {
+  return class ControllerToggle extends Component{
     render() {
       return <Toggle {...this.props}
         onSelect={group.onSelect}
