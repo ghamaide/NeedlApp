@@ -23,7 +23,6 @@ class Occasion extends Component {
   }
 
   occasionState() {
-    console.log(RestaurantsStore.searchableOccasions());
     var occasions = _.map(RestaurantsStore.searchableOccasions(), function(occasion) {
       return {
         value: RestaurantsStore.MAP_OCCASIONS[occasion].label,
@@ -80,7 +79,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
     borderTopWidth: 0.5,
-    borderColor: '#EF582D'
+    borderColor: '#DDDDDD'
   },
   row: {
     padding: 10,

@@ -1,7 +1,9 @@
 'use strict';
 
-import React, {View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight} from 'react-native';
+import React, {NativeModules, View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight, Dimensions, Image} from 'react-native';
 import _ from 'lodash';
+import SearchBar from 'react-native-search-bar';
+import Animatable from 'react-native-animatable';
 
 import RecoActions from '../../../actions/RecoActions';
 import RecoStore from '../../../stores/Reco';
@@ -41,6 +43,10 @@ class RecoStep1 extends Component {
     this.setState(RecoStep1.getRecoState());
   }
 
+  closeKeyboard = () => {
+    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+  }
+
   renderRestaurant = (restaurant) => {
     return (
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
@@ -63,13 +69,16 @@ class RecoStep1 extends Component {
   }
 
   renderRestaurants() {
-    return <ListView
-      style={styles.restaurantsList}
-      dataSource={this.state.restaurants}
-      renderRow={this.renderRestaurant}
-      contentInset={{top: 0}}
-      automaticallyAdjustContentInsets={false}
-      showsVerticalScrollIndicator={false} />;
+    return (
+      <ListView
+        style={styles.restaurantsList}
+        dataSource={this.state.restaurants}
+        renderRow={this.renderRestaurant}
+        contentInset={{top: 0}}
+        onScroll={this.closeKeyboard}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false} />
+    );
   }
 
   renderBlankScreen(content) {
@@ -101,17 +110,27 @@ class RecoStep1 extends Component {
 
     return (
      <View style={styles.container}>
-      {!MeStore.getState().me.HAS_SHARED ?
-        <View style={styles.firstMessage}>
-          <Text style={styles.firstMessageText}>Partage ta première reco avant de découvrir celles de tes amis !</Text>
-        </View>
+      <SearchBar
+        ref='searchBar'
+        placeholder='Sélectionne ton restaurant'
+        hideBackground={true}
+        textFieldBackgroundColor='#DDDDDD'
+        onChangeText={this.onRestaurantQuery} />
+
+      {!MeStore.getState().me.HAS_SHARED && !this.state.query ?
+        <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <Animatable.Image
+              animation="slideInDown"
+              iterationCount="infinite"
+              direction="alternate"
+              duration={1000}
+              style={styles.arrowUp}
+              source={require('../../../assets/img/other/icons/arrow_up.png')} />
+            <Text style={styles.firstMessageText}>Partage ta première reco !</Text>
+          </View>
+        </TouchableHighlight>
       : null}
-      <TextInput
-        style={styles.restaurantQueryInput}
-        autoCorrent={false}
-        onChangeText={this.onRestaurantQuery}
-        value={this.state.query}
-        placeholder="Sélectionne le bon restaurant"/>
 
         {content}
 
@@ -127,26 +146,18 @@ class RecoStep1 extends Component {
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF'
-  },
-  firstMessage: {
-    backgroundColor: '#38E1B2',
-    padding: 10
-  },
-  firstMessageText: {
-    color: 'white',
-    fontSize: 15,
-    fontWeight: '500',
-    textAlign: 'center'
+    backgroundColor: '#FFFFFF',
+    paddingBottom: 10
   },
   restaurantQueryInput: {
-    height: 30,
-    backgroundColor: '#DDD',
+    height: 50,
+    backgroundColor: '#DDDDDD',
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
     margin: 10,
-    fontSize: 13
+    fontSize: 14,
+    color: '#222222'
   },
   restaurantsList: {
     flex: 1,
@@ -157,17 +168,37 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 10,
     borderBottomWidth: 0.5,
-    borderColor: '#EF582D'
+    borderColor: '#DDDDDD'
   },
   viewContainer: {
     backgroundColor: '#FFFFFF',
     flex: 1,
     alignItems: 'center',
-    padding: 10
+    padding: 10,
+    height: 100
   },
   noResultText: {
     fontWeight: 'bold',
     color: '#000000'
+  },
+  firstMessage: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  firstMessageText: {
+    color: '#000000',
+    fontSize: 15,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginTop: 20
+  },
+  arrowUp: {
+    width: 50,
+    height: 50,
+    margin: 5
   }
 });
 

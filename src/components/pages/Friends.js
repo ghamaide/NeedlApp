@@ -1,15 +1,17 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
 import _ from 'lodash';
-import SGListView from 'react-native-sglistview';
+
+import RefreshableListView from 'react-native-refreshable-listview';
+import SearchBar from 'react-native-search-bar';
+import Animatable from 'react-native-animatable';
 
 import FriendsActions from '../../actions/FriendsActions';
 import FriendsStore from '../../stores/Friends';
 
 import Page from '../ui/Page';
 import Profil from './Profil';
-import AddFriend from './AddFriend';
 import InviteFriend from './InviteFriend';
 import FriendsRequests from './FriendsRequests';
 
@@ -30,7 +32,8 @@ class Friends extends Page {
   friendsState() {
     return {
       data: (FriendsStore.getState().data.friends.length || !FriendsStore.loading()) && {
-        friends: friendsSource.cloneWithRows(FriendsStore.getState().data.friends)
+        friends: FriendsStore.getState().data.friends,
+        filteredFriends : FriendsStore.getState().data.friends
       },
       loading: FriendsStore.loading(),
       error: FriendsStore.error(),
@@ -68,6 +71,27 @@ class Friends extends Page {
     this.setState(this.friendsState());
   }
 
+  searchFriends = (searchedText) => {
+    var newFilteredFriends = _.filter(this.state.data.friends, function(friend) {
+      return friend.name.indexOf(searchedText) > -1;
+    });
+
+    var filteredData = {
+      friends: this.state.data.friends,
+      filteredFriends: newFilteredFriends
+    }
+
+    this.setState({data: filteredData});
+  }
+
+  closeKeyboard = () => {
+    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+  }
+
+  onRefresh = () => {
+    FriendsActions.fetchFriends();
+  }
+
   renderFriend = (friend) => {
     return (
       <TouchableHighlight style={styles.friendRowWrapper} underlayColor="#FFFFFF" onPress={() => {
@@ -84,39 +108,60 @@ class Friends extends Page {
     );
   }
 
-  renderHeader = () => {
+  renderHeader = (refreshingIndicator) => {
     var nbPot = FriendsStore.getState().data.friends.length;
 
     if (nbPot) {
-      return null;
+      return ({refreshingIndicator});
     }
 
-    return <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, ajoutes en !</Text>
-    </View>;
+    return (
+      <View style={styles.emptyContainer}>
+        {refreshingIndicator}
+        <View style={styles.textContainerWrapper}>
+          <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriend.route())}>
+            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
   }
 
   renderPage() {
-    return <View style={{flex: 1}}>
-      {this.state.nbRequests ?
-        <TouchableHighlight onPress={() => {
-          this.props.navigator.push(FriendsRequests.route());
-        }}>
-          <View style={styles.nbRequestsContainer}>
-            <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
-          </View>
-        </TouchableHighlight>
-        : null}
-      <SGListView
-        style={styles.friendsList}
-        dataSource={this.state.data.friends}
-        renderRow={this.renderFriend}
-        renderHeader={this.renderHeader}
-        contentInset={{top: 0}}
-        scrollRenderAheadDistance={150}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false} />
-    </View>;
+    return (
+      <View style={{flex: 1}}>
+        {_.map(this.state.errors, (err) => {
+          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
+        })}
+        {this.state.nbRequests ?
+          <TouchableHighlight onPress={() => {
+            this.props.navigator.push(FriendsRequests.route());
+          }}>
+            <View style={styles.nbRequestsContainer}>
+              <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
+            </View>
+          </TouchableHighlight>
+          : null}
+        <SearchBar
+          ref='searchBar'
+          placeholder='Search'
+          hideBackground={true}
+          textFieldBackgroundColor='#DDDDDD'
+          onChangeText={this.searchFriends} />
+        <RefreshableListView
+          style={styles.friendsList}
+          dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
+          renderRow={this.renderFriend}
+          renderHeaderWrapper={this.renderHeader}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          loadData={this.onRefresh}
+          onScroll={this.closeKeyboard}
+          refreshDescription="Refreshing..." />
+      </View>
+    );
   }
 }
 
@@ -128,7 +173,7 @@ var styles = StyleSheet.create({
   friendRowWrapper: {
     backgroundColor: 'white',
     borderBottomWidth: 0.5,
-    borderColor: '#EF582D',
+    borderColor: '#DDDDDD',
   },
   friendRow: {
     padding: 20,
@@ -165,13 +210,39 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   emptyContainer: {
+    flex: 1,
     alignItems: 'center',
-    padding: 20
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    backgroundColor: '#FFFFFF'
+  },
+  textContainerWrapper: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 10,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textContainer: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyText: {
+    width: 175,
     textAlign: 'center',
-    fontSize: 14,
-    color: 'white'
+    fontSize: 15,
+    color: '#EF582D',
   }
 });
 

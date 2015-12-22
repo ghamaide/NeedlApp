@@ -12,7 +12,8 @@ class Page extends Component {
         animating={true}
         style={[{height: 80}]}
         size="large" />
-    </View>);
+      </View>
+    );
   }
 
   renderError() {

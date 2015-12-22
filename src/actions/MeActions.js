@@ -29,7 +29,6 @@ export class FriendsActions {
   }
 
   editSuccess(data) {
-    console.log(data);
     this.dispatch(data);
   }
 
@@ -88,8 +87,20 @@ export class FriendsActions {
   }
 
   uploadContacts(data) {
-    //console.log(data);
-    // requets to upload data
+    this.dispatch();
+
+    request('POST', '/api/users/contacts_access')
+      .send({
+        'contact_list': data
+      })
+      .set('Accept', 'application/json')
+      .end((err) => {
+        if(err) {
+          return this.actions.uploadContactsFailed(err);
+        }
+
+        this.actions.uploadContactsSuccess();
+      });
   }
 
   uploadContactsFailed(err) {
@@ -98,6 +109,42 @@ export class FriendsActions {
 
   uploadContactsSuccess() {
     this.dispatch();
+  }
+
+  sendMessageContact(data) {
+    this.dispatch();
+
+    request('POST', '/api/users/invite_contact')
+      .send({
+        'contact' : data
+      })
+      .end((err) => {
+        if(err) {
+          return this.actions.sendMessageContactFailed(err);
+        }
+
+        this.actions.sendMessageContactSuccess();
+      });
+  }
+
+  sendMessageContactFailed(err) {
+    this.dispatch(err);
+  }
+
+  sendMessageContactSuccess() {
+    this.dispatch();
+  }
+
+  displayTabBar(display) {
+    this.dispatch(display);
+  }
+
+  setVersion(version) {
+    this.dispatch(version);
+  }
+
+  showedCurrentPosition(showed) {
+    this.dispatch(showed);
   }
 }
 

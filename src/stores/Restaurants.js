@@ -15,30 +15,17 @@ export class RestaurantsStore extends CachedStore {
     super();
 
     this.filters = {
-      prix: {
-        id: null,
-        value: 'Tous'
-      },
-      food: {
-        id: null,
-        value: 'Tous'
-      },
-      friend: {
-        id: null,
-        value: 'Tous'
-      },
-      metro: {
-        id: null,
-        value: 'Tous'
-      },
-      ambiance: {
-        id: null,
-        value: 'Tous'
-      },
-      occasion: {
-        id: null,
-        value: 'Tous'
-      }
+      prices: [],
+      types: [],
+      ambiences: [],
+      occasions: []
+    };
+
+    this.region = {
+      lat: 48.8534100,
+      long: 2.3378000,
+      deltaLong: 0.12,
+      deltaLat: 0.065
     };
 
     this.restaurants = {};
@@ -78,6 +65,7 @@ export class RestaurantsStore extends CachedStore {
       handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
 
       handleSetFilter: RestaurantsActions.SET_FILTER,
+      handleSetRegion: RestaurantsActions.SET_REGION,
 
       handleProfilInvisible: ProfilActions.MASK_PROFIL_SUCCESS
     });
@@ -107,8 +95,12 @@ export class RestaurantsStore extends CachedStore {
 
   handleSetFilter(data) {
     var newFilters = _.clone(this.filters);
-    newFilters[data.type] = data.filter;
+    newFilters[data.label] = data.ids;
     this.filters = newFilters;
+  }
+
+  handleSetRegion(data) {
+    this.region = data;
   }
 
   handleAddWish(restaurant) {
@@ -398,9 +390,9 @@ export class RestaurantsStore extends CachedStore {
     });
   }
 
-  static searchableAmbiances() {
-    return _.sortBy(_.remove(_.uniq(_.flatten(_.pluck(this.searchable(), 'ambiences'))), function(ambiance) {
-      return !!ambiance;
+  static searchableAmbiences() {
+    return _.sortBy(_.remove(_.uniq(_.flatten(_.pluck(this.searchable(), 'ambiences'))), function(ambience) {
+      return !!ambience;
     }));
   }
 
@@ -410,137 +402,205 @@ export class RestaurantsStore extends CachedStore {
     }));
   }
 
-  static MAP_AMBIANCES = {
-    1: {
+  static MAP_AMBIENCES = [
+    {
       label: 'Chic',
       icon: require('../assets/img/ambiances/icons/chic.png')
     },
-    2: {
+    {
       label: 'Festif',
       icon: require('../assets/img/ambiances/icons/festif.png')
     },
-    6: {
-      label: 'Casual',
-      icon: require('../assets/img/ambiances/icons/casual.png')
+    {
+      label: 'Convivial',
+      icon: require('../assets/img/ambiances/icons/convivial.png')
     },
-    4: {
-      label: 'Ensoleillé',
-      icon: require('../assets/img/ambiances/icons/ensoleille.png')
+    {
+      label: 'Romantique',
+      icon: require('../assets/img/ambiances/icons/romantique.png')
     },
-    5: {
-      label: 'Fast',
-      icon: require('../assets/img/ambiances/icons/fast.png')
+    {
+      label: 'Branché',
+      icon: require('../assets/img/ambiances/icons/branche.png')
     },
-    3: {
+    {
       label: 'Typique',
       icon: require('../assets/img/ambiances/icons/typique.png')
-    }
-  }
-
-  static MAP_AMBIANCES_2 = {
-    1: {
-      label: 'Chic',
-      icon: require('../assets/img/ambiances/icons/chic.png')
     },
-    2: {
-      label: 'Festif',
-      icon: require('../assets/img/ambiances/icons/festif.png')
+    {
+      label: 'Cosy',
+      icon: require('../assets/img/ambiances/icons/cosy.png')
     },
-    //////
-    3: {
-      label: 'Terrasse',
-      icon: require('../assets/img/ambiances/images/terrasse.jpg')
-    },
-    ///////
-    4: {
-      label: 'Bonne Franquette',
-      icon: require('../assets/img/ambiances/images/bonne_franquette.jpg')
-    },
-    5: {
-      label: 'Fast',
-      icon: require('../assets/img/ambiances/icons/fast.png')
-    },
-    ///////
-    6: {
-      label: 'Traditionnel',
-      icon: require('../assets/img/ambiances/images/traditionnel.jpg')
-    },
-    ////////
-    7: {
-      label: 'Romantique',
-      icon: require('../assets/img/ambiances/images/romantique.jpg')
-    },
-    8: {
-      label: 'Autres',
+    {
+      label: 'Inclassable',
       icon: require('../assets/img/ambiances/icons/autre.png')
     }
-  }
+  ];
 
-  static MAP_OCCASIONS = {
-    1: {
+  static MAP_OCCASIONS = [
+    {
       label: 'Business',
       icon: require('../assets/img/occasions/icons/dej_business.png')
     },
-    2: {
+    {
       label: 'En Couple',
       icon: require('../assets/img/occasions/icons/en_couple.png')
     },
-    3: {
+    {
       label: 'En Famille',
       icon: require('../assets/img/occasions/icons/en_famille.png')
     },
-    4: {
+    {
       label: 'Entre amis',
       icon: require('../assets/img/occasions/icons/entre_amis.png')
     },
-    5: {
-      label: 'Grandes tablees',
+    {
+      label: 'Groupe',
       icon: require('../assets/img/occasions/icons/grandes_tablees.png')
     },
-    6: {
-      label: 'Pour un date',
-      icon: require('../assets/img/occasions/icons/date.png')
-    },
-    7: {
+    {
       label: 'Brunch',
       icon: require('../assets/img/occasions/icons/brunch.png')
     },
-    8: {
-      label: 'Autres',
-      icon: require('../assets/img/occasions/icons/autre.png')
+    {
+      label: 'Terrasse',
+      icon: require('../assets/img/occasions/icons/terrasse.png')
     },
-  }
+    {
+      label: 'Fast',
+      icon: require('../assets/img/occasions/icons/fast.png')
+    },
+    {
+      label: 'Date',
+      icon: require('../assets/img/occasions/icons/date.png')
+    }
+  ];
 
-  static MAP_STRENGTHS = {
-    1: {
+  static MAP_STRENGTHS = [
+    {
       label: 'Cuisine',
       icon: require('../assets/img/points_forts/icons/cuisine.png')
     },
-    2: {
+    {
       label: 'Service',
       icon: require('../assets/img/points_forts/icons/service.png')
     },
-    3: {
+    {
       label: 'Cadre',
       icon: require('../assets/img/points_forts/icons/cadre.png')
     },
-    4: {
+    {
       label: 'Original',
       icon: require('../assets/img/points_forts/icons/original.png')
     },
-    5: {
+    {
       label: 'Copieux',
       icon: require('../assets/img/points_forts/icons/copieux.png')
     },
-    6: {
+    {
       label: 'Vins',
       icon: require('../assets/img/points_forts/icons/vins.png')
     },
-    7: {
+    {
       label: 'Qté Prix',
       icon: require('../assets/img/points_forts/icons/qtiteprix.png')
     }
-  }
+  ];
+
+  static MAP_TYPES = [
+    {
+      label: 'Coréen',
+      icon: require('../assets/img/types/icons/korean.png')
+    },
+    {
+      label: 'Thai',
+      icon: require('../assets/img/types/icons/thai.png')
+    },
+    {
+      label: 'Chinois',
+      icon: require('../assets/img/types/icons/chinese.png')
+    },
+    {
+      label: 'Indien',
+      icon: require('../assets/img/types/icons/indian.png')
+    },
+    {
+      label: 'Japonais',
+      icon: require('../assets/img/types/icons/japanese.png')
+    },
+    {
+      label: 'Sushi',
+      icon: require('../assets/img/types/icons/sushi.png')
+    },
+    {
+      label: 'Autres Asie',
+      icon: require('../assets/img/types/icons/others_asia.png')
+    },
+    {
+      label: 'Français',
+      icon: require('../assets/img/types/icons/french.png')
+    },
+    {
+      label: 'Italien',
+      icon: require('../assets/img/types/icons/italian.png')
+    },
+    {
+      label: 'Pizza',
+      icon: require('../assets/img/types/icons/pizza.png')
+    },
+    {
+      label: 'Burger',
+      icon: require('../assets/img/types/icons/burger.png')
+    },
+    {
+      label: 'Street Food',
+      icon: require('../assets/img/types/icons/street_food.png')
+    },
+    {
+      label: 'Autres Europe',
+      icon: require('../assets/img/types/icons/others_europe.png')
+    },
+    {
+      label: 'Viandes et Grillades',
+      icon: require('../assets/img/types/icons/grill.png')
+    },
+    {
+      label: 'Oriental',
+      icon: require('../assets/img/types/icons/oriental.png')
+    },
+    {
+      label: 'Mexicain',
+      icon: require('../assets/img/types/icons/mexican.png')
+    },
+    {
+      label: 'Autres Amérique Latine',
+      icon: require('../assets/img/types/icons/latino.png')
+    },
+    {
+      label: 'Fruits de mer',
+      icon: require('../assets/img/types/icons/seafood.png')
+    },
+    {
+      label: 'Africain',
+      icon: require('../assets/img/types/icons/african.png')
+    },
+    {
+      label: 'Créole',
+      icon: require('../assets/img/types/icons/creole.png')
+    },
+    {
+      label: 'Crêpes',
+      icon: require('../assets/img/types/icons/crepes.png')
+    },
+    {
+      label: 'Tapas',
+      icon: require('../assets/img/types/icons/tapas.png')
+    },
+    {
+      label: 'Végétarien',
+      icon: require('../assets/img/types/icons/vegetarian.png')
+    }
+  ];
 
   static subways(id) {
     var restaurant = this.restaurant(id);
@@ -564,38 +624,56 @@ export class RestaurantsStore extends CachedStore {
 
   static filteredRestaurants() {
     var filters = this.getState().filters;
+    var region = this.getState().region;
 
-    return _.filter(this.searchable(), (restaurant) => {
-      //prix
-      if (filters.prix.id && restaurant.price_range !== filters.prix.id) {
+    var findOne = function (haystack, arr) {
+      return arr.some(function (v) {
+        return haystack.indexOf(v) >= 0;
+      });
+    };
+
+    var filteredRestaurants =  _.filter(this.searchable(), (restaurant) => {
+
+      var intAmbiences = _.map(restaurant.ambiences, (ambience) => {
+        return parseInt(ambience);
+      });
+
+      var intOccasions = _.map(restaurant.occasions, (occasion) => {
+        return parseInt(occasion);
+      });
+
+      if (filters.prices.length > 0 && filters.prices.indexOf(restaurant.price_range) === -1) {
         return false;
       }
 
-      if (filters.food.id && !_.contains(restaurant.food, filters.food.id)) {
+      if (filters.ambiences.length > 0 && !findOne(filters.ambiences, intAmbiences)) {
         return false;
       }
 
-      if (filters.friend.id && !_.contains(this.recommenders(restaurant.id), filters.friend.id)) {
+      if (filters.occasions.length > 0 && !findOne(filters.occasions, intOccasions)) {
         return false;
       }
 
-      if (filters.metro.id && !this.subways(restaurant.id)[filters.metro.id]) {
+      if (filters.types.length > 0 && !findOne(filters.types, restaurant.types)) {
         return false;
       }
 
-      if (filters.ambiance.id && !_.contains(restaurant.ambiences, filters.ambiance.id)) {
+      var deltaX = (region.width / region.deltaLong) * (region.longCentre - restaurant.longitude);
+      var deltaY = (region.mapHeight / region.deltaLat) * (region.latCentre - restaurant.latitude);
+
+      if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 15 > region.radius) {
         return false;
       }
 
       return true;
     });
+
+    return _.sortByOrder(filteredRestaurants, ['score'], ['desc']);
   }
 
   static filterActive() {
-    //console.log(this.getState().filters);
-    return _.some(this.getState().filters, (filter) => {
-      return !!filter.id;
-    });
+    var filters = this.getState().filters;
+    return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0);
   }
 }
 

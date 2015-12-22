@@ -38,32 +38,29 @@ class BoxesRestaurants extends Page {
           {id: "3", label: "En Famille", icon: require('../../assets/img/occasions/images/en_famille.jpg')},
           {id: "4", label: "Entre amis", icon: require('../../assets/img/occasions/images/entre_amis.jpg')},
           {id: "5", label: "Grandes tablees", icon: require('../../assets/img/occasions/images/grandes_tablees.jpg')},
-          {id: "6", label: "Pour un date", icon: require('../../assets/img/occasions/images/date.jpg')},
-          {id: "7", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
-          {id: "8", label: "Autres", icon: require('../../assets/img/occasions/images/autre.jpg')},
+          {id: "6", label: "Brunch", icon: require('../../assets/img/occasions/images/brunch.jpg')},
+          {id: "7", label: "Déjeuner en terrasse", icon: require('../../assets/img/ambiances/images/terrasse.jpg')},
+          {id: "7", label: "Déjeuner rapide", icon: require('../../assets/img/ambiances/images/fast.jpg')},
         ],
         [
           {id: "1", label: "Chic", icon: require('../../assets/img/ambiances/images/chic.jpg')},
           {id: "2", label: "Festif", icon: require('../../assets/img/ambiances/images/festif.jpg')},
-          {id: "3", label: "Terrasse", icon: require('../../assets/img/ambiances/images/terrasse.jpg')},
-          {id: "4", label: "Bonne Franquette", icon: require('../../assets/img/ambiances/images/bonne_franquette.jpg')},
-          {id: "5", label: "Fast", icon: require('../../assets/img/ambiances/images/fast.jpg')},
-          {id: "6", label: "Traditionnel", icon: require('../../assets/img/ambiances/images/traditionnel.jpg')},
-          {id: "7", label: "Romantique", icon: require('../../assets/img/ambiances/images/romantique.jpg')},
-          {id: "8", label: "Autres", icon: require('../../assets/img/ambiances/images/autre.jpg')},
+          {id: "3", label: "En toute simplicité", icon: require('../../assets/img/ambiances/images/traditionnel.jpg')},
+          {id: "4", label: "Romantique", icon: require('../../assets/img/ambiances/images/romantique.jpg')},
+          {id: "5", label: "Inclassable", icon: require('../../assets/img/ambiances/images/autre.jpg')},
         ],
         [
-          {label: "€", icon: require('../../assets/img/prix/images/prix_1.jpg')},
-          {label: "€€", icon: require('../../assets/img/prix/images/prix_2.jpg')},
-          {label: "€€€", icon: require('../../assets/img/prix/images/prix_3.jpg')},
-          {label: "€€€+", icon: require('../../assets/img/prix/images/prix_4.jpg')},
+          {label: "€", icon: require('../../assets/img/prices/images/prix_1.jpg')},
+          {label: "€€", icon: require('../../assets/img/prices/images/prix_2.jpg')},
+          {label: "€€€", icon: require('../../assets/img/prices/images/prix_3.jpg')},
+          {label: "€€€+", icon: require('../../assets/img/prices/images/prix_4.jpg')},
         ]
       ],
       dataFilters: [
         {id: 0, name: "Occasions", label: "occasion"},
-        {id: 1, name: "Ambiances", label: "ambiance"},
+        {id: 1, name: "Ambiances", label: "ambiance"},/*
         {id: 2, name: "Prix", label: "prix"},
-        {id: 3, name: "Points forts", label: "type"},
+        {id: 3, name: "Points forts", label: "type"},*/
       ]
       
       // Images to change
@@ -86,6 +83,33 @@ class BoxesRestaurants extends Page {
 
   componentWillUnmount() {
     // on unmount
+  }
+
+  clearFilters() {
+    RestaurantsActions.setFilter('ambiance', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('occasion', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('friend', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('metro', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('food', {
+      value: 'Tous',
+      id: null
+    });
+    RestaurantsActions.setFilter('prix', {
+      value: 'Tous',
+      id: null
+    });
   }
 
   showFilters = () => {
@@ -112,9 +136,7 @@ class BoxesRestaurants extends Page {
         label={data.label} 
         onPress={
           () => {
-            //console.log(this.state.dataFilters[this.state.filterChosen].label);
-            var temp = {value: data.label, id: data.id};
-            //console.log(temp);
+            this.clearFilters();
             RestaurantsActions.setFilter(this.state.dataFilters[this.state.filterChosen].label, {value: data.label, id: data.id});
             this.props.navigator.push(Liste.route(data.label));
           }

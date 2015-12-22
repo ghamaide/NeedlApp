@@ -19,9 +19,36 @@ class Filtre extends Component {
     return {
       component: Filtre,
       title: 'Filtrer',
-      rightButtonTitle: 'Valider',
-      onRightButtonPress() {
+      leftButtonTitle: 'Annuler',
+      onLeftButtonPress() {
         this.pop();
+      },
+      rightButtonTitle: 'Réinitialiser',
+      onRightButtonPress() {
+        RestaurantsActions.setFilter('ambiance', {
+          value: 'Tous',
+          id: null
+        });
+        RestaurantsActions.setFilter('occasion', {
+          value: 'Tous',
+          id: null
+        });
+        RestaurantsActions.setFilter('friend', {
+          value: 'Tous',
+          id: null
+        });
+        RestaurantsActions.setFilter('metro', {
+          value: 'Tous',
+          id: null
+        });
+        RestaurantsActions.setFilter('food', {
+          value: 'Tous',
+          id: null
+        });
+        RestaurantsActions.setFilter('prix', {
+          value: 'Tous',
+          id: null
+        });
       }
     };
   }
@@ -30,6 +57,7 @@ class Filtre extends Component {
     super(props);
 
     this.state = this.filtersState();
+    this.arrivalState = this.filtersState();
   }
 
   filtersState() {
@@ -48,20 +76,6 @@ class Filtre extends Component {
             this.props.navigator.push(Type.route());
           },
           value: RestaurantsStore.getState().filters.food.value
-        },
-        {
-          title: 'Amis',
-          action: () => {
-            this.props.navigator.push(Friends.route());
-          },
-          value: RestaurantsStore.getState().filters.friend.value
-        },
-        {
-          title: 'Station de métro',
-          action: () => {
-            this.props.navigator.push(Metro.route());
-          },
-          value: RestaurantsStore.getState().filters.metro.value
         },
         {
           title: 'Ambiance',
@@ -143,8 +157,8 @@ class Filtre extends Component {
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
-        <TouchableHighlight style={styles.clearButton} onPress={() => this.clearFilters()}>
-          <Text style={styles.clear}>Réinitialiser les filters</Text>
+        <TouchableHighlight underlayColor='rgba(0, 0, 0, 0.3)' style={styles.clearButton} onPress={() => this.props.navigator.pop()}>
+          <Text style={styles.clear}>Valider</Text>
         </TouchableHighlight>
       </View>
     );
@@ -155,7 +169,7 @@ var styles = StyleSheet.create({
   rowWrapper: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
-    borderColor: '#EF582D'
+    borderColor: '#DDDDDD'
   },
   row: {
     padding: 10,
@@ -172,23 +186,21 @@ var styles = StyleSheet.create({
   },
   clearButton: {
     backgroundColor: '#FFFFFF',
-    borderBottomWidth: 0.5,
-    borderColor: '#EF582D'
-  },
-  clear: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    fontSize: 14,
-    color: 'black',
-    padding: 10,
-    textAlign: 'center',
     marginTop: 10,
     marginBottom: 10,
     marginLeft: 30,
     marginRight: 30,
     borderRadius: 10,
     borderWidth: 0.5,
-    borderColor: '#EF582D',
+    padding: 10,
+    borderColor: '#EF582D'
+  },
+  clear: {
+    flex: 1,
+    fontSize: 14,
+    color: 'black',
+    textAlign: 'center',
     fontWeight: 'bold'
   }
 });

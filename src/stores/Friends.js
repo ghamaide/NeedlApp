@@ -202,11 +202,9 @@ export class FriendsStore extends CachedStore {
   }
 
   handleFetchFriends() {
-    console.log('11');
     this.waitFor(MeStore);
     this.status.friendsLoading = true;
     delete this.status.friendsLoadingError;
-    console.log('12');
   }
 
   handleFriendsFetched(friends) {

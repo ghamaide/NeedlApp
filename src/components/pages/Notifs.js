@@ -13,6 +13,7 @@ import Page from '../ui/Page';
 import RestaurantElement from '../elements/Restaurant';
 import Restaurant from './Restaurant';
 import Profil from './Profil';
+import InviteFriend from './InviteFriend';
 
 let notifsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -37,12 +38,12 @@ class Notifs extends Page {
 
   onFocus = (event) => {
     if (event.data.route.component === Notifs && event.data.route.fromTabs) {
-     NotifsActions.fetchNotifs();
-     if (event.data.route.skipCache) {
-      this.setState({data: null});
-     }
-     this.IS_FOCUS = true;
-     return;
+      NotifsActions.fetchNotifs();
+      if (event.data.route.skipCache) {
+        this.setState({data: null});
+      }
+      this.IS_FOCUS = true;
+      return;
     }
 
     if (this.IS_FOCUS) {
@@ -68,19 +69,26 @@ class Notifs extends Page {
   }
 
   onRefresh() {
-    // reload the list here
+    NotifsActions.fetchNotifs();
   }
 
-  renderHeader = () => {
+  renderHeader = (refreshingIndicator) => {
     var nbPot = NotifsStore.getState().notifs.length;
 
     if (nbPot) {
-      return null;
+      return ({refreshingIndicator});
     }
 
-    return <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>Tu n'as pas de notifications pour l'instant</Text>
-    </View>;
+    return (
+      <View style={styles.emptyContainer}>
+        {refreshingIndicator}
+        <View style={styles.textContainerWrapper}>
+          <TouchableHighlight style={styles.textContainer} underlayColor='#FFFFFF' onPress={() => this.props.navigator.push(InviteFriend.route())}>
+            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
   }
 
   renderNotif = (notif) => {
@@ -121,8 +129,8 @@ class Notifs extends Page {
       <RefreshableListView
         style={styles.notifsList}
         dataSource={this.state.data}
-        renderRow={this.renderNotif}
         renderHeaderWrapper={this.renderHeader}
+        renderRow={this.renderNotif}
         contentInset={{top: 0}}
         scrollRenderAheadDistance={150}
         automaticallyAdjustContentInsets={false}
@@ -135,10 +143,14 @@ class Notifs extends Page {
 
 var styles = StyleSheet.create({
   notifsList: {
-    paddingTop: 20
+    paddingTop: 20,
+    backgroundColor: '#FFFFFF'
   },
   notifRow: {
-    padding: 0,
+    paddingLeft: 0,
+    paddingTop: 0,
+    paddingRight: 0,
+    paddingBottom: 15,
     backgroundColor: 'transparent',
     position: 'relative',
   },
@@ -179,13 +191,39 @@ var styles = StyleSheet.create({
     ]
   },
   emptyContainer: {
+    flex: 1,
     alignItems: 'center',
-    padding: 20,
+    paddingLeft: 20,
+    paddingRight: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
+    backgroundColor: '#FFFFFF'
+  },
+  textContainerWrapper: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 10,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  textContainer: {
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    borderColor: '#EF582D',
+    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyText: {
+    width: 175,
     textAlign: 'center',
-    fontSize: 16,
-    color: '#000000'
+    fontSize: 15,
+    color: '#EF582D',
   }
 });
 

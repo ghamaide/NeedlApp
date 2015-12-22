@@ -15,7 +15,7 @@ class ErrorToast extends Component {
       value = this.props.value;
 
     return (
-     <Overlay isVisible={!this.state.closed}>
+      <Overlay isVisible={!this.state.closed}>
         <View style={[styles.toast, {marginTop: this.props.appBar ? 60 : 20}]}>
           <View style={styles.content}>
             <Text style={styles.toastValue}>{value}</Text>

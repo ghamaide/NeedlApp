@@ -12,16 +12,35 @@ class Restaurant extends Component {
       return '€';
     }).join('') + (this.props.budget > 3 ? '+' : '');
 
+    if (budget === '€') {
+      emptyBudget = '€€+';
+    } else if (budget === '€€') {
+      emptyBudget = '€+';
+    } else if (budget ==='€€€') {
+      emptyBudget = '+';
+    } else if (budget === '€€€+') {
+      emptyBudget = '';
+    }
+
     var content = (
-      <View style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
+      <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.pictures[0]} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.pictures[0]}}>
           <LinearGradient colors={[processColor('#FFFFFF'), processColor('#000000')]} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
-            <Text style={styles.restaurantName}>{this.props.name}</Text>
-            <Text style={styles.restaurantType}>{this.props.type}</Text>
-            {budget ?
-              <Text style={styles.restaurantPrice}>{budget}</Text>
-              : null}
+            <Text key="restaurant_name" style={styles.restaurantName}>{this.props.name}</Text>
+            {budget ? [
+              <Text key="restaurant_budget" style={styles.restaurantType}>
+                {this.props.type}
+                <Text style={{color: '#FFFFFF'}}>
+                   , {budget}
+                </Text>
+                <Text style={{color: '#999999'}}>
+                  {emptyBudget}
+                </Text>
+              </Text>
+            ] : [
+              <Text key="restaurant_budget" style={styles.restaurantType}>{this.props.type}</Text>
+            ]}
             {this.props.subway ?
               <View style={styles.restaurantSubway}>
                 <Image
@@ -30,6 +49,18 @@ class Restaurant extends Component {
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>
               : null}
+            {this.props.isNeedl ? 
+              <Image style={styles.imageNeedl} source={require('../../assets/img/other/images/logo.png')} />
+             : null}
+            {!this.props.isNeedl && this.props.rank === 1 ?
+              <Image style={[styles.imageRank, {tintColor: 'gold'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
+            {!this.props.isNeedl && this.props.rank === 2 ?
+              <Image style={[styles.imageRank, {tintColor: 'silver'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
+            {!this.props.isNeedl && this.props.rank === 3 ?
+              <Image style={[styles.imageRank, {tintColor: 'brown'}]} source={require('../../assets/img/other/icons/medal.png')} />
+             : null}
           </View>
         </Image>
       </View>
@@ -56,7 +87,7 @@ var styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     top: 0,
-    opacity: 0.2
+    opacity: 0.3
   },
   restaurantInfos: {
     flex: 1,
@@ -113,6 +144,21 @@ var styles = StyleSheet.create({
     fontSize: 14,
     color: 'white',
     backgroundColor: 'rgba(0,0,0,0)',
+  },
+  imageNeedl: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    position: 'absolute',
+    top: 5,
+    right: 5
+  },
+  imageRank: {
+    width: 12,
+    height: 30,
+    position: 'absolute',
+    top: 0,
+    right: 10
   }
 });
 

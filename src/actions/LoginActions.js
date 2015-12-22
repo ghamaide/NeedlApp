@@ -25,9 +25,7 @@ export class LoginActions {
     this.dispatch();
 
     LoginUtils.facebook((err, me) => {
-      console.log(err);
       if (err) {
-        console.log(err);
         return this.actions.loginFailed(err);
       }
 

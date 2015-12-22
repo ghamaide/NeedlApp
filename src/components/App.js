@@ -2,24 +2,24 @@
 
 import React, {Component, AppStateIOS, View, PushNotificationIOS, NativeModules, Text, Image, StyleSheet, ActivityIndicatorIOS, ScrollView, StatusBarIOS} from 'react-native';
 import Overlay from 'react-native-overlay';
-import Swiper from 'react-native-swiper';
 import _ from 'lodash';
 
 import TabView from './ui/TabView';
 import ErrorToast from './ui/ErrorToast';
 
 import Profil from './pages/Profil';
-import Onboard_Friends from './pages/Onboard_Friends';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
-import BoxesRestaurants from './pages/BoxesRestaurants';
+import Liste from './pages/Liste';
 import RecoStep1 from './pages/Reco/Step1';
 
 import MeStore from '../stores/Me';
 import FriendsStore from '../stores/Friends';
 import NotifsStore from '../stores/Notifs';
+import RestaurantsStore from '../stores/Restaurants';
 
 import FriendsActions from '../actions/FriendsActions';
+import RestaurantsActions from '../actions/RestaurantsActions';
 import NotifsActions from '../actions/NotifsActions';
 import MeActions from '../actions/MeActions';
 
@@ -55,7 +55,8 @@ class App extends Component {
     this.setState({
       uploadingList: MeStore.uploadingList(),
       errors: errors,
-      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed()
+      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
+      showTabBar: MeStore.getState().showTabBar
     });
   }
 
@@ -93,13 +94,13 @@ class App extends Component {
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
     MeActions.resetBadgeNumber();
-
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();
     StatusBarIOS.setStyle('default');
   }
 
   componentWillMount() {
+    MeStore.listen(this.onMeChange);
     FriendsStore.listen(this.onPastillesChange);
     NotifsStore.listen(this.onPastillesChange);
 
@@ -112,8 +113,6 @@ class App extends Component {
       this.notifLaunchTab = this.getNotifTab(coldNotif);
     }
 
-    MeStore.listen(this.onMeChange);
-
     this.startActions();
   }
 
@@ -121,36 +120,6 @@ class App extends Component {
     FriendsStore.unlisten(this.onPastillesChange);
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
-  }
-
-  pickImage() {
-    var options = {
-      title: 'Choisis ta photo', // specify null or empty string to remove the title
-      cancelButtonTitle: 'Annuler',
-      takePhotoButtonTitle: 'Prendre une photo...', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...', // specify null or empty string to remove this button
-      quality: 0.2,
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
-      noData: false // Disables the base64 `data` field from being generated (greatly improves performance on large photos)
-    }
-    
-    NativeModules.UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
-      console.log('Response = ', response);
-
-      if (didCancel) {
-        console.log('User cancelled image picker');
-      }
-
-      else {
-        var uri = 'data:image/jpeg;base64,' + response.data;
-        MeActions.uploadList(uri, () => {
-          this.setState({showUploadConfirmation: true});
-          setTimeout(() => {
-            this.setState({showUploadConfirmation: false});
-          }, 4000);
-        });
-      }
-    });
   }
 
   render() {
@@ -191,34 +160,20 @@ class App extends Component {
         </Overlay>
 
         <Overlay isVisible={!this.state.selectingPhoto && !this.state.uploadingList && !this.state.hasBeenUploadWelcomed}>
-          <Swiper showsButtons={false} showsPagination={true} loop={false} style={styles.swiper}>
-            <View style={styles.containerSwiper}>
-              <ScrollView
-                style={{flex: 1, backgroundColor: 'white'}}
-                contentInset={{top: 0}}
-                automaticallyAdjustContentInsets={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.containerCEOMessage}>
-                <Text style={[styles.messageCEO, {marginBottom: 10}]}>Tu peux désormais accéder à ta carte personnalisée de Paris comprenant toutes tes recommandations ainsi que celles de tes amis.</Text>
-                <Text style={[styles.messageCEO, {marginBottom: 20}]}>En attendant qu'ils s'inscrivent, tu peux compter sur ma sélection de burgers, pizzas et restaurants thaïs! Ce sont mes 3 passions culinaires, et ces adresses sont de loin mes préférées!</Text>
-                <Text style={[styles.messageCEO, {marginBottom: 20}]}>Valentin, CEO Needl</Text>
-                <Image style={styles.avatarCEO} source={{uri: 'http://needl.s3.amazonaws.com/production/users/pictures/000/000/125/original/picture?1435579332'}} />
-              </ScrollView>
-            </View>
-
-            <Onboard_Friends />
-
-            <View style={styles.containerSwiper}>
-              <Text style={[styles.titleImportList, {marginBottom: 40}]}>Importe ta liste de restos</Text>
-              <Text style={[styles.messageImportList, {marginBottom: 40}]}>{uploadText}</Text>
-              <View style={{flexDirection: 'row'}}>
-                <Button label="Envoyer une liste" onPress={this.pickImage} style={{margin: 5}}/>
-                <Button label="Passer" onPress={() => {
-                  MeActions.hasBeenUploadWelcomed();
-                }} style={{margin: 5}}/>
-              </View>
-            </View>
-          </Swiper>
+          <ScrollView
+            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+            contentInset={{top: 0}}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.containerCEOMessage}>
+            <Text style={[styles.messageCEO, {marginBottom: 10}]}>Tu peux désormais accéder à ta carte personnalisée de Paris comprenant toutes tes recommandations ainsi que celles de tes amis.</Text>
+            <Text style={[styles.messageCEO, {marginBottom: 20}]}>En attendant qu'ils s'inscrivent, tu peux compter sur ma sélection de burgers, pizzas et restaurants thaïs! Ce sont mes 3 passions culinaires, et ces adresses sont de loin mes préférées!</Text>
+            <Text style={[styles.messageCEO, {marginBottom: 20}]}>Valentin, CEO Needl</Text>
+            <Image style={styles.avatarCEO} source={{uri: 'http://needl.s3.amazonaws.com/production/users/pictures/000/000/125/original/picture?1435579332'}} />
+            <Button label="Passer" onPress={() => {
+              MeActions.hasBeenUploadWelcomed();
+            }} style={{margin: 5}}/>
+          </ScrollView>
         </Overlay>
 
         <TabView 
@@ -228,7 +183,7 @@ class App extends Component {
           }}
           tabs={[
             {
-              component: BoxesRestaurants,
+              component: Liste,
               name: 'Accueil',
               icon: require('../assets/img/tabs/icons/home.png')
             },
@@ -236,17 +191,18 @@ class App extends Component {
               component: Friends,
               name: 'Amis',
               icon: require('../assets/img/tabs/icons/friend.png'),
-              pastille: this.state.friendsPastille <= 10 ? this.state.friendsPastille : '9+'
+              pastille: this.state.friendsPastille < 10 ? this.state.friendsPastille : '9+'
             },
             {
               component: RecoStep1,
-              icon: require('../assets/img/tabs/icons/add.png')
+              icon: require('../assets/img/tabs/icons/add.png'),
+              hasShared: MeStore.getState().me.HAS_SHARED
             },
             {
               component: Notifs,
               name: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
-              pastille: this.state.notifsPastille <= 10 ? this.state.notifsPastille : '9+'
+              pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
               component: Profil,
@@ -255,8 +211,8 @@ class App extends Component {
             }
           ]}
           initialSkipCache={!!this.notifLaunchTab}
-          initialSelected={this.notifLaunchTab || (!MeStore.getState().me.HAS_SHARED ? 2 : 0)}
-          tabsBlocked={!MeStore.getState().me.HAS_SHARED} />
+          initialSelected={this.notifLaunchTab || 0}
+          tabsBlocked={false} />
       </View>
     );
   }
@@ -290,13 +246,6 @@ var styles = StyleSheet.create({
     fontSize: 18,
     color: '#EF582D',
     fontWeight: 'bold'
-  },
-
-  containerSwiper: {
-    flex: 1,
-    backgroundColor: 'white',
-    paddingTop: 50,
-    alignItems: 'center'
   },
   containerCEOMessage: {
     padding: 20,

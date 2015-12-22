@@ -59,6 +59,7 @@ import _ from 'lodash';
 import Login from './src/components/pages/Login';
 import App from './src/components/App';
 import MeStore from './src/stores/Me';
+import MeActions from './src/actions/MeActions';
 import ProfilStore from './src/stores/Profil';
 import FriendsStore from './src/stores/Friends';
 import RestaurantsStore from './src/stores/Restaurants';
@@ -78,6 +79,7 @@ class NeedlIOS extends Component {
   state = NeedlIOS.getNeedlState()
 
   componentWillMount() {
+    MeActions.showedCurrentPosition(false);
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));

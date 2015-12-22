@@ -1,7 +1,8 @@
 'use strict';
 
-import React, {StyleSheet, ImagePickerIOS, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
+import Overlay from 'react-native-overlay';
 
 import LoginActions from '../../actions/LoginActions';
 import MeActions from '../../actions/MeActions';
@@ -21,7 +22,7 @@ import Option from '../elements/Option';
 import EditMe from './EditMe';
 import Friends from './Friends';
 
-import Overlay from 'react-native-overlay';
+var windowWidth = Dimensions.get('window').width;
 
 class Profil extends Page {
   static route(props, title) {
@@ -106,51 +107,31 @@ class Profil extends Page {
     return (
       <View style={[styles.restaurantsWrapper, {backgroundColor: backgroundColor}]}>
         <Text style={styles.restaurantsWrapperTitle}>{title}</Text>
-        <Carousel style={styles.restaurantsCarousel}>
+        <ScrollView 
+          style={styles.restaurantsCarousel} 
+          scrollEnabled={true}
+          automaticallyAdjustContentInsets={false}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}>
           {_.map(restaurants, (restaurant) => {
-            return <RestaurantElement
-                    key={restaurant.id}
-                    name={restaurant.name}
-                    pictures={[restaurant.picture]}
-                    type={restaurant.type}
-                    budget={restaurant.price_range}
-                    onPress={() => {
-                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                    }}/>;
+            return (
+              <RestaurantElement
+                height={150}
+                style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 60}}
+                key={restaurant.id}
+                name={restaurant.name}
+                pictures={[restaurant.picture]}
+                type={restaurant.type}
+                budget={restaurant.price_range}
+                underlayColor='#EEEEEE'
+                onPress={() => {
+                  this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                }}/>
+              );
           })}
-        </Carousel>
+        </ScrollView>
       </View>
     );
-  }
-
-  pickImage = () => {
-    var options = {
-      title: 'Choisis ta photo', // specify null or empty string to remove the title
-      cancelButtonTitle: 'Annuler',
-      takePhotoButtonTitle: 'Prendre une photo...', // specify null or empty string to remove this button
-      chooseFromLibraryButtonTitle: 'Choisir une photo de tes albums...', // specify null or empty string to remove this button
-      quality: 0.2,
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
-      noData: false // Disables the base64 `data` field from being generated (greatly improves performance on large photos)
-    }
-    
-    NativeModules.UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
-      console.log('Response = ', response);
-
-      if (didCancel) {
-        console.log('User cancelled image picker');
-      }
-
-      else {
-        var uri = 'data:image/jpeg;base64,' + response.data;
-        MeActions.uploadList(uri, () => {
-          this.setState({showUploadConfirmation: true});
-          setTimeout(() => {
-            this.setState({showUploadConfirmation: false});
-          }, 4000);
-        });
-      }
-    });
   }
 
   renderPage() {
@@ -158,12 +139,11 @@ class Profil extends Page {
 
     return (
       <ScrollView
-      	onFocus={(e) => {
-        	console.log('coucou', e.nativeEvent);
-      	}}
         contentInset={{top: 0}}
         automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+        onScroll={this.onScroll}
+        scrollEventThrottle={16}>
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>
@@ -189,12 +169,7 @@ class Profil extends Page {
 
         <Options>
           {MeStore.getState().me.id === profil.id ?
-            [	
-              <Option 
-					 			label="Envoyer une liste"
-					 			key={"list send " + profil.id}
-					 			onPress={this.pickImage}
-								icon={require('../../assets/img/actions/icons/import_list.png')} />,
+            [
               <Option
 					 			key={"edit " + profil.id}
 								label="Modifier"
@@ -289,7 +264,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   restaurantsWrapper: {
-    padding: 20
+    padding: 10
   },
   restaurantsWrapperTitle: {
     marginBottom: 10,
@@ -300,7 +275,10 @@ var styles = StyleSheet.create({
   },
   restaurantsCarousel: {
     height: 150,
-    flexDirection: 'row'
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    width: windowWidth - 30,
+    margin: 5
   },
   uploadConfirmationContainer: {
     backgroundColor: '#38E1B2',
@@ -308,7 +286,7 @@ var styles = StyleSheet.create({
     marginTop: 60
   },
   uploadConfirmationText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontWeight: '500',
     textAlign: 'center'
   }

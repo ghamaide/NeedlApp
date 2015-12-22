@@ -1,11 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View} from 'react-native';
+import React, {StyleSheet, Component, Text, View, Dimensions} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 import Step6 from './Step6';
 import RecoStore from '../../../stores/Reco';
 
+var windowWidth = Dimensions.get('window').width;
 
 class RecoStep5 extends Component {
   static route() {
@@ -15,7 +16,6 @@ class RecoStep5 extends Component {
       rightButtonTitle: 'Valider',
       onRightButtonPress() {
         var reco = RecoStore.getReco();
-        console.log(reco);
         if (!reco.occasions || !reco.occasions.length) {
           return;
         }
@@ -30,9 +30,9 @@ class RecoStep5 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne les occasions correspondant au restaurant</Text>
+        <Text style={styles.title}>Sélectionne une ou plusieurs occasions correspondant au restaurant</Text>
         <ToggleGroup
-          maxSelection={3}
+          maxSelection={8}
           fifo={true}
           selectedInitial={reco.occasions}
           onSelect={(v, selected) => {
@@ -45,23 +45,27 @@ class RecoStep5 extends Component {
             return (
               <View style={{alignItems: 'center'}}>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label="Business" value={1} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label="Couple" value={2} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label="Famille" value={3} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label="Business" value={1} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label="Couple" value={2} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label="Famille" value={3} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Nombreux" value={5} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={6} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Groupe" value={5} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={7} />
-                  <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/autre.png')} activeInitial={false} label="Autres" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/fast.png')} activeInitial={false} label="Fast" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={9} />
                 </View>
               </View>
             );
           }}
         </ToggleGroup>
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarCompleted} />
+        </View>
       </View>
     );
   }
@@ -83,13 +87,29 @@ var styles = StyleSheet.create({
  },
  pastilleContainer: {
   flexDirection: 'row',
-  alignItems: 'center'
+  alignItems: 'flex-start'
  },
  pastille: {
   marginLeft: 15,
   marginRight: 15,
   marginTop: 10,
   marginBottom: 10
+ },
+progressBar: {
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 10,
+  position: 'absolute',
+  backgroundColor: '#DDDDDD'
+ },
+progressBarCompleted: {
+  backgroundColor: '#38E1B2',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: 0.75 * windowWidth,
+  height: 10
  }
 });
 

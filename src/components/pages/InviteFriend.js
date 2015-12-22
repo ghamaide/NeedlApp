@@ -1,9 +1,9 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS} from 'react-native';
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
-import RNComm from 'react-native-communications';
+import SearchBar from 'react-native-search-bar';
 
 import Page from '../ui/Page';
 import ErrorToast from '../ui/ErrorToast';
@@ -29,19 +29,27 @@ class InviteFriend extends Page {
     this.state = {};
     this.state.errors = [];
     this.state.contacts = {};
+    this.state.filteredContacts = {};
     this.state.data = {};
+    this.state.switchList = {};
   }
 
   onMeChange = () => {
     var errors = this.state.errors;
 
-    var uploadContactsError = MeStore.uploadingContactsError();
-    if (uploadContactsError && !_.contains(errors, uploadContactsError)) {
-      errors.push(uploadContactsError);
+    var uploadingContactsError = MeStore.uploadingContactsError();
+    var sendingMessageError = MeStore.sendingMessageError();
+    if (uploadingContactsError && !_.contains(errors, uploadingContactsError)) {
+      errors.push(uploadingContactsError);
+    }
+
+    if (sendingMessageError && !_.contains(errors, sendingMessageError)) {
+      errors.push(sendingMessageError);
     }
 
     this.setState({
-      uploadingList: MeStore.uploadingContacts(),
+      uploadingContacts: MeStore.uploadingContacts(),
+      sendingMessage: MeStore.sendingMessage(),
       errors: errors
     });
   }
@@ -58,46 +66,8 @@ class InviteFriend extends Page {
     this.checkPermission();
   }
 
-  sendSms = (phone_number) => {
-    var message = "Hey, je viens de m'inscrire sur Needl, rejoins moi pour partager tes restos ! Télécharge l'application ici : https://itunes.apple.com/fr/app/id1027312535";
-
-    NativeModules.RNMessageComposer.composeMessageWithArgs(
-    {
-      'messageText': message,
-      'subject': "",
-      'recipients':[phone_number]
-    },
-    (result) => {
-      switch(result) {
-        case NativeModules.RNMessageComposer.Sent:
-            console.log('the message has been sent');
-            break;
-        case NativeModules.RNMessageComposer.Cancelled:
-            console.log('user cancelled sending the message');
-            break;
-        case NativeModules.RNMessageComposer.Failed:
-            console.log('failed to send the message');
-            break;
-        case NativeModules.RNMessageComposer.NotSupported:
-            console.log('this device does not support sending texts');
-            break;
-        default:
-            console.log('something unexpected happened');
-            break;
-      }
-    });
-  }
-
-  sendMail = (adress) => {
-    var message = "Hey, je viens de m'inscrire sur Needl, rejoins moi pour partager tes restos ! Télécharge l'application ici : https://itunes.apple.com/fr/app/id1027312535";
-    var subject = "Viens partager tes restos sur Needl !";
-
-    RNComm.email(adress, null, null, subject, message);
-  }
-
   checkPermission() {
     Contacts.checkPermission( (err, permission) => {
-      console.log(permission);
       if(permission === 'undefined'){
         Contacts.requestPermission( (err, permission) => {
           this.getContacts();
@@ -117,8 +87,16 @@ class InviteFriend extends Page {
       if(err && err.type === 'permissionDenied'){
         this.authorizeShowContacts();
       } else {
+        retrievedContacts = _.map(retrievedContacts, (contact) => {
+          contact.invitationSent = false;
+          return contact;
+        });
         this.setState({contacts : retrievedContacts});
+        this.setState({filteredContacts : retrievedContacts});
         MeActions.uploadContacts(retrievedContacts);
+        var i = _.findIndex(retrievedContacts, (contact) => {
+          return contact.givenName == 'Valentin';
+        });
       }
     })
   }
@@ -133,38 +111,66 @@ class InviteFriend extends Page {
     );
   }
 
-  renderContact = (contact) => {    
+  searchContacts = (searchedText) => {
+    var tempFilteredContacts = _.filter(this.state.contacts, function(contact) {
+      if (typeof contact.familyName !== 'undefined' && typeof contact.givenName !== 'undefined') {
+        return ((contact.givenName.indexOf(searchedText) > -1) || (contact.familyName.indexOf(searchedText) > -1));
+      } else if (typeof contact.familyName !== 'undefined') {
+        return contact.familyName.indexOf(searchedText) > -1;
+      } else if (typeof contact.givenName !== 'undefined') {
+        return  contact.givenName.indexOf(searchedText) > -1;
+      } else {
+        return false;
+      }
+    });
+    this.setState({filteredContacts: tempFilteredContacts});
+  }
+
+  closeKeyboard = () => {
+    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+  }
+
+  isEqual (a, b) {
+    return (a === b);
+  }
+
+  renderContact = (contact) => {
     return (
       <View style={styles.contactWrapper}>
-        <View style={styles.contactInfoWrapper}>
-          <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
-          <View style={styles.contactActionWrapper}>
-            <Text style={styles.contactNumber}>{contact.phoneNumbers[0] ? contact.phoneNumbers[0].number : ""}</Text>
-            {contact.phoneNumbers[0] ? 
-              [
-                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendSms(contact.phoneNumbers[0].number)}>
-                  <Image
-                    source={require('../../assets/img/actions/icons/send_sms.png')}
-                    style={styles.imageSMS} />
-                </TouchableHighlight>
-              ] : [
-              ]
-            }
-          </View>
-          <View style={styles.contactActionWrapper}>
-            <Text style={styles.contactMail}>{contact.emailAddresses[0] ? contact.emailAddresses[0].email : ""}</Text>          
-            {contact.emailAddresses[0] ? 
-              [
-                <TouchableHighlight underlayColor="rgba(0, 0, 0, 0)" onPress={() => this.sendMail([contact.emailAddresses[0].email])}>
+          <View style={styles.contactInfoWrapper}>
+            <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
+            {this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
+              <Image
+                style={styles.imageCheck}
+                source={require('../../assets/img/actions/icons/check.png')} />
+            ] : [
+              !this.state.uploadingContacts & !this.state.sendingMessage ? [
+                <TouchableHighlight style={styles.imageWrapper} onPress={() => {
+                  var updatedContacts = _.map(this.state.contacts, (row) => {
+                    if (contact.recordID === row.recordID) {
+                      row.invitationSent = true;
+                      return row;
+                    } else {
+                      return row;
+                    }
+                  });
+                  this.setState({contacts: updatedContacts});
+                  MeActions.sendMessageContact(contact);
+                }}>
                   <Image
                     source={require('../../assets/img/actions/icons/send_mail.png')}
                     style={styles.imageMail} />
                 </TouchableHighlight>
               ] : [
+                <View style={styles.loadingWrapper}>
+                  <ActivityIndicatorIOS
+                  animating={true}
+                  style={[{height: 40}]}
+                  size="large" />
+                </View>
               ]
-            }
+            ]}
           </View>
-        </View>
       </View>
     );
   }
@@ -177,13 +183,25 @@ class InviteFriend extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
+        <SearchBar
+          ref='searchBar'
+          placeholder='Search'
+          hideBackground={true}
+          textFieldBackgroundColor='#DDDDDD'
+          onChangeText={this.searchContacts}
+          onSearchButtonPress={this.closeKeyboard} />
         <ListView
           style={styles.contactsList}
-          dataSource={contactsSource.cloneWithRows(this.state.contacts)}
+          dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
           renderRow={this.renderContact}
           contentInset={{top: 0}}
+          onScroll={this.closeKeyboard}
           automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false} />
+          showsVerticalScrollIndicator={false}
+          renderHeader={this.renderEmptyState} />
+        {_.map(this.state.errors, (error, i) => {
+          return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
+        })}
       </View>
     );
   }
@@ -199,55 +217,50 @@ var styles = StyleSheet.create({
     padding: 5,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
-    borderTopWidth: 0.5,
-    borderColor: '#EF582D',
+    borderColor: '#DDDDDD',
     alignItems: 'center'
   },
   contactInfoWrapper: {
     marginLeft: 10,
     marginRight: 5,
-    flex: 1
+    marginTop: 10,
+    marginBottom: 10,
+    height: 40,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-start'
   },
   contactName: {
+    flex: 1,
     color: '#000000',
     fontSize: 13,
-    paddingTop: 2,
-    paddingBottom: 2,
-    marginBottom: 10
+    paddingTop: 12,
+    paddingBottom: 5
   },
-  contactNumber: {
-    color: '#888888',
-    fontSize: 12,
-    flex: 1
-  },
-  contactMail: {
-    color: '#888888',
-    fontSize: 12,
-    flex: 1
-  },
-  contactImage: {
-    height: 50,
-    width: 50,
-    borderRadius: 25
-  },
-  contactActionWrapper: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingTop: 2,
-    paddingBottom: 2,
-    height: 30
-  },
-  imageSMS: {
-    width: 20,
-    height: 16.8,
-    marginLeft: 5,
-    marginTop: 2
+  imageWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#EF582D'
   },
   imageMail: {
     width: 20,
     height: 12.8,
+    marginLeft: 10,
+    marginTop: 13.5
+  },
+  imageCheck: {
+    width: 20,
+    height: 20,
     marginLeft: 5,
-    marginTop: 4
+    marginRight: 10,
+    marginTop: 7
+  },
+  loadingWrapper: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

@@ -38,8 +38,6 @@ var api = (method, URL) => {
         return _.isEqual(query, r._query);
       });
 
-      //console.log(err, res);
-
       if (!err && res.ok) {
         return callback(null, res.body);
       }
@@ -62,7 +60,6 @@ api.uploadPhoto = (fileName, fileUri, uri, callback) => {
   };
 
   NativeModules.FileTransfer.upload(upload, (err, res) => {
-    console.log(err, res);
     if (err || res.status !== 200) {
       return callback(err || res.data || 'UNKNOWN NETWORK ERROR');
     }

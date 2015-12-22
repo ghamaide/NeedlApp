@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS, Dimensions} from 'react-native';
 import _ from 'lodash';
 
 import request from '../../../utils/api';
@@ -10,6 +10,8 @@ import RecoStore from '../../../stores/Reco';
 import RecoActions from '../../../actions/RecoActions';
 import Step4 from './Step4';
 import Button from '../../elements/Button';
+
+var windowWidth = Dimensions.get('window').width;
 
 class RecoStep3 extends Component {
   static route(props) {
@@ -82,10 +84,10 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne 1 à 3 ambiances</Text>
+        <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
         <ToggleGroup
           ref="togglegroup"
-          maxSelection={3}
+          maxSelection={5}
           fifo={true}
           selectedInitial={reco.ambiances}
           onSelect={(v, selected) => {
@@ -97,22 +99,25 @@ class RecoStep3 extends Component {
           {(Toggle) => {
             return <View style={{alignItems: 'center'}}>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={3} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label="Convivial" value={3} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/bonne_franquette.png')} activeInitial={false} label="Bonne Franquette" value={4} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/fast.png')} activeInitial={false} label="Fast" value={5} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Traditionnel" value={6} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label="Branché" value={5} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Typique" value={6} />
               </View>
               <View style={styles.pastilleContainer}>
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={7} />
-                <Toggle size={60} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Autres" value={8} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label="Cosy" value={7} />
+                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={8} />
               </View>
             </View>;
           }}
         </ToggleGroup>
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarCompleted} />
+        </View>
       </View>
     );
   }
@@ -134,13 +139,32 @@ var styles = StyleSheet.create({
  },
  pastilleContainer: {
   flexDirection: 'row',
-  alignItems: 'center'
+  alignItems: 'flex-start',
  },
  pastille: {
   marginLeft: 15,
   marginRight: 15,
   marginTop: 10,
   marginBottom: 10
+ },
+ progressBar: {
+  top: 0,
+  left: 0,
+  right: 0,
+  height: 10,
+  position: 'absolute',
+  backgroundColor: '#DDDDDD',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'row'
+ },
+ progressBarCompleted: {
+  backgroundColor: '#38E1B2',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: windowWidth / 4,
+  height: 10
  }
 });
 

@@ -1,15 +1,18 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, PushNotificationIOS, TouchableHighlight, Image} from 'react-native';
+import React, {StyleSheet, ListView, View, Text, PushNotificationIOS, TouchableHighlight, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
+import MeActions from '../../actions/MeActions';
 
 import Page from '../ui/Page';
 import RestaurantElement from '../elements/Restaurant';
-import Filtre from './Filtre/List';
+import ErrorToast from '../ui/ErrorToast';
+import Filtre from './Filtre';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
 import Restaurant from './Restaurant';
@@ -17,13 +20,13 @@ import Restaurant from './Restaurant';
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class Liste extends Page {
-  static route(title) {
+  static route() {
     return {
       component: Liste,
-      title: title,
-      rightButtonIcon: require('../../assets/img/tabs/icons/home.png'),
+      title: 'Restaurants',
+      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
       onRightButtonPress() {
-				this.replace(Carte.route("Carte"));
+				this.replace(Carte.route());
       }
     };
   }
@@ -33,7 +36,7 @@ class Liste extends Page {
       // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),
+      errors: RestaurantsStore.error(),
 			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
   }
@@ -52,6 +55,9 @@ class Liste extends Page {
   }
 
   componentWillMount() {
+  	if (!MeStore.getState().showTabBar) {
+  		MeActions.displayTabBar(true);
+  	}
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   }
@@ -64,9 +70,15 @@ class Liste extends Page {
     this.setState(this.restaurantsState());
   }
 
+  onRefresh = () => {
+  	RestaurantsActions.fetchRestaurants();
+  }
+
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
+      	rank={_.findIndex(this.state.data, restaurant) + 1}
+      	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         pictures={restaurant.pictures}
         subway={restaurant.subways[1][0]}
@@ -75,37 +87,53 @@ class Liste extends Page {
         marginTop={5}
         marginBottom={5}
         underlayColor={"#FFFFFF"}
+        key={restaurant.id}
         onPress={() => {
           this.props.navigator.push(Restaurant.route({id: restaurant.id}));
         }}/>
     );
   }
 
+  renderHeaderWrapper = (refreshingIndicator) => {
+  	if (!this.state.data.length) {
+  		return(
+  			<View>
+	 				{refreshingIndicator}
+	  			<View style={styles.emptyTextContainer}>
+	  				<Text style={styles.emptyText}>Tu n'as pas de restaurants avec ces critères. Essaie de modifier les filtres ou de changer de lieu sur la carte.</Text>
+	  			</View>
+	  		</View>
+  		);
+  	} else {
+  		return {refreshingIndicator};
+  	}
+  }
+
   renderPage() {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-				<TouchableHighlight style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route());
 				}}>
-					<View style={styles.filterContainer}>
-						{RestaurantsStore.filterActive() ? 
-							[
-								<View key={'opened'} style={styles.triangleDown} />
-							] : [
-								<View key={'closed'} style={styles.triangleRight} />
-							]
-						}
 						<Text style={styles.filterMessageText}>
-							{RestaurantsStore.filterActive() ? 'Filtre activé - ' + this.state.data.length + ' résultat' + (this.state.data.length > 1 ? 's' : '') : 'Filtre désactivé'}
+							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
 						</Text>
-					</View>
 				</TouchableHighlight>
-				<ListView
+				<RefreshableListView
+					key="list_restaurants"
 					dataSource={this.state.dataSource}
 					renderRow={this.renderRestaurant}
+					renderHeaderWrapper={this.renderHeaderWrapper}
 					contentInset={{top: 0}}
-					automaticallyAdjustContentInsets={false}
-					showsVerticalScrollIndicator={false} />
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          loadData={this.onRefresh}
+          refreshDescription="Refreshing..." />
+
+        {_.map(this.state.errors, (err) => {
+          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
+        })}
 			</View>
 		);
   }
@@ -185,8 +213,8 @@ var styles = StyleSheet.create({
 		left: 5
 	},
 	filterMessageText: {
-		color: '#000000',
-    fontSize: 13,
+		color: '#EF582D',
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
@@ -195,46 +223,29 @@ var styles = StyleSheet.create({
 	},
 	filterContainerWrapper: {
 		backgroundColor: '#FFFFFF',
+		borderColor: '#EF582D',
+		borderWidth: 1,
+		borderRadius: 1,
+		margin: 5,
 	},
 	filterContainer: {
 		flex: 1,
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center'
-	},
-	triangleRight: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '90deg'}
-    ]
   },
-  	triangleDown: {
-    width: 0,
-    height: 0,
-    marginRight: 5,
-    marginTop: 2,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#000000',
-    transform: [
-      {rotate: '180deg'}
-    ]
+  emptyTextContainer: {
+  	flex: 1,
+  	marginTop: 40,
+  	alignItems: 'center',
+  	justifyContent: 'center'
+  },
+  emptyText: {
+  	flex: 1,
+  	textAlign: 'center',
+  	padding: 20,
+  	fontSize: 15,
+  	fontWeight: '600'
   }
 });
 
