@@ -265,7 +265,7 @@ var styles = StyleSheet.create({
   pastilleText: {
     color: '#EF582D',
     fontWeight: 'bold',
-    fontSize: 12
+    fontSize: 11
   }
 });
 

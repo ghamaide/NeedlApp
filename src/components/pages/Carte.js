@@ -67,12 +67,12 @@ class Carte extends Page {
     if (event.data.route.component === Carte) {
       RestaurantsActions.fetchRestaurants();
 
-      this.setState({showsUserLocation: true});
-
       navigator.geolocation.getCurrentPosition(
         () => PushNotificationIOS.requestPermissions(),
         () => PushNotificationIOS.requestPermissions()
       );
+
+      this.setState({showsUserLocation: true});
 
       navigator.geolocation.getCurrentPosition(
         (initialPosition) => {
@@ -181,8 +181,9 @@ class Carte extends Page {
             {_.map(this.state.data, (restaurant) => {
               return (
                 <RestaurantElement
+                  rank={_.findIndex(this.state.data, restaurant) + 1}
                   isNeedl={restaurant.score <= 5}
-                  key={restaurant.id}
+                  key={"restaurant_" + restaurant.id}
                   name={restaurant.name}
                   pictures={restaurant.pictures}
                   type={restaurant.food[1]}

@@ -2,6 +2,7 @@
 
 import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS} from 'react-native';
 import _ from 'lodash';
+import RefreshableListView from 'react-native-refreshable-listview';
 import Contacts from 'react-native-contacts';
 import SearchBar from 'react-native-search-bar';
 
@@ -32,6 +33,7 @@ class InviteFriend extends Page {
     this.state.filteredContacts = {};
     this.state.data = {};
     this.state.switchList = {};
+    this.state.hasUploadedContacts = MeStore.getState().hasUploadedContacts;
   }
 
   onMeChange = () => {
@@ -50,7 +52,7 @@ class InviteFriend extends Page {
     this.setState({
       uploadingContacts: MeStore.uploadingContacts(),
       sendingMessage: MeStore.sendingMessage(),
-      errors: errors
+      errors: errors,
     });
   }
 
@@ -93,10 +95,9 @@ class InviteFriend extends Page {
         });
         this.setState({contacts : retrievedContacts});
         this.setState({filteredContacts : retrievedContacts});
-        MeActions.uploadContacts(retrievedContacts);
-        var i = _.findIndex(retrievedContacts, (contact) => {
-          return contact.givenName == 'Valentin';
-        });
+        if (!this.state.hasUploadedContacts) {
+          MeActions.uploadContacts(retrievedContacts);
+        }
       }
     })
   }
@@ -144,7 +145,7 @@ class InviteFriend extends Page {
                 style={styles.imageCheck}
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [
-              !this.state.uploadingContacts & !this.state.sendingMessage ? [
+              !this.state.uploadingContacts ? [
                 <TouchableHighlight style={styles.imageWrapper} onPress={() => {
                   var updatedContacts = _.map(this.state.contacts, (row) => {
                     if (contact.recordID === row.recordID) {
@@ -175,9 +176,9 @@ class InviteFriend extends Page {
     );
   }
 
-  renderEmptyState = () => {
-    // if contacts is empty : return();
-
+  onRefresh = () => {
+    this.setState({hasUploadedContacts: false});
+    this.checkPermission();
   }
 
   renderPage() {
@@ -190,7 +191,7 @@ class InviteFriend extends Page {
           textFieldBackgroundColor='#DDDDDD'
           onChangeText={this.searchContacts}
           onSearchButtonPress={this.closeKeyboard} />
-        <ListView
+        <RefreshableListView
           style={styles.contactsList}
           dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
           renderRow={this.renderContact}
@@ -198,7 +199,8 @@ class InviteFriend extends Page {
           onScroll={this.closeKeyboard}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
-          renderHeader={this.renderEmptyState} />
+          loadData={this.onRefresh}
+          refreshDescription="Refreshing..." />
         {_.map(this.state.errors, (error, i) => {
           return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}

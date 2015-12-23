@@ -89,7 +89,7 @@ class Filtre extends Component {
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEEEEE', position: 'relative'}}>
         <Overlay key="ambiences_overlay" isVisible={this.state.showOverlayAmbiences}>
           <ToggleGroup
-            maxSelection={4}
+            maxSelection={7}
             fifo={true}
             selectedInitial={this.state.ambiences}
             onSelect={(v, selected) => {
@@ -110,9 +110,9 @@ class Filtre extends Component {
                       <Toggle key="romantique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/romantique.png')} label="Romantique" value={4} />
                     </View>
                     <View style={styles.pastilleContainerOverlay}>
-                      <Toggle key="branche" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/branche.png')} label="Chic" value={5} />
-                      <Toggle key="typique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/typique.png')} label="Convivial" value={6} />
-                      <Toggle key="cosy" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/cosy.png')} label="Festif" value={7} />
+                      <Toggle key="branche" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/branche.png')} label="Branché" value={5} />
+                      <Toggle key="typique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/typique.png')} label="Typique" value={6} />
+                      <Toggle key="cosy" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/cosy.png')} label="Cosy" value={7} />
                     </View>
                     <TouchableHighlight 
                       underlayColor='rgba(0, 0, 0, 0.3)'
@@ -130,7 +130,7 @@ class Filtre extends Component {
         <Overlay key="occasions_overlay" isVisible={this.state.showOverlayOccasions}>
           <ToggleGroup
             ref="togglegroupoccasions"
-            maxSelection={7}
+            maxSelection={9}
             fifo={true}
             selectedInitial={this.state.occasions}
             onSelect={(v, selected) => {
@@ -175,7 +175,7 @@ class Filtre extends Component {
         <Overlay key="types_overlay" isVisible={this.state.showOverlayTypes}>
           <ToggleGroup
             ref="togglegrouptypes"
-            maxSelection={7}
+            maxSelection={23}
             fifo={true}
             selectedInitial={this.state.types}
             onSelect={(v, selected) => {
