@@ -11,7 +11,6 @@ export class RestaurantsActions {
 
       request('GET', '/api/restaurants')
         .end((err, result) => {
-          console.log(err);
           if (err) {
             return this.restaurantsFetchFailed(err);
           }

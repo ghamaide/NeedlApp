@@ -81,7 +81,7 @@ class Liste extends Page {
       	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         pictures={restaurant.pictures}
-        subway={restaurant.subways[1][0]}
+        subway={restaurant.subways[1] ? restaurant.subways[1][0] : 'Non disponible'}
         type={restaurant.food[1]}
         height={200}
         marginTop={5}

@@ -68,9 +68,12 @@ class Filtre extends Component {
   }
 
   clearFilters = () => {
-    this.refs.togglegroupprice.onUnselect(this.state.price);
-    this.refs.togglegroupambiences.onUnselect(this.state.ambience);
-    this.refs.togglegroupoccasions.onUnselect(this.state.occasion);
+    this.setState({ambiences: []});
+    this.setState({occasions: []});
+    this.setState({types: []});
+    _.map(this.state.prices, (id) => {
+      this.refs.togglegroupprices.onUnselect(id);
+    });
   }
 
   render() {
@@ -89,6 +92,7 @@ class Filtre extends Component {
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEEEEE', position: 'relative'}}>
         <Overlay key="ambiences_overlay" isVisible={this.state.showOverlayAmbiences}>
           <ToggleGroup
+            ref="togglegroupambiences"
             maxSelection={7}
             fifo={true}
             selectedInitial={this.state.ambiences}
@@ -239,7 +243,7 @@ class Filtre extends Component {
 
         <ScrollView key="filter_scrollview" style={styles.container}>
           <ToggleGroup
-            ref="togglegroupprice"
+            ref="togglegroupprices"
             maxSelection={4}
             fifo={true}
             selectedInitial={RestaurantsStore.getState().filters.prices}
@@ -247,6 +251,8 @@ class Filtre extends Component {
               this.setState({prices: selected});
             }}
             onUnselect={(v, selected) => {
+              console.log(v);
+              console.log(selected);
               this.setState({prices: selected});
             }}>
             {(Toggle) => {
@@ -343,6 +349,12 @@ class Filtre extends Component {
               </TouchableHighlight>
             ]}
           </View>
+          <TouchableHighlight 
+            underlayColor='rgba(0, 0, 0, 0.3)'
+            style={styles.resetButton}
+            onPress={this.clearFilters}>
+            <Text style={styles.resetText}>Réinitialiser</Text>
+          </TouchableHighlight>
         </ScrollView>
 
         <TouchableHighlight 
@@ -373,6 +385,22 @@ var styles = StyleSheet.create({
     borderWidth: 0.5,
     padding: 10,
     borderColor: '#EF582D'
+  },
+  resetButton : {
+    backgroundColor: '#EEEEEE',
+    borderRadius: 3,
+    padding: 10,
+    borderColor: '#888888',
+    borderWidth: 1,
+    width: 240,
+    marginLeft: (windowWidth - 240) / 2,
+  },
+  resetText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#888888',
+    textAlign: 'center',
+    fontWeight: '600',
   },
   submitButton : {
     backgroundColor: '#EF582D',
