@@ -2,7 +2,6 @@
 
 import React, {StyleSheet, Text, ListView, View, Image, TouchableHighlight} from 'react-native';
 import _ from 'lodash';
-import SGListView from 'react-native-sglistview';
 import RefreshableListView from 'react-native-refreshable-listview';
 
 import NotifsActions from '../../actions/NotifsActions';
@@ -65,7 +64,7 @@ class Notifs extends Page {
   }
 
   onNotifsChange = () => {
-    //this.setState(Notifs.notifsState);
+    this.setState(Notifs.notifsState);
   }
 
   onRefresh() {
@@ -73,7 +72,7 @@ class Notifs extends Page {
     NotifsActions.fetchNotifs();
   }
 
-  renderHeader = (refreshingIndicator) => {
+  renderHeaderWrapper = (refreshingIndicator) => {
     var nbPot = NotifsStore.getState().notifs.length;
 
     if (nbPot) {
@@ -134,7 +133,7 @@ class Notifs extends Page {
       <RefreshableListView
         style={styles.notifsList}
         dataSource={this.state.data}
-        renderHeaderWrapper={this.renderHeader}
+        renderHeaderWrapper={this.renderHeaderWrapper}
         renderRow={this.renderNotif}
         contentInset={{top: 0}}
         scrollRenderAheadDistance={150}

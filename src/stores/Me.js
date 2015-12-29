@@ -25,6 +25,8 @@ export class MeStore extends CachedStore {
 
     this.version = 0;
 
+    this.hasUploadedContacts = false;
+
     this.status.uploadingList = false;
     this.status.uploadingListError = null;
 
@@ -157,6 +159,7 @@ export class MeStore extends CachedStore {
 
   handleUploadContactsSuccess() {
     this.status.uploadingContacts = false;
+    this.hasUploadedContacts = true;
   }
 
   handleSendMessageContact() {

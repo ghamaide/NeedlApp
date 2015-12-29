@@ -168,7 +168,7 @@ class Profil extends Page {
           : null}
 
         {profil.wishes.length ?
-          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Envies', profil.wishes, 'transparent')
+          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'a Wishlist', profil.wishes, 'transparent')
           : null}
 
         <Options>
