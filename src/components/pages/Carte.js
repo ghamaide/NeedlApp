@@ -67,11 +67,6 @@ class Carte extends Page {
     if (event.data.route.component === Carte) {
       RestaurantsActions.fetchRestaurants();
 
-      navigator.geolocation.getCurrentPosition(
-        () => PushNotificationIOS.requestPermissions(),
-        () => PushNotificationIOS.requestPermissions()
-      );
-
       this.setState({showsUserLocation: true});
 
       navigator.geolocation.getCurrentPosition(

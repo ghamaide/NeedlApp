@@ -129,7 +129,7 @@ export class MeActions {
   }
 
   sendMessageContact(data) {
-   return (dispatch) => {
+    return (dispatch) => {
       dispatch();
 
       request('POST', '/api/users/invite_contact')
@@ -141,7 +141,7 @@ export class MeActions {
             return this.sendMessageContactFailed(err);
           }
 
-          this.sendMessageContactSuccess();
+          this.sendMessageContactSuccess(data.recordID);
         });
     }
   }
@@ -150,10 +150,8 @@ export class MeActions {
     return err;
   }
 
-  sendMessageContactSuccess() {
-    return function (dispatch) {
-      dispatch()
-    }
+  sendMessageContactSuccess(id) {
+    return id;
   }
 
   displayTabBar(display) {
