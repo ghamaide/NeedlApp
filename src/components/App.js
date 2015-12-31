@@ -104,6 +104,7 @@ class App extends Component {
     FriendsStore.listen(this.onPastillesChange);
     NotifsStore.listen(this.onPastillesChange);
 
+    PushNotificationIOS.requestPermissions();
     PushNotificationIOS.addEventListener('register', this.onDeviceToken);
     PushNotificationIOS.addEventListener('notification', this.onNotification);
     AppStateIOS.addEventListener('change', this.onAppStateChange);

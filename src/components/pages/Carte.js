@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, MapView, View, Text, TouchableHighlight, Image, PixelRatio} from 'react-native';
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 

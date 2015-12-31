@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Animated, StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, ListView, ScrollView} from 'react-native';
+import React, {Animated, StyleSheet, MapView, View, Text, TouchableHighlight, ListView, ScrollView} from 'react-native';
 import _ from 'lodash';
 import GridView from 'react-native-grid-view';
 

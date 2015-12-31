@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, PushNotificationIOS, TouchableHighlight, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, Text, TouchableHighlight, Image, NativeModules} from 'react-native';
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
