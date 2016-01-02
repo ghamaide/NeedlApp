@@ -53,13 +53,19 @@ class Restaurant extends Component {
               <Image style={styles.imageNeedl} source={require('../../assets/img/other/images/logo.png')} />
              : null}
             {!this.props.isNeedl && this.props.rank === 1 ?
-              <Image style={[styles.imageRank, {tintColor: 'gold'}]} source={require('../../assets/img/other/icons/medal.png')} />
+              <View style={styles.imageRank}>
+                <Text style={[styles.imageRankText, {marginLeft: 1}]}>#1</Text>
+              </View>
              : null}
             {!this.props.isNeedl && this.props.rank === 2 ?
-              <Image style={[styles.imageRank, {tintColor: 'silver'}]} source={require('../../assets/img/other/icons/medal.png')} />
+              <View style={styles.imageRank}>
+                <Text style={styles.imageRankText}>#2</Text>
+              </View>
              : null}
             {!this.props.isNeedl && this.props.rank === 3 ?
-              <Image style={[styles.imageRank, {tintColor: 'brown'}]} source={require('../../assets/img/other/icons/medal.png')} />
+              <View style={styles.imageRank}>
+                <Text style={styles.imageRankText}>#3</Text>
+              </View>
              : null}
           </View>
         </Image>
@@ -154,11 +160,21 @@ var styles = StyleSheet.create({
     right: 5
   },
   imageRank: {
-    width: 12,
+    width: 30,
     height: 30,
     position: 'absolute',
-    top: 0,
-    right: 10
+    top: 10,
+    right: 10,
+    borderRadius: 15,
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    padding: 6.1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  imageRankText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '500'
   }
 });
 

@@ -57,7 +57,9 @@ Class RCTPushNotificationManager = nil;
                                                       moduleName:@"NeedlIOS"
                                                initialProperties:props
                                                    launchOptions:launchOptions];
-  
+
+  RCTPushNotificationManager = NSClassFromString(@"RCTPushNotificationManager");
+
   // Get launch image
   NSString *launchImageName = nil;
   if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {

@@ -90,7 +90,11 @@ class InviteFriend extends Page {
         this.authorizeShowContacts();
       } else {
         retrievedContacts = _.map(retrievedContacts, (contact) => {
-          contact.invitationSent = false;
+          if (!_.contains(MeStore.getState().uploadedContacts, contact.recordID)) {
+            contact.invitationSent = false;
+          } else {
+            contact.invitationSent = true;
+          }
           return contact;
         });
         this.setState({contacts : retrievedContacts});
@@ -142,6 +146,7 @@ class InviteFriend extends Page {
             <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
             {this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
               <Image
+                key={"check_" + contact.recordID}
                 style={styles.imageCheck}
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [

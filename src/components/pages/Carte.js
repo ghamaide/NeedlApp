@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, MapView, View, Text, TouchableHighlight, Image, PixelRatio} from 'react-native';
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 
@@ -70,11 +70,6 @@ class Carte extends Page {
   onFocus = (event) => {
     if (event.data.route.component === Carte) {
       RestaurantsActions.fetchRestaurants();
-
-      navigator.geolocation.getCurrentPosition(
-        () => PushNotificationIOS.requestPermissions(),
-        () => PushNotificationIOS.requestPermissions()
-      );
 
       this.setState({showsUserLocation: true});
 

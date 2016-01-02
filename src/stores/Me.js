@@ -26,6 +26,7 @@ export class MeStore extends CachedStore {
     this.version = 0;
 
     this.hasUploadedContacts = false;
+    this.uploadedContacts = [];
 
     this.status.uploadingList = false;
     this.status.uploadingListError = null;
@@ -172,8 +173,11 @@ export class MeStore extends CachedStore {
     this.status.sendingMessageError = err;
   }
 
-  handleSendMessageContactSuccess() {
+  handleSendMessageContactSuccess(id) {
     this.status.sendingMessage = false;
+    if (!_.contains(this.uploadedContacts, id)) {
+      this.uploadedContacts.push(id);  
+    }
   }
 
   handleDisplayTabBar(display) {
