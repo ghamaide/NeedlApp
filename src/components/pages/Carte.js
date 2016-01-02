@@ -54,6 +54,10 @@ class Carte extends Page {
     this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
     this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
+    this.state.northLatitude = 48.91;
+    this.state.southLatitude = 48.8;
+    this.state.westLongitude = 2.25;
+    this.state.eastLongitude = 2.42;
 
     this.state.center = {
       latitude: RestaurantsStore.getState().region.lat,
@@ -71,7 +75,7 @@ class Carte extends Page {
 
       navigator.geolocation.getCurrentPosition(
         (initialPosition) => {
-          if (!MeStore.getState().showedCurrentPosition) {
+          if (!MeStore.getState().showedCurrentPosition && this.isInParis(initialPosition)) {
             this.setState({
               center: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
             });
@@ -82,6 +86,10 @@ class Carte extends Page {
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
       );
     }
+  }
+
+  isInParis = (initialPosition) => {
+    return (initialPosition.coords.latitude <= this.state.northLatitude && initialPosition.coords.latitude >= this.state.southLatitude && initialPosition.coords.longitude <= this.state.eastLongitude && initialPosition.coords.longitude >= this.state.westLongitude);
   }
 
   componentWillMount() {
