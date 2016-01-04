@@ -50,7 +50,6 @@ class Carte extends Page {
     this.state = this.restaurantsState();
     this.state.isChanging = false;
     this.state.showsUserLocation = false;
-    this.state.initialPosition = 'unknown';
     this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
     this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
@@ -114,6 +113,8 @@ class Carte extends Page {
     RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
     this.setState({data: RestaurantsStore.filteredRestaurants()});
     this.setState({isChanging : false});
+    this.setState({index : 0});
+    this.refs.carousel.goToPage(this.state.index, 'annotationPress');
   }
 
   onRegionChange = (region) => {
@@ -193,7 +194,7 @@ class Carte extends Page {
                   budget={restaurant.price_range}
                   height={120}
                   onPress={() => {
-                    this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+                    this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
                   }}/>
               );
             })}

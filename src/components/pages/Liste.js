@@ -89,7 +89,7 @@ class Liste extends Page {
         underlayColor={"#FFFFFF"}
         key={restaurant.id}
         onPress={() => {
-          this.props.navigator.push(Restaurant.route({id: restaurant.id}));
+          this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
         }}/>
     );
   }
@@ -108,6 +108,7 @@ class Liste extends Page {
   		return (
   			<View>
 	   			{refreshingIndicator}
+  				<Text key="number_restaurants" style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants trouvés classés" : "restaurant trouvé classé"} par pertinence grâce aux interactions avec tes amis</Text>
 	   		</View>
   		);
   	}
@@ -250,6 +251,11 @@ var styles = StyleSheet.create({
   	padding: 20,
   	fontSize: 15,
   	fontWeight: '600'
+  },
+  numberRestaurants: {
+  	textAlign: 'center',
+  	color: '#444444',
+  	padding: 10 
   }
 });
 

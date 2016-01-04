@@ -40,6 +40,7 @@ class RecoStep6 extends Component {
     return (
       <ScrollView style={styles.container} scrollEnabled={false}>
         <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+          <Text style={styles.subtitle}>(Optionnel)</Text>
           <Text style={styles.title}>Taille d'un tweet</Text>
           <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
           <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
@@ -61,50 +62,57 @@ class RecoStep6 extends Component {
 }
 
 var styles = StyleSheet.create({
- container: {
-  backgroundColor: 'transparent',
-  paddingTop: 30,
-  paddingBottom: 10
- },
- title: {
-  width: windowWidth,
-  marginTop: 10,
-  color: '#000000',
-  fontSize: 15,
-  textAlign: 'center'
- },
- character: {
-  width: windowWidth,
-  marginTop: 5,
-  marginBottom: 15,
-  color: '#000000',
-  fontSize: 12,
-  textAlign: 'center'
- },
- reviewInput: {
-  padding: 10,
-  margin: 5,
-  height: 100,
-  borderWidth: 1,
-  borderColor: '#ccc',
-  color: '#444444'
- },
-progressBar: {
-  top: -30,
-  left: 0,
-  right: 0,
-  height: 10,
-  position: 'absolute',
-  backgroundColor: '#DDDDDD'
- },
-progressBarCompleted: {
-  backgroundColor: '#38E1B2',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  width: windowWidth,
-  height: 10
- }
+  container: {
+    backgroundColor: 'transparent',
+    paddingTop: 30,
+    paddingBottom: 10
+   },
+  title: {
+    width: windowWidth,
+    marginTop: 10,
+    color: '#000000',
+    fontSize: 15,
+    textAlign: 'center'
+  },
+  subtitle: {
+    width: windowWidth,
+    marginTop: 2,
+    color: '#000000',
+    fontSize: 13,
+    textAlign: 'center'
+  },
+  character: {
+    width: windowWidth,
+    marginTop: 5,
+    marginBottom: 15,
+    color: '#000000',
+    fontSize: 12,
+    textAlign: 'center'
+  },
+  reviewInput: {
+    padding: 10,
+    margin: 5,
+    height: 120,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    color: '#444444'
+  },
+  progressBar: {
+    top: -30,
+    left: 0,
+    right: 0,
+    height: 10,
+    position: 'absolute',
+    backgroundColor: '#DDDDDD'
+  },
+  progressBarCompleted: {
+    backgroundColor: '#38E1B2',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: windowWidth,
+    height: 10
+  }
 });
 
 export default RecoStep6;

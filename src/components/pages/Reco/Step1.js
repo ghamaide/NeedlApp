@@ -128,7 +128,8 @@ class RecoStep1 extends Component {
               duration={1000}
               style={styles.arrowUp}
               source={require('../../../assets/img/other/icons/arrow_up.png')} />
-            <Text style={styles.firstMessageText}>Partage ta première reco !</Text>
+            <Text style={[styles.firstMessageText, {marginTop: 20}]}>Recommande ton premier restaurant à tes amis!</Text>
+            <Text style={[styles.firstMessageText, {marginTop: 5}]}>Chaque interaction nous permet de mieux personnaliser la pertinence des restaurants qui te sont recommandés.</Text>
           </View>
         </TouchableHighlight>
       : null}
@@ -187,14 +188,16 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     padding: 5,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginTop: 20
   },
   firstMessageText: {
     color: '#000000',
     fontSize: 15,
     fontWeight: '500',
     textAlign: 'center',
-    marginTop: 20
+    marginLeft: 5,
+    marginRight: 5
   },
   arrowUp: {
     width: 50,

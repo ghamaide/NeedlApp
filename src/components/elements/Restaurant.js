@@ -49,8 +49,10 @@ class Restaurant extends Component {
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>
               : null}
-            {this.props.isNeedl ? 
-              <Image style={styles.imageNeedl} source={require('../../assets/img/other/images/logo.png')} />
+            {this.props.isNeedl ?
+              <View style={styles.imageNeedlContainer}>
+                <Image style={styles.imageNeedl} source={require('../../assets/img/other/icons/home.png')} />
+              </View>
              : null}
             {!this.props.isNeedl && this.props.rank === 1 ?
               <View style={styles.imageRank}>
@@ -151,20 +153,30 @@ var styles = StyleSheet.create({
     color: 'white',
     backgroundColor: 'rgba(0,0,0,0)',
   },
-  imageNeedl: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  imageNeedlContainer: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
     position: 'absolute',
     top: 5,
-    right: 5
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 5
+  },
+  imageNeedl: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    tintColor: '#FFFFFF'
   },
   imageRank: {
     width: 30,
     height: 30,
     position: 'absolute',
-    top: 10,
-    right: 10,
+    top: 5,
+    right: 5,
     borderRadius: 15,
     borderColor: '#FFFFFF',
     borderWidth: 1,

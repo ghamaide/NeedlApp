@@ -79,19 +79,20 @@ export class MeActions {
   }
 
   saveDeviceToken(token) {
-    request('POST', '/api/users/new_parse_installation.json')
-      .send({
-        'device_type': 'ios',
-        'device_token': token
-      })
-      .end((err) => {
-        console.log(err);
-      });
+    return (dispatch) => {
+      request('POST', '/api/users/new_parse_installation.json')
+        .send({
+          'device_type': 'ios',
+          'device_token': token
+        })
+        .end((err) => {
+          console.log(err);
+        });
+    }
   }
 
   resetBadgeNumber() {
     return (dispatch) => {
-      //dispatch();
       request('GET', '/api/users/reset_badge_to_zero')
         .end((err) => {
           console.log(err);
