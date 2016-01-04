@@ -166,14 +166,27 @@ class Restaurant extends Page {
         contentContainerStyle={styles.container}>
 
         <View key="restaurant_image" style={styles.header}>
-          <RestaurantElement
-            isNeedl={restaurant.score <= 5}
-            key={restaurant.id}
-            name={restaurant.name}
-            pictures={restaurant.pictures}
-            type={restaurant.food[1]}
-            height={250}
-            budget={restaurant.price_range} />
+          <Carousel
+            key="carouselRestaurant"
+            ref="carouselRestaurant" 
+            style={{
+              flexDirection: 'row',
+              flex: 1,
+              position: 'relative'
+            }}>
+            {_.map(restaurant.pictures, (picture) => {
+              return (
+                <RestaurantElement
+                  isNeedl={restaurant.score <= 5}
+                  key={picture}
+                  name={restaurant.name}
+                  picture={picture}
+                  type={restaurant.food[1]}
+                  height={250}
+                  budget={restaurant.price_range} />
+              );
+            })}
+          </Carousel>
         </View>
 
         <View key="restaurant_call_top" style={[styles.callContainer]}>
@@ -535,7 +548,9 @@ var styles = StyleSheet.create({
   container: {
   },
   header: {
-    height: 300
+    flex: 1,
+    position: 'relative',
+    height: 250
   },
   restaurantImage: {
     flex: 1,

@@ -103,7 +103,7 @@ class Notifs extends Page {
       <View style={styles.notifRow}>
         <RestaurantElement
           name={notif.restaurant_name}
-          pictures={[notif.restaurant_picture]}
+          picture={notif.restaurant_picture}
           type={notif.restaurant_food}
           budget={notif.restaurant_price_range}
           height={180}

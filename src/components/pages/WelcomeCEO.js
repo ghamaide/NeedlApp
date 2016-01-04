@@ -27,9 +27,6 @@ class WelcomeCEO extends Component {
         <Button label="On y va ?" onPress={() => {
           this.props.navigator.resetToTab(0);
         }} />
-      </ScrollView
-
-      >
     );
   }
 }

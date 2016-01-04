@@ -189,7 +189,7 @@ class Carte extends Page {
                   isNeedl={restaurant.score <= 5}
                   key={"restaurant_" + restaurant.id}
                   name={restaurant.name}
-                  pictures={restaurant.pictures}
+                  picture={restaurant.pictures[0]}
                   type={restaurant.food[1]}
                   budget={restaurant.price_range}
                   height={120}

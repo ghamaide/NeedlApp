@@ -120,7 +120,7 @@ class Profil extends Page {
                 style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 65}}
                 key={restaurant.id}
                 name={restaurant.name}
-                pictures={[restaurant.picture]}
+                picture={restaurant.picture}
                 type={restaurant.type}
                 budget={restaurant.price_range}
                 underlayColor='#EEEEEE'

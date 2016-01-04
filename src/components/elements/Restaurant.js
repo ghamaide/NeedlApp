@@ -24,7 +24,7 @@ class Restaurant extends Component {
 
     var content = (
       <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
-        <Image key={this.props.pictures[0]} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.pictures[0]}}>
+        <Image key={this.props.picture} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.picture}}>
           <LinearGradient colors={[processColor('#FFFFFF'), processColor('#000000')]} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
             <Text key="restaurant_name" style={styles.restaurantName}>{this.props.name}</Text>
