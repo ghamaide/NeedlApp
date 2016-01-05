@@ -12,7 +12,7 @@ class RecoStep5 extends Component {
   static route() {
     return {
       component: RecoStep5,
-      title: 'Occasion',
+      title: 'Occasions',
       rightButtonTitle: 'Valider',
       onRightButtonPress() {
         var reco = RecoStore.getReco();

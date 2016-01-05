@@ -36,3 +36,8 @@ npm-debug.log
 # MixPanel
 #
 ios/Pods/
+
+# Sublime Text
+#
+Needl.sublime-project
+Needl.sublime-workspace

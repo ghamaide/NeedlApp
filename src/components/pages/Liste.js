@@ -81,7 +81,7 @@ class Liste extends Page {
       	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         picture={restaurant.pictures[0]}
-        subway={restaurant.subways[1] ? restaurant.subways[1][0] : 'Non disponible'}
+        subway={RestaurantsStore.closestSubwayName(restaurant.id)}
         type={restaurant.food[1]}
         height={200}
         marginTop={5}
@@ -108,7 +108,7 @@ class Liste extends Page {
   		return (
   			<View>
 	   			{refreshingIndicator}
-  				<Text key="number_restaurants" style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants trouvés classés" : "restaurant trouvé classé"} par pertinence grâce aux interactions avec tes amis</Text>
+					<Text key="number_restaurants" style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants trouvés classés" : "restaurant trouvé classé"} par pertinence grâce aux interactions avec tes amis</Text>
 	   		</View>
   		);
   	}

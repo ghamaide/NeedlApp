@@ -12,6 +12,7 @@ import ToggleGroup from './Reco/ToggleGroup';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
+var marginBottom = (windowHeight >= 667 ? 0 : 60);
 
 class Filtre extends Component {
   static route() {
@@ -22,14 +23,7 @@ class Filtre extends Component {
       onLeftButtonPress() {
         MeActions.displayTabBar(true);
         this.pop();
-      },/*
-      rightButtonTitle: 'Réinitialiser',
-      onRightButtonPress() {
-        this.refs.togglegroupprice.onUnselect(this.state.prices);
-        this.refs.togglegroupambiences.onUnselect(this.state.ambiences);
-        this.refs.togglegroupoccasions.onUnselect(this.state.occasions);
-        this.refs.togglegrouptypes.onUnselect(this.state.types);
-      }*/
+      }
     };
   }
 
@@ -37,7 +31,6 @@ class Filtre extends Component {
     super(props);
 
     this.state = this.filtersState();
-    this.arrivalState = this.filtersState();
   }
 
   filtersState() {
@@ -55,9 +48,6 @@ class Filtre extends Component {
   componentWillMount() {
     MeActions.displayTabBar(false);
     this.setState(this.filtersState());
-  }
-
-  componentWillUnmount() {
   }
 
   setFilters = () => {
@@ -251,8 +241,6 @@ class Filtre extends Component {
               this.setState({prices: selected});
             }}
             onUnselect={(v, selected) => {
-              console.log(v);
-              console.log(selected);
               this.setState({prices: selected});
             }}>
             {(Toggle) => {
@@ -375,7 +363,7 @@ class Filtre extends Component {
 var styles = StyleSheet.create({
   container: {
     paddingTop: 10,
-    backgroundColor: '#EEEEEE'
+    backgroundColor: '#EEEEEE',
   },
   clearButton: {
     backgroundColor: '#FFFFFF',
@@ -394,6 +382,7 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     width: 240,
     marginLeft: (windowWidth - 240) / 2,
+    marginBottom: marginBottom
   },
   resetText: {
     flex: 1,
