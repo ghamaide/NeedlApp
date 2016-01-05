@@ -113,6 +113,10 @@ class Carte extends Page {
     RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
     this.setState({data: RestaurantsStore.filteredRestaurants()});
     this.setState({isChanging : false});
+    if (this.state.data.length && typeof this.refs.carousel !== 'undefined' && this.refs.carousel.goToPage !== 'undefined') {
+      this.setState({index: 0});
+      this.refs.carousel.goToPage(this.state.index, 'annotationPress');
+    }
   }
 
   onRegionChange = (region) => {

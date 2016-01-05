@@ -147,7 +147,6 @@ class Notifs extends Page {
 
 var styles = StyleSheet.create({
   notifsList: {
-    paddingTop: 20,
     backgroundColor: '#FFFFFF'
   },
   notifRow: {

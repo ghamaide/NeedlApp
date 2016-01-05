@@ -16,6 +16,7 @@ import Filtre from './Filtre';
 import Carte from './Carte';
 import BoxesRestaurants from './BoxesRestaurants';
 import Restaurant from './Restaurant';
+import Help from './Help';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -74,6 +75,10 @@ class Liste extends Page {
   	RestaurantsActions.fetchRestaurants();
   }
 
+  onPressText = () => {
+  	this.props.navigator.push(Help.route("Aide", {from: "liste"}));
+  }
+
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
@@ -108,7 +113,7 @@ class Liste extends Page {
   		return (
   			<View>
 	   			{refreshingIndicator}
-					<Text key="number_restaurants" style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants trouvés classés" : "restaurant trouvé classé"} par pertinence grâce aux interactions avec tes amis</Text>
+					<Text key="number_restaurants" style={styles.numberRestaurants} onPress={this.onPressText}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants classés" : "restaurant classé"} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
 	   		</View>
   		);
   	}
@@ -255,7 +260,9 @@ var styles = StyleSheet.create({
   numberRestaurants: {
   	textAlign: 'center',
   	color: '#444444',
-  	padding: 10 
+  	padding: 10,
+  	fontSize: 13,
+  	textDecorationLine: 'underline'
   }
 });
 

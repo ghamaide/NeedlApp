@@ -51,7 +51,7 @@ class Restaurant extends Component {
               : null}
             {this.props.isNeedl ?
               <View style={styles.imageNeedlContainer}>
-                <Image style={styles.imageNeedl} source={require('../../assets/img/other/icons/home.png')} />
+                <Image style={styles.imageNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
               </View>
              : null}
             {!this.props.isNeedl && this.props.rank === 1 ?
@@ -168,7 +168,6 @@ var styles = StyleSheet.create({
   imageNeedl: {
     width: 18,
     height: 18,
-    borderRadius: 9,
     tintColor: '#FFFFFF'
   },
   imageRank: {

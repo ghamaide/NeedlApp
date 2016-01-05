@@ -21,6 +21,7 @@ import Options from '../elements/Options';
 import Option from '../elements/Option';
 import Toggle from './Reco/Toggle';
 import RecoStep3 from './Reco/Step3';
+import Help from './Help';
 
 class Restaurant extends Page {
   static route(props, title) {
@@ -152,6 +153,10 @@ class Restaurant extends Page {
     this.refs.carouselReco.goToPage(-1);
   }
 
+  onPressText = () => {
+    this.props.navigator.push(Help.route("Aide", {from: "restaurant"}));
+  }
+
   renderPage() {
     var restaurant = this.state.data;
     var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
@@ -177,7 +182,6 @@ class Restaurant extends Page {
             {_.map(restaurant.pictures, (picture) => {
               return (
                 <RestaurantElement
-                  isNeedl={restaurant.score <= 5}
                   key={picture}
                   name={restaurant.name}
                   picture={picture}
@@ -268,11 +272,13 @@ class Restaurant extends Page {
             </View>
             : [ restaurant.score <= 5 ?
               <View key="review_needl" style={{alignItems: 'center', marginBottom: 10}}>
-                <View key="profile_container_553" style={styles.avatarWrapper}>
-                  <Image key="profile_553" style={styles.avatar} source={require('../../assets/img/other/images/logo.png')} />
+                <View key="profile_container_553" style={[styles.avatarWrapper, {backgroundColor: '#EF582D'}]}>
+                  <TouchableHighlight onPress={this.onPressText} underlayColor='rgba(0, 0, 0, 0)'>
+                    <Image key="profile_553" style={styles.avatarNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
+                  </TouchableHighlight>
                 </View>
                 <View key="needl_review" style={styles.reviewNeedl}>
-                  <Text key="recommendation_text" style={styles.reviewText}>Labellisé valeur sûre par Needl</Text>
+                  <Text key="recommendation_text" style={[styles.reviewText, {textDecorationLine: 'underline'}]} onPress={this.onPressText}>Labellisé valeur sûre par Needl (+)</Text>
                 </View>
               </View>
               : <Text key="no_recommenders" style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
@@ -658,6 +664,11 @@ var styles = StyleSheet.create({
     height: 60,
     width: 60,
     borderRadius: 30
+  },
+  avatarNeedl: {
+    height: 40,
+    width: 40,
+    margin: 10
   },
   avatarContainer: {
     flexDirection: 'row',

@@ -124,53 +124,23 @@ class App extends Component {
   }
 
   render() {
-    var uploadText = "Si toi aussi tu stockes tes restaurants à tester dans des notes ou quoi que ce soit d'autres, prends des screenshots et importe-les! Tu pourras également le faire à tout autre moment sur ta page profil. Les restaurants seront alors automatiquement ajoutés à ta wishlist sous 24h.";
-
-    if (this.state.secondTime) {
-      uploadText = "Ta photo a bien été récupérée, tes restaurants seront ajoutés à ta wishlist d'ici 24h. Si besoin, tu peux importer d'autres photos ou commencer à naviguer!";
-    }
-
     return (
       <View style={{flex: 1}}>
         {_.map(this.state.errors, (error, i) => {
           return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}
-        <Overlay isVisible={this.state.uploadingList}>
-          <View style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            position: 'relative'
-          }}>
-            <View style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              backgroundColor: 'white',
-              opacity: 0.5
-            }} />
-            <ActivityIndicatorIOS
-              animating={true}
-              color="#EF582D"
-              style={[{height: 80}]}
-              size="large"
-            />
-          </View>
-        </Overlay>
-
-        <Overlay isVisible={!this.state.selectingPhoto && !this.state.uploadingList && !this.state.hasBeenUploadWelcomed}>
+        <Overlay isVisible={!this.state.hasBeenUploadWelcomed}>
           <ScrollView
             style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
             contentInset={{top: 0}}
             automaticallyAdjustContentInsets={false}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.containerCEOMessage}>
-            <Text style={[styles.messageCEO, {marginBottom: 10}]}>Tu peux désormais accéder à ta carte personnalisée de Paris comprenant toutes tes recommandations ainsi que celles de tes amis.</Text>
-            <Text style={[styles.messageCEO, {marginBottom: 20}]}>En attendant qu'ils s'inscrivent, tu peux compter sur ma sélection de burgers, pizzas et restaurants thaïs! Ce sont mes 3 passions culinaires, et ces adresses sont de loin mes préférées!</Text>
-            <Text style={[styles.messageCEO, {marginBottom: 20}]}>Valentin, CEO Needl</Text>
-            <Image style={styles.avatarCEO} source={{uri: 'http://needl.s3.amazonaws.com/production/users/pictures/000/000/125/original/picture?1435579332'}} />
+            contentContainerStyle={styles.container}>
+            <View style={styles.avatarWrapper}>
+              <Image style={styles.avatar} source={require('../assets/img/other/icons/personal.png')} />
+            </View>
+            <Text style={styles.title}>Ton app est unique !</Text>
+            <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
             <Button label="Passer" onPress={() => {
               MeActions.hasBeenUploadWelcomed();
             }} style={{margin: 5}}/>
@@ -221,102 +191,35 @@ class App extends Component {
 
 var styles = StyleSheet.create({
   container: {
-    position: 'relative',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20
-  },
-  backContainer: {
-    backgroundColor: 'white',
-    opacity: 0.8,
-    position: 'absolute',
-    top: 0,
-    bottom: -40,
-    left: 0,
-    right: -40
-  },
-  message: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: 'black',
-    fontWeight: 'bold'
+    padding: 20,
+    alignItems: 'center'
   },
   title: {
     textAlign: 'center',
     fontSize: 18,
-    color: '#EF582D',
-    fontWeight: 'bold'
-  },
-  containerCEOMessage: {
-    padding: 20,
-    alignItems: 'center'
-  },
-  messageCEO: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#717171'
-  },
-  avatarCEO: {
-    height: 100,
-    width: 100,
-    borderRadius: 50,
-    marginBottom: 20
-  },
-  messageImportList: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: 'black',
-    fontWeight: 'bold',
-    paddingRight: 10,
-    paddingLeft: 10
-  },
-  titleImportList: {
-    textAlign: 'center',
-    fontSize: 18,
-    color: '#EF582D',
-    fontWeight: 'bold',
-    paddingRight: 10,
-    paddingLeft: 10,
-    paddingTop: 10
-  },
-  containerReco: {
-    backgroundColor: 'white'
-  },
-  containerFirstMessageReco: {
-    backgroundColor: '#38E1B2',
-    padding: 10
-  },
-  textFirstMessageReco: {
-    color: 'white',
-    fontSize: 16,
     fontWeight: '500',
-    textAlign: 'center'
-  },
-  restaurantQueryInput: {
-    height: 30,
-    backgroundColor: '#EEEEEE',
-    borderRadius: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
-    margin: 10
-  },
-  restaurantsList: {
-    backgroundColor: 'white',
+    color: '#707070',
     marginBottom: 20
   },
-  restaurantRowInner: {
-    justifyContent: 'center',
-    backgroundColor: 'white',
-    padding: 10
+  message: {
+    textAlign: 'center',
+    fontSize: 15,
+    color: '#414141',
+    marginBottom: 50
   },
-  noResultText: {
-    fontWeight: 'bold',
-    color: '#222'
+  avatar: {
+    height: 40,
+    width: 40,
+    margin: 15,
+    tintColor: '#FFFFFF'
   },
-  activityIndicator: {
-    alignItems: 'center',
-    justifyContent: 'center'
+  avatarWrapper: {
+    height: 70,
+    width: 70,
+    borderRadius: 35,
+    marginBottom: 40,
+    backgroundColor: '#EF582D',
+    marginTop: 20
   }
 });
 

@@ -120,7 +120,7 @@ class RecoStep1 extends Component {
 
       {!MeStore.getState().me.HAS_SHARED && !this.state.query ?
         <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
-          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 40}}>
             <Animatable.Image
               animation="slideInDown"
               iterationCount="infinite"
@@ -128,8 +128,8 @@ class RecoStep1 extends Component {
               duration={1000}
               style={styles.arrowUp}
               source={require('../../../assets/img/other/icons/arrow_up.png')} />
-            <Text style={[styles.firstMessageText, {marginTop: 20}]}>Recommande ton premier restaurant à tes amis!</Text>
-            <Text style={[styles.firstMessageText, {marginTop: 5}]}>Chaque interaction nous permet de mieux personnaliser la pertinence des restaurants qui te sont recommandés.</Text>
+            <Text style={[styles.firstMessageText, {marginTop: 20}]}>Recommande ton premier restaurant à tes amis !</Text>
+            <Text style={[styles.firstMessageText, {marginTop: 25}]}>Chaque interaction nous permet de personnaliser plus finement la pertinence des restaurants qui te sont conseillés.</Text>
           </View>
         </TouchableHighlight>
       : null}
@@ -173,11 +173,9 @@ var styles = StyleSheet.create({
     borderColor: '#DDDDDD'
   },
   viewContainer: {
-    backgroundColor: '#FFFFFF',
-    flex: 1,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     padding: 10,
-    height: 100
   },
   noResultText: {
     fontWeight: 'bold',
@@ -185,19 +183,16 @@ var styles = StyleSheet.create({
   },
   firstMessage: {
     flex: 1,
-    backgroundColor: 'transparent',
-    padding: 5,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20
   },
   firstMessageText: {
     color: '#000000',
-    fontSize: 15,
-    fontWeight: '500',
+    fontSize: 16,
     textAlign: 'center',
-    marginLeft: 5,
-    marginRight: 5
+    paddingLeft: 15,
+    paddingRight: 15
   },
   arrowUp: {
     width: 50,
