@@ -88,6 +88,7 @@ class Liste extends Page {
         picture={restaurant.pictures[0]}
         subway={RestaurantsStore.closestSubwayName(restaurant.id)}
         type={restaurant.food[1]}
+        budget={restaurant.price_range}
         height={200}
         marginTop={5}
         marginBottom={5}

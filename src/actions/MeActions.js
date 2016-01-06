@@ -166,6 +166,12 @@ export class MeActions {
   showedCurrentPosition(showed) {
     return showed;
   }
+
+  hideOverlayMapTutorial() {
+    return function (dispatch) {
+      dispatch()
+    }
+  }
 }
 
 export default alt.createActions(MeActions);

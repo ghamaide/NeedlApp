@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {NativeModules, View, Component, Text, StyleSheet, TextInput, ListView, ActivityIndicatorIOS, TouchableHighlight, Dimensions, Image} from 'react-native';
+import React, {NativeModules, View, Component, Text, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image} from 'react-native';
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
@@ -50,14 +50,8 @@ class RecoStep1 extends Component {
     return (
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
         RecoActions.setReco({restaurant: restaurant});
-        if (MeStore.getState().me.HAS_SHARED) {
-          this.props.navigator.push(Step2.route());
-        } else {
-          var reco = RecoStore.getReco();
-          reco.approved = true;
-          reco.step2 = true;
-          this.props.navigator.push(Step3.route());
-        }
+        this.closeKeyboard();
+        this.props.navigator.push(Step2.route());
       }}>
         <View style={styles.restaurantRowInner}>
           <Text style={{color: '#000000'}}>{restaurant.name_and_address.split(': ')[0]}</Text>

@@ -19,6 +19,8 @@ export class MeStore extends CachedStore {
 
     this.hasBeenUploadWelcomed = false;
 
+    this.showOverlayMapTutorial = true;
+
     this.showedCurrentPosition = false;
 
     this.showTabBar = true;
@@ -64,6 +66,8 @@ export class MeStore extends CachedStore {
       handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
 
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
+      
+      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
       
       handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
 
@@ -192,6 +196,10 @@ export class MeStore extends CachedStore {
     this.showedCurrentPosition = showed;
   }
 
+  handleHideOverlayMapTutorial() {
+    this.showOverlayMapTutorial = false;
+  }
+
   static uploadingContactsError() {
     return this.getState().status.uploadingContactsError;
   }
@@ -218,6 +226,10 @@ export class MeStore extends CachedStore {
 
   static hasBeenUploadWelcomed() {
     return this.getState().hasBeenUploadWelcomed;
+  }
+
+  static showOverlayMapTutorial() {
+    return this.getState().showOverlayMapTutorial;
   }
 }
 

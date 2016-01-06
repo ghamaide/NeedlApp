@@ -2,6 +2,7 @@
 
 import React, {StyleSheet, View, Component, Image, Text, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
 import _ from 'lodash';
+import TimerMixin from 'react-timer-mixin';
 import MeStore from '../../stores/Me';
 
 class PatchedNavigatorIOS extends Component {
@@ -168,7 +169,7 @@ class TabView extends Component {
       newNav.parent._emitDidFocus(_.extend({fromTabs: true}, opts, newNav.parent.state.routeStack[newNav.parent.state.observedTopOfStack]));
     }
 
-    setTimeout(() => {
+    TimerMixin.setTimeout(() => {
       if (nav) {
         nav.resetTo(this.props.tabs[selected].component.route());
       }

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, AppStateIOS, View, PushNotificationIOS, NativeModules, Text, Image, StyleSheet, ActivityIndicatorIOS, ScrollView, StatusBarIOS} from 'react-native';
+import React, {Component, AppStateIOS, View, PushNotificationIOS, NativeModules, Text, Image, StyleSheet, ActivityIndicatorIOS, ScrollView, StatusBarIOS, TouchableHighlight} from 'react-native';
 import Overlay from 'react-native-overlay';
 import _ from 'lodash';
 
@@ -33,7 +33,8 @@ class App extends Component {
       friendsPastille: FriendsStore.nbUnseenRequests(),
       notifsPastille: NotifsStore.nbUnseenNotifs(),
       errors: [],
-      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed()
+      hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
+      showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
     };
   }
 
@@ -56,6 +57,7 @@ class App extends Component {
       uploadingList: MeStore.uploadingList(),
       errors: errors,
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
+      showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
       showTabBar: MeStore.getState().showTabBar
     });
   }
@@ -129,6 +131,20 @@ class App extends Component {
         {_.map(this.state.errors, (error, i) => {
           return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}
+        <Overlay isVisible={this.state.showOverlayMapTutorial}>
+          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
+              contentInset={{top: 0}}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
+              <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+            </ScrollView>
+          </TouchableHighlight>
+        </Overlay>
+
         <Overlay isVisible={!this.state.hasBeenUploadWelcomed}>
           <ScrollView
             style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
@@ -141,7 +157,7 @@ class App extends Component {
             </View>
             <Text style={styles.title}>Ton app est unique !</Text>
             <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
-            <Button label="Passer" onPress={() => {
+            <Button label="On y va !" onPress={() => {
               MeActions.hasBeenUploadWelcomed();
             }} style={{margin: 5}}/>
           </ScrollView>
@@ -155,7 +171,7 @@ class App extends Component {
           tabs={[
             {
               component: Liste,
-              name: 'Accueil',
+              name: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
             },
             {
@@ -220,7 +236,22 @@ var styles = StyleSheet.create({
     marginBottom: 40,
     backgroundColor: '#EF582D',
     marginTop: 20
-  }
+  },
+  arrow: {
+    height: 60,
+    width: 60,
+    position: 'absolute',
+    right: 40,
+    top: 0,
+    tintColor: '#FFFFFF'
+  },
+  titleShowMap: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
+    marginTop: 70
+  },
 });
 
 export default App;
