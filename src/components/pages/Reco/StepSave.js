@@ -30,7 +30,8 @@ class RecoStepSave extends Component {
 
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
-    this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id}, reco.restaurant.name));
+    var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
+    this.props.navigator.resetTo(Restaurant.route({id: id}, reco.restaurant.name));
   }
 
   onRecoChange = () => {

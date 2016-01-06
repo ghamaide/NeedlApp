@@ -28,6 +28,8 @@ export class RestaurantsStore extends CachedStore {
       deltaLat: 0.065
     };
 
+    this.restoID = 0;
+
     this.restaurants = {};
     this.status.restaurantsLoading = [];
     this.status.restaurantsLoadingError = {};
@@ -51,6 +53,7 @@ export class RestaurantsStore extends CachedStore {
       handleRestaurantFetchFailed: RestaurantsActions.RESTAURANT_FETCH_FAILED,
 
       handleRecoSaved: RecoActions.RECO_SAVED,
+      handleSaveReco: RecoActions.SAVE_RECO,
 
       handleAddWish: RestaurantsActions.ADD_WISH,
       handleAddWishFailed: RestaurantsActions.ADD_WISH_FAILED,
@@ -177,7 +180,13 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleRecoSaved(reco) {
+    this.restoID = reco.restaurant.id;
     this.updateRestauAfterWishRecoUpdate(reco.restaurant);
+    this.status.allRestaurantsLoading = false;
+  }
+
+  handleSaveReco() {
+    this.status.allRestaurantsLoading = true;
   }
 
   parseSubways(subways) {

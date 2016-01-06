@@ -33,29 +33,36 @@ class Restaurant extends Page {
   }
 
   restaurantsState() {
-    var restaurant = RestaurantsStore.restaurant(this.props.id);
+    if (this.props.id === 0) {
+      var restoID = RestaurantsStore.getState().restoID;
+    } else {
+      var restoID = this.props.id;
+    }
+
+    var restaurant = RestaurantsStore.restaurant(restoID);
 
     var errors = this.state.errors;
 
-    var removeRecoErr = RestaurantsStore.removeRecoError(this.props.id);
+    var removeRecoErr = RestaurantsStore.removeRecoError(restaurant.id);
     if (removeRecoErr && !_.contains(errors, removeRecoErr)) {
       errors.push(removeRecoErr);
     }
 
-    var removeWishErr = RestaurantsStore.removeWishError(this.props.id);
+    var removeWishErr = RestaurantsStore.removeWishError(restaurant.id);
     if (removeWishErr && !_.contains(errors, removeWishErr)) {
       errors.push(removeWishErr);
     }
 
-    var addWishErr = RestaurantsStore.addWishError(this.props.id);
+    var addWishErr = RestaurantsStore.addWishError(restaurant.id);
     if (addWishErr && !_.contains(errors, addWishErr)) {
       errors.push(addWishErr);
     }
 
     return {
+      id: restaurant.id,
       data: restaurant,
-      loading: RestaurantsStore.loading(this.props.id),
-      error: RestaurantsStore.error(this.props.id),
+      loading: RestaurantsStore.loading(restaurant.id),
+      error: RestaurantsStore.error(restaurant.id),
       errors: errors
     };
   }
@@ -79,7 +86,7 @@ class Restaurant extends Page {
   }
 
   componentDidUpdate() {
-    var restaurant = RestaurantsStore.restaurant(this.props.id);
+    var restaurant = RestaurantsStore.restaurant(this.state.id);
 
     if (restaurant) {
       var users = _.filter(_.union(RestaurantsStore.recommenders(restaurant.id), RestaurantsStore.wishers(restaurant.id)), (userId) => {
@@ -168,7 +175,11 @@ class Restaurant extends Page {
         contentInset={{top: 0}}
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.container}>
+        contentContainerStyle={styles.container}
+        onRefreshStart={(endRefreshing) => {
+          this.componentDidUpdate();
+          endRefreshing();
+        }}>
 
         <View key="restaurant_image" style={styles.header}>
           <Carousel

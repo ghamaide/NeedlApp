@@ -41,7 +41,7 @@ export class RecoActions {
             wish: !reco.approved,
             strengths: reco.strengths,
             ambiences: reco.ambiances,
-            price_ranges: reco.price_range && [reco.price_range],
+            occasions: reco.occasions,
             review: reco.review
           }
         }, { arrayFormat: 'brackets' }))

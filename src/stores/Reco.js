@@ -24,7 +24,6 @@ export class RecoStore {
       handleFetchRestaurants: RecoActions.FETCH_RESTAURANTS,
       handleRestaurantsFetched: RecoActions.RESTAURANTS_FETCHED,
       handleRestaurantsFetchFailed: RecoActions.RESTAURANTS_FETCH_FAILED,
-      handleSaveReco: RecoActions.SAVE_RECO,
       handleRecoSaveFailed: RecoActions.RECO_SAVE_FAILED,
       handleRecoSaved: RecoActions.RECO_SAVED,
 
@@ -60,11 +59,8 @@ export class RecoStore {
     this.status.reco = reco;
   }
 
-  handleSaveReco() {
-    delete this.errSave;
-  }
-
   handleRecoSaved() {
+    delete this.errSave;
     this.saved = true;
   }
 
