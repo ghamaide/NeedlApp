@@ -1,52 +1,60 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
-var React = require('react-native');
-var {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-} = React;
+import React, {AppRegistry, Component, StyleSheet, Text, View, TextInput} from 'react-native';
 
-var NeedlIOS = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
+import _ from 'lodash';
+import Login from './src/components/pages/Login';
+//import App from './src/components/App';
+import MeStore from './src/stores/Me';
+import MeActions from './src/actions/MeActions';
+import ProfilStore from './src/stores/Profil';
+import FriendsStore from './src/stores/Friends';
+import RestaurantsStore from './src/stores/Restaurants';
+
+class NeedlIOS extends Component {
+
+  static getNeedlState() {
+    return {
+      ready: MeStore.getState().status.ready &&
+              ProfilStore.getState().status.ready &&
+              FriendsStore.getState().status.ready &&
+              RestaurantsStore.getState().status.ready,
+      loggedIn: !!MeStore.getState().me.id
+    };
   }
-});
 
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+  state = NeedlIOS.getNeedlState()
+
+  componentWillMount() {
+    MeActions.showedCurrentPosition(false);
+    MeStore.listen(this.onReadyChange.bind(this));
+    ProfilStore.listen(this.onReadyChange.bind(this));
+    RestaurantsStore.listen(this.onReadyChange.bind(this));
+    FriendsStore.listen(this.onReadyChange.bind(this));
+  }
+
+  componentWillUnmount() {
+    MeStore.unlisten(this.onReadyChange.bind(this));
+    ProfilStore.unlisten(this.onReadyChange.bind(this));
+    RestaurantsStore.unlisten(this.onReadyChange.bind(this));
+    FriendsStore.unlisten(this.onReadyChange.bind(this));
+  }
+
+  onReadyChange = () => {
+    this.setState(NeedlIOS.getNeedlState());
+  }
+
+  render() {
+    if (!this.state.ready) {
+      return null;
+    }
+
+    if (!this.state.loggedIn) {
+      return <Login />;
+    }
+
+    return <Login />;
+  }
+}
 
 AppRegistry.registerComponent('NeedlIOS', () => NeedlIOS);

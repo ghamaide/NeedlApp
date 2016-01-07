@@ -23,6 +23,10 @@ export class MeStore extends CachedStore {
 
     this.showedCurrentPosition = false;
 
+    this.showedUpdateMessage = true;
+    
+    this.dismissedUpdateMessage = false;
+
     this.showTabBar = true;
 
     this.version = 0;
@@ -30,14 +34,14 @@ export class MeStore extends CachedStore {
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
 
-    this.status.uploadingList = false;
-    this.status.uploadingListError = null;
-
     this.status.uploadingContacts = false;
     this.status.uploadingContactsError = null;
 
     this.status.sendingMessage = false;
     this.status.sendingMessageError = null;
+
+    this.status.sendingVersion = false;
+    this.status.sendingVersionError = null;
 
     this.bindListeners({
       handleRecoSaved: [RecoActions.RECO_SAVED, RestaurantsActions.ADD_WISH],
@@ -52,10 +56,6 @@ export class MeStore extends CachedStore {
       handleEdit: MeActions.EDIT,
       handleCleanEditError: MeActions.CLEAN_EDIT_ERROR,
       handleProfilFetched: ProfilActions.PROFIL_FETCHED,
-
-      handleUploadList: MeActions.UPLOAD_LIST,
-      handleUploadListSuccess: MeActions.UPLOAD_LIST_SUCCESS,
-      handleUploadListFailed: MeActions.UPLOAD_LIST_FAILED,
 
       handleUploadContacts : MeActions.UPLOAD_CONTACTS,
       handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
@@ -73,7 +73,12 @@ export class MeStore extends CachedStore {
 
       handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
 
-      handleSetVersion: MeActions.SET_VERSION
+      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
+
+      handleSetVersion: MeActions.SET_VERSION,
+
+      handleSendVersionSuccess: MeActions.SEND_VERSION_SUCCESS,
+      handleSendVersionFailed: MeActions.SEND_VERSION_FAILED
     });
   }
 
@@ -188,8 +193,31 @@ export class MeStore extends CachedStore {
     this.showTabBar = display;
   }
 
+  handleSendVersionFailed(err) {
+    this.status.sendingVersion = false;
+    this.status.sendingVersionError = err;
+  }
+
+  handleSendVersionSuccess(result) {
+    this.status.sendingVersionError = null;
+    this.status.sendingVersion = false;
+    if (!result && !this.dismissedUpdateMessage) {
+      this.showedUpdateMessage = false;
+    }
+    
+  }
+
+  handleSendVersion() {
+    this.status.sendingVersion = true;
+  }
+
   handleSetVersion(version) {
     this.version = version;
+  }
+
+  handleShowedUpdateMessage() {
+    this.showedUpdateMessage = true;
+    this.dismissedUpdateMessage = true;
   }
 
   handleShowedCurrentPosition(showed) {
@@ -216,12 +244,16 @@ export class MeStore extends CachedStore {
     return this.getState().status.sendingMessage;
   }
 
-  static uploadingList() {
-    return this.getState().status.uploadingList;
+  static sendingVersion() {
+    return this.getState().status.sendingVersion;
   }
 
-  static uploadingListError() {
-    return this.getState().status.uploadingListError;
+  static sendingVersionError() {
+    return this.getState().status.sendingVersionError;
+  }
+
+  static showedUpdateMessage() {
+    return this.getState().showedUpdateMessage;
   }
 
   static hasBeenUploadWelcomed() {

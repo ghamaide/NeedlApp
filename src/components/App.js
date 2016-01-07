@@ -48,15 +48,16 @@ class App extends Component {
   onMeChange = () => {
     var errors = this.state.errors;
 
-    var uploadListError = MeStore.uploadingListError();
-    if (uploadListError && !_.contains(errors, uploadListError)) {
-      errors.push(uploadListError);
+    var sendVersionError = MeStore.sendingVersionError();
+    if (sendVersionError && !_.contains(errors, sendVersionError)) {
+      errors.push(sendVersionError);
     }
 
     this.setState({
-      uploadingList: MeStore.uploadingList(),
+      sendingVersion: MeStore.sendingVersion(),
       errors: errors,
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
+      showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
       showTabBar: MeStore.getState().showTabBar
     });
@@ -95,6 +96,7 @@ class App extends Component {
 
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
+    MeActions.sendVersion(MeStore.getState().version);
     MeActions.resetBadgeNumber();
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();
@@ -163,6 +165,24 @@ class App extends Component {
           </ScrollView>
         </Overlay>
 
+        <Overlay isVisible={!this.state.showedUpdateMessage}>
+          <ScrollView
+            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+            contentInset={{top: 0}}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.container}>
+            <View style={styles.avatarWrapper}>
+              <Image style={styles.avatar} source={require('../assets/img/tabs/icons/home.png')} />
+            </View>
+            <Text style={styles.title}>Ton app a été updatée !</Text>
+            <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
+            <Button label="Passer" onPress={() => {
+              MeActions.showedUpdateMessage();
+            }} style={{margin: 5}}/>
+          </ScrollView>
+        </Overlay>
+
         <TabView 
           ref="tabs"
           onTab={(tab) => {
@@ -209,6 +229,11 @@ var styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: 'center'
+  },
+  loadingWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     textAlign: 'center',

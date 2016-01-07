@@ -44,34 +44,6 @@ export class MeActions {
     }
   }
 
-  uploadList(uri, callback) {
-    return (dispatch) => {
-      dispatch();
-
-      request.uploadPhoto('picture', uri, '/api/user_wishlist_pictures.json', (err) => {
-        if (err) {
-          return this.uploadListFailed(err);
-        }
-
-        this.uploadListSuccess();
-
-        if (callback) {
-          callback();
-        }
-      });
-    }
-  }
-
-  uploadListFailed(err) {
-    return err;
-  }
-
-  uploadListSuccess() {
-    return function (dispatch) {
-      dispatch()
-    }
-  }
-
   hasBeenUploadWelcomed() {
     return function (dispatch) {
       dispatch();
@@ -163,6 +135,30 @@ export class MeActions {
     return version;
   }
 
+  sendVersion(version) {
+    return (dispatch) => {
+      request('GET', '/api/users/update_version')
+        .query({
+          'version' : version
+        })
+        .end((err, result) => {
+          if(err) {
+            return this.sendVersionFailed(err);
+          }
+
+          this.sendVersionSuccess(result.is_last_version);
+        });
+    }
+  }
+
+  sendVersionSuccess(result) {
+    return result;
+  }
+
+  sendVersionFailed(err) {
+    return err;
+  }
+
   showedCurrentPosition(showed) {
     return showed;
   }
@@ -170,6 +166,12 @@ export class MeActions {
   hideOverlayMapTutorial() {
     return function (dispatch) {
       dispatch()
+    }
+  }
+
+  showedUpdateMessage() {
+    return function (dispatch) {
+      dispatch();
     }
   }
 }
