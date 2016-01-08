@@ -1,17 +1,39 @@
-					annotations={_.map(this.state.data, (restaurant) => {
-            var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
-            myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
-            return {
-              latitude: restaurant.latitude,
-              longitude: restaurant.longitude,
-              title: restaurant.name
-            };
-          })}
 
 
+(tab, navigator) => {
+  var index = navigator.getCurrentRoutes().indexOf(tab);
+  return (
+    <PatchedNavigatorIOS
+      style={styles.tabbarContent}
+      navigator={navigator}
+      tabsMaster={this}
+      key={index}
+      index={index}
+      fireFromTabs={index === this.state.selected}
+      translucent={false}
+      titleStyle={{fontFamily: 'Quicksand-Bold', fontSize: 12}}
+      itemWrapperStyle={styles.tabbarContentWrapper}
+      initialRoute={tab.component.route()}
+      initialSkipCache={this.props.initialSkipCache} />
+    );
+}}
 
+===============================================================================================================================================
 
-North: 48.91
-South: 48.81
-West: 2.25
-East: 2.42
+var selected = this.state.selected;
+var nav = this.refs.tabs.subnav[selected];
+this.setState({selected: index});
+
+this.refs.tabs.jumpTo(this.refs.tabs.state.routeStack[index]);
+this.props.onTab(index);
+
+var newNav = this.refs.tabs.subnav[index];
+if (newNav) {
+  newNav.parent._emitDidFocus(_.extend({fromTabs: true}, opts, newNav.parent.state.routeStack[newNav.parent.state.observedTopOfStack]));
+}
+
+TimerMixin.setTimeout(() => {
+  if (nav) {
+    nav.resetTo(this.props.tabs[selected].component.route());
+  }
+}, 100);

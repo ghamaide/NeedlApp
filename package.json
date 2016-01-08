@@ -14,7 +14,7 @@
     "react-native-carousel": "^0.4.3",
     "react-native-communications": "^0.0.5",
     "react-native-contacts": "^0.1.5",
-    "react-native-facebook-login": "^0.5.9",
+    "react-native-facebook-login": "^1.0.2",
     "react-native-fbsdkcore": "0.0.7",
     "react-native-fbsdklogin": "0.0.7",
     "react-native-file-transfer": "0.0.3",

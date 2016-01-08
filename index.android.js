@@ -3,13 +3,14 @@
 import React, {AppRegistry, Component, StyleSheet, Text, View, TextInput} from 'react-native';
 
 import _ from 'lodash';
-import Login from './src/components/pages/Login';
-//import App from './src/components/App';
-import MeStore from './src/stores/Me';
-import MeActions from './src/actions/MeActions';
-import ProfilStore from './src/stores/Profil';
-import FriendsStore from './src/stores/Friends';
-import RestaurantsStore from './src/stores/Restaurants';
+import Login from './srcAndroid/components/pages/Login';
+import App from './srcAndroid/components/App';
+//import EditMe from './srcAndroid/components/pages/EditMe';
+import MeStore from './srcAndroid/stores/Me';
+import MeActions from './srcAndroid/actions/MeActions';
+import ProfilStore from './srcAndroid/stores/Profil';
+import FriendsStore from './srcAndroid/stores/Friends';
+import RestaurantsStore from './srcAndroid/stores/Restaurants';
 
 class NeedlIOS extends Component {
 
@@ -53,7 +54,7 @@ class NeedlIOS extends Component {
       return <Login />;
     }
 
-    return <Login />;
+    return <App />;
   }
 }
 
