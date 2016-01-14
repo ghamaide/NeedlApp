@@ -165,7 +165,7 @@ class App extends Component {
           </ScrollView>
         </Overlay>
 
-        <Overlay isVisible={!this.state.showedUpdateMessage}>
+        <Overlay isVisible={(typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage)}>
           <ScrollView
             style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
             contentInset={{top: 0}}

@@ -33,6 +33,7 @@ class Restaurant extends Page {
   }
 
   restaurantsState() {
+    console.log("restaurantsState");
     if (this.props.id === 0) {
       var restoID = RestaurantsStore.getState().restoID;
     } else {
