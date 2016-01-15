@@ -49,62 +49,16 @@ export class FriendsStore extends CachedStore {
       handleFriendsFetched: FriendsActions.FRIENDS_FETCHED,
       handleFriendsFetchFailed: FriendsActions.FRIENDS_FETCH_FAILED,
 
-      handleFetchPotentialFriends: FriendsActions.FETCH_POTENTIAL_FRIENDS,
-      handlePotentialFriendsFetched: FriendsActions.POTENTIAL_FRIENDS_FETCHED,
-      handlePotentialFriendsFetchFailed: FriendsActions.POTENTIAL_FRIENDS_FETCH_FAILED,
-
       handleRemoveFriendship: FriendsActions.REMOVE_FRIENDSHIP,
       handleRemoveFriendshipFailed: FriendsActions.REMOVE_FRIENDSHIP_FAILED,
       handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
-
-      handleProposeFriendship: FriendsActions.PROPOSE_FRIENDSHIP,
-      handleProposeFriendshipFailed: FriendsActions.PROPOSE_FRIENDSHIP_FAILED,
-      handleProposeFriendshipSuccess: FriendsActions.PROPOSE_FRIENDSHIP_SUCCESS,
 
       handleIgnoreFriendship: FriendsActions.IGNORE_FRIENDSHIP,
       handleIgnoreFriendshipFailed: FriendsActions.IGNORE_FRIENDSHIP_FAILED,
       handleIgnoreFriendshipSuccess: FriendsActions.IGNORE_FRIENDSHIP_SUCCESS,
 
-      handleAcceptFriendship: FriendsActions.ACCEPT_FRIENDSHIP,
-      handleAcceptFriendshipFailed: FriendsActions.ACCEPT_FRIENDSHIP_FAILED,
-      handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
-
       setRequestsAsSeen: FriendsActions.REQUESTS_SEEN
     });
-  }
-
-  handleAcceptFriendship(id) {
-    this.status.friendshipAccepting.push(id);
-    delete this.status.friendshipAcceptingError[id];
-  }
-  handleAcceptFriendshipFailed(data) {
-    _.remove(this.status.friendshipAccepting, function(id) {
-      return id === data.id;
-    });
-    this.status.friendshipAcceptingError[data.id] = data.err;
-  }
-  handleAcceptFriendshipSuccess(idProfil) {
-    _.remove(this.status.friendshipAccepting, function(id) {
-      return id === idProfil;
-    });
-    this.data.requests = _.map(this.data.requests, (friend) => {
-      if (friend.id === idProfil) {
-        friend = _.clone(friend);
-        friend.accepted = Date.now();
-        this.data.friends.push(friend);
-        this.data.friends = _.sortBy(this.data.friends, (f) => {
-          return f.name;
-        });
-      }
-
-      return friend;
-    });
-  }
-  static acceptFriendshipError(id) {
-    return this.getState().status.friendshipAcceptingError[id];
-  }
-  static acceptFriendshipLoading(id) {
-    return _.contains(this.getState().status.friendshipAccepting, id);
   }
 
   handleIgnoreFriendship(id) {
@@ -135,36 +89,6 @@ export class FriendsStore extends CachedStore {
   }
   static ignoreFriendshipLoading(id) {
     return _.contains(this.getState().status.friendshipIgnoring, id);
-  }
-
-  handleProposeFriendship(id) {
-    this.status.friendshipProposing.push(id);
-    delete this.status.friendshipProposingError[id];
-  }
-  handleProposeFriendshipFailed(data) {
-    _.remove(this.status.friendshipProposing, function(id) {
-      return id === data.id;
-    });
-    this.status.friendshipProposingError[data.id] = data.err;
-  }
-  handleProposeFriendshipSuccess(idProfil) {
-    _.remove(this.status.friendshipProposing, function(id) {
-      return id === idProfil;
-    });
-    this.data.potential_friends = _.map(this.data.potential_friends, function(friend) {
-      if (friend.id === idProfil) {
-        friend = _.clone(friend);
-        friend.added = Date.now();
-      }
-
-      return friend;
-    });
-  }
-  static proposeFriendshipError(id) {
-    return this.getState().status.friendshipProposingError[id];
-  }
-  static proposeFriendshipLoading(id) {
-    return _.contains(this.getState().status.friendshipProposing, id);
   }
 
   handleRemoveFriendship(id) {
@@ -232,32 +156,6 @@ export class FriendsStore extends CachedStore {
 
   static loading() {
     return this.getState().status.friendsLoading;
-  }
-
-  handleFetchPotentialFriends() {
-    //no cache for this ones as it can evolve independently
-    // from the user
-    delete this.data.potential_friends;
-    this.status.potentialFriendsLoading = true;
-    delete this.status.potentialFriendsLoadingError;
-  }
-
-  handlePotentialFriendsFetched(friends) {
-    this.data = _.extend({}, this.data, friends);
-    this.status.potentialFriendsLoading = false;
-  }
-
-  handlePotentialFriendsFetchFailed(err) {
-    this.status.potentialFriendsLoading = false;
-    this.status.potentialFriendsLoadingError = err;
-  }
-
-  static potentialFriendsError() {
-    return this.getState().status.potentialFriendsLoadingError;
-  }
-
-  static potentialFriendsLoading() {
-    return this.getState().status.potentialFriendsLoading;
   }
 
   static nbUnseenRequests() {

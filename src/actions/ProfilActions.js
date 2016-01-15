@@ -7,7 +7,7 @@ export class ProfilActions {
 
   fetchProfil(id) {
     return (dispatch) => {
-      //dispatch(id);
+      dispatch(id);
 
       request('GET', '/api/users/' + id)
         .end((err, result) => {

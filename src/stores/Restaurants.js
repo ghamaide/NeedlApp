@@ -8,6 +8,7 @@ import RecoActions from '../actions/RecoActions';
 import ProfilActions from '../actions/ProfilActions';
 import CachedStore from './CachedStore';
 import MeStore from './Me';
+import RecoStore from './Reco';
 
 export class RestaurantsStore extends CachedStore {
 
@@ -52,7 +53,7 @@ export class RestaurantsStore extends CachedStore {
       handleRestaurantFetched: RestaurantsActions.RESTAURANT_FETCHED,
       handleRestaurantFetchFailed: RestaurantsActions.RESTAURANT_FETCH_FAILED,
 
-      handleRecoSaved: RecoActions.RECO_SAVED,
+      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleSaveReco: RecoActions.SAVE_RECO,
 
       handleAddWish: RestaurantsActions.ADD_WISH,
@@ -179,7 +180,7 @@ export class RestaurantsStore extends CachedStore {
     this.restaurants[restaurant.id].ON_MAP = restaurant.friends_recommending && restaurant.friends_recommending.length || (restaurant.friends_wishing && restaurant.friends_wishing.length);
   }
 
-  handleRecoSaved(reco) {
+  handleSaveRecoSuccess(reco) {
     this.restoID = reco.restaurant.id;
     this.updateRestauAfterWishRecoUpdate(reco.restaurant);
     this.status.allRestaurantsLoading = false;
@@ -200,7 +201,7 @@ export class RestaurantsStore extends CachedStore {
     return newSubways;
   }
 
-// all at once
+  // all at once
   handleFetchRestaurants() {
     this.status.allRestaurantsLoading = true;
     delete this.status.allRestaurantsLoadingError;

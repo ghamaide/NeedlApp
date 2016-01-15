@@ -44,7 +44,7 @@ export class MeStore extends CachedStore {
     this.status.sendingVersionError = null;
 
     this.bindListeners({
-      handleRecoSaved: [RecoActions.RECO_SAVED, RestaurantsActions.ADD_WISH],
+      handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
 
       handleLoginSuccess: LoginActions.LOGIN_SUCCESS,
       handleLoginFailed: LoginActions.LOGIN_FAILED,
@@ -109,7 +109,7 @@ export class MeStore extends CachedStore {
     delete this.status.editingError;
   }
 
-  handleRecoSaved() {
+  handleSaveRecoSuccess() {
     this.me.HAS_SHARED = true;
   }
 

@@ -31,8 +31,8 @@ class Help extends Component {
   }
 
   componentDidMount() {
-    //Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-    //Mixpanel.trackWithProperties('Help Page From ' + this.props.from, {id: MeStore.getState().me.id});
+    // Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    // Mixpanel.trackWithProperties('Help Page From ' + this.props.from, {id: MeStore.getState().me.id});
   }
 
   render() {

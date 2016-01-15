@@ -69,22 +69,22 @@ class Filtre extends Component {
       types: this.state.types
     }
 
-    Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, hash: hash});
+    Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, hash: hash});
 
     _.map(this.state.prices, (price) => {
-      Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, price: price});
+      Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, price: price});
     });
 
     _.map(this.state.occasions, (occasion) => {
-      Mixpanel.trackWithProperties('Filtre Occasions', {id: MeStore.getState().me.id, occasions: RestaurantsStore.MAP_OCCASIONS[occasion - 1].label});
+      Mixpanel.trackWithProperties('Filtre Occasions', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, occasions: RestaurantsStore.MAP_OCCASIONS[occasion - 1].label});
     });
 
     _.map(this.state.ambiences, (ambience) => {
-      Mixpanel.trackWithProperties('Filtre Ambiences', {id: MeStore.getState().me.id, ambiences: RestaurantsStore.MAP_AMBIENCES[ambience - 1].label});
+      Mixpanel.trackWithProperties('Filtre Ambiences', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, ambiences: RestaurantsStore.MAP_AMBIENCES[ambience - 1].label});
     });
 
     _.map(this.state.types, (type) => {
-      Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
+      Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
     });
   }
 

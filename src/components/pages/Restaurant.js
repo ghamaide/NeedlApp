@@ -112,7 +112,7 @@ class Restaurant extends Page {
   }
 
   getToggle (map, v, color) {
-    if (v <= map.length) {
+    if (v <= map.length && v != 0) {
       return <Toggle
         key={map[v - 1].label}
         style={styles.toggle}
@@ -152,7 +152,7 @@ class Restaurant extends Page {
   }
 
   call = () => {
-    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id});
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
     RNComm.phonecall(this.state.data.phone_number, false);
   }
 
