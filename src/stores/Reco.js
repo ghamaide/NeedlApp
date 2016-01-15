@@ -3,6 +3,7 @@
 import alt from '../alt';
 import RecoActions from '../actions/RecoActions';
 import MeStore from './Me';
+import RestaurantsStore from './Restaurants';
 
 export class RecoStore {
 
@@ -24,8 +25,8 @@ export class RecoStore {
       handleFetchRestaurants: RecoActions.FETCH_RESTAURANTS,
       handleRestaurantsFetched: RecoActions.RESTAURANTS_FETCHED,
       handleRestaurantsFetchFailed: RecoActions.RESTAURANTS_FETCH_FAILED,
-      handleRecoSaveFailed: RecoActions.RECO_SAVE_FAILED,
-      handleRecoSaved: RecoActions.RECO_SAVED,
+      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
+      handleSaveRecoFailed: RecoActions.SAVE_RECO_FAILED,
 
       handleSetReco: RecoActions.SET_RECO,
 
@@ -59,12 +60,13 @@ export class RecoStore {
     this.status.reco = reco;
   }
 
-  handleRecoSaved() {
+  handleSaveRecoSuccess() {
+    this.waitFor(RestaurantsStore.dispatchToken);
     delete this.errSave;
     this.saved = true;
   }
 
-  handleRecoSaveFailed(data) {
+  handleSaveRecoFailed(data) {
     this.errSave = data.err;
   }
 

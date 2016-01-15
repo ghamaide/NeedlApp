@@ -10,9 +10,6 @@ export class ProfilActions {
       //dispatch(id);
       request('GET', '/api/users/' + id)
         .end((err, result) => {
-          console.log('fetch profil');
-          console.log(result);
-          console.log(err);
           if (err) {
             return this.profilFetchFailed(err, id);
           }

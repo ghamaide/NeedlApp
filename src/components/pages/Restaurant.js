@@ -112,13 +112,13 @@ class Restaurant extends Page {
   }
 
   getToggle (map, v, color) {
-    if (v < map.length) {
+    if (v <= map.length && v != 0) {
       return <Toggle
-        key={map[v].label}
+        key={map[v - 1].label}
         style={styles.toggle}
         labelColor={color}
-        label={map[v].label}
-        icon={map[v].icon}
+        label={map[v - 1].label}
+        icon={map[v - 1].icon}
         active={false}
         size={60}/>;
     } else {
@@ -152,7 +152,7 @@ class Restaurant extends Page {
   }
 
   call = () => {
-    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id});
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
     RNComm.phonecall(this.state.data.phone_number, false);
   }
 
@@ -323,11 +323,6 @@ class Restaurant extends Page {
                 return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, "#444444");
               })}
             </View>
-            <View key="restaurant_ambiences_slice2" style={styles.toggleBox}>
-              {_.map(restaurant.ambiences.slice(3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, "#444444");
-              })}
-            </View>
           </View>
           : null
         }
@@ -338,16 +333,6 @@ class Restaurant extends Page {
             <View key="restaurant_strengths_slice1" style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(0, 3), (strength) => {
               	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
-              })}
-            </View>
-            <View key="restaurant_strengths_slice2" style={styles.toggleBox}>
-              {_.map(restaurant.strengths.slice(3), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#888888");
-              })}
-            </View>
-             <View key="restaurant_strengths_slice3" style={styles.toggleBox}>
-              {_.map(restaurant.strengths.slice(6), (strength) => {
-								return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
               })}
             </View>
           </View>

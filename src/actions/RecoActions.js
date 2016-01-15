@@ -47,10 +47,10 @@ export class RecoActions {
         }, { arrayFormat: 'brackets' }))
         .end((err, restaurant) => {
           if (err) {
-            return this.recoSaveFailed(err, reco);
+            return this.saveRecoFailed(err, reco);
           }
 
-          this.recoSaved(reco, restaurant);
+          this.saveRecoSuccess(reco, restaurant);
         });
     }
   }
@@ -99,12 +99,12 @@ export class RecoActions {
     return reco;
   }
 
-  recoSaved(reco, restaurant) {
+  saveRecoSuccess(reco, restaurant) {
     reco.restaurant = restaurant;
     return reco;
   }
 
-  recoSaveFailed(err, reco) {
+  saveRecoFailed(err, reco) {
     return {err: err, reco: reco};
   }
 
