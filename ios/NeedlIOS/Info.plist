@@ -26,6 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>fb1624037477816607</string>
+				<string>needl</string>
 			</array>
 		</dict>
 	</array>
@@ -101,5 +102,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>branch_key</key>
+	<string>key_live_lni5hjavnJFzJYS5jHjqfbmmFAjkXe2N</string>
 </dict>
 </plist>

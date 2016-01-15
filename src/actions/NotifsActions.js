@@ -7,7 +7,7 @@ export class NotifsActions {
 
   fetchNotifs() {
     return (dispatch) => {
-      dispatch();
+      //dispatch();
 
       request('GET', '/api/recommendations')
         .end((err, result) => {

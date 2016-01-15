@@ -7,7 +7,7 @@ export class FriendsActions {
 
   fetchFriends() {
     return (dispatch) => {
-      dispatch();
+      //dispatch();
       request('GET', '/api/friendships')
         .end((err, result) => {
           if (err) {
