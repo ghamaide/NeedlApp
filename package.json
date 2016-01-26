@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "alt": "^0.18.1",
+    "eslint-plugin-react": "^3.16.1",
     "lodash": "^3.10.1",
     "qs": "^4.0.0",
     "react-native": "^0.16.0",
@@ -34,7 +35,6 @@
   },
   "devDependencies": {
     "babel-preset-react": "^6.3.13",
-    "babel-preset-stage-0": "^6.3.13",
-    "eslint-plugin-react": "^3.11.3"
+    "babel-preset-stage-0": "^6.3.13"
   }
 }
