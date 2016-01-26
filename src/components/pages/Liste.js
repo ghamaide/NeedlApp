@@ -161,7 +161,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
 		height: 200,
-		alignItems: 'stretch'
   },
 	restaurantImage: {
 		flex: 1,

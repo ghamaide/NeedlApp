@@ -138,11 +138,11 @@ Class RCTPushNotificationManager = nil;
   }
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
-  }
-}
+//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+//{
+//  if(RCTPushNotificationManager){
+//    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
+//  }
+//}
 
 @end
