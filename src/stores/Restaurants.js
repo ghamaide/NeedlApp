@@ -29,6 +29,8 @@ export class RestaurantsStore extends CachedStore {
       deltaLat: 0.065
     };
 
+    this.showPersonalContent = true;
+
     this.restoID = 0;
 
     this.restaurants = {};
@@ -70,6 +72,7 @@ export class RestaurantsStore extends CachedStore {
 
       handleSetFilter: RestaurantsActions.SET_FILTER,
       handleSetRegion: RestaurantsActions.SET_REGION,
+      handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL,
 
       handleProfilInvisible: ProfilActions.MASK_PROFIL_SUCCESS
     });
@@ -105,6 +108,10 @@ export class RestaurantsStore extends CachedStore {
 
   handleSetRegion(data) {
     this.region = data;
+  }
+
+  handleSetDisplayPersonal(display) {
+    this.showPersonalContent = display;
   }
 
   handleAddWish(restaurant) {
@@ -635,6 +642,7 @@ export class RestaurantsStore extends CachedStore {
   static filteredRestaurants() {
     var filters = this.getState().filters;
     var region = this.getState().region;
+    var showPersonalContent = this.getState().showPersonalContent;
 
     var findOne = function (haystack, arr) {
       return arr.some(function (v) {
@@ -665,6 +673,10 @@ export class RestaurantsStore extends CachedStore {
       }
 
       if (filters.types.length > 0 && !findOne(filters.types, restaurant.types)) {
+        return false;
+      }
+
+      if(!showPersonalContent && _.contains(restaurant.friends_recommending, MeStore.getState().me.id)) {
         return false;
       }
 

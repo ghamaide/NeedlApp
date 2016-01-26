@@ -141,6 +141,10 @@ export class RestaurantsActions {
     return {radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight};
   }
 
+  setDisplayPersonal(display) {
+    return display;
+  }
+
   clearFilters() {
     return function (dispatch) {
       dispatch();

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Component, TouchableHighlight, ScrollView, Dimensions, Image} from 'react-native';
+import React, {StyleSheet, Text, View, Component, TouchableHighlight, ScrollView, Dimensions, Image, Switch} from 'react-native';
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 import Mixpanel from 'react-native-mixpanel';
@@ -40,6 +40,7 @@ class Filtre extends Component {
       showOverlayAmbiences: false,
       showOverlayOccasions: false,
       showOverlayTypes: false,
+      showPersonalContent: RestaurantsStore.getState().showPersonalContent,
       prices: RestaurantsStore.getState().filters.prices,
       ambiences: RestaurantsStore.getState().filters.ambiences,
       occasions: RestaurantsStore.getState().filters.occasions,
@@ -61,6 +62,7 @@ class Filtre extends Component {
     RestaurantsActions.setFilter('ambiences', this.state.ambiences);
     RestaurantsActions.setFilter('occasions', this.state.occasions);
     RestaurantsActions.setFilter('types', this.state.types);
+    RestaurantsActions.setDisplayPersonal(this.state.showPersonalContent);
 
     var hash = {
       prices: this.state.prices,
@@ -70,6 +72,7 @@ class Filtre extends Component {
     }
 
     Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, hash: hash});
+    Mixpanel.trackWithProperties('Show Own Recommendations', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, display: this.state.showPersonalContent});
 
     _.map(this.state.prices, (price) => {
       Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, price: price});
@@ -95,6 +98,10 @@ class Filtre extends Component {
     _.map(this.state.prices, (id) => {
       this.refs.togglegroupprices.onUnselect(id);
     });
+  }
+
+  onValueChange = (value) => {
+    this.setState({showPersonalContent: value});
   }
 
   render() {
@@ -367,6 +374,13 @@ class Filtre extends Component {
                 </View>
               </TouchableHighlight>
             ]}
+          </View>
+          <View style={{flex: 1, width: windowWidth, flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
+            <Switch
+              onValueChange={this.onValueChange}
+              style={{marginRight: 10}}
+              value={this.state.showPersonalContent} />
+            <Text style={{flex: 1}}>Afficher les restaurants que j'ai recommandés</Text>
           </View>
           <TouchableHighlight 
             underlayColor='rgba(0, 0, 0, 0.3)'
