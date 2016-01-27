@@ -117,27 +117,27 @@ Class RCTPushNotificationManager = nil;
 
 // Notifications
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  }
-}
-
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
-{
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
-  }
-}
-
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-{
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didRegisterUserNotificationSettings:notificationSettings];
-  }
-}
-
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+//{
+//  if(RCTPushNotificationManager){
+//    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+//  }
+//}
+//
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+//{
+//  if(RCTPushNotificationManager){
+//    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
+//  }
+//}
+//
+//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+//{
+//  if(RCTPushNotificationManager){
+//    [RCTPushNotificationManager application:application didRegisterUserNotificationSettings:notificationSettings];
+//  }
+//}
+//
 //- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 //{
 //  if(RCTPushNotificationManager){

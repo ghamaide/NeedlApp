@@ -1,11 +1,16 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, Text, TextInput, View} from 'react-native';
+import React, {StyleSheet, TouchableHighlight, Component, TextInput, View} from 'react-native';
+
 import _ from 'lodash';
 
-import MeStore from '../../stores/Me';
-import MeActions from '../../actions/MeActions';
 import ErrorToast from '../ui/ErrorToast';
+import Text from '../ui/Text';
+
+import MeStore from '../../stores/Me';
+
+import MeActions from '../../actions/MeActions';
+
 import Profil from './Profil';
 
 class EditMe extends Component {
@@ -14,7 +19,7 @@ class EditMe extends Component {
       component: EditMe,
       title: 'Modification'
     };
-  }
+  };
 
   getEditState() {
     var err = MeStore.getState().status.editingError;
@@ -29,7 +34,7 @@ class EditMe extends Component {
       email: (this.state && this.state.email) || MeStore.getState().me.email,
       errors: this.state.errors
     };
-  }
+  };
 
   constructor() {
     super();
@@ -38,20 +43,20 @@ class EditMe extends Component {
       errors: []
     };
     this.state = this.getEditState();
-  }
+  };
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
     MeActions.cleanEditError();
-  }
+  };
 
   onMeChange = () => {
     this.setState(this.getEditState());
-  }
+  };
 
   onSubmit = () => {
     if (this.state.me.status.editing) {
@@ -61,7 +66,7 @@ class EditMe extends Component {
     MeActions.edit(this.state.nom, this.state.email, () => {
       this.props.navigator.resetTo(Profil.route());
     });
-  }
+  };
 
   render() {
     return (
@@ -93,7 +98,7 @@ class EditMe extends Component {
         })}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

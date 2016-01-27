@@ -1,9 +1,11 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TextInput, Dimensions, ScrollView} from 'react-native';
+import React, {StyleSheet, Component, View, TextInput, Dimensions, ScrollView} from 'react-native';
 
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
+
+import Text from '../../ui/Text';
 
 import StepSave from './StepSave';
 
@@ -23,17 +25,17 @@ class RecoStep6 extends Component {
         this.resetTo(StepSave.route(title));
       }
     };
-  }
+  };
 
   state = {
     keyboardSpace: 0,
     characterNbRemaining: 140
-  }
+  };
 
   handleChange(characterNb) {
     var temp = 140 - characterNb; 
     this.setState({characterNbRemaining: temp});
-  }
+  };
 
   render() {
     var reco = RecoStore.getReco();
@@ -58,7 +60,7 @@ class RecoStep6 extends Component {
         </View>
       </ScrollView>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

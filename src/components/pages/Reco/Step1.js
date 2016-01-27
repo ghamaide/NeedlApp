@@ -1,13 +1,18 @@
 'use strict';
 
-import React, {NativeModules, View, Component, Text, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image} from 'react-native';
+import React, {NativeModules, View, Component, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image} from 'react-native';
+
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
 
+import Text from '../../ui/Text';
+
 import RecoActions from '../../../actions/RecoActions';
+
 import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+
 import Step2 from './Step2';
 import Step3 from './Step3';
 
@@ -19,32 +24,32 @@ class RecoStep1 extends Component {
       component: RecoStep1,
       title: 'Sélection'
     };
-  }
+  };
 
   static getRecoState() {
     var state = RecoStore.getState();
     state.nb = state.restaurants && state.restaurants.length;
     state.restaurants = restaurantsSource.cloneWithRows(state.restaurants || []);
     return state;
-  }
+  };
 
-  state = RecoStep1.getRecoState()
+  state = RecoStep1.getRecoState();
 
   componentWillMount() {
     RecoStore.listen(this.onRecoChange);
-  }
+  };
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoChange);
-  }
+  };
 
   onRecoChange = () => {
     this.setState(RecoStep1.getRecoState());
-  }
+  };
 
   closeKeyboard = () => {
     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  }
+  };
 
   renderRestaurant = (restaurant) => {
     return (
@@ -59,7 +64,7 @@ class RecoStep1 extends Component {
         </View>
       </TouchableHighlight> 
     );
-  }
+  };
 
   renderRestaurants() {
     return (
@@ -72,7 +77,7 @@ class RecoStep1 extends Component {
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false} />
     );
-  }
+  };
 
   renderBlankScreen(content) {
     return (
@@ -82,7 +87,7 @@ class RecoStep1 extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 
   render() {
     var content;
@@ -132,11 +137,11 @@ class RecoStep1 extends Component {
 
      </View>
     );
-  }
+  };
 
   onRestaurantQuery = (query) => {
     RecoActions.fetchRestaurants(query);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

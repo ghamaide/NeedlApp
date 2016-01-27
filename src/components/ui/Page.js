@@ -1,7 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, Component, View, ActivityIndicatorIOS} from 'react-native';
+
 import _ from 'lodash';
+
+import Text from './Text';
 
 class Page extends Component {
 
@@ -14,11 +17,11 @@ class Page extends Component {
         size="large" />
       </View>
     );
-  }
+  };
 
   renderError() {
     return <Text>Error</Text>;
-  }
+  };
 
   render() {
     if (!this.state) {
@@ -37,7 +40,7 @@ class Page extends Component {
       return this.renderLoading();
     }
 
-  }
+  };
 }
 
 var styles = StyleSheet.create({

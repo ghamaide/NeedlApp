@@ -1,10 +1,14 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ScrollView, Dimensions} from 'react-native';
+import React, {StyleSheet, Component, View, ScrollView, Dimensions} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
-import Step5 from './Step5';
+
+import Text from '../../ui/Text';
+
 import RecoStore from '../../../stores/Reco';
+
+import Step5 from './Step5';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -22,9 +26,9 @@ class RecoStep4 extends Component {
         this.push(Step5.route());
       }
     };
-  }
+  };
 
-  state = {}
+  state = {};
 
   render() {
     var reco = RecoStore.getReco();
@@ -65,7 +69,7 @@ class RecoStep4 extends Component {
         </View>
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

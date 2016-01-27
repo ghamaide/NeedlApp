@@ -1,12 +1,15 @@
 'use strict';
 
-import React, {View, Component, Text, StyleSheet, TouchableHighlight} from 'react-native';
+import React, {View, Component, StyleSheet, TouchableHighlight} from 'react-native';
+
 import Overlay from 'react-native-overlay';
+
+import Text from './Text';
 
 class ErrorToast extends Component {
   state = {
     closed: false
-  }
+  };
 
   render() {
     var value = "Votre requête a eu un problème d'exécution, veuillez réessayer";
@@ -27,7 +30,7 @@ class ErrorToast extends Component {
         </View>
       </Overlay>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

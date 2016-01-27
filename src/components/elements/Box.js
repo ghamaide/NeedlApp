@@ -1,7 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, Component, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+
 import Dimensions from 'Dimensions';
+
+import Text from '../ui/Text';
 
 var windowWidth = (Dimensions.get('window').width / PixelRatio.get()) - 6;
 
@@ -18,7 +21,7 @@ class Box extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

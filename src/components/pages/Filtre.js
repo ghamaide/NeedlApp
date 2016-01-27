@@ -1,16 +1,20 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Component, TouchableHighlight, ScrollView, Dimensions, Image, Switch} from 'react-native';
+import React, {StyleSheet, View, Component, TouchableHighlight, ScrollView, Dimensions, Image, Switch} from 'react-native';
+
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 import Mixpanel from 'react-native-mixpanel';
 
-import RestaurantsStore from '../../stores/Restaurants';
-import RestaurantsActions from '../../actions/RestaurantsActions';
-import MeActions from '../../actions/MeActions';
-import MeStore from '../../stores/Me';
+import Text from '../ui/Text';
 
 import ToggleGroup from './Reco/ToggleGroup';
+
+import MeActions from '../../actions/MeActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
+
+import RestaurantsStore from '../../stores/Restaurants';
+import MeStore from '../../stores/Me';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -27,13 +31,13 @@ class Filtre extends Component {
         this.pop();
       }
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.filtersState();
-  }
+  };
 
   filtersState() {
     return {
@@ -46,16 +50,16 @@ class Filtre extends Component {
       occasions: RestaurantsStore.getState().filters.occasions,
       types: RestaurantsStore.getState().filters.types
     };
-  }
+  };
 
   componentWillMount() {
     MeActions.displayTabBar(false);
     this.setState(this.filtersState());
-  }
+  };
 
   componentDidMount() {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-  }
+  };
 
   setFilters = () => {
     RestaurantsActions.setFilter('prices', this.state.prices);
@@ -89,7 +93,7 @@ class Filtre extends Component {
     _.map(this.state.types, (type) => {
       Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
     });
-  }
+  };
 
   clearFilters = () => {
     this.setState({ambiences: []});
@@ -98,11 +102,11 @@ class Filtre extends Component {
     _.map(this.state.prices, (id) => {
       this.refs.togglegroupprices.onUnselect(id);
     });
-  }
+  };
 
   onValueChange = (value) => {
     this.setState({showPersonalContent: value});
-  }
+  };
 
   render() {
     var backgroundColor = '#FFFFFF';
@@ -402,7 +406,7 @@ class Filtre extends Component {
         </TouchableHighlight>
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

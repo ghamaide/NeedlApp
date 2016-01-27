@@ -5,9 +5,11 @@ import _ from 'lodash';
 
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
+import TempActions from '../actions/TempActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 import ProfilActions from '../actions/ProfilActions';
+
 import CachedStore from './CachedStore';
 
 export class MeStore extends CachedStore {
@@ -51,34 +53,34 @@ export class MeStore extends CachedStore {
       handleLogout: LoginActions.LOGOUT,
       handleLogin: LoginActions.LOGIN,
       handleLoginCancelled: LoginActions.LOGIN_CANCELLED,
-      handleEditSuccess: MeActions.EDIT_SUCCESS,
-      handleEditFailed: MeActions.EDIT_FAILED,
-      handleEdit: MeActions.EDIT,
-      handleCleanEditError: MeActions.CLEAN_EDIT_ERROR,
+      handleEditSuccess: TempActions.editSuccess,
+      handleEditFailed: TempActions.EDIT_FAILED,
+      handleEdit: TempActions.EDIT,
+      handleCleanEditError: TempActions.CLEAN_EDIT_ERROR,
       handleProfilFetched: ProfilActions.PROFIL_FETCHED,
 
-      handleUploadContacts : MeActions.UPLOAD_CONTACTS,
-      handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
-      handleUploadContactsFailed : MeActions.UPLOAD_CONTACTS_FAILED,
+      handleUploadContacts : TempActions.UPLOAD_CONTACTS,
+      handleUploadContactsSuccess : TempActions.UPLOAD_CONTACTS_SUCCESS,
+      handleUploadContactsFailed : TempActions.UPLOAD_CONTACTS_FAILED,
 
-      handleSendMessageContact : MeActions.SEND_MESSAGE_CONTACT,
-      handleSendMessageContactSuccess : MeActions.SEND_MESSAGE_CONTACT_SUCCESS,
-      handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
+      handleSendMessageContact : TempActions.SEND_MESSAGE_CONTACT,
+      handleSendMessageContactSuccess : TempActions.SEND_MESSAGE_CONTACT_SUCCESS,
+      handleSendMessageContactFailed : TempActions.SEND_MESSAGE_CONTACT_FAILED,
 
-      handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
+      handleHasBeenUploadWelcomed: TempActions.HAS_BEEN_UPLOAD_WELCOMED,
       
-      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
+      handleHideOverlayMapTutorial: TempActions.HIDE_OVERLAY_MAP_TUTORIAL,
       
-      handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
+      handleDisplayTabBar: TempActions.DISPLAY_TAB_BAR,
 
-      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
+      handleShowedCurrentPosition: TempActions.SHOWED_CURRENT_POSITION,
 
-      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
+      handleShowedUpdateMessage: TempActions.SHOWED_UPDATE_MESSAGE,
 
-      handleSetVersion: MeActions.SET_VERSION,
+      handleSetVersion: TempActions.SET_VERSION,
 
-      handleSendVersionSuccess: MeActions.SEND_VERSION_SUCCESS,
-      handleSendVersionFailed: MeActions.SEND_VERSION_FAILED
+      handleSendVersionSuccess: TempActions.SEND_VERSION_SUCCESS,
+      handleSendVersionFailed: TempActions.SEND_VERSION_FAILED
     });
   }
 

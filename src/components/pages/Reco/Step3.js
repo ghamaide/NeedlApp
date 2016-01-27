@@ -1,15 +1,22 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS, Dimensions} from 'react-native';
+import React, {StyleSheet, Component, View, ActivityIndicatorIOS, Dimensions} from 'react-native';
+
 import _ from 'lodash';
 
 import request from '../../../utils/api';
 
-import ToggleGroup from './ToggleGroup';
-import RecoStore from '../../../stores/Reco';
-import RecoActions from '../../../actions/RecoActions';
-import Step4 from './Step4';
 import Button from '../../elements/Button';
+
+import Text from '../../ui/Text';
+
+import ToggleGroup from './ToggleGroup';
+
+import RecoStore from '../../../stores/Reco';
+
+import RecoActions from '../../../actions/RecoActions';
+
+import Step4 from './Step4';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -30,27 +37,27 @@ class RecoStep3 extends Component {
         this.push(Step4.route());
       }
     };
-  }
+  };
 
-  state = {}
+  state = {};
 
   onRecoUpdate = () => {
     this.setState({
       loading: RecoStore.getRecoLoading(),
       err: RecoStore.getRecoErr()
     });
-  }
+  };
 
   componentDidMount() {
     if (this.props.editing) {
       RecoStore.listen(this.onRecoUpdate);
       RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);
     }
-  }
+  };
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoUpdate);
-  }
+  };
 
   render() {
     if (this.state.err || this.state.loading) {
@@ -120,7 +127,7 @@ class RecoStep3 extends Component {
         </View>
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

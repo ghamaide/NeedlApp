@@ -1,11 +1,16 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View} from 'react-native';
+import React, {StyleSheet, Component, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
+
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
+
 import RecoActions from '../../../actions/RecoActions';
+
+import Text from '../../ui/Text';
+
 import StepSave from './StepSave';
 import Step3 from './Step3';
 
@@ -16,9 +21,9 @@ class RecoStep2 extends Component {
       component: RecoStep2,
       title: 'Statut'
     };
-  }
+  };
 
-  state = {}
+  state = {};
 
   render() {
 
@@ -72,7 +77,7 @@ class RecoStep2 extends Component {
         </ToggleGroup>
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

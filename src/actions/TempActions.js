@@ -3,7 +3,7 @@
 import alt from '../alt';
 import request from '../utils/api';
 
-export class MeActions {
+export class TempActions {
 
   edit(name, email, success) {
     return (dispatch) => {
@@ -175,4 +175,4 @@ export class MeActions {
   }
 }
 
-export default alt.createActions(MeActions);
+export default alt.createActions(TempActions);

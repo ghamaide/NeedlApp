@@ -1,15 +1,20 @@
 'use strict';
 
-import React, {StyleSheet, Text, ListView, View, Image, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight} from 'react-native';
+
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import NotifsActions from '../../actions/NotifsActions';
+
 import NotifsStore from '../../stores/Notifs';
 import MeStore from '../../stores/Me';
 
-import Page from '../ui/Page';
-import RestaurantElement from '../elements/Restaurant';
 import Restaurant from './Restaurant';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
@@ -22,7 +27,7 @@ class Notifs extends Page {
       component: Notifs,
       title: 'Notifs'
     };
-  }
+  };
 
   static notifsState() {
     return {
@@ -31,9 +36,9 @@ class Notifs extends Page {
       error: NotifsStore.error(),
       loggedIn: !!MeStore.getState().me.id
     };
-  }
+  };
 
-  state = Notifs.notifsState()
+  state = Notifs.notifsState();
 
   onFocus = (event) => {
     if (event.data.route.component === Notifs && event.data.route.fromTabs) {
@@ -49,28 +54,28 @@ class Notifs extends Page {
       this.IS_FOCUS = false;
       NotifsActions.notifsSeen();
     }
-  }
+  };
 
   componentWillMount() {
     NotifsStore.listen(this.onNotifsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     NotifsStore.unlisten(this.onNotifsChange);
     if (!!MeStore.getState().me.id) {
       NotifsActions.notifsSeen();
     }
-  }
+  };
 
   onNotifsChange = () => {
     this.setState(Notifs.notifsState);
-  }
+  };
 
   onRefresh() {
     NotifsActions.notifsSeen();
     NotifsActions.fetchNotifs();
-  }
+  };
 
   renderHeaderWrapper = (refreshingIndicator) => {
     var nbPot = NotifsStore.getState().notifs.length;
@@ -93,7 +98,7 @@ class Notifs extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderNotif = (notif) => {
     var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {};
@@ -125,10 +130,9 @@ class Notifs extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderPage() {
-
     return (
       <RefreshableListView
         style={styles.notifsList}
@@ -142,7 +146,7 @@ class Notifs extends Page {
         loadData={this.onRefresh}
         refreshDescription="Refreshing..." />
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

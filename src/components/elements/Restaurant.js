@@ -1,10 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, Component, Image, View, Text, TouchableHighlight, processColor} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+import React, {StyleSheet, Component, Image, View, TouchableHighlight, processColor} from 'react-native';
+
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 
 import Carousel from '../ui/Carousel';
+import Text from '../ui/Text';
 
 class Restaurant extends Component {
   render() {
@@ -81,7 +83,7 @@ class Restaurant extends Component {
     }
 
     return content;
-  }
+  };
 }
 
 var styles = StyleSheet.create({

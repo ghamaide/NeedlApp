@@ -1,21 +1,25 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, MapView, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+import Carousel from '../ui/Carousel';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import RestaurantsActions from '../../actions/RestaurantsActions';
-import RestaurantsStore from '../../stores/Restaurants';
-import MeStore from '../../stores/Me';
 import MeActions from '../../actions/MeActions';
 
-import Page from '../ui/Page';
+import RestaurantsStore from '../../stores/Restaurants';
+import MeStore from '../../stores/Me';
+
 import Filtre from './Filtre';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
-
-import Carousel from '../ui/Carousel';
-import RestaurantElement from '../elements/Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -32,7 +36,7 @@ class Carte extends Page {
         this.replace(Liste.route());
       }
     };
-  }
+  };
 
   restaurantsState() {
     return {
@@ -42,7 +46,7 @@ class Carte extends Page {
       error: RestaurantsStore.error(),
       isChanging: false
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -64,7 +68,7 @@ class Carte extends Page {
       latitudeDelta: RestaurantsStore.getState().region.deltaLat,
       longitudeDelta: RestaurantsStore.getState().region.deltaLong,
     };
-  }
+  };
 
   onFocus = (event) => {
     if (event.data.route.component === Carte) {
@@ -85,24 +89,24 @@ class Carte extends Page {
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
       );
     }
-  }
+  };
 
   isInParis = (initialPosition) => {
     return (initialPosition.coords.latitude <= this.state.northLatitude && initialPosition.coords.latitude >= this.state.southLatitude && initialPosition.coords.longitude <= this.state.eastLongitude && initialPosition.coords.longitude >= this.state.westLongitude);
-  }
+  };
 
   componentWillMount() {
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
-  }
+  };
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
-  }
+  };
 
   onRegionChangeComplete = (region) => {
     var mapHeight = windowHeight - 124;
@@ -117,17 +121,17 @@ class Carte extends Page {
       this.setState({index: 0});
       this.refs.carousel.goToPage(this.state.index, 'annotationPress');
     }
-  }
+  };
 
   onRegionChange = (region) => {
     // to see if the user is changing region
     this.setState({isChanging : true});
-  }
+  };
 
   onAnnotationPress = (annotation) => {
     this.setState({index : _.findIndex(this.state.data, {'name' : annotation.title})});
     this.refs.carousel.goToPage(this.state.index, 'annotationPress');
-  }
+  };
 
   carouselOnPageChange = (i, from) => {
     var event = {
@@ -141,7 +145,7 @@ class Carte extends Page {
       // Here call function to select annotation on map
       //this.refs.mapview._onPress(event);
     }
-  }
+  };
 
   renderPage() {
     return (
@@ -218,7 +222,7 @@ class Carte extends Page {
         </TouchableHighlight>
 			</View>
 		);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

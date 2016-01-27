@@ -1,29 +1,31 @@
 'use strict';
 
-import React, {Component, AppStateIOS, View, PushNotificationIOS, NativeModules, Text, Image, StyleSheet, ActivityIndicatorIOS, ScrollView, StatusBarIOS, TouchableHighlight} from 'react-native';
-import Overlay from 'react-native-overlay';
+import React, {Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
+
 import _ from 'lodash';
+import Overlay from 'react-native-overlay';
 
 import TabView from './ui/TabView';
 import ErrorToast from './ui/ErrorToast';
+import Text from './ui/Text';
 
-import Profil from './pages/Profil';
-import Friends from './pages/Friends';
-import Notifs from './pages/Notifs';
-import Liste from './pages/Liste';
-import RecoStep1 from './pages/Reco/Step1';
+import Button from './elements/Button';
+
+import FriendsActions from '../actions/FriendsActions';
+import RestaurantsActions from '../actions/RestaurantsActions';
+import NotifsActions from '../actions/NotifsActions';
+import TempActions from '../actions/TempActions';
 
 import MeStore from '../stores/Me';
 import FriendsStore from '../stores/Friends';
 import NotifsStore from '../stores/Notifs';
 import RestaurantsStore from '../stores/Restaurants';
 
-import FriendsActions from '../actions/FriendsActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
-import NotifsActions from '../actions/NotifsActions';
-import MeActions from '../actions/MeActions';
-
-import Button from './elements/Button';
+import Profil from './pages/Profil';
+import Friends from './pages/Friends';
+import Notifs from './pages/Notifs';
+import Liste from './pages/Liste';
+import RecoStep1 from './pages/Reco/Step1';
 
 class App extends Component {
   constructor(props) {
@@ -36,14 +38,14 @@ class App extends Component {
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
     };
-  }
+  };
 
   onPastillesChange = () => {
     this.setState({
       friendsPastille: FriendsStore.nbUnseenRequests(),
       notifsPastille: NotifsStore.nbUnseenNotifs()
     });
-  }
+  };
 
   onMeChange = () => {
     var errors = this.state.errors;
@@ -61,11 +63,11 @@ class App extends Component {
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
       showTabBar: MeStore.getState().showTabBar
     });
-  }
+  };
 
   onDeviceToken = (deviceToken) => {
-    MeActions.saveDeviceToken(deviceToken);
-  }
+    TempActions.saveDeviceToken(deviceToken);
+  };
 
   getNotifTab(notif) {
     var notifTab;
@@ -78,7 +80,7 @@ class App extends Component {
         break;
     }
     return notifTab;
-  }
+  };
 
   onNotification = (notif) => {
     var notifTab = this.getNotifTab(notif);
@@ -86,22 +88,21 @@ class App extends Component {
     if (notifTab && AppStateIOS.currentState !== 'active') {
       this.refs.tabs.resetToTab(notifTab, {skipCache: true});
     }
-  }
+  };
 
   onAppStateChange = (state) => {
     if (state === 'active') {
       this.startActions();
     }
-  }
+  };
 
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
-    MeActions.sendVersion(MeStore.getState().version);
-    MeActions.resetBadgeNumber();
+    TempActions.sendVersion(MeStore.getState().version);
+    TempActions.resetBadgeNumber();
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();
-    StatusBarIOS.setStyle('default');
-  }
+  };
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
@@ -119,13 +120,13 @@ class App extends Component {
     }
 
     this.startActions();
-  }
+  };
 
   componentWillUnmount() {
     FriendsStore.unlisten(this.onPastillesChange);
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
-  }
+  };
 
   render() {
     return (
@@ -134,7 +135,7 @@ class App extends Component {
           return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}
         <Overlay isVisible={this.state.showOverlayMapTutorial}>
-          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
+          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => TempActions.hideOverlayMapTutorial()}>
             <ScrollView
               style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
               contentInset={{top: 0}}
@@ -160,7 +161,7 @@ class App extends Component {
             <Text style={styles.title}>Ton app est unique !</Text>
             <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
             <Button label="On y va !" onPress={() => {
-              MeActions.hasBeenUploadWelcomed();
+              TempActions.hasBeenUploadWelcomed();
             }} style={{margin: 5}}/>
           </ScrollView>
         </Overlay>
@@ -178,7 +179,7 @@ class App extends Component {
             <Text style={styles.title}>Ton app a été updatée !</Text>
             <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
             <Button label="Passer" onPress={() => {
-              MeActions.showedUpdateMessage();
+              TempActions.showedUpdateMessage();
             }} style={{margin: 5}}/>
           </ScrollView>
         </Overlay>
@@ -222,7 +223,7 @@ class App extends Component {
           tabsBlocked={false} />
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

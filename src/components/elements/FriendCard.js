@@ -1,14 +1,17 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TouchableHighlight, Image} from 'react-native';
+import React, {StyleSheet, Component, View, TouchableHighlight, Image} from 'react-native';
+
 import _ from 'lodash';
+
+import Text from '../ui/Text';
 
 class FriendCard extends Component {
 
   static defaultProps = {
     onAccept() {},
     onignore() {}
-  }
+  };
 
   render() {
     var nbRecos = _.isNumber(this.props.number_of_recos) ? this.props.number_of_recos : this.props.number;
@@ -37,8 +40,9 @@ class FriendCard extends Component {
          : null}
       </View>
     );
-  }
+  };
 }
+
 var styles = StyleSheet.create({
   friendRow: {
     margin: 20,

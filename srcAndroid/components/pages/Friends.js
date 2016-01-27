@@ -12,7 +12,6 @@ import FriendsStore from '../../stores/Friends';
 import Page from '../ui/Page';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
-import FriendsRequests from './FriendsRequests';
 
 let friendsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -134,14 +133,6 @@ class Friends extends Page {
     return (
       <View style={{flex: 1}}>
         {this.state.nbRequests ?
-          <TouchableHighlight onPress={() => {
-            this.props.navigator.push(FriendsRequests.route());
-          }}>
-            <View style={styles.nbRequestsContainer}>
-              <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
-            </View>
-          </TouchableHighlight>
-          : null}
         <TextInput
           ref='searchBar'
           placeholder='Search'

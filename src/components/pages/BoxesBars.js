@@ -1,15 +1,17 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, Text, PushNotificationIOS, TouchableHighlight, ListView, ScrollView} from 'react-native';
+import React, {StyleSheet, MapView, View, PushNotificationIOS, TouchableHighlight, ListView, ScrollView} from 'react-native';
+
 import _ from 'lodash';
 
 import Box from '../elements/Box';
 
 import Page from '../ui/Page';
+import Text from '../ui/Text';
 
+import BoxesRestaurants from './BoxesRestaurants';
 import Carte from './Carte';
 import Liste from './Liste';
-import BoxesRestaurants from './BoxesRestaurants';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -23,27 +25,27 @@ class BoxesBars extends Page {
         this.replace(BoxesRestaurants.route());
       }
     };
-  }
+  };
 
   occasionsState() {
     return {
       // see boxesrestaurants
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.occasionsState();
-  }
+  };
   
   componentWillMount() {
     
-  }
+  };
 
   componentWillUnmount() {
     
-  }
+  };
 
   renderData = (data) => {
   	return (
@@ -58,7 +60,7 @@ class BoxesBars extends Page {
           }
         } />
   	);
-  }
+  };
 	
   renderPage() {
     return (
@@ -76,7 +78,7 @@ class BoxesBars extends Page {
           </ScrollView>
 				</View>
 		);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

@@ -25,7 +25,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb1624037477816607</string>
+				<string>fb809629925772179</string>
 				<string>needl</string>
 			</array>
 		</dict>
@@ -33,9 +33,9 @@
 	<key>CFBundleVersion</key>
 	<string>64</string>
 	<key>FacebookAppID</key>
-	<string>1624037477816607</string>
+	<string>809629925772179</string>
 	<key>FacebookDisplayName</key>
-	<string>Needl</string>
+	<string>needl development</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>

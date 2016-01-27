@@ -1,19 +1,21 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
-import _ from 'lodash';
+import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
 
+import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
 
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+
 import FriendsActions from '../../actions/FriendsActions';
+
 import FriendsStore from '../../stores/Friends';
 
-import Page from '../ui/Page';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
-import FriendsRequests from './FriendsRequests';
 
 let friendsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -27,7 +29,7 @@ class Friends extends Page {
         this.push(InviteFriend.route());
       }
     };
-  }
+  };
 
   friendsState() {
     return {
@@ -37,17 +39,14 @@ class Friends extends Page {
       },
       loading: FriendsStore.loading(),
       error: FriendsStore.error(),
-      nbRequests: _.filter(FriendsStore.getState().data.requests, (friend) => {
-        return !friend.accepted && !friend.refused;
-      }).length
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.friendsState();
-  }
+  };
 
   onFocus = (event) => {
     if (event.data.route.component === Friends && event.data.route.fromTabs) {
@@ -56,20 +55,20 @@ class Friends extends Page {
         this.setState({data: null});
        }
     }
-  }
+  };
 
   componentWillMount() {
     FriendsStore.listen(this.onFriendsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     FriendsStore.unlisten(this.onFriendsChange);
-  }
+  };
 
   onFriendsChange = () => {
     this.setState(this.friendsState());
-  }
+  };
 
   searchFriends = (searchedText) => {
     var newFilteredFriends = _.filter(this.state.data.friends, function(friend) {
@@ -82,15 +81,15 @@ class Friends extends Page {
     }
 
     this.setState({data: filteredData});
-  }
+  };
 
   closeKeyboard = () => {
     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  }
+  };
 
   onRefresh = () => {
     FriendsActions.fetchFriends();
-  }
+  };
 
   renderFriend = (friend) => {
     return (
@@ -106,7 +105,7 @@ class Friends extends Page {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 
   renderHeader = (refreshingIndicator) => {
     var nbPot = FriendsStore.getState().data.friends.length;
@@ -129,7 +128,7 @@ class Friends extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderPage() {
     return (
@@ -137,15 +136,6 @@ class Friends extends Page {
         {_.map(this.state.errors, (err) => {
           return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
         })}
-        {this.state.nbRequests ?
-          <TouchableHighlight onPress={() => {
-            this.props.navigator.push(FriendsRequests.route());
-          }}>
-            <View style={styles.nbRequestsContainer}>
-              <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
-            </View>
-          </TouchableHighlight>
-          : null}
         <SearchBar
           ref='searchBar'
           placeholder='Search'
@@ -166,7 +156,7 @@ class Friends extends Page {
           refreshDescription="Refreshing..." />
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

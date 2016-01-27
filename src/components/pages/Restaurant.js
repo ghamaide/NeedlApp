@@ -1,24 +1,29 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, ScrollView, MapView, Image, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, View, ScrollView, MapView, Image, TouchableHighlight} from 'react-native';
+
 import _ from 'lodash';
 import RNComm from 'react-native-communications';
 import Mixpanel from 'react-native-mixpanel';
 
-import RestaurantsActions from '../../actions/RestaurantsActions';
-import RestaurantsStore from '../../stores/Restaurants';
-import ProfilActions from '../../actions/ProfilActions';
-import ProfilStore from '../../stores/Profil';
-import MeStore from '../../stores/Me';
-import RecoActions from '../../actions/RecoActions';
-
-import Page from '../ui/Page';
-import ErrorToast from '../ui/ErrorToast';
-import Carousel from '../ui/Carousel';
 import RestaurantElement from '../elements/Restaurant';
 import Button from '../elements/Button';
 import Options from '../elements/Options';
 import Option from '../elements/Option';
+
+import Page from '../ui/Page';
+import ErrorToast from '../ui/ErrorToast';
+import Carousel from '../ui/Carousel';
+import Text from '../ui/Text';
+
+import RestaurantsActions from '../../actions/RestaurantsActions';
+import ProfilActions from '../../actions/ProfilActions';
+import RecoActions from '../../actions/RecoActions';
+
+import ProfilStore from '../../stores/Profil';
+import MeStore from '../../stores/Me';
+import RestaurantsStore from '../../stores/Restaurants';
+
 import Toggle from './Reco/Toggle';
 import RecoStep3 from './Reco/Step3';
 import Help from './Help';
@@ -30,7 +35,7 @@ class Restaurant extends Page {
       title: title,
       passProps: props
     };
-  }
+  };
 
   restaurantsState() {
     if (this.props.id === 0) {
@@ -65,7 +70,7 @@ class Restaurant extends Page {
       error: RestaurantsStore.error(restaurant.id),
       errors: errors
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -74,16 +79,15 @@ class Restaurant extends Page {
       errors: []
     };
     this.state = this.restaurantsState();
-  }
+  };
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
-    //this.refs.carouselReco.goToPage(-1);
-  }
+  };
 
   onProfilStoreUpdate = () => {
     this.forceUpdate();
-  }
+  };
 
   componentDidUpdate() {
     var restaurant = RestaurantsStore.restaurant(this.state.id);
@@ -97,19 +101,19 @@ class Restaurant extends Page {
         ProfilActions.fetchProfil(userId);
       });
     }
-  }
+  };
 
   componentWillMount() {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
     RestaurantsStore.listen(this.onRestaurantsChange);
     ProfilStore.listen(this.onProfilStoreUpdate);
     RestaurantsActions.fetchRestaurant(this.props.id);
-  }
+  };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
     ProfilStore.unlisten(this.onProfilStoreUpdate);
-  }
+  };
 
   getToggle (map, v, color) {
     if (v <= map.length && v != 0) {
@@ -124,7 +128,7 @@ class Restaurant extends Page {
     } else {
       return ;
     }
-  }
+  };
 
   approuve = (editing) => {
     var restaurant = this.state.data;
@@ -149,20 +153,20 @@ class Restaurant extends Page {
     }
 
     this.props.navigator.push(RecoStep3.route(props));
-  }
+  };
 
   call = () => {
     Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
     RNComm.phonecall(this.state.data.phone_number, false);
-  }
+  };
 
   centerReco = () => {
     this.refs.carouselReco.goToPage(-1);
-  }
+  };
 
   onPressText = () => {
     this.props.navigator.push(Help.route("Aide", {from: "restaurant"}));
-  }
+  };
 
   renderPage() {
     var restaurant = this.state.data;
@@ -543,7 +547,7 @@ class Restaurant extends Page {
           })}
       </ScrollView>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

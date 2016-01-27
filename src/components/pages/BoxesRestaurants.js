@@ -1,18 +1,21 @@
 'use strict';
 
-import React, {Animated, StyleSheet, MapView, View, Text, TouchableHighlight, ListView, ScrollView} from 'react-native';
+import React, {Animated, StyleSheet, MapView, View, TouchableHighlight, ListView, ScrollView} from 'react-native';
+
 import _ from 'lodash';
 import GridView from 'react-native-grid-view';
 
 import Box from '../elements/Box';
 
 import Page from '../ui/Page';
-
-import Liste from './Liste';
-import BoxesBars from './BoxesBars';
+import Text from '../ui/Text';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
+
 import RestaurantsStore from '../../stores/Restaurants';
+
+import BoxesBars from './BoxesBars';
+import Liste from './Liste';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -26,7 +29,7 @@ class BoxesRestaurants extends Page {
         this.replace(BoxesBars.route());
       }*/
     };
-  }
+  };
 
   occasionsState() {
     return {
@@ -66,7 +69,7 @@ class BoxesRestaurants extends Page {
       // Images to change
       // Put the list in restaurants stores
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -75,15 +78,15 @@ class BoxesRestaurants extends Page {
     this.state.isOpened = false;
     this.state.heightFiltersList = new Animated.Value(0);
     this.state.filterChosen = 0;
-  }
+  };
   
   componentWillMount() {
     // on mount 
-  }
+  };
 
   componentWillUnmount() {
     // on unmount
-  }
+  };
 
   clearFilters() {
     RestaurantsActions.setFilter('ambiance', {
@@ -110,7 +113,7 @@ class BoxesRestaurants extends Page {
       value: 'Tous',
       id: null
     });
-  }
+  };
 
   showFilters = () => {
     if (this.state.isOpened) {
@@ -127,7 +130,7 @@ class BoxesRestaurants extends Page {
         {toValue: this.state.dataFilters.length * 35, duration: 500}
       ).start();
     } 
-  }
+  };
 
   renderData = (data) => {
   	return (
@@ -142,7 +145,7 @@ class BoxesRestaurants extends Page {
           }
         } />
   	);
-  }
+  };
 
   renderDataFilter = (data) => {
     return (
@@ -155,7 +158,7 @@ class BoxesRestaurants extends Page {
         <Text style={styles.filtersText}>{data.name}</Text>
       </TouchableHighlight>
     );
-  }
+  };
 
   renderPage() {
     return (
@@ -197,7 +200,7 @@ class BoxesRestaurants extends Page {
             ]}
 				</View>
 		);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

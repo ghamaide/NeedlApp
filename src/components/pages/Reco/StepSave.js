@@ -1,13 +1,18 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, Component, View, ActivityIndicatorIOS} from 'react-native';
+
+import Text from '../../ui/Text';
+
+import Button from '../../elements/Button';
 
 import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+
 import RecoActions from '../../../actions/RecoActions';
+
 import Restaurant from '../Restaurant';
 import Liste from '../Liste';
-import Button from '../../elements/Button';
 
 class RecoStepSave extends Component {
   static route(title) {
@@ -18,7 +23,7 @@ class RecoStepSave extends Component {
       // pour pas rester avec un Merci...
       title: title
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -26,13 +31,13 @@ class RecoStepSave extends Component {
     this.state = {
       hasShared: MeStore.getState().me.HAS_SHARED
     };
-  }
+  };
 
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
     this.props.navigator.resetTo(Restaurant.route({id: id}, reco.restaurant.name));
-  }
+  };
 
   onRecoChange = () => {
     if (RecoStore.getState().saved) {
@@ -45,18 +50,17 @@ class RecoStepSave extends Component {
     this.setState({
       err: RecoStore.getState().errSave
     });
-  }
+  };
 
   componentDidMount() {
     RecoStore.listen(this.onRecoChange);
     var reco = RecoStore.getReco();
     RecoActions.saveReco(reco);
-  }
+  };
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoChange);
-  }
-
+  };
 
   render() {
     var content;
@@ -93,7 +97,7 @@ class RecoStepSave extends Component {
         {content}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

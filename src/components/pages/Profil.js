@@ -1,24 +1,29 @@
 'use strict';
 
-import React, {StyleSheet, Dimensions, Text, ScrollView, View, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, Dimensions, ScrollView, View, Image, NativeModules, RefreshControl} from 'react-native';
+
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
+
+import Carousel from '../ui/Carousel';
+import ErrorToast from '../ui/ErrorToast';
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+
+import RestaurantElement from '../elements/Restaurant';
+import Options from '../elements/Options';
+import Option from '../elements/Option';
 
 import LoginActions from '../../actions/LoginActions';
 import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
 import FriendsActions from '../../actions/FriendsActions';
+
 import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 import FriendsStore from '../../stores/Friends';
 
-import Carousel from '../ui/Carousel';
-import ErrorToast from '../ui/ErrorToast';
-import Page from '../ui/Page';
-import RestaurantElement from '../elements/Restaurant';
 import Restaurant from './Restaurant';
-import Options from '../elements/Options';
-import Option from '../elements/Option';
 import EditMe from './EditMe';
 import Friends from './Friends';
 
@@ -31,11 +36,11 @@ class Profil extends Page {
       title: title || 'Profil',
       passProps: props
     };
-  }
+  };
 
   currentProfil() {
     return this.props.id || MeStore.getState().me.id;
-  }
+  };
 
   getProfilState() {
     var errors = this.state.errors;
@@ -63,7 +68,7 @@ class Profil extends Page {
       error: ProfilStore.error(this.currentProfil()),
       errors: errors
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -72,13 +77,13 @@ class Profil extends Page {
       errors: [],
     };
     this.state = this.getProfilState();
-  }
+  };
 
   onFocus = (event) => {
     if (event.data.route.component === Profil) {
       ProfilActions.fetchProfil(this.currentProfil());
     }
-  }
+  };
 
   componentWillMount() {
     ProfilStore.listen(this.onProfilsChange);
@@ -89,16 +94,16 @@ class Profil extends Page {
     } else {
       ProfilActions.fetchProfil(this.currentProfil());
     }
-  }
+  };
 
   componentWillUnmount() {
     FriendsStore.unlisten(this.onProfilsChange);
     ProfilStore.unlisten(this.onProfilsChange);
-  }
+  };
 
   onProfilsChange = () => {
     this.setState(this.getProfilState());
-  }
+  };
 
   renderRestaurants(title, restaurants, backgroundColor) {
     restaurants = _.uniq(restaurants, (restaurant) => {
@@ -132,7 +137,7 @@ class Profil extends Page {
         </ScrollView>
       </View>
     );
-  }
+  };
 
   renderPage() {
     var profil = this.state.data;
@@ -144,10 +149,17 @@ class Profil extends Page {
         showsVerticalScrollIndicator={false}
         onScroll={this.onScroll}
         scrollEventThrottle={16}
-        onRefreshStart={(endRefreshing) => {
-          ProfilActions.fetchProfil(this.currentProfil());
-          endRefreshing();
-        }}>
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => {
+              ProfilActions.fetchProfil(this.currentProfil());
+            }}
+            tintColor="#ff0000"
+            title="Loading..."
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00" />
+        }>
 
         <Overlay isVisible={this.state.showUploadConfirmation}>
           <View style={styles.uploadConfirmationContainer}>
@@ -231,7 +243,7 @@ class Profil extends Page {
           return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}
       </ScrollView>);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

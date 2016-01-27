@@ -1,20 +1,24 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, TouchableHighlight, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, NativeModules} from 'react-native';
+
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
-import RestaurantsStore from '../../stores/Restaurants';
-import MeStore from '../../stores/Me';
 import MeActions from '../../actions/MeActions';
 
+import RestaurantsStore from '../../stores/Restaurants';
+import MeStore from '../../stores/Me';
+
 import Page from '../ui/Page';
-import RestaurantElement from '../elements/Restaurant';
 import ErrorToast from '../ui/ErrorToast';
+import Text from '../ui/Text';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import Filtre from './Filtre';
 import Carte from './Carte';
-import BoxesRestaurants from './BoxesRestaurants';
 import Restaurant from './Restaurant';
 import Help from './Help';
 
@@ -30,7 +34,7 @@ class Liste extends Page {
 				this.replace(Carte.route());
       }
     };
-  }
+  };
 
   restaurantsState() {
     return {
@@ -40,20 +44,20 @@ class Liste extends Page {
       errors: RestaurantsStore.error(),
 			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.restaurantsState();
     this.state.showsUserLocation = false;
-  }
+  };
 
   onFocus = (event) => {
     if (event.data.route.component === Liste) {
       RestaurantsActions.fetchRestaurants();
     }
-  }
+  };
 
   componentWillMount() {
   	if (!MeStore.getState().showTabBar) {
@@ -61,23 +65,23 @@ class Liste extends Page {
   	}
     RestaurantsStore.listen(this.onRestaurantsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
-  }
+  };
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
-  }
+  };
 
   onRefresh = () => {
   	RestaurantsActions.fetchRestaurants();
-  }
+  };
 
   onPressText = () => {
   	this.props.navigator.push(Help.route("Aide", {from: "liste"}));
-  }
+  };
 
 	renderRestaurant = (restaurant) => {
     return (
@@ -98,7 +102,7 @@ class Liste extends Page {
           this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
         }}/>
     );
-  }
+  };
 
   renderHeaderWrapper = (refreshingIndicator) => {
   	if (!this.state.data.length) {
@@ -118,9 +122,10 @@ class Liste extends Page {
 	   		</View>
   		);
   	}
-  }
+  };
 
   renderPage() {
+    console.log(this.state.errors);
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
 				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
@@ -147,7 +152,7 @@ class Liste extends Page {
         })}
 			</View>
 		);
-  }
+  };
 }
 
 var styles = StyleSheet.create({

@@ -1,15 +1,14 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, Text, View, Image} from 'react-native';
+import React, {StyleSheet, TouchableHighlight, Component, View, Image} from 'react-native';
 import _ from 'lodash';
 
-import MeStore from '../../stores/Me';
-import LoginActions from '../../actions/LoginActions';
+import Text from '../ui/Text';
 import ErrorToast from '../ui/ErrorToast';
 
-import FBSDKLogin, {FBSDKLoginButton} from 'react-native-fbsdklogin';
-import FBSDKCore, {FBSDKAccessToken} from 'react-native-fbsdkcore';
+import LoginActions from '../../actions/LoginActions';
 
+import MeStore from '../../stores/Me';
 
 class Login extends Component {
   getLoginState() {
@@ -24,7 +23,7 @@ class Login extends Component {
       me: MeStore.getState().me,
       errors: this.state.errors
     };
-  }
+  };
 
   constructor() {
     super();
@@ -33,25 +32,25 @@ class Login extends Component {
       errors: []
     };
     this.state = this.getLoginState();
-  }
+  };
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-  }
+  };
 
   onMeChange = () => {
     this.setState(this.getLoginState());
-  }
+  };
 
   onLogin = () => {
     if (!this.state.status.loggingIn) {
       LoginActions.login();
     }
-  }
+  };
 
   render() {
     return (
@@ -79,7 +78,7 @@ class Login extends Component {
         })}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

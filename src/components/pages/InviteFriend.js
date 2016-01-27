@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS} from 'react-native';
+
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 import Contacts from 'react-native-contacts';
@@ -8,9 +9,12 @@ import SearchBar from 'react-native-search-bar';
 
 import Page from '../ui/Page';
 import ErrorToast from '../ui/ErrorToast';
+import Text from '../ui/Text';
+
 import FriendCard from '../elements/FriendCard';
 
 import MeStore from '../../stores/Me'
+
 import MeActions from '../../actions/MeActions'
 
 let contactsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
@@ -22,7 +26,7 @@ class InviteFriend extends Page {
       component: InviteFriend,
       title: 'Inviter des amis'
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -34,7 +38,7 @@ class InviteFriend extends Page {
     this.state.data = {};
     this.state.switchList = {};
     this.state.hasUploadedContacts = MeStore.getState().hasUploadedContacts;
-  }
+  };
 
   onMeChange = () => {
     var errors = this.state.errors;
@@ -54,19 +58,19 @@ class InviteFriend extends Page {
       sendingMessage: MeStore.sendingMessage(),
       errors: errors,
     });
-  }
+  };
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-  }
+  };
 
   componentDidMount() {
     this.checkPermission();
-  }
+  };
 
   checkPermission() {
     Contacts.checkPermission( (err, permission) => {
@@ -82,7 +86,7 @@ class InviteFriend extends Page {
         this.authorizeShowContacts();
       }
     });
-  }
+  };
 
   getContacts() {
     Contacts.getAll((err, retrievedContacts) => {
@@ -104,7 +108,7 @@ class InviteFriend extends Page {
         }
       }
     })
-  }
+  };
 
   authorizeShowContacts() {
     AlertIOS.alert(
@@ -114,7 +118,7 @@ class InviteFriend extends Page {
         {text: 'OK', onPress: () => this.props.navigator.pop()},
       ]
     );
-  }
+  };
 
   searchContacts = (searchedText) => {
     var tempFilteredContacts = _.filter(this.state.contacts, function(contact) {
@@ -129,15 +133,15 @@ class InviteFriend extends Page {
       }
     });
     this.setState({filteredContacts: tempFilteredContacts});
-  }
+  };
 
   closeKeyboard = () => {
     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  }
+  };
 
   isEqual (a, b) {
     return (a === b);
-  }
+  };
 
   renderContact = (contact) => {
     return (
@@ -179,12 +183,12 @@ class InviteFriend extends Page {
           </View>
       </View>
     );
-  }
+  };
 
   onRefresh = () => {
     this.setState({hasUploadedContacts: false});
     this.checkPermission();
-  }
+  };
 
   renderPage() {
     return (
@@ -211,7 +215,7 @@ class InviteFriend extends Page {
         })}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

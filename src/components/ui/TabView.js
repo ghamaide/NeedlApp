@@ -1,8 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, View, Component, Image, Text, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
+import React, {StyleSheet, View, Component, Image, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
+
 import _ from 'lodash';
 import TimerMixin from 'react-timer-mixin';
+
+import Text from './Text';
+
 import MeStore from '../../stores/Me';
 
 class PatchedNavigatorIOS extends Component {
@@ -12,12 +16,12 @@ class PatchedNavigatorIOS extends Component {
       rerender: 0,
       index: props.index
     };
-  }
+  };
 
   // hack
   resetToTab = (selected) => {
     this.props.tabsMaster.resetToTab(selected);
-  }
+  };
 
   resetTo = (route) => {
     if (this.refs.nav.state.routeStack.length === 1) {
@@ -30,15 +34,15 @@ class PatchedNavigatorIOS extends Component {
     }
     this.refs.nav.replaceAtIndex(this.patchRoute(route), 0);
     this.refs.nav.popN(this.refs.nav.state.routeStack.length - 1);
-  }
+  };
 
   push = (route) => {
     this.refs.nav.push(this.patchRoute(route));
-  }
+  };
 
   replace = (route) => {
     this.refs.nav.replace(this.patchRoute(route));
-  }
+  };
 
   patchRoute(route) {
     var newRoute = _.clone(route);
@@ -63,7 +67,7 @@ class PatchedNavigatorIOS extends Component {
       newRoute.onLeftButtonPress = () => {};
     }
     return newRoute;
-  }
+  };
 
   componentDidMount() {
     var ref = {};
@@ -78,14 +82,14 @@ class PatchedNavigatorIOS extends Component {
     if (this.props.fireFromTabs) {
       this.refs.nav._emitDidFocus(_.extend({fromTabs: true, skipCache: this.props.initialSkipCache}, this.refs.nav.state.routeStack[this.refs.nav.state.observedTopOfStack]));
     }
-  }
+  };
 
   componentDidUpdate() {
     this.refs.nav.navigator.resetTo = this.resetTo;
     this.refs.nav.navigator.replace = this.replace;
     this.refs.nav.navigator.push = this.push;
     this.refs.nav.navigator.resetToTab = this.resetToTab;
-  }
+  };
 
   render() {
     return <NavigatorIOS
@@ -96,7 +100,7 @@ class PatchedNavigatorIOS extends Component {
       key={this.state.index + 'n' + this.state.rerender}
       {...this.props}
       initialRoute={this.patchRoute(this.props.initialRoute)} />;
-  }
+  };
 }
 
 class TabView extends Component {
@@ -107,7 +111,7 @@ class TabView extends Component {
       selected: this.props.initialSelected || 0,
       rerender: 0
     };
-  }
+  };
 
   renderTab(index, name, icon, pastille, hasShared) {
     var opacityStyle = {opacity: index === this.state.selected ? 1 : 0.3};
@@ -140,21 +144,21 @@ class TabView extends Component {
         </View>
       </TouchableWithoutFeedback>
     );
-  }
+  };
 
   onMeChange = () => {
     this.setState({showTabBar: MeStore.getState().showTabBar});
-  }
+  };
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
     this.setState({showTabBar: MeStore.getState().showTabBar});
     this.props.onTab(this.state.selected);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-  }
+  };
 
   resetToTab(index, opts) {
     var selected = this.state.selected;
@@ -174,7 +178,7 @@ class TabView extends Component {
         nav.resetTo(this.props.tabs[selected].component.route());
       }
     }, 100);
-  }
+  };
 
   render() {
     return (
@@ -219,7 +223,7 @@ class TabView extends Component {
         ] : []}
     	</View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({
