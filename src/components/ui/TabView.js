@@ -192,21 +192,15 @@ class TabView extends Component {
         initialRoute={tab.component.route()}
         ref="views"
         renderScene={(route, nav) => {
-          var navBar = route.navigationBar;
-          if (navBar) {
-            navBar = React.cloneElement(navBar, {
-              navigator: nav,
-              route: route
-            });
-          }
-          return (
-            <View style={{flex: 1}}>
-              {navBar}            
-              {React.createElement(route.component, _.extend({navigator: nav}, route.passProps))}
-            </View>
-          );
+          return React.createElement(route.component, _.extend({navigator: nav}, route.passProps));
         }}
-        configureScene={(route) => Navigator.SceneConfigs.FloatFromLeft} />
+        configureScene={() => {
+          return {
+            ...Navigator.SceneConfigs.FadeAndroid,
+            defaultTransitionVelocity: 1000,
+            gestures: {}
+          };
+        }} />
     );
   };
 

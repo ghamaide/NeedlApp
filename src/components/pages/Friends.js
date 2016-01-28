@@ -24,11 +24,7 @@ class Friends extends Page {
   static route() {
     return {
       component: Friends,
-      title: 'Amis',
-      rightButtonTitle: 'Inviter',
-      onRightButtonPress() {
-        this.push(InviteFriend.route());
-      }
+      title: 'Amis'
     };
   };
 
@@ -137,10 +133,10 @@ class Friends extends Page {
         {_.map(this.state.errors, (err) => {
           return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
         })}
-        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.replace(InviteFriend.route())} />
+        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriend.route())} />
         <SearchBar
           ref='searchBar'
-          placeholder='Search'
+          placeholder='Rechercher'
           hideBackground={true}
           textFieldBackgroundColor='#DDDDDD'
           onChangeText={this.searchFriends} />

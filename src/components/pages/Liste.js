@@ -84,11 +84,6 @@ class Liste extends Page {
   	this.props.navigator.push(Help.route("Aide", {from: "liste"}));
   };
 
-  onRightButtonPress = () => {
-    console.log('lol');
-     
-  };
-
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
@@ -133,7 +128,7 @@ class Liste extends Page {
   renderPage() {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar title="Restaurants" rightButtonTitle="Map" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
 				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
         	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
 				}}>

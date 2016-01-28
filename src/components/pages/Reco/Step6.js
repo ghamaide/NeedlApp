@@ -1,8 +1,9 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, TextInput, Dimensions, ScrollView} from 'react-native';
+import React, {StyleSheet, Component, View, Dimensions, ScrollView} from 'react-native';
 
 import Text from '../../ui/Text';
+import TextInput from '../../ui/TextInput';
 import NavigationBar from '../../ui/NavigationBar';
 
 import MeStore from '../../../stores/Me';

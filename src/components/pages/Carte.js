@@ -158,85 +158,88 @@ class Carte extends Page {
     // console.log({latitude: this.state.region.latitude, longitude: this.state.region.longitude});
     return (
   		<View style={{flex: 1, position: 'relative'}}>
-        <MapView
-          key="map"
-          ref="mapview"
-          style={styles.restaurantsMap}
-          showsUserLocation={this.state.showsUserLocation}
-          followUserLocation={false}
-          region={this.state.region}
-          onRegionChange={this.onRegionChange}
-          onAnnotationPress={this.onAnnotationPress} >
+        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
+        <View style={{flex: 1, position: 'relative'}}>
+          <MapView
+            key="map"
+            ref="mapview"
+            style={styles.restaurantsMap}
+            showsUserLocation={this.state.showsUserLocation}
+            followUserLocation={false}
+            region={this.state.region}
+            onRegionChange={this.onRegionChange}
+            onAnnotationPress={this.onAnnotationPress} >
 
-          <MapView.Circle
-            center={{latitude: this.state.region.latitude, longitude: this.state.region.longitude}}
-            radius={this.state.radius}
-            fillColor="rgba(0, 0, 0, 0.2)"
-            strokeColor="rgba(0, 0, 0, 0.2)"/>
-          
-          {_.map(this.state.data, (restaurant) => {
-            var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
-            myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
-            var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
-            return (
-              <MapView.Marker 
-                coordinate={coord}
-                title={restaurant.name}
-                pinColor={myRestaurant ? 'green' : 'red'} />
-            );
-          })}
-        </MapView>
+            <MapView.Circle
+              center={{latitude: this.state.region.latitude, longitude: this.state.region.longitude}}
+              radius={this.state.radius}
+              fillColor="rgba(0, 0, 0, 0.2)"
+              strokeColor="rgba(0, 0, 0, 0.2)"/>
+            
+            {_.map(this.state.data, (restaurant) => {
+              var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
+              myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
+              var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+              return (
+                <MapView.Marker 
+                  coordinate={coord}
+                  title={restaurant.name}
+                  pinColor={myRestaurant ? 'green' : 'red'} />
+              );
+            })}
+          </MapView>
 
-        {this.state.isChanging ? 
-          [
-            <View key="target_container" style={styles.targetContainer}>
-              <View key="target_top_container" style={[styles.fillRectangleTop, {width: windowWidth}]} />
-              <Image
-                key="target_image"
-                source={require('../../assets/img/other/images/target.png')}
-                style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
-              <View key="target_bottom_container" style={styles.fillRectangleBottom} />
+          {this.state.isChanging ? 
+            [
+              <View key="target_container" style={styles.targetContainer}>
+                <View key="target_top_container" style={[styles.fillRectangleTop, {width: windowWidth}]} />
+                <Image
+                  key="target_image"
+                  source={require('../../assets/img/other/images/target.png')}
+                  style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
+                <View key="target_bottom_container" style={styles.fillRectangleBottom} />
+              </View>
+            ] : []}
+
+          {this.state.data.length && false ? [
+            <Carousel
+              key="carousel"
+              style={styles.carousel}
+              ref="carousel"
+              onPageChange={this.carouselOnPageChange}>
+              {_.map(this.state.data, (restaurant) => {
+                return (
+                  <RestaurantElement
+                    rank={_.findIndex(this.state.data, restaurant) + 1}
+                    isNeedl={restaurant.score <= 5}
+                    key={"restaurant_" + restaurant.id}
+                    name={restaurant.name}
+                    picture={restaurant.pictures[0]}
+                    type={restaurant.food[1]}
+                    budget={restaurant.price_range}
+                    height={120}
+                    onPress={() => {
+                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                    }}/>
+                );
+              })}
+            </Carousel>
+          ] : []}
+
+          {!this.state.data.length && !this.state.isChanging ? [        
+            <View key="no_restaurants" style={styles.emptyTextContainer}>
+              <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
             </View>
           ] : []}
 
-        {this.state.data.length && false ? [
-          <Carousel
-            key="carousel"
-            style={styles.carousel}
-            ref="carousel"
-            onPageChange={this.carouselOnPageChange}>
-            {_.map(this.state.data, (restaurant) => {
-              return (
-                <RestaurantElement
-                  rank={_.findIndex(this.state.data, restaurant) + 1}
-                  isNeedl={restaurant.score <= 5}
-                  key={"restaurant_" + restaurant.id}
-                  name={restaurant.name}
-                  picture={restaurant.pictures[0]}
-                  type={restaurant.food[1]}
-                  budget={restaurant.price_range}
-                  height={120}
-                  onPress={() => {
-                    this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                  }}/>
-              );
-            })}
-          </Carousel>
-        ] : []}
-
-        {!this.state.data.length && !this.state.isChanging ? [        
-          <View key="no_restaurants" style={styles.emptyTextContainer}>
-            <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
-          </View>
-        ] : []}
-        
-				<TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
+          <TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
           this.props.navigator.push(Filtre.route());
         }}>
             <Text style={styles.filterMessageText}>
               {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
             </Text>
-        </TouchableHighlight>
+          </TouchableHighlight>
+        </View>
 			</View>
 		);
   };

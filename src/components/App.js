@@ -97,10 +97,9 @@ class App extends Component {
   };
 
   startActions() {
-    MeActions.setVersion(this.props.version);
-    MeActions.showedCurrentPosition(false);
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
-    MeActions.sendVersion(MeStore.getState().version);
+    MeActions.showedCurrentPosition(false);
+    MeActions.sendVersion(this.props.version);
     MeActions.resetBadgeNumber();
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();

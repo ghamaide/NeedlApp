@@ -147,10 +147,13 @@ class Profil extends Page {
 
   renderPage() {
     var profil = this.state.data;
-
     return (
       <View>
-        <NavigationBar title="Profil" rightButtonTitle="Map" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        {!this.props.id ? [
+          <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        ] : [
+          <NavigationBar leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        ]}
         <ScrollView
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
