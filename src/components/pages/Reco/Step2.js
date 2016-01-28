@@ -4,12 +4,13 @@ import React, {StyleSheet, Component, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
-import MeStore from '../../../stores/Me';
-import RecoStore from '../../../stores/Reco';
+import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import RecoActions from '../../../actions/RecoActions';
 
-import Text from '../../ui/Text';
+import MeStore from '../../../stores/Me';
+import RecoStore from '../../../stores/Reco';
 
 import StepSave from './StepSave';
 import Step3 from './Step3';
@@ -31,6 +32,7 @@ class RecoStep2 extends Component {
 
     return (
       <View style={styles.container}>
+        <NavigationBar title="Statut" />
         <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
         <ToggleGroup
           maxSelection={1}

@@ -9,6 +9,7 @@ import request from '../../../utils/api';
 import Button from '../../elements/Button';
 
 import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import ToggleGroup from './ToggleGroup';
 
@@ -26,16 +27,6 @@ class RecoStep3 extends Component {
       component: RecoStep3,
       title: 'Ambiances',
       passProps: props,
-      rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-
-        if (!reco.ambiances || !reco.ambiances.length) {
-          return;
-        }
-
-        this.push(Step4.route());
-      }
     };
   };
 
@@ -57,6 +48,16 @@ class RecoStep3 extends Component {
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoUpdate);
+  };
+
+  onRightButtonPress= () => {
+    var reco = RecoStore.getReco();
+
+    if (!reco.ambiances || !reco.ambiances.length) {
+      return;
+    }
+
+    this.props.navigator.push(Step4.route());
   };
 
   render() {
@@ -91,6 +92,7 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
+        <NavigationBar title="Ambiances" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
         <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
         <ToggleGroup
           ref="togglegroup"

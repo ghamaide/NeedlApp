@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, ScrollView, MapView, Image, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, View, ScrollView, MapView, Image, TouchableHighlight, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
 import RNComm from 'react-native-communications';
@@ -180,10 +180,17 @@ class Restaurant extends Page {
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
-        onRefreshStart={(endRefreshing) => {
-          this.componentDidUpdate();
-          endRefreshing();
-        }}>
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => {
+              this.componentDidUpdate();
+            }}
+            tintColor="#ff0000"
+            title="Loading..."
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00" />
+        }>
 
         <View key="restaurant_image" style={styles.header}>
           <Carousel

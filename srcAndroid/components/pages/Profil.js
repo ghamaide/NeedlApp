@@ -144,10 +144,17 @@ class Profil extends Page {
         showsVerticalScrollIndicator={false}
         onScroll={this.onScroll}
         scrollEventThrottle={16}
-        onRefreshStart={(endRefreshing) => {
-          ProfilActions.fetchProfil(this.currentProfil());
-          endRefreshing();
-        }}>
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={() => {
+              ProfilActions.fetchProfil(this.currentProfil());
+            }}
+            tintColor="#ff0000"
+            title="Loading..."
+            colors={['#ff0000', '#00ff00', '#0000ff']}
+            progressBackgroundColor="#ffff00" />
+        }>
 
         <View style={styles.infoContainer}>
           <Image source={{uri: profil.picture}} style={styles.image} />

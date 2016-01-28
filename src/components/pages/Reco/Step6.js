@@ -2,10 +2,11 @@
 
 import React, {StyleSheet, Component, View, TextInput, Dimensions, ScrollView} from 'react-native';
 
+import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
+
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
-
-import Text from '../../ui/Text';
 
 import StepSave from './StepSave';
 
@@ -17,13 +18,6 @@ class RecoStep6 extends Component {
       component: RecoStep6,
       title: 'Mot de la fin',
       rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-        // hack pour le fucking title ..
-        // because resetTo does not change title if only one page in the stack
-        var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
-        this.resetTo(StepSave.route(title));
-      }
     };
   };
 
@@ -37,28 +31,39 @@ class RecoStep6 extends Component {
     this.setState({characterNbRemaining: temp});
   };
 
+  onRightButtonPress = () => {
+    var reco = RecoStore.getReco();
+    // hack pour le fucking title ..
+    // because resetTo does not change title if only one page in the stack
+    var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
+    this.props.navigator.resetTo(StepSave.route(title));
+  };
+
   render() {
     var reco = RecoStore.getReco();
     return (
-      <ScrollView style={styles.container} scrollEnabled={false}>
-        <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
-          <Text style={styles.subtitle}>(Optionnel)</Text>
-          <Text style={styles.title}>Taille d'un tweet</Text>
-          <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
-          <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
-            maxLength={140}
-            multiline={true}
-            value={reco.review}
-            onChangeText={(review) => {
-              reco.review = review;
-              this.forceUpdate();
-              this.handleChange(reco.review.length);
-            }} />
-        </View>
-        <View style={styles.progressBar}>
-          <View style={styles.progressBarCompleted} />
-        </View>
-      </ScrollView>
+      <View>
+        <NavigationBar title="Occasions" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
+        <ScrollView style={styles.container} scrollEnabled={false}>
+          <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+            <Text style={styles.subtitle}>(Optionnel)</Text>
+            <Text style={styles.title}>Taille d'un tweet</Text>
+            <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
+            <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
+              maxLength={140}
+              multiline={true}
+              value={reco.review}
+              onChangeText={(review) => {
+                reco.review = review;
+                this.forceUpdate();
+                this.handleChange(reco.review.length);
+              }} />
+          </View>
+          <View style={styles.progressBar}>
+            <View style={styles.progressBarCompleted} />
+          </View>
+        </ScrollView>
+      </View>
     );
   };
 }

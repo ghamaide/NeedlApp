@@ -5,6 +5,7 @@ import React, {StyleSheet, Component, View, ScrollView, Dimensions} from 'react-
 import ToggleGroup from './ToggleGroup';
 
 import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import RecoStore from '../../../stores/Reco';
 
@@ -18,22 +19,25 @@ class RecoStep4 extends Component {
       component: RecoStep4,
       title: 'Points forts',
       rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-        if (!reco.strengths || !reco.strengths.length) {
-          return;
-        }
-        this.push(Step5.route());
-      }
+      
     };
   };
 
   state = {};
 
+  onRightButtonPress = () => {
+    var reco = RecoStore.getReco();
+    if (!reco.strengths || !reco.strengths.length) {
+      return;
+    }
+    this.props.navigator.push(Step5.route());
+  };
+
   render() {
     var reco = RecoStore.getReco();
     return (
-      <View style={styles.container}>        
+      <View style={styles.container}>  
+        <NavigationBar title="Points forts" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
         <Text style={styles.title}>Sélectionne une ou plusieurs points forts</Text>
          <ToggleGroup
           ref="togglegroup"

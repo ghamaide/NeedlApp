@@ -7,6 +7,7 @@ import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
 
 import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import RecoActions from '../../../actions/RecoActions';
 
@@ -110,6 +111,7 @@ class RecoStep1 extends Component {
 
     return (
      <View style={styles.container}>
+      <NavigationBar title="Séléction" />
       <SearchBar
         ref='searchBar'
         placeholder='Sélectionne ton restaurant'

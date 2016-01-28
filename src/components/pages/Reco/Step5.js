@@ -5,6 +5,7 @@ import React, {StyleSheet, Component, View, Dimensions} from 'react-native';
 import ToggleGroup from './ToggleGroup';
 
 import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import RecoStore from '../../../stores/Reco';
 
@@ -18,22 +19,24 @@ class RecoStep5 extends Component {
       component: RecoStep5,
       title: 'Occasions',
       rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-        if (!reco.occasions || !reco.occasions.length) {
-          return;
-        }
-        this.push(Step6.route());
-      }
     };
   };
 
   state = {};
 
+  onRightButtonPress = () => {
+    var reco = RecoStore.getReco();
+    if (!reco.occasions || !reco.occasions.length) {
+      return;
+    }
+    this.props.navigator.push(Step6.route());
+  };
+
   render() {
     var reco = RecoStore.getReco();
     return (
       <View style={styles.container}>
+        <NavigationBar title="Occasions" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
         <Text style={styles.title}>Sélectionne une ou plusieurs occasions correspondant au restaurant</Text>
         <ToggleGroup
           maxSelection={8}

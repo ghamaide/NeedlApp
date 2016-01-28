@@ -57,7 +57,9 @@ export class MeActions {
           'device_token': token
         })
         .end((err) => {
-          console.log(err);
+          if (err) {
+            console.log(err);
+          }
         });
     }
   }
@@ -66,7 +68,9 @@ export class MeActions {
     return (dispatch) => {
       request('GET', '/api/users/reset_badge_to_zero')
         .end((err) => {
-          console.log(err);
+          if (err) {
+            console.log(err);
+          }
         });
     }
   }

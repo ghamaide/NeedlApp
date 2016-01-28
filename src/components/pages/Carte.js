@@ -1,13 +1,15 @@
 'use strict';
 
-import React, {StyleSheet, MapView, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
+import MapView from 'react-native-maps';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import Carousel from '../ui/Carousel';
+import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
 
@@ -61,13 +63,17 @@ class Carte extends Page {
     this.state.southLatitude = 48.8;
     this.state.westLongitude = 2.25;
     this.state.eastLongitude = 2.42;
-
+    this.state.radius = 4000;
+    
     this.state.center = {
       latitude: RestaurantsStore.getState().region.lat,
       longitude: RestaurantsStore.getState().region.long,
       latitudeDelta: RestaurantsStore.getState().region.deltaLat,
       longitudeDelta: RestaurantsStore.getState().region.deltaLong,
     };
+
+    this.state.region = this.state.center;
+
   };
 
   onFocus = (event) => {
@@ -85,7 +91,7 @@ class Carte extends Page {
             MeActions.showedCurrentPosition(true);
           }
         },
-        (error) => console.log(error.message),
+        (error) => console.log("---" + error.message),
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
       );
     }
@@ -109,23 +115,24 @@ class Carte extends Page {
   };
 
   onRegionChangeComplete = (region) => {
-    var mapHeight = windowHeight - 124;
+    // var mapHeight = windowHeight - 124;
 
-    var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - (topSize * 2)) * (region.latitudeDelta / (2 * mapHeight));
-    var centerCircleLongitude = region.longitude;
+    // var centerCircleLatitude = region.latitude + (mapHeight -  windowWidth  - (topSize * 2)) * (region.latitudeDelta / (2 * mapHeight));
+    // var centerCircleLongitude = region.longitude;
 
-    RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
-    this.setState({data: RestaurantsStore.filteredRestaurants()});
-    this.setState({isChanging : false});
-    if (this.state.data.length && typeof this.refs.carousel !== 'undefined' && this.refs.carousel.goToPage !== 'undefined') {
-      this.setState({index: 0});
-      this.refs.carousel.goToPage(this.state.index, 'annotationPress');
-    }
+    // RestaurantsActions.setRegion(radius, region.longitude, region.latitude, region.longitudeDelta, region.latitudeDelta, centerCircleLongitude, centerCircleLatitude, windowWidth, mapHeight);
+    // this.setState({data: RestaurantsStore.filteredRestaurants()});
+    // this.setState({isChanging : false});
+    // if (this.state.data.length && typeof this.refs.carousel !== 'undefined' && this.refs.carousel.goToPage !== 'undefined') {
+    //   this.setState({index: 0});
+    //   this.refs.carousel.goToPage(this.state.index, 'annotationPress');
+    // }
   };
 
   onRegionChange = (region) => {
     // to see if the user is changing region
-    this.setState({isChanging : true});
+    this.setState({region: region});
+    //this.setState({isChanging : true});
   };
 
   onAnnotationPress = (annotation) => {
@@ -148,6 +155,7 @@ class Carte extends Page {
   };
 
   renderPage() {
+    // console.log({latitude: this.state.region.latitude, longitude: this.state.region.longitude});
     return (
   		<View style={{flex: 1, position: 'relative'}}>
         <MapView
@@ -156,19 +164,28 @@ class Carte extends Page {
           style={styles.restaurantsMap}
           showsUserLocation={this.state.showsUserLocation}
           followUserLocation={false}
-          annotations={_.map(this.state.data, (restaurant) => {
+          region={this.state.region}
+          onRegionChange={this.onRegionChange}
+          onAnnotationPress={this.onAnnotationPress} >
+
+          <MapView.Circle
+            center={{latitude: this.state.region.latitude, longitude: this.state.region.longitude}}
+            radius={this.state.radius}
+            fillColor="rgba(0, 0, 0, 0.2)"
+            strokeColor="rgba(0, 0, 0, 0.2)"/>
+          
+          {_.map(this.state.data, (restaurant) => {
             var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
             myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
-            return {
-              latitude: restaurant.latitude,
-              longitude: restaurant.longitude,
-              title: restaurant.name
-            };
+            var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+            return (
+              <MapView.Marker 
+                coordinate={coord}
+                title={restaurant.name}
+                pinColor={myRestaurant ? 'green' : 'red'} />
+            );
           })}
-          region={this.state.center}
-          onAnnotationPress={this.onAnnotationPress}
-          onRegionChange={this.onRegionChange}
-          onRegionChangeComplete={this.onRegionChangeComplete} />
+        </MapView>
 
         {this.state.isChanging ? 
           [
@@ -182,7 +199,7 @@ class Carte extends Page {
             </View>
           ] : []}
 
-        {this.state.data.length ? [
+        {this.state.data.length && false ? [
           <Carousel
             key="carousel"
             style={styles.carousel}

@@ -5,6 +5,7 @@ import React, {StyleSheet, View, Component, TouchableHighlight, ScrollView, Dime
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 import Mixpanel from 'react-native-mixpanel';
+import NavigationBar from 'react-native-navbar';
 
 import Text from '../ui/Text';
 
@@ -21,10 +22,11 @@ var windowHeight = Dimensions.get('window').height;
 var marginBottom = (windowHeight >= 667 ? 0 : 60);
 
 class Filtre extends Component {
-  static route() {
+  static route(passProps) {
+    console.log(passProps);
     return {
       component: Filtre,
-      title: 'Filtrer',
+      navigationBar: <NavigationBar title="Filtrer" />,
       leftButtonTitle: 'Annuler',
       onLeftButtonPress() {
         MeActions.displayTabBar(true);
