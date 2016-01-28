@@ -158,7 +158,7 @@ class Carte extends Page {
     // console.log({latitude: this.state.region.latitude, longitude: this.state.region.longitude});
     return (
   		<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
+        <NavigationBar image={require('../../assets/img/other/icons/list.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
         <View style={{flex: 1, position: 'relative'}}>
           <MapView
             key="map"
