@@ -23,11 +23,13 @@ export class RestaurantsStore extends CachedStore {
     };
 
     this.region = {
-      lat: 48.8534100,
-      long: 2.3378000,
-      deltaLong: 0.12,
-      deltaLat: 0.065
+      latitude: 48.8534100,
+      longitude: 2.3378000,
+      longitudeDelta: 0.12,
+      latitudeDelta: 0.065
     };
+
+    this.currentRegion = {};
 
     this.showPersonalContent = true;
 
@@ -107,7 +109,8 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleSetRegion(data) {
-    this.region = data;
+    this.currentRegion = data.currentRegion;
+    this.region = data.region;
   }
 
   handleSetDisplayPersonal(display) {
@@ -641,7 +644,7 @@ export class RestaurantsStore extends CachedStore {
 
   static filteredRestaurants() {
     var filters = this.getState().filters;
-    var region = this.getState().region;
+    var currentRegion = this.getState().currentRegion;
     var showPersonalContent = this.getState().showPersonalContent;
 
     var findOne = function (haystack, arr) {
@@ -680,12 +683,16 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      var deltaX = (region.width / region.deltaLong) * (region.longCentre - restaurant.longitude);
-      var deltaY = (region.mapHeight / region.deltaLat) * (region.latCentre - restaurant.latitude);
-
-      if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 15 > region.radius) {
+      if (restaurant.longitude <= currentRegion.west || restaurant.longitude >= currentRegion.east || restaurant.latitude <= currentRegion.south || restaurant.latitude >= currentRegion.north) {
         return false;
       }
+
+      // var deltaX = (region.width / region.deltaLong) * (region.longCentre - restaurant.longitude);
+      // var deltaY = (region.mapHeight / region.deltaLat) * (region.latCentre - restaurant.latitude);
+
+      // if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 15 > region.radius) {
+      //   return false;
+      // }
 
       return true;
     });

@@ -27,7 +27,7 @@ import FriendsStore from '../../stores/Friends';
 import Restaurant from './Restaurant';
 import EditMe from './EditMe';
 import Friends from './Friends';
-import Carte from './Carte';
+import CarteProfil from './CarteProfil';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -37,9 +37,6 @@ class Profil extends Page {
       component: Profil,
       title: title || 'Profil',
       passProps: props,
-      // rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-      // onRightButtonPress() {
-      //   this.replace(Carte.route());
       // }
     };
   };
@@ -150,9 +147,9 @@ class Profil extends Page {
     return (
       <View>
         {!this.props.id ? [
-          <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+          <NavigationBar key="navbarfromtab" image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
         ] : [
-          <NavigationBar leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+          <NavigationBar key="navbarfrompush" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
         ]}
         <ScrollView
           contentInset={{top: 0}}
@@ -165,6 +162,7 @@ class Profil extends Page {
               refreshing={this.state.loading}
               onRefresh={() => {
                 ProfilActions.fetchProfil(this.currentProfil());
+                this.setState({loading: false});
               }}
               tintColor="#ff0000"
               title="Loading..."

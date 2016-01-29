@@ -17,71 +17,75 @@ import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
 
 import RestaurantsStore from '../../stores/Restaurants';
+import ProfilStore from '../../stores/Profil';
 import MeStore from '../../stores/Me';
 
 import Filtre from './Filtre';
-import Liste from './Liste';
+import Profil from './Profil';
 import Restaurant from './Restaurant';
+
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 var radius = 150;
 var topSize = (windowHeight === 667 ? 40 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
 
-class Carte extends Page {
+class CarteProfil extends Page {
   static route() {
     return {
-      component: Carte,
-      title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-      onRightButtonPress() {
-        this.replace(Liste.route());
-      }
+      component: CarteProfil
     };
   };
 
-  restaurantsState() {
+  profilRestaurants() {
+
+  }
+
+  currentProfil() {
+    return this.props.id || MeStore.getState().me.id;
+  };
+
+  mapState() {
     return {
       // we want the map even if it is still loading
-      data: RestaurantsStore.filteredRestaurants(),
-      loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),
-      isChanging: false,
-      showedCurrentPosition: MeStore.getState().showedCurrentPosition,
-      region: RestaurantsStore.getState().region
+      data: ProfilStore.getState().profils[this.currentProfil()]
     };
   };
 
   constructor(props) {
     super(props);
 
-    this.state = this.restaurantsState();
+    this.state = this.mapState();
+    this.state.isChanging = false;
     this.state.showsUserLocation = false;
-    this.state.defaultLatitudeDelta = 10 / 110.574;
+    this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
+    this.state.annotations = [];
+    this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
     this.state.paris = {
       northLatitude: 48.91,
       southLatitude: 48.8,
       westLongitude: 2.25,
       eastLongitude: 2.42
-    };
+    }
     this.state.radius = 4000;
+    
+    this.state.center = {
+      latitude: RestaurantsStore.getState().region.lat,
+      longitude: RestaurantsStore.getState().region.long,
+      latitudeDelta: RestaurantsStore.getState().region.deltaLat,
+      longitudeDelta: RestaurantsStore.getState().region.deltaLong,
+    };
   };
 
   onFocus = (event) => {
-    if (event.data.route.component === Carte) {
-      RestaurantsActions.fetchRestaurants();
-
+    if (event.data.route.component === CarteProfil) {
       this.setState({showsUserLocation: true});
 
       navigator.geolocation.getCurrentPosition(
         (initialPosition) => {
-          if (!MeStore.getState().showedCurrentPosition && this.isInParis(initialPosition)) {
-            this.setState({
-              region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
-            });
-            MeActions.showedCurrentPosition(true);
-          }
+          //do something here
+          this.setState({region : {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}});
         },
         (error) => console.log("---" + error.message),
         {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
@@ -89,38 +93,17 @@ class Carte extends Page {
     }
   };
 
-  isInParis = (initialPosition) => {
-    return (initialPosition.coords.latitude <= this.state.paris.northLatitude && initialPosition.coords.latitude >= this.state.paris.southLatitude && initialPosition.coords.longitude <= this.state.paris.eastLongitude && initialPosition.coords.longitude >= this.state.paris.westLongitude);
-  };
-
   componentWillMount() {
-    RestaurantsStore.listen(this.onRestaurantsChange);
+    ProfilStore.listen(this.onProfilsChange);
     this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   };
 
   componentWillUnmount() {
-    RestaurantsStore.unlisten(this.onRestaurantsChange);
+    ProfilStore.unlisten(this.onProfilsChange);
   };
 
-  onRestaurantsChange = () => {
-    this.setState(this.restaurantsState());
-  };
-
-  onRegionChangeComplete = (region) => {
-    var currentRegion = {
-      east: region.longitude + region.longitudeDelta / 2,
-      west:region.longitude - region.longitudeDelta / 2,
-      south:region.latitude - region.latitudeDelta / 2,
-      north:region.latitude + region.latitudeDelta / 2
-    };
-
-    this.setState({region: region});
-    RestaurantsActions.setRegion(currentRegion, region);
-    //this.setState({data: RestaurantsStore.filteredRestaurants()});
-  };
-
-  onRegionChange = (region) => {
-    // this.setState({displayRestaurant: false});
+  onProfilsChange = () => {
+    this.setState(this.mapState());
   };
 
   onMapPress = (zone) => {
@@ -133,9 +116,11 @@ class Carte extends Page {
   };
 
   renderPage() {
+    var profil = this.state.data;
+
     return (
   		<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key="navbar" image={require('../../assets/img/other/icons/list.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
+        <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: this.props.id}))} />
         <View key="mapcontainer" style={{flex: 1, position: 'relative'}}>
           <MapView
             key="map"
@@ -146,47 +131,41 @@ class Carte extends Page {
             onRegionChange={this.onRegionChange}
             onRegionChangeComplete={this.onRegionChangeComplete}
             onPress={this.onMapPress}
-            onMarkerSelect={this.onMarkerPress}>
-            
-            {_.map(this.state.data, (restaurant) => {
-              var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
-              myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
+            onMarkerSelect={this.onMarkerPress}>     
+            {_.map(profil.recommendations, (restaurant) => {
+              var coordinate = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+              return (
+                <MapView.Marker 
+                  key={restaurant.id}
+                  coordinate={coordinate}
+                  title={restaurant.name}
+                  pinColor='red' />
+              );
+            })}
+            {_.map(profil.wishes, (restaurant) => {
               var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
                 <MapView.Marker 
-                  ref={restaurant.id}
                   key={restaurant.id}
                   coordinate={coord}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
-                  <MapView.Callout>
-                    <View>
-                      <Text>{restaurant.name}</Text>
-                    </View>
-                  </MapView.Callout>
-                </MapView.Marker>
+                  title={restaurant.name}
+                  pinColor='green' />
               );
             })}
           </MapView>
 
-          {this.state.displayRestaurant ? [
-            <View style={styles.restaurantContainer}>
-              <RestaurantElement
-                rank={_.findIndex(this.state.data, this.state.restaurant) + 1}
-                isNeedl={this.state.restaurant.score <= 5}
-                key={"restaurant_" + this.state.restaurant.id}
-                name={this.state.restaurant.name}
-                picture={this.state.restaurant.pictures[0]}
-                type={this.state.restaurant.food[1]}
-                budget={this.state.restaurant.price_range}
-                height={120}
-                onPress={() => {
-                  this.props.navigator.push(Restaurant.route({id: this.state.restaurant.id}, this.state.restaurant.name));
-                }}/>
+          {this.state.isChanging ? 
+            [
+              <View key="target_container" style={styles.targetContainer}>
+                <View key="target_top_container" style={[styles.fillRectangleTop, {width: windowWidth}]} />
+                <Image
+                  key="target_image"
+                  source={require('../../assets/img/other/images/target.png')}
+                  style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
+                <View key="target_bottom_container" style={styles.fillRectangleBottom} />
               </View>
-            ] : []
-          }
+            ] : []}
 
-            
           {this.state.data.length && false ? [
             <Carousel
               key="carousel"
@@ -212,13 +191,7 @@ class Carte extends Page {
             </Carousel>
           ] : []}
 
-          {!this.state.data.length && !this.state.isChanging ? [        
-            <View key="no_restaurants" style={styles.emptyTextContainer}>
-              <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
-            </View>
-          ] : []}
-
-          <TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
+         <TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
           this.props.navigator.push(Filtre.route());
         }}>
             <Text style={styles.filterMessageText}>
@@ -259,7 +232,7 @@ var styles = StyleSheet.create({
     position: 'relative',
     height: 120,
   },
-  restaurantContainer: {
+  carousel: {
     height: 120,
     position: 'absolute',
     bottom: 5,
@@ -316,4 +289,4 @@ var styles = StyleSheet.create({
   }
 });
 
-export default Carte;
+export default CarteProfil;

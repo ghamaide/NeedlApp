@@ -19,6 +19,7 @@ import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
 import Filtre from './Filtre';
+import AnimatedViews from './NewCarte';
 import Carte from './Carte';
 import Restaurant from './Restaurant';
 import Help from './Help';
