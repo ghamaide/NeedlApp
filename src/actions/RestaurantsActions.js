@@ -137,8 +137,8 @@ export class RestaurantsActions {
     return {label: label, ids: ids};
   }
 
-  setRegion(radius, long, lat, deltaLong, deltaLat, longCentre, latCentre, width, mapHeight) {
-    return {radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight};
+  setRegion(currentRegion, region) {
+    return {currentRegion: currentRegion, region: region};
   }
 
   setDisplayPersonal(display) {

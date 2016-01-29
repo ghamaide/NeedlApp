@@ -161,51 +161,59 @@ class TabView extends Component {
   };
 
   resetToTab(index, opts) {
-    var selected = this.state.selected;
-    var nav = this.refs.tabs.subnav[selected];
     this.setState({selected: index});
 
     this.refs.tabs.jumpTo(this.refs.tabs.state.routeStack[index]);
+
     this.props.onTab(index);
+    // var selected = this.state.selected;
+    // var nav = this.refs.tabs.subnav[selected];
+    // this.setState({selected: index});
 
-    var newNav = this.refs.tabs.subnav[index];
-    if (newNav) {
-      newNav.parent._emitDidFocus(_.extend({fromTabs: true}, opts, newNav.parent.state.routeStack[newNav.parent.state.observedTopOfStack]));
-    }
+    // this.refs.tabs.jumpTo(this.refs.tabs.state.routeStack[index]);
+    // this.props.onTab(index);
 
-    TimerMixin.setTimeout(() => {
-      if (nav) {
-        nav.resetTo(this.props.tabs[selected].component.route());
-      }
-    }, 100);
+    // var newNav = this.refs.tabs.subnav[index];
+    // if (newNav) {
+    //   newNav.parent._emitDidFocus(_.extend({fromTabs: true}, opts, newNav.parent.state.routeStack[newNav.parent.state.observedTopOfStack]));
+    // }
+
+    // TimerMixin.setTimeout(() => {
+    //   if (nav) {
+    //     nav.resetTo(this.props.tabs[selected].component.route());
+    //   }
+    // }, 100);
+  };
+
+  renderScene = (tab, navigator) => {
+    return (
+      <Navigator
+        style={{backgroundColor: '#FFFFFF'}}
+        initialRoute={tab.component.route()}
+        ref="views"
+        renderScene={(route, nav) => {
+          return React.createElement(route.component, _.extend({navigator: nav}, route.passProps));
+        }}
+        configureScene={() => {
+          return {
+            ...Navigator.SceneConfigs.FadeAndroid,
+            defaultTransitionVelocity: 1000,
+            gestures: {}
+          };
+        }} />
+    );
   };
 
   render() {
     return (
      <View style={styles.tabbarContainer}>
       	<Navigator
-          style={{backgroundColor: '#FFFFFF', paddingTop: 20}}
+          style={{backgroundColor: '#FFFFFF'}}
           initialRouteStack={this.props.tabs}
           initialRoute={this.props.tabs[this.props.initialSelected || 0]}
           ref="tabs"
           key="navigator"
-          renderScene={(tab, navigator) => {
-            var index = navigator.getCurrentRoutes().indexOf(tab);
-            return (
-              <PatchedNavigatorIOS
-                style={styles.tabbarContent}
-                navigator={navigator}
-                tabsMaster={this}
-                key={index}
-                index={index}
-                fireFromTabs={index === this.state.selected}
-                translucent={false}
-                titleStyle={{fontFamily: 'Quicksand-Bold', fontSize: 12}}
-                itemWrapperStyle={styles.tabbarContentWrapper}
-                initialRoute={tab.component.route()}
-                initialSkipCache={this.props.initialSkipCache} />
-              );
-          }}
+          renderScene={this.renderScene}
           configureScene={() => {
             return {
               ...Navigator.SceneConfigs.FadeAndroid,

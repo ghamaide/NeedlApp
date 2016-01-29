@@ -9,6 +9,7 @@ import request from '../../../utils/api';
 import Button from '../../elements/Button';
 
 import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import ToggleGroup from './ToggleGroup';
 
@@ -26,16 +27,6 @@ class RecoStep3 extends Component {
       component: RecoStep3,
       title: 'Ambiances',
       passProps: props,
-      rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-
-        if (!reco.ambiances || !reco.ambiances.length) {
-          return;
-        }
-
-        this.push(Step4.route());
-      }
     };
   };
 
@@ -57,6 +48,16 @@ class RecoStep3 extends Component {
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoUpdate);
+  };
+
+  onRightButtonPress= () => {
+    var reco = RecoStore.getReco();
+
+    if (!reco.ambiances || !reco.ambiances.length) {
+      return;
+    }
+
+    this.props.navigator.push(Step4.route());
   };
 
   render() {
@@ -90,40 +91,43 @@ class RecoStep3 extends Component {
 
     var reco = RecoStore.getReco();
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
-        <ToggleGroup
-          ref="togglegroup"
-          maxSelection={5}
-          fifo={true}
-          selectedInitial={reco.ambiances}
-          onSelect={(v, selected) => {
-            reco.ambiances = selected;
-          }}
-          onUnselect={(v, selected) => {
-            reco.ambiances = selected;
-          }}>
-          {(Toggle) => {
-            return <View style={{alignItems: 'center'}}>
-              <View style={styles.pastilleContainer}>
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label="Convivial" value={3} />
-              </View>
-              <View style={styles.pastilleContainer}>
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label="Branché" value={5} />
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Typique" value={6} />
-              </View>
-              <View style={styles.pastilleContainer}>
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label="Cosy" value={7} />
-                <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={8} />
-              </View>
-            </View>;
-          }}
-        </ToggleGroup>
-        <View style={styles.progressBar}>
-          <View style={styles.progressBarCompleted} />
+      <View style={{flex: 1}}>
+        <NavigationBar title="Ambiances" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
+        <View style={styles.container}>
+          <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
+          <ToggleGroup
+            ref="togglegroup"
+            maxSelection={5}
+            fifo={true}
+            selectedInitial={reco.ambiances}
+            onSelect={(v, selected) => {
+              reco.ambiances = selected;
+            }}
+            onUnselect={(v, selected) => {
+              reco.ambiances = selected;
+            }}>
+            {(Toggle) => {
+              return <View style={{alignItems: 'center'}}>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label="Convivial" value={3} />
+                </View>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label="Branché" value={5} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Typique" value={6} />
+                </View>
+                <View style={styles.pastilleContainer}>
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label="Cosy" value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={8} />
+                </View>
+              </View>;
+            }}
+          </ToggleGroup>
+          <View style={styles.progressBar}>
+            <View style={styles.progressBarCompleted} />
+          </View>
         </View>
       </View>
     );

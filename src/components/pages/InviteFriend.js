@@ -10,12 +10,15 @@ import SearchBar from 'react-native-search-bar';
 import Page from '../ui/Page';
 import ErrorToast from '../ui/ErrorToast';
 import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
 
 import FriendCard from '../elements/FriendCard';
 
 import MeStore from '../../stores/Me'
 
 import MeActions from '../../actions/MeActions'
+
+import Friends from './Friends';
 
 let contactsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 let friendsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
@@ -193,6 +196,7 @@ class InviteFriend extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
+        <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
         <SearchBar
           ref='searchBar'
           placeholder='Search'

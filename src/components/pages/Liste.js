@@ -5,19 +5,21 @@ import React, {StyleSheet, ListView, View, TouchableHighlight, Image, NativeModu
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import Page from '../ui/Page';
+import ErrorToast from '../ui/ErrorToast';
+import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
 
 import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
-import Page from '../ui/Page';
-import ErrorToast from '../ui/ErrorToast';
-import Text from '../ui/Text';
-
-import RestaurantElement from '../elements/Restaurant';
-
 import Filtre from './Filtre';
+import AnimatedViews from './NewCarte';
 import Carte from './Carte';
 import Restaurant from './Restaurant';
 import Help from './Help';
@@ -29,10 +31,10 @@ class Liste extends Page {
     return {
       component: Liste,
       title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-      onRightButtonPress() {
-				this.replace(Carte.route());
-      }
+    //   rightButtonIcon: require('../../assets/img/other/icons/map.png'),
+    //   onRightButtonPress() {
+				// this.replace(Carte.route());
+    //   }
     };
   };
 
@@ -125,11 +127,11 @@ class Liste extends Page {
   };
 
   renderPage() {
-    console.log(this.state.errors);
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
+        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
 				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
-        	this.props.navigator.push(Filtre.route());
+        	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
 				}}>
 						<Text style={styles.filterMessageText}>
 							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
@@ -148,7 +150,7 @@ class Liste extends Page {
           refreshDescription="Refreshing..." />
 
         {_.map(this.state.errors, (err) => {
-          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
+          // return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
         })}
 			</View>
 		);

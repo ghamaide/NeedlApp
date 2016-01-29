@@ -1,12 +1,13 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, Dimensions} from 'react-native';
 
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
 
@@ -19,6 +20,7 @@ import Restaurant from './Restaurant';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
 
+const windowHeight = Dimensions.get('window').height;
 let notifsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class Notifs extends Page {
@@ -134,24 +136,28 @@ class Notifs extends Page {
 
   renderPage() {
     return (
-      <RefreshableListView
-        style={styles.notifsList}
-        dataSource={this.state.data}
-        renderHeaderWrapper={this.renderHeaderWrapper}
-        renderRow={this.renderNotif}
-        contentInset={{top: 0}}
-        scrollRenderAheadDistance={150}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        loadData={this.onRefresh}
-        refreshDescription="Refreshing..." />
+      <View>
+        <NavigationBar title="Notifs" />
+        <RefreshableListView
+          style={styles.notifsList}
+          dataSource={this.state.data}
+          renderHeaderWrapper={this.renderHeaderWrapper}
+          renderRow={this.renderNotif}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          loadData={this.onRefresh}
+          refreshDescription="Refreshing..." />
+      </View>
     );
   };
 }
 
 var styles = StyleSheet.create({
   notifsList: {
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
+    height: windowHeight - 100
   },
   notifRow: {
     paddingLeft: 0,

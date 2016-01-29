@@ -9,6 +9,7 @@ import Carousel from '../ui/Carousel';
 import ErrorToast from '../ui/ErrorToast';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
 import Options from '../elements/Options';
@@ -26,6 +27,7 @@ import FriendsStore from '../../stores/Friends';
 import Restaurant from './Restaurant';
 import EditMe from './EditMe';
 import Friends from './Friends';
+import CarteProfil from './CarteProfil';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -34,7 +36,8 @@ class Profil extends Page {
     return {
       component: Profil,
       title: title || 'Profil',
-      passProps: props
+      passProps: props,
+      // }
     };
   };
 
@@ -141,108 +144,116 @@ class Profil extends Page {
 
   renderPage() {
     var profil = this.state.data;
-
     return (
-      <ScrollView
-        contentInset={{top: 0}}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        onScroll={this.onScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={() => {
-              ProfilActions.fetchProfil(this.currentProfil());
-            }}
-            tintColor="#ff0000"
-            title="Loading..."
-            colors={['#ff0000', '#00ff00', '#0000ff']}
-            progressBackgroundColor="#ffff00" />
-        }>
+      <View>
+        {!this.props.id ? [
+          <NavigationBar key="navbarfromtab" image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
+        ] : [
+          <NavigationBar key="navbarfrompush" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+        ]}
+        <ScrollView
+          contentInset={{top: 0}}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          onScroll={this.onScroll}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={() => {
+                ProfilActions.fetchProfil(this.currentProfil());
+                this.setState({loading: false});
+              }}
+              tintColor="#ff0000"
+              title="Loading..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00" />
+          }>
 
-        <Overlay isVisible={this.state.showUploadConfirmation}>
-          <View style={styles.uploadConfirmationContainer}>
-            <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d'ici 24h</Text>
+          <Overlay isVisible={this.state.showUploadConfirmation}>
+            <View style={styles.uploadConfirmationContainer}>
+              <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d'ici 24h</Text>
+            </View>
+          </Overlay>
+
+          <View style={styles.infoContainer}>
+            <Image source={{uri: profil.picture}} style={styles.image} />
+            <View style={styles.textInfoContainer}>
+              <Text style={styles.profilName}>{profil.name}</Text>
+              <Text style={styles.profilNbRecos}>{profil.recommendations.length} reco{profil.recommendations.length > 1 && 's'}</Text>
+            </View>
           </View>
-        </Overlay>
 
-        <View style={styles.infoContainer}>
-          <Image source={{uri: profil.picture}} style={styles.image} />
-          <View style={styles.textInfoContainer}>
-            <Text style={styles.profilName}>{profil.name}</Text>
-            <Text style={styles.profilNbRecos}>{profil.recommendations.length} reco{profil.recommendations.length > 1 && 's'}</Text>
-          </View>
-        </View>
+          {profil.recommendations.length ?
+            this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, '#FFFFFF')
+            : null}
 
-        {profil.recommendations.length ?
-          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'es Recos', profil.recommendations, '#FFFFFF')
-          : null}
+          {profil.wishes.length ?
+            this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'a Wishlist', profil.wishes, 'transparent')
+            : null}
 
-        {profil.wishes.length ?
-          this.renderRestaurants((MeStore.getState().me.id === profil.id ? 'M' : 'S') + 'a Wishlist', profil.wishes, 'transparent')
-          : null}
-
-        <Options>
-          {MeStore.getState().me.id === profil.id ?
-            [
-              <Option
-					 			key={"edit " + profil.id}
-								label="Modifier"
-								icon={require('../../assets/img/actions/icons/modify.png')}
-								onPress={() => {
-                	this.props.navigator.push(EditMe.route());
-              	}} />,
-              <Option
-					 			key={"logout " + profil.id}
-								label="Me Déconnecter"
-								icon={require('../../assets/img/actions/icons/signout.png')}
-								onPress={LoginActions.logout} />
-            ]
-            :
-            [
-              !profil.invisible ?
+          <Options>
+            {MeStore.getState().me.id === profil.id ?
+              [
                 <Option
-									key={profil.id}
-                  label={ProfilStore.maskProfilLoading(profil.id) ? 'Masque...' : 'Masquer ses recos'}
-                  icon={require('../../assets/img/actions/icons/masquer.png')}
+  					 			key={"edit " + profil.id}
+  								label="Modifier"
+  								icon={require('../../assets/img/actions/icons/modify.png')}
+  								onPress={() => {
+                  	this.props.navigator.push(EditMe.route());
+                	}} />,
+                <Option
+  					 			key={"logout " + profil.id}
+  								label="Me Déconnecter"
+  								icon={require('../../assets/img/actions/icons/signout.png')}
+  								onPress={LoginActions.logout} />
+              ]
+              :
+              [
+                !profil.invisible ?
+                  <Option
+  									key={profil.id}
+                    label={ProfilStore.maskProfilLoading(profil.id) ? 'Masque...' : 'Masquer ses recos'}
+                    icon={require('../../assets/img/actions/icons/masquer.png')}
+                    onPress={() => {
+                      if (ProfilStore.maskProfilLoading(profil.id)) {
+                        return;
+                      }
+                      ProfilActions.maskProfil(profil.id);
+                    }} /> :
+                  <Option
+  									key={'showReco' + profil.id}
+                    label={ProfilStore.displayProfilLoading(profil.id) ? 'Affichage...' : 'Afficher ses recos'}
+                    icon={require('../../assets/img/actions/icons/afficher.png')}
+                    onPress={() => {
+                      if (ProfilStore.displayProfilLoading(profil.id)) {
+                        return;
+                      }
+                      ProfilActions.displayProfil(profil.id);
+                    }} />,
+                <Option
+  								key={'deleteFriend' + profil.id}
+                  label={FriendsStore.removeFriendshipLoading(profil.id) ? 'Suppression...' : 'Retirer de mes amis'}
+                  icon={require('../../assets/img/actions/icons/retirer.png')}
                   onPress={() => {
-                    if (ProfilStore.maskProfilLoading(profil.id)) {
+                    if (FriendsStore.removeFriendshipLoading(profil.id)) {
                       return;
                     }
-                    ProfilActions.maskProfil(profil.id);
-                  }} /> :
-                <Option
-									key={'showReco' + profil.id}
-                  label={ProfilStore.displayProfilLoading(profil.id) ? 'Affichage...' : 'Afficher ses recos'}
-                  icon={require('../../assets/img/actions/icons/afficher.png')}
-                  onPress={() => {
-                    if (ProfilStore.displayProfilLoading(profil.id)) {
-                      return;
-                    }
-                    ProfilActions.displayProfil(profil.id);
-                  }} />,
-              <Option
-								key={'deleteFriend' + profil.id}
-                label={FriendsStore.removeFriendshipLoading(profil.id) ? 'Suppression...' : 'Retirer de mes amis'}
-                icon={require('../../assets/img/actions/icons/retirer.png')}
-                onPress={() => {
-                  if (FriendsStore.removeFriendshipLoading(profil.id)) {
-                    return;
-                  }
-                  FriendsActions.removeFriendship(profil.id, () => {
-                    this.props.navigator.resetTo(Friends.route());
-                  });
-                  this.forceUpdate();
-                }} />
-            ]
-          }
-        </Options>
+                    FriendsActions.removeFriendship(profil.id, () => {
+                      this.props.navigator.resetTo(Friends.route());
+                    });
+                    this.forceUpdate();
+                  }} />
+              ]
+            }
+          </Options>
 
-        {_.map(this.state.errors, (error, i) => {
-          return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
-        })}
-      </ScrollView>);
+          {_.map(this.state.errors, (error, i) => {
+            return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
+          })}
+        </ScrollView>
+      </View>
+    );
   };
 }
 

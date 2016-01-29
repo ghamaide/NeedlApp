@@ -4,12 +4,13 @@ import React, {StyleSheet, Component, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
-import MeStore from '../../../stores/Me';
-import RecoStore from '../../../stores/Reco';
+import Text from '../../ui/Text';
+import NavigationBar from '../../ui/NavigationBar';
 
 import RecoActions from '../../../actions/RecoActions';
 
-import Text from '../../ui/Text';
+import MeStore from '../../../stores/Me';
+import RecoStore from '../../../stores/Reco';
 
 import StepSave from './StepSave';
 import Step3 from './Step3';
@@ -30,51 +31,54 @@ class RecoStep2 extends Component {
     var reco = RecoStore.getReco();
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
-        <ToggleGroup
-          maxSelection={1}
-          fifo={true}
-          onSelect={(value) => {
-            reco.approved = value === 'approved';
-            reco.step2 = true;
-						
-						if (reco.approved) {
-							return this.props.navigator.push(Step3.route());
-						}
+      <View style={{flex: 1}}>
+        <NavigationBar title="Statut" />
+        <View style={styles.container}>
+          <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
+          <ToggleGroup
+            maxSelection={1}
+            fifo={true}
+            onSelect={(value) => {
+              reco.approved = value === 'approved';
+              reco.step2 = true;
+  						
+  						if (reco.approved) {
+  							return this.props.navigator.push(Step3.route());
+  						}
 
-						// hack pour le fucking title ..
-						// because resetTo does not change title if only one page in the stack
-        		var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
-        		this.props.navigator.resetTo(StepSave.route(title));
-          }}
-          onUnselect={() => {
-            delete reco.approved;
-            reco.step2 = false;
-          }}>
-          {(Toggle) => {
-            return (
-              <View style={styles.pastilleContainer}>
-                <Toggle
-                  size={60}
-                  width={140}
-                  style={styles.pastille}
-                  icon={require('../../../assets/img/actions/icons/japprouve.png')}
-                  activeInitial={false}
-                  label="Je recommande"
-                  value={'approved'} />
-                <Toggle
-                  size={60}
-                  width={140}
-                  style={styles.pastille}
-                  icon={require('../../../assets/img/actions/icons/aessayer.png')}
-                  activeInitial={false}
-                  label="Sur ma wishlist"
-                  value={'totry'} />
-              </View>
-            );
-          }}
-        </ToggleGroup>
+  						// hack pour le fucking title ..
+  						// because resetTo does not change title if only one page in the stack
+          		var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
+          		this.props.navigator.resetTo(StepSave.route(title));
+            }}
+            onUnselect={() => {
+              delete reco.approved;
+              reco.step2 = false;
+            }}>
+            {(Toggle) => {
+              return (
+                <View style={styles.pastilleContainer}>
+                  <Toggle
+                    size={60}
+                    width={140}
+                    style={styles.pastille}
+                    icon={require('../../../assets/img/actions/icons/japprouve.png')}
+                    activeInitial={false}
+                    label="Je recommande"
+                    value={'approved'} />
+                  <Toggle
+                    size={60}
+                    width={140}
+                    style={styles.pastille}
+                    icon={require('../../../assets/img/actions/icons/aessayer.png')}
+                    activeInitial={false}
+                    label="Sur ma wishlist"
+                    value={'totry'} />
+                </View>
+              );
+            }}
+          </ToggleGroup>
+        </View>
       </View>
     );
   };

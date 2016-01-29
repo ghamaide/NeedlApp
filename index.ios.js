@@ -4,8 +4,6 @@ import React, {AppRegistry, Component} from 'react-native';
 
 import _ from 'lodash';
 
-import MeActions from './src/actions/MeActions';
-
 import MeStore from './src/stores/Me';
 import ProfilStore from './src/stores/Profil';
 import FriendsStore from './src/stores/Friends';
@@ -29,8 +27,6 @@ class NeedlIOS extends Component {
   state = NeedlIOS.getNeedlState();
 
   componentWillMount() {
-    MeActions.setVersion(this.props.version);
-    MeActions.showedCurrentPosition(false);
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));
@@ -57,7 +53,7 @@ class NeedlIOS extends Component {
       return <Login />;
     }
 
-    return <App />;
+    return <App version={this.props.version} />;
   };
 }
 

@@ -14,7 +14,7 @@ import Button from './elements/Button';
 import FriendsActions from '../actions/FriendsActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 import NotifsActions from '../actions/NotifsActions';
-import TempActions from '../actions/TempActions';
+import MeActions from '../actions/MeActions';
 
 import MeStore from '../stores/Me';
 import FriendsStore from '../stores/Friends';
@@ -66,7 +66,7 @@ class App extends Component {
   };
 
   onDeviceToken = (deviceToken) => {
-    TempActions.saveDeviceToken(deviceToken);
+    MeActions.saveDeviceToken(deviceToken);
   };
 
   getNotifTab(notif) {
@@ -98,8 +98,9 @@ class App extends Component {
 
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
-    TempActions.sendVersion(MeStore.getState().version);
-    TempActions.resetBadgeNumber();
+    MeActions.showedCurrentPosition(false);
+    MeActions.sendVersion(this.props.version);
+    MeActions.resetBadgeNumber();
     FriendsActions.fetchFriends();
     NotifsActions.fetchNotifs();
   };
@@ -132,10 +133,10 @@ class App extends Component {
     return (
       <View style={{flex: 1}}>
         {_.map(this.state.errors, (error, i) => {
-          return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
+          // return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
         })}
         <Overlay isVisible={this.state.showOverlayMapTutorial}>
-          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => TempActions.hideOverlayMapTutorial()}>
+          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
             <ScrollView
               style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
               contentInset={{top: 0}}
@@ -161,7 +162,7 @@ class App extends Component {
             <Text style={styles.title}>Ton app est unique !</Text>
             <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
             <Button label="On y va !" onPress={() => {
-              TempActions.hasBeenUploadWelcomed();
+              MeActions.hasBeenUploadWelcomed();
             }} style={{margin: 5}}/>
           </ScrollView>
         </Overlay>
@@ -179,7 +180,7 @@ class App extends Component {
             <Text style={styles.title}>Ton app a été updatée !</Text>
             <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
             <Button label="Passer" onPress={() => {
-              TempActions.showedUpdateMessage();
+              MeActions.showedUpdateMessage();
             }} style={{margin: 5}}/>
           </ScrollView>
         </Overlay>

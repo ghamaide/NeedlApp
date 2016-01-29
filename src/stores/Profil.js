@@ -103,18 +103,15 @@ export class ProfilStore extends CachedStore {
   }
 
   handleFetchProfil(id) {
-    console.log("fetching");
     this.status.profilsLoading.push(id);
     delete this.status.profilsLoadingError[id];
   }
 
   handleProfilFetched(profil) {
-    console.log("fetched");
     this.profils[profil.id] = profil;
     _.remove(this.status.profilsLoading, function(id) {
       return id === profil.id;
     });
-    console.log(this.status.profilsLoading);
   }
 
   handleProfilFetchFailed(data) {
