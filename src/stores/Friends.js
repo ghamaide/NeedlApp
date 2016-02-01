@@ -26,6 +26,7 @@ export class FriendsStore extends CachedStore {
       friends: [],
       requests: []
     };
+    
     this.status.friendsLoading = false;
     this.status.friendsLoadingError = null;
 

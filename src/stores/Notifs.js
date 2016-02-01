@@ -23,7 +23,7 @@ export class NotifsStore extends CachedStore {
     });
 
     this.notifs = [];
-    this.status.notifsLoading = [];
+    this.status.notifsLoading = false;
     this.status.notifsLoadingError = {};
 
     this.bindListeners({

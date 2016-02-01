@@ -47,15 +47,21 @@ export class MeStore extends CachedStore {
     this.bindListeners({
       handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
 
+      handleStartActions: MeActions.START_ACTIONS,
+      handleStartActionsFailed: MeActions.START_ACTIONS_FAILED,
+      handleStartActionsSuccess: MeActions.START_ACTIONS_SUCCESS,
+
       handleLoginSuccess: LoginActions.LOGIN_SUCCESS,
       handleLoginFailed: LoginActions.LOGIN_FAILED,
       handleLogout: LoginActions.LOGOUT,
       handleLogin: LoginActions.LOGIN,
       handleLoginCancelled: LoginActions.LOGIN_CANCELLED,
+
       handleEditSuccess: MeActions.EDIT_SUCCESS,
       handleEditFailed: MeActions.EDIT_FAILED,
       handleEdit: MeActions.EDIT,
       handleCleanEditError: MeActions.CLEAN_EDIT_ERROR,
+      
       handleProfilFetched: ProfilActions.PROFIL_FETCHED,
 
       handleUploadContacts : MeActions.UPLOAD_CONTACTS,
@@ -72,29 +78,27 @@ export class MeStore extends CachedStore {
       
       handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
 
-      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
-
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
 
-      handleSetVersion: MeActions.SET_VERSION,
-
-      handleSendVersionSuccess: MeActions.SEND_VERSION_SUCCESS,
-      handleSendVersionFailed: MeActions.SEND_VERSION_FAILED
+      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION
     });
   }
 
-  handleUploadList() {
-    this.status.uploadingList = true;
-    this.status.uploadingListError = null;
+  handleStartActions() {
+    this.showedCurrentPosition = false;
   }
 
-  handleUploadListFailed(err) {
-    this.status.uploadingList = false;
-    this.status.uploadingListError = err;
+  handleStartActionsFailed(err) {
+    this.status.sendingVersion = false;
+    this.status.sendingVersionError = err;
   }
 
-  handleUploadListSuccess() {
-    this.status.uploadingList = false;
+  handleStartActionsSuccess(result) {
+    this.status.sendingVersionError = null;
+    this.status.sendingVersion = false;
+    if (!result && !this.dismissedUpdateMessage) {
+      this.showedUpdateMessage = false;
+    }
   }
 
   handleProfilFetched(profil) {
@@ -205,15 +209,10 @@ export class MeStore extends CachedStore {
     if (!result && !this.dismissedUpdateMessage) {
       this.showedUpdateMessage = false;
     }
-    
   }
 
   handleSendVersion() {
     this.status.sendingVersion = true;
-  }
-
-  handleSetVersion(version) {
-    this.version = version;
   }
 
   handleShowedUpdateMessage() {
@@ -221,12 +220,12 @@ export class MeStore extends CachedStore {
     this.dismissedUpdateMessage = true;
   }
 
-  handleShowedCurrentPosition(showed) {
-    this.showedCurrentPosition = showed;
-  }
-
   handleHideOverlayMapTutorial() {
     this.showOverlayMapTutorial = false;
+  }
+
+  handleShowedCurrentPosition(showed) {
+    this.showedCurrentPosition = showed;
   }
 
   static uploadingContactsError() {

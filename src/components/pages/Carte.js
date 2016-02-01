@@ -25,18 +25,13 @@ import Restaurant from './Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-var radius = 150;
-var topSize = (windowHeight === 667 ? 40 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
 
 class Carte extends Page {
   static route() {
     return {
       component: Carte,
       title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-      onRightButtonPress() {
-        this.replace(Liste.route());
-      }
+      rightButtonIcon: require('../../assets/img/other/icons/map.png')
     };
   };
 
@@ -68,25 +63,23 @@ class Carte extends Page {
     this.state.radius = 4000;
   };
 
-  onFocus = (event) => {
-    if (event.data.route.component === Carte) {
-      RestaurantsActions.fetchRestaurants();
+  startActions() {
+    RestaurantsActions.fetchRestaurants();
+    this.setState({showsUserLocation: true});
 
-      this.setState({showsUserLocation: true});
-
-      navigator.geolocation.getCurrentPosition(
-        (initialPosition) => {
-          if (!MeStore.getState().showedCurrentPosition && this.isInParis(initialPosition)) {
-            this.setState({
-              region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
-            });
-            MeActions.showedCurrentPosition(true);
-          }
-        },
-        (error) => console.log("---" + error.message),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-      );
-    }
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) => {
+        if (!MeStore.getState().showedCurrentPosition && this.isInParis(initialPosition)) {
+          this.setState({
+            region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
+          });
+          MeActions.showedCurrentPosition(true);
+        }
+      },
+      (error) => console.log("---" + error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    console.log('lol');
   };
 
   isInParis = (initialPosition) => {
@@ -94,19 +87,12 @@ class Carte extends Page {
   };
 
   componentWillMount() {
-    RestaurantsStore.listen(this.onRestaurantsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  };
-
-  componentWillUnmount() {
-    RestaurantsStore.unlisten(this.onRestaurantsChange);
-  };
-
-  onRestaurantsChange = () => {
-    this.setState(this.restaurantsState());
+    this.startActions();
   };
 
   onRegionChangeComplete = (region) => {
+    this.setState({region: region, displayRestaurant: false});
+
     var currentRegion = {
       east: region.longitude + region.longitudeDelta / 2,
       west:region.longitude - region.longitudeDelta / 2,
@@ -114,20 +100,22 @@ class Carte extends Page {
       north:region.latitude + region.latitudeDelta / 2
     };
 
-    this.setState({region: region});
     RestaurantsActions.setRegion(currentRegion, region);
-    //this.setState({data: RestaurantsStore.filteredRestaurants()});
-  };
-
-  onRegionChange = (region) => {
-    // this.setState({displayRestaurant: false});
+    this.setState({data: RestaurantsStore.filteredRestaurants()});
   };
 
   onMapPress = (zone) => {
+    console.log('lol');
     this.setState({displayRestaurant: false});
   };
 
-  onMarkerPress = (marker) => {
+  onMarkerSelect = (marker) => {
+    // trigger event marker
+    console.log(marker);
+    // this.setState({displayRestaurant: true});
+  };
+
+  onSelect = (event) => {
     // trigger event marker
     // this.setState({displayRestaurant: true});
   };
@@ -143,20 +131,20 @@ class Carte extends Page {
             style={styles.restaurantsMap}
             showsUserLocation={this.state.showsUserLocation}
             region={this.state.region}
-            onRegionChange={this.onRegionChange}
             onRegionChangeComplete={this.onRegionChangeComplete}
             onPress={this.onMapPress}
-            onMarkerSelect={this.onMarkerPress}>
+            onMarkerSelect={this.onMarkerSelect}>
             
             {_.map(this.state.data, (restaurant) => {
               var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
               myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
               var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
-                <MapView.Marker 
+                <MapView.Marker
                   ref={restaurant.id}
                   key={restaurant.id}
                   coordinate={coord}
+                  onSelect={this.onSelect}
                   pinColor={myRestaurant ? 'green' : 'red'}>
                   <MapView.Callout>
                     <View>
@@ -301,18 +289,6 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'transparent'
-  },
-  targetImage: {
-    backgroundColor: 'transparent',
-    alignItems: 'center'
-  },
-  fillRectangleBottom: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-  },
-  fillRectangleTop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-    height: topSize
   }
 });
 

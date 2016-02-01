@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 
 import Carousel from '../ui/Carousel';
-import ErrorToast from '../ui/ErrorToast';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -30,6 +29,7 @@ import Friends from './Friends';
 import CarteProfil from './CarteProfil';
 
 var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
 
 class Profil extends Page {
   static route(props, title) {
@@ -37,7 +37,6 @@ class Profil extends Page {
       component: Profil,
       title: title || 'Profil',
       passProps: props,
-      // }
     };
   };
 
@@ -82,21 +81,10 @@ class Profil extends Page {
     this.state = this.getProfilState();
   };
 
-  onFocus = (event) => {
-    if (event.data.route.component === Profil) {
-      ProfilActions.fetchProfil(this.currentProfil());
-    }
-  };
-
   componentWillMount() {
     ProfilStore.listen(this.onProfilsChange);
     FriendsStore.listen(this.onProfilsChange);
-    // it can be a tab view or a pushed view
-    if (!this.props.id) {
-      this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-    } else {
-      ProfilActions.fetchProfil(this.currentProfil());
-    }
+    ProfilActions.fetchProfil.defer(this.currentProfil());
   };
 
   componentWillUnmount() {
@@ -145,7 +133,7 @@ class Profil extends Page {
   renderPage() {
     var profil = this.state.data;
     return (
-      <View>
+      <View style={{flex: 1}}>
         {!this.props.id ? [
           <NavigationBar key="navbarfromtab" image={require('../../assets/img/other/icons/map.png')} title="Profil" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
         ] : [
@@ -162,10 +150,9 @@ class Profil extends Page {
               refreshing={this.state.loading}
               onRefresh={() => {
                 ProfilActions.fetchProfil(this.currentProfil());
-                this.setState({loading: false});
               }}
               tintColor="#ff0000"
-              title="Loading..."
+              title="Chargement..."
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
@@ -247,10 +234,6 @@ class Profil extends Page {
               ]
             }
           </Options>
-
-          {_.map(this.state.errors, (error, i) => {
-            return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
-          })}
         </ScrollView>
       </View>
     );

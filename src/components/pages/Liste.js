@@ -1,12 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
-import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
-import ErrorToast from '../ui/ErrorToast';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
 
@@ -19,7 +17,6 @@ import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
 
 import Filtre from './Filtre';
-import AnimatedViews from './NewCarte';
 import Carte from './Carte';
 import Restaurant from './Restaurant';
 import Help from './Help';
@@ -30,11 +27,7 @@ class Liste extends Page {
   static route() {
     return {
       component: Liste,
-      title: 'Restaurants',
-    //   rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-    //   onRightButtonPress() {
-				// this.replace(Carte.route());
-    //   }
+      title: 'Restaurants'
     };
   };
 
@@ -43,8 +36,7 @@ class Liste extends Page {
       // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
-      errors: RestaurantsStore.error(),
-			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
+      errors: RestaurantsStore.error()
     };
   };
 
@@ -55,18 +47,12 @@ class Liste extends Page {
     this.state.showsUserLocation = false;
   };
 
-  onFocus = (event) => {
-    if (event.data.route.component === Liste) {
-      RestaurantsActions.fetchRestaurants();
-    }
-  };
-
   componentWillMount() {
   	if (!MeStore.getState().showTabBar) {
   		MeActions.displayTabBar(true);
   	}
+    RestaurantsActions.fetchRestaurants.defer();
     RestaurantsStore.listen(this.onRestaurantsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   };
 
   componentWillUnmount() {
@@ -88,6 +74,7 @@ class Liste extends Page {
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
+        style={{overflow: 'hidden'}}
       	rank={_.findIndex(this.state.data, restaurant) + 1}
       	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
@@ -130,30 +117,39 @@ class Liste extends Page {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
-				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
-        	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
-				}}>
-						<Text style={styles.filterMessageText}>
-							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
-						</Text>
-				</TouchableHighlight>
-				<RefreshableListView
-					key="list_restaurants"
-					dataSource={this.state.dataSource}
-					renderRow={this.renderRestaurant}
-					renderHeaderWrapper={this.renderHeaderWrapper}
-					contentInset={{top: 0}}
-          scrollRenderAheadDistance={150}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          loadData={this.onRefresh}
-          refreshDescription="Refreshing..." />
-
-        {_.map(this.state.errors, (err) => {
-          // return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
-        })}
+				<ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor="#ff0000"
+              title="Chargement..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00" />
+          }>
+            <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+            	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
+    				}}>
+    						<Text style={styles.filterMessageText}>
+    							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
+    						</Text>
+    				</TouchableHighlight>
+    				
+        </ScrollView>
 			</View>
 		);
+            // <ListView
+            //   key="list_restaurants"
+            //   renderToHardwareTextureAndroid={true} 
+            //   initialListSize={1}
+            //   pageSize={5}
+            //   dataSource={ds.cloneWithRows(this.state.data)}
+            //   renderRow={this.renderRestaurant}
+            //   renderHeaderWrapper={this.renderHeaderWrapper}
+            //   contentInset={{top: 0}}
+            //   automaticallyAdjustContentInsets={false}
+            //   showsVerticalScrollIndicator={false} />
+
   };
 }
 

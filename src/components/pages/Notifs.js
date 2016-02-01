@@ -1,9 +1,8 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, Dimensions} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, ScrollView, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
-import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -20,7 +19,6 @@ import Restaurant from './Restaurant';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
 
-const windowHeight = Dimensions.get('window').height;
 let notifsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class Notifs extends Page {
@@ -35,15 +33,14 @@ class Notifs extends Page {
     return {
       data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs),
       loading: NotifsStore.loading(),
-      error: NotifsStore.error(),
-      loggedIn: !!MeStore.getState().me.id
+      error: NotifsStore.error()
     };
   };
 
   state = Notifs.notifsState();
 
   onFocus = (event) => {
-    if (event.data.route.component === Notifs && event.data.route.fromTabs) {
+    if (event.data.route.component === Notifs) {
       NotifsActions.fetchNotifs();
       if (event.data.route.skipCache) {
         this.setState({data: null});
@@ -136,28 +133,40 @@ class Notifs extends Page {
 
   renderPage() {
     return (
-      <View>
+      <View style={{flex: 1}}>
         <NavigationBar title="Notifs" />
-        <RefreshableListView
-          style={styles.notifsList}
-          dataSource={this.state.data}
-          renderHeaderWrapper={this.renderHeaderWrapper}
-          renderRow={this.renderNotif}
-          contentInset={{top: 0}}
-          scrollRenderAheadDistance={150}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          loadData={this.onRefresh}
-          refreshDescription="Refreshing..." />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor="#ff0000"
+              title="Chargement..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00" />
+          }>
+          
+        </ScrollView>
       </View>
     );
+          // <ListView
+          //   initialListSize={1}
+          //   renderToHardwareTextureAndroid={true} 
+          //   pageSize={5}
+          //   style={styles.notifsList}
+          //   dataSource={this.state.data}
+          //   renderHeaderWrapper={this.renderHeaderWrapper}
+          //   renderRow={this.renderNotif}
+          //   contentInset={{top: 0}}
+          //   scrollRenderAheadDistance={150}
+          //   automaticallyAdjustContentInsets={false}
+          //   showsVerticalScrollIndicator={false} />
   };
 }
 
 var styles = StyleSheet.create({
   notifsList: {
     backgroundColor: '#FFFFFF',
-    height: windowHeight - 100
   },
   notifRow: {
     paddingLeft: 0,

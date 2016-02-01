@@ -36,7 +36,7 @@ class Page extends Component {
       return this.renderError();
     }
 
-    if (this.state.loading || !this.state.data) {
+    if (this.state.loading || this.state.globalLoading || !this.state.data) {
       return this.renderLoading();
     }
 

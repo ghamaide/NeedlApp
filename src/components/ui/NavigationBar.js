@@ -11,7 +11,7 @@ class BackButton extends Component {
   render() {
     return (
       <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent'}, this.props.style]}>
-        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 1, marginLeft: 7}}>
+        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', paddingTop: 8, marginLeft: 7}}>
           <Icon
             name='fontawesome|angle-left'
             size={25}
@@ -26,14 +26,24 @@ class BackButton extends Component {
 
 class NavBarButton extends Component {
   render() {
-    return (
-      <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
-        <View style={{alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
-          <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#000000'}} />
-          <Text style={{fontSize: 11}}>{this.props.title}</Text>
-        </View>
-      </TouchableOpacity>
-    );
+    if (this.props.image) {
+      return (
+        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
+          <View style={{alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
+            <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#000000'}} />
+            <Text style={{fontSize: 11}}>{this.props.title}</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
+          <View style={{marginTop: 5, padding: 5, borderRadius: 5, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
+            <Text style={{fontSize: 15, color: '#EF582D', fontWeight: '500'}}>{this.props.title}</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
   }
 }
 
@@ -60,7 +70,7 @@ class NavigationBar extends Component {
       <NavBar
         style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 40, margin: 0}, this.props.style]}
         title={titleConfig}
-        rightButton={rightButtonConfig.title ? (rightButtonConfig.image ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : rightButtonConfig) : []}
+        rightButton={rightButtonConfig.title ? ((rightButtonConfig.image || rightButtonConfig.title === 'Inviter') ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : rightButtonConfig) : []}
         leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
     );
   };

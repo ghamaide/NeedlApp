@@ -7,7 +7,7 @@ export class RestaurantsActions {
 
   fetchRestaurants() {
     return (dispatch) => {
-      // dispatch();
+      dispatch();
 
       request('GET', '/api/restaurants')
         .end((err, result) => {
@@ -29,7 +29,7 @@ export class RestaurantsActions {
 
   fetchRestaurant(id) {
     return (dispatch) => {
-      // dispatch(id);
+      dispatch(id);
 
       request('GET', '/api/restaurants/' + id)
         .end((err, result) => {

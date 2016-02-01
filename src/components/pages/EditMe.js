@@ -3,8 +3,8 @@
 import React, {StyleSheet, TouchableHighlight, Component, TextInput, View} from 'react-native';
 
 import _ from 'lodash';
+import NavigationBar from '../ui/NavigationBar';
 
-import ErrorToast from '../ui/ErrorToast';
 import Text from '../ui/Text';
 
 import MeStore from '../../stores/Me';
@@ -70,7 +70,8 @@ class EditMe extends Component {
 
   render() {
     return (
-      <View>
+      <View style={{flex: 1}}>
+        <NavigationBar title="Modification" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.editContainer}>
           <Text style={styles.label}>Nom</Text>
           <TextInput
@@ -92,10 +93,6 @@ class EditMe extends Component {
             </View>
           </TouchableHighlight>
         </View>
-
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast value={JSON.stringify(err)} appBar={true} />;
-        })}
       </View>
     );
   };

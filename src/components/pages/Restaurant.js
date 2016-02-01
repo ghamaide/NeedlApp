@@ -12,7 +12,6 @@ import Options from '../elements/Options';
 import Option from '../elements/Option';
 
 import Page from '../ui/Page';
-import ErrorToast from '../ui/ErrorToast';
 import Carousel from '../ui/Carousel';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -93,17 +92,19 @@ class Restaurant extends Page {
   };
 
   componentDidUpdate() {
-    var restaurant = RestaurantsStore.restaurant(this.state.id);
+    // console.log('update');
+    // var restaurant = RestaurantsStore.restaurant(this.state.id);
 
-    if (restaurant) {
-      var users = _.filter(_.union(RestaurantsStore.recommenders(restaurant.id), RestaurantsStore.wishers(restaurant.id)), (userId) => {
-        return !ProfilStore.profil(userId) && !ProfilStore.loading(userId);
-      });
+    // if (restaurant) {
+    //   var users = _.filter(_.union(RestaurantsStore.recommenders(restaurant.id), RestaurantsStore.wishers(restaurant.id)), (userId) => {
+    //     return !ProfilStore.profil(userId) && !ProfilStore.loading(userId);
+    //   });
 
-      _.each(users, (userId) => {
-        ProfilActions.fetchProfil(userId);
-      });
-    }
+    //   _.each(users, (userId) => {
+    //     console.log(userId);
+    //     ProfilActions.fetchProfil.defer(userId);
+    //   });
+    // }
   };
 
   componentWillMount() {
@@ -192,7 +193,7 @@ class Restaurant extends Page {
                 this.componentDidUpdate();
               }}
               tintColor="#ff0000"
-              title="Loading..."
+              title="Chargement..."
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
@@ -553,10 +554,6 @@ class Restaurant extends Page {
               }
             </Options>
             : null }
-            
-            {_.map(this.state.errors, (error, i) => {
-              return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
-            })}
         </ScrollView>
       </View>
     );

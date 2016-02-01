@@ -1,14 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS, ScrollView, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
-import RefreshableListView from 'react-native-refreshable-listview';
 import Contacts from 'react-native-contacts';
 import SearchBar from 'react-native-search-bar';
 
 import Page from '../ui/Page';
-import ErrorToast from '../ui/ErrorToast';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
 
@@ -194,29 +192,38 @@ class InviteFriend extends Page {
   };
 
   renderPage() {
+    console.log(this.props.navigator.getCurrentRoutes());
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
-        <SearchBar
-          ref='searchBar'
-          placeholder='Search'
-          hideBackground={true}
-          textFieldBackgroundColor='#DDDDDD'
-          onChangeText={this.searchContacts}
-          onSearchButtonPress={this.closeKeyboard} />
-        <RefreshableListView
-          style={styles.contactsList}
-          dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
-          renderRow={this.renderContact}
-          contentInset={{top: 0}}
-          onScroll={this.closeKeyboard}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          loadData={this.onRefresh}
-          refreshDescription="Refreshing..." />
-        {_.map(this.state.errors, (error, i) => {
-          return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
-        })}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor="#ff0000"
+              title="Chargement..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00" />
+          }>
+          <SearchBar
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.searchContacts}
+            onSearchButtonPress={this.closeKeyboard} />
+          <ListView
+            initialListSize={1}
+            pageSize={10}
+            style={styles.contactsList}
+            dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
+            renderRow={this.renderContact}
+            contentInset={{top: 0}}
+            onScroll={this.closeKeyboard}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}/>
+        </ScrollView>
       </View>
     );
   };

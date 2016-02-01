@@ -1,11 +1,11 @@
 'use strict';
 
-import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
+import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules, ScrollView, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
-import RefreshableListView from 'react-native-refreshable-listview';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
+import SGListView from 'react-native-sglistview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -47,7 +47,7 @@ class Friends extends Page {
 
   onFocus = (event) => {
     if (event.data.route.component === Friends && event.data.route.fromTabs) {
-      FriendsActions.fetchFriends();
+      // FriendsActions.fetchFriends();
       if (event.data.route.skipCache) {
         this.setState({data: null});
        }
@@ -130,28 +130,34 @@ class Friends extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
-        })}
         <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriend.route())} />
-        <SearchBar
-          ref='searchBar'
-          placeholder='Rechercher'
-          hideBackground={true}
-          textFieldBackgroundColor='#DDDDDD'
-          onChangeText={this.searchFriends} />
-        <RefreshableListView
-          style={styles.friendsList}
-          dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
-          renderRow={this.renderFriend}
-          renderHeaderWrapper={this.renderHeader}
-          contentInset={{top: 0}}
-          scrollRenderAheadDistance={150}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          loadData={this.onRefresh}
-          onScroll={this.closeKeyboard}
-          refreshDescription="Refreshing..." />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor="#ff0000"
+              title="Loading..."
+              colors={['#ff0000', '#00ff00', '#0000ff']}
+              progressBackgroundColor="#ffff00" />
+          }> 
+          <SearchBar
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.searchFriends} />
+          <SGListView
+            style={styles.friendsList}
+            dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
+            renderRow={this.renderFriend}
+            renderHeaderWrapper={this.renderHeader}
+            contentInset={{top: 0}}
+            scrollRenderAheadDistance={150}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}
+            onScroll={this.closeKeyboard} />
+        </ScrollView>
       </View>
     );
   };

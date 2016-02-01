@@ -4,7 +4,6 @@ import React, {StyleSheet, TouchableHighlight, Component, View, Image} from 'rea
 import _ from 'lodash';
 
 import Text from '../ui/Text';
-import ErrorToast from '../ui/ErrorToast';
 
 import LoginActions from '../../actions/LoginActions';
 
@@ -72,10 +71,6 @@ class Login extends Component {
             {this.state.status.loggingIn ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>
         </TouchableHighlight>
-
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast forceTrueValue value={JSON.stringify(err)} />;
-        })}
       </View>
     );
   };

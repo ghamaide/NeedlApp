@@ -27,21 +27,16 @@ import Restaurant from './Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-var radius = 150;
-var topSize = (windowHeight === 667 ? 40 : (windowHeight === 568 ? 25 : (windowHeight === 480 ? 18 : 42) ))
 
 class CarteProfil extends Page {
-  static route() {
+  static route(props) {
     return {
-      component: CarteProfil
+      component: CarteProfil,
+      passProps: props
     };
   };
 
-  profilRestaurants() {
-
-  }
-
-  currentProfil() {
+ currentProfil() {
     return this.props.id || MeStore.getState().me.id;
   };
 
@@ -59,7 +54,6 @@ class CarteProfil extends Page {
     this.state.isChanging = false;
     this.state.showsUserLocation = false;
     this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
-    this.state.annotations = [];
     this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
     this.state.paris = {
@@ -106,6 +100,10 @@ class CarteProfil extends Page {
     this.setState(this.mapState());
   };
 
+  onRegionChangeComplete = (region) => {
+    this.setState({region: region});
+  };
+
   onMapPress = (zone) => {
     this.setState({displayRestaurant: false});
   };
@@ -120,7 +118,7 @@ class CarteProfil extends Page {
 
     return (
   		<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: this.props.id}))} />
+        <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
         <View key="mapcontainer" style={{flex: 1, position: 'relative'}}>
           <MapView
             key="map"
@@ -154,17 +152,23 @@ class CarteProfil extends Page {
             })}
           </MapView>
 
-          {this.state.isChanging ? 
-            [
-              <View key="target_container" style={styles.targetContainer}>
-                <View key="target_top_container" style={[styles.fillRectangleTop, {width: windowWidth}]} />
-                <Image
-                  key="target_image"
-                  source={require('../../assets/img/other/images/target.png')}
-                  style={[styles.targetImage, {width: windowWidth, height: windowWidth, tintColor: 'rgba(0, 0, 0, 0.4)'}]} />
-                <View key="target_bottom_container" style={styles.fillRectangleBottom} />
+          {this.state.displayRestaurant ? [
+            <View style={styles.restaurantContainer}>
+              <RestaurantElement
+                rank={_.findIndex(this.state.data, this.state.restaurant) + 1}
+                isNeedl={this.state.restaurant.score <= 5}
+                key={"restaurant_" + this.state.restaurant.id}
+                name={this.state.restaurant.name}
+                picture={this.state.restaurant.pictures[0]}
+                type={this.state.restaurant.food[1]}
+                budget={this.state.restaurant.price_range}
+                height={120}
+                onPress={() => {
+                  this.props.navigator.push(Restaurant.route({id: this.state.restaurant.id}, this.state.restaurant.name));
+                }}/>
               </View>
-            ] : []}
+            ] : []
+          }
 
           {this.state.data.length && false ? [
             <Carousel
@@ -274,18 +278,6 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'transparent'
-  },
-  targetImage: {
-    backgroundColor: 'transparent',
-    alignItems: 'center'
-  },
-  fillRectangleBottom: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-  },
-  fillRectangleTop: {
-    backgroundColor: 'rgba(0, 0, 0, 0.16)',
-    height: topSize
   }
 });
 

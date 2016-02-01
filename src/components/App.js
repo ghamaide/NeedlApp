@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Overlay from 'react-native-overlay';
 
 import TabView from './ui/TabView';
-import ErrorToast from './ui/ErrorToast';
 import Text from './ui/Text';
 
 import Button from './elements/Button';
@@ -98,11 +97,9 @@ class App extends Component {
 
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
-    MeActions.showedCurrentPosition(false);
-    MeActions.sendVersion(this.props.version);
-    MeActions.resetBadgeNumber();
-    FriendsActions.fetchFriends();
-    NotifsActions.fetchNotifs();
+    MeActions.startActions.defer(this.props.version);
+    FriendsActions.fetchFriends.defer();
+    NotifsActions.fetchNotifs.defer();
   };
 
   componentWillMount() {
@@ -132,9 +129,6 @@ class App extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        {_.map(this.state.errors, (error, i) => {
-          // return <ErrorToast key={i} value={JSON.stringify(error)} appBar={true} />;
-        })}
         <Overlay isVisible={this.state.showOverlayMapTutorial}>
           <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
             <ScrollView
