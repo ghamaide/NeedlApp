@@ -5,7 +5,6 @@ import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModu
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
-import SGListView from 'react-native-sglistview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -147,7 +146,7 @@ class Friends extends Page {
             hideBackground={true}
             textFieldBackgroundColor='#DDDDDD'
             onChangeText={this.searchFriends} />
-          <SGListView
+          <ListView
             style={styles.friendsList}
             dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
             renderRow={this.renderFriend}

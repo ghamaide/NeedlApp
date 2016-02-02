@@ -134,22 +134,20 @@ class Liste extends Page {
     							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
     						</Text>
     				</TouchableHighlight>
-    				
+    				<ListView
+              key="list_restaurants"
+              renderToHardwareTextureAndroid={true} 
+              initialListSize={1}
+              pageSize={5}
+              dataSource={ds.cloneWithRows(this.state.data)}
+              renderRow={this.renderRestaurant}
+              renderHeaderWrapper={this.renderHeaderWrapper}
+              contentInset={{top: 0}}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false} />
         </ScrollView>
 			</View>
 		);
-            // <ListView
-            //   key="list_restaurants"
-            //   renderToHardwareTextureAndroid={true} 
-            //   initialListSize={1}
-            //   pageSize={5}
-            //   dataSource={ds.cloneWithRows(this.state.data)}
-            //   renderRow={this.renderRestaurant}
-            //   renderHeaderWrapper={this.renderHeaderWrapper}
-            //   contentInset={{top: 0}}
-            //   automaticallyAdjustContentInsets={false}
-            //   showsVerticalScrollIndicator={false} />
-
   };
 }
 

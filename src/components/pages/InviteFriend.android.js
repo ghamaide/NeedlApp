@@ -1,10 +1,9 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, NativeModules, ActivityIndicatorIOS, ScrollView, RefreshControl} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, TextInput, ScrollView, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
-import SearchBar from 'react-native-search-bar';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -37,7 +36,6 @@ class InviteFriend extends Page {
     this.state.contacts = {};
     this.state.filteredContacts = {};
     this.state.data = {};
-    this.state.switchList = {};
     this.state.hasUploadedContacts = MeStore.getState().hasUploadedContacts;
   };
 
@@ -174,10 +172,9 @@ class InviteFriend extends Page {
                 </TouchableHighlight>
               ] : [
                 <View style={styles.loadingWrapper}>
-                  <ActivityIndicatorIOS
-                  animating={true}
-                  style={[{height: 40}]}
-                  size="large" />
+                  <ProgressBarAndroid
+                    indeterminate
+                    styleAttr='normal' />
                 </View>
               ]
             ]}
@@ -206,7 +203,7 @@ class InviteFriend extends Page {
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
-          <SearchBar
+          <TextInput
             ref='searchBar'
             placeholder='Rechercher'
             hideBackground={true}

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {View, Component, StyleSheet, TouchableHighlight, TouchableOpacity, Image} from 'react-native';
+import React, {View, Component, StyleSheet, TouchableHighlight, TouchableOpacity, Image, Platform} from 'react-native';
 
 import NavBar from 'react-native-navbar';
 import {Icon} from 'react-native-icons';
@@ -68,6 +68,7 @@ class NavigationBar extends Component {
 
     return (
       <NavBar
+        marginTop={(Platform.OS === 'ios') ? 20 : 0}
         style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 40, margin: 0}, this.props.style]}
         title={titleConfig}
         rightButton={rightButtonConfig.title ? ((rightButtonConfig.image || rightButtonConfig.title === 'Inviter') ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : rightButtonConfig) : []}

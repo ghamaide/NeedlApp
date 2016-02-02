@@ -145,22 +145,21 @@ class Notifs extends Page {
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
-          
+          <ListView
+            initialListSize={1}
+            renderToHardwareTextureAndroid={true} 
+            pageSize={5}
+            style={styles.notifsList}
+            dataSource={this.state.data}
+            renderHeaderWrapper={this.renderHeaderWrapper}
+            renderRow={this.renderNotif}
+            contentInset={{top: 0}}
+            scrollRenderAheadDistance={150}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false} />
         </ScrollView>
       </View>
     );
-          // <ListView
-          //   initialListSize={1}
-          //   renderToHardwareTextureAndroid={true} 
-          //   pageSize={5}
-          //   style={styles.notifsList}
-          //   dataSource={this.state.data}
-          //   renderHeaderWrapper={this.renderHeaderWrapper}
-          //   renderRow={this.renderNotif}
-          //   contentInset={{top: 0}}
-          //   scrollRenderAheadDistance={150}
-          //   automaticallyAdjustContentInsets={false}
-          //   showsVerticalScrollIndicator={false} />
   };
 }
 
