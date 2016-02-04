@@ -139,7 +139,7 @@ class Liste extends Page {
               renderToHardwareTextureAndroid={true} 
               initialListSize={1}
               pageSize={5}
-              dataSource={ds.cloneWithRows(this.state.data)}
+              dataSource={ds.cloneWithRows(this.state.data.slice(0, 3))}
               renderRow={this.renderRestaurant}
               renderHeaderWrapper={this.renderHeaderWrapper}
               contentInset={{top: 0}}

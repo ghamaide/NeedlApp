@@ -31,7 +31,7 @@ class Notifs extends Page {
 
   static notifsState() {
     return {
-      data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs),
+      data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs.slice(0, 3)),
       loading: NotifsStore.loading(),
       error: NotifsStore.error()
     };

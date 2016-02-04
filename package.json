@@ -1,6 +1,6 @@
 {
   "name": "NeedlIOS",
-  "version": "1.4.2",
+  "version": "2.0.2",
   "private": true,
   "scripts": {
     "start": "react-native start"
@@ -10,7 +10,7 @@
     "eslint-plugin-react": "^3.16.1",
     "lodash": "^3.10.1",
     "qs": "^4.0.0",
-    "react-native": "^0.18.1",
+    "react-native": "^0.19.0",
     "react-native-animatable": "^0.4.0",
     "react-native-carousel": "^0.4.3",
     "react-native-communications": "^0.0.5",

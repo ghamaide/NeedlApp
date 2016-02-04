@@ -13,8 +13,8 @@
 #import "RCTUtils.h"
 #import "Mixpanel.h"
 
-#import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <FBSDKLoginKit/FBSDKLoginKit.h>
+//#import <FBSDKCoreKit/FBSDKCoreKit.h>
+//#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 Class RCTPushNotificationManager = nil;
 
@@ -39,7 +39,7 @@ Class RCTPushNotificationManager = nil;
    * on the same Wi-Fi network.
    */
 
-  jsCodeLocation = [NSURL URLWithString:@"http://192.168.1.65:8081/index.ios.bundle?platform=ios&dev=false"];
+  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
 
   /**
    * OPTION 2
@@ -99,50 +99,52 @@ Class RCTPushNotificationManager = nil;
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                  didFinishLaunchingWithOptions:launchOptions];
+  return YES;
+//  return [[FBSDKApplicationDelegate sharedInstance] application:application
+//                                  didFinishLaunchingWithOptions:launchOptions];
 }
 
 // Facebook SDK
-- (void)applicationDidBecomeActive:(UIApplication *)application {
-  [FBSDKAppEvents activateApp];
-}
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                        openURL:url
-                                              sourceApplication:sourceApplication
-                                                     annotation:annotation];
-}
+//- (void)applicationDidBecomeActive:(UIApplication *)application {
+//  [FBSDKAppEvents activateApp];
+//}
+//
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+//  return [[FBSDKApplicationDelegate sharedInstance] application:application
+//                                                        openURL:url
+//                                              sourceApplication:sourceApplication
+//                                                     annotation:annotation];
+//}
 
 // Notifications
 
-//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-//{
-//  if(RCTPushNotificationManager){
-//    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-//  }
-//}
-//
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
-//{
-//  if(RCTPushNotificationManager){
-//    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
-//  }
-//}
-//
-//- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-//{
-//  if(RCTPushNotificationManager){
-//    [RCTPushNotificationManager application:application didRegisterUserNotificationSettings:notificationSettings];
-//  }
-//}
-//
-//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-//{
-//  if(RCTPushNotificationManager){
-//    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
-//  }
-//}
-//
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+  if(RCTPushNotificationManager){
+    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+  }
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+{
+  if(RCTPushNotificationManager){
+    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
+  }
+}
+
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+  if(RCTPushNotificationManager){
+    [RCTPushNotificationManager application:application didRegisterUserNotificationSettings:notificationSettings];
+  }
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+  if(RCTPushNotificationManager){
+    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
+  }
+}
+
 @end
