@@ -16,7 +16,32 @@ export class MeStore extends CachedStore {
   constructor() {
     super();
 
-    this.me = {};
+    // this.me = {};
+
+    this.me = {
+      HAS_SHARED: true,
+      admin: false,
+      app_version: null,
+      authentication_token: "4LAv-94uE8-vJhHprrfJ",
+      birthday: null,
+      code: null,
+      created_at: "2015-12-12T10:27:46Z",
+      email: "hamaide.gregoire@gmail.com",
+      gender: "male",
+      id: 573,
+      name: "Greg Hmd",
+      picture: "http://needl.s3.amazonaws.com/production/users/pictures/000/000/573/original/picture?1449916065",
+      picture_content_type: "image/jpeg",
+      picture_file_name: "picture",
+      picture_file_size: 18019,
+      picture_updated_at: "2015-12-12T10:27:45Z",
+      provider: "facebook",
+      score: 0,
+      token: "CAAXFDbD3mR8BAPxDWMMRZCIl83Gk7qJZAQc6ZAxWMXA96qFBoR797AWzdRQa2ZARwr7N3h48qNcDK9nYauQ4MId7s739gZBydbYZCDKmNqk6ZBWUqFvgi8DYMKQNc8ZBL9Fa85blUk6RomC6CV1ZAcQkl12dMk9ZCwy4N9V97Q9vn3SF3ZBCwZA90lAwMdsHk9YwAcm1DDBATPNmirtDZBPIQpAqW65aNyAh0mN4ZD",
+      token_expiry: null,
+      uid: "138033766558653",
+      updated_at: "2016-02-08T13:06:44Z"
+    }
 
     this.hasBeenUploadWelcomed = false;
 

@@ -124,6 +124,7 @@ class NavBar extends Component {
 var styles = StyleSheet.create({
   navBarContainer: {
     backgroundColor: 'white',
+    marginTop: (Platform.OS === 'ios' ? 20 : 0),
   },
   statusBar: {
     height: (Platform.OS === 'ios' ? 20 : 0),
