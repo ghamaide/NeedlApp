@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, TextInput, ScrollView, RefreshControl} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, TextInput, ScrollView, RefreshControl, ProgressBarAndroid} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
@@ -61,52 +61,29 @@ class InviteFriend extends Page {
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
+    this.getContacts();
   };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
   };
 
-  componentDidMount() {
-    this.checkPermission();
-  };
-
-  checkPermission() {
-    Contacts.checkPermission( (err, permission) => {
-      if(permission === 'undefined'){
-        Contacts.requestPermission( (err, permission) => {
-          this.getContacts();
-        })
-      }
-      if(permission === 'authorized'){
-        this.getContacts();
-      }
-      if(permission === 'denied'){
-        this.authorizeShowContacts();
-      }
-    });
-  };
-
   getContacts() {
     Contacts.getAll((err, retrievedContacts) => {
-      if(err && err.type === 'permissionDenied'){
-        this.authorizeShowContacts();
-      } else {
-        retrievedContacts = _.map(retrievedContacts, (contact) => {
-          if (!_.contains(MeStore.getState().uploadedContacts, contact.recordID)) {
-            contact.invitationSent = false;
-          } else {
-            contact.invitationSent = true;
-          }
-          return contact;
-        });
-        this.setState({contacts : retrievedContacts});
-        this.setState({filteredContacts : retrievedContacts});
-        if (!this.state.hasUploadedContacts) {
-          MeActions.uploadContacts(retrievedContacts);
+      retrievedContacts = _.map(retrievedContacts, (contact) => {
+        if (!_.contains(MeStore.getState().uploadedContacts, contact.recordID)) {
+          contact.invitationSent = false;
+        } else {
+          contact.invitationSent = true;
         }
+        return contact;
+      });
+      this.setState({contacts : retrievedContacts});
+      this.setState({filteredContacts : retrievedContacts});
+      if (!this.state.hasUploadedContacts) {
+        MeActions.uploadContacts(retrievedContacts);
       }
-    })
+    });
   };
 
   authorizeShowContacts() {
@@ -122,11 +99,11 @@ class InviteFriend extends Page {
   searchContacts = (searchedText) => {
     var tempFilteredContacts = _.filter(this.state.contacts, function(contact) {
       if (typeof contact.familyName !== 'undefined' && typeof contact.givenName !== 'undefined') {
-        return ((contact.givenName.indexOf(searchedText) > -1) || (contact.familyName.indexOf(searchedText) > -1));
+        return ((contact.givenName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1) || (contact.familyName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1));
       } else if (typeof contact.familyName !== 'undefined') {
-        return contact.familyName.indexOf(searchedText) > -1;
+        return contact.familyName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
       } else if (typeof contact.givenName !== 'undefined') {
-        return  contact.givenName.indexOf(searchedText) > -1;
+        return  contact.givenName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
       } else {
         return false;
       }
@@ -172,9 +149,7 @@ class InviteFriend extends Page {
                 </TouchableHighlight>
               ] : [
                 <View style={styles.loadingWrapper}>
-                  <ProgressBarAndroid
-                    indeterminate
-                    styleAttr='normal' />
+                  <ProgressBarAndroid indeterminate />
                 </View>
               ]
             ]}
@@ -185,11 +160,9 @@ class InviteFriend extends Page {
 
   onRefresh = () => {
     this.setState({hasUploadedContacts: false});
-    this.checkPermission();
   };
 
   renderPage() {
-    console.log(this.props.navigator.getCurrentRoutes());
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
@@ -206,13 +179,12 @@ class InviteFriend extends Page {
           <TextInput
             ref='searchBar'
             placeholder='Rechercher'
-            hideBackground={true}
-            textFieldBackgroundColor='#DDDDDD'
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             onChangeText={this.searchContacts}
             onSearchButtonPress={this.closeKeyboard} />
           <ListView
             initialListSize={1}
-            pageSize={10}
+            pageSize={20}
             style={styles.contactsList}
             dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
             renderRow={this.renderContact}

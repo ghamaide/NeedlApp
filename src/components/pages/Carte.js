@@ -79,7 +79,6 @@ class Carte extends Page {
       (error) => console.log("---" + error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
-    console.log('lol');
   };
 
   isInParis = (initialPosition) => {
@@ -105,18 +104,20 @@ class Carte extends Page {
   };
 
   onMapPress = (zone) => {
-    console.log('lol');
-    this.setState({displayRestaurant: false});
+     this.setState({displayRestaurant: false});
   };
 
   onMarkerSelect = (marker) => {
     // trigger event marker
+    console.log('on marker select');
     console.log(marker);
     // this.setState({displayRestaurant: true});
   };
 
   onSelect = (event) => {
     // trigger event marker
+    console.log('on select');
+    console.log(event);
     // this.setState({displayRestaurant: true});
   };
 
@@ -138,12 +139,12 @@ class Carte extends Page {
             {_.map(this.state.data, (restaurant) => {
               var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
               myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
-              var coord = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+              var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
                 <MapView.Marker
                   ref={restaurant.id}
                   key={restaurant.id}
-                  coordinate={coord}
+                  coordinate={coordinates}
                   onSelect={this.onSelect}
                   pinColor={myRestaurant ? 'green' : 'red'}>
                   <MapView.Callout>

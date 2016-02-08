@@ -1,7 +1,6 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
-// import com.AirMaps.AirPackage;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -9,6 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.magus.fblogin.FacebookLoginPackage;
+
+import com.smixx.reactnativeicons.ReactNativeIcons;
+import com.smixx.reactnativeicons.IconFont;
+
+import com.AirMaps.AirPackage;
+
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 public class MainActivity extends ReactActivity {
 
@@ -38,7 +44,11 @@ public class MainActivity extends ReactActivity {
     protected List<ReactPackage> getPackages() {
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-            // new AirPackage(),
+            new AirPackage(),
+            new ReactNativeIcons(Arrays.asList(
+                new IconFont("fontawesome", "FontAwesome.otf")
+            )),
+            new ReactNativeContacts(),
             new FacebookLoginPackage()
         );
     }

@@ -68,7 +68,7 @@ class RecoStepSave extends Component {
     var reco = RecoStore.getReco();
 
     if (!this.state.err) {
-      content = <ProgressBarAndroid indeterminate styleAttr='normal' />;
+      content = <ProgressBarAndroid indeterminate />;
     }
 
     if (this.state.err && this.state.err.notice) {

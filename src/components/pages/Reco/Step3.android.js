@@ -91,7 +91,7 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Ambiances" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
+        <NavigationBar title="Ambiances" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
         <View style={styles.container}>
           <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
           <ToggleGroup

@@ -3,7 +3,6 @@
 import React, {Component, View, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
-import Overlay from 'react-native-overlay';
 
 import TabView from './ui/TabView';
 import Text from './ui/Text';
@@ -104,56 +103,6 @@ class App extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <Overlay isVisible={this.state.showOverlayMapTutorial}>
-          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
-            <ScrollView
-              style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.container}>
-              <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
-              <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
-            </ScrollView>
-          </TouchableHighlight>
-        </Overlay>
-
-        <Overlay isVisible={!this.state.hasBeenUploadWelcomed}>
-          <ScrollView
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
-            contentInset={{top: 0}}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.container}>
-            <View style={styles.avatarWrapper}>
-              <Image style={styles.avatar} source={require('../assets/img/other/icons/personal.png')} />
-            </View>
-            <Text style={styles.title}>Ton app est unique !</Text>
-            <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
-            <Button label="On y va !" onPress={() => {
-              MeActions.hasBeenUploadWelcomed();
-            }} style={{margin: 5}}/>
-          </ScrollView>
-        </Overlay>
-
-        <Overlay isVisible={(typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage)}>
-          <ScrollView
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
-            contentInset={{top: 0}}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.container}>
-            <View style={styles.avatarWrapper}>
-              <Image style={styles.avatar} source={require('../assets/img/tabs/icons/home.png')} />
-            </View>
-            <Text style={styles.title}>Ton app a été updatée !</Text>
-            <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
-            <Button label="Passer" onPress={() => {
-              MeActions.showedUpdateMessage();
-            }} style={{margin: 5}}/>
-          </ScrollView>
-        </Overlay>
-
         <TabView 
           ref="tabs"
           onTab={(tab) => {

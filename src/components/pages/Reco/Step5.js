@@ -36,7 +36,7 @@ class RecoStep5 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Occasions" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
+        <NavigationBar title="Occasions" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
         <View style={styles.container}>
           <Text style={styles.title}>Sélectionne une ou plusieurs occasions correspondant au restaurant</Text>
           <ToggleGroup

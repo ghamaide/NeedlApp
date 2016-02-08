@@ -1,13 +1,14 @@
 'use strict';
 
-import React, {StyleSheet, View, Component, TouchableHighlight, ScrollView, Dimensions, Image, Switch} from 'react-native';
+import React, {StyleSheet, View, Component, TouchableHighlight, ScrollView, Dimensions, Image, Switch, Platform} from 'react-native';
 
 import _ from 'lodash';
-import Overlay from 'react-native-overlay';
 import Mixpanel from 'react-native-mixpanel';
 
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
+
+import Overlay from '../elements/Overlay';
 
 import ToggleGroup from './Reco/ToggleGroup';
 
@@ -19,7 +20,6 @@ import MeStore from '../../stores/Me';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
-var marginBottom = (windowHeight >= 667 ? 0 : 60);
 
 class Filtre extends Component {
   static route(passProps) {
@@ -53,7 +53,9 @@ class Filtre extends Component {
   };
 
   componentDidMount() {
-    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    if (Platform.OS === 'ios') { 
+      Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    }
   };
 
   setFilters = () => {
@@ -70,24 +72,26 @@ class Filtre extends Component {
       types: this.state.types
     }
 
-    Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, hash: hash});
-    Mixpanel.trackWithProperties('Show Own Recommendations', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, display: this.state.showPersonalContent});
+    if (Platform.OS === 'ios') { 
+      Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, hash: hash});
+      Mixpanel.trackWithProperties('Show Own Recommendations', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, display: this.state.showPersonalContent});
 
-    _.map(this.state.prices, (price) => {
-      Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, price: price});
-    });
+      _.map(this.state.prices, (price) => {
+        Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, price: price});
+      });
 
-    _.map(this.state.occasions, (occasion) => {
-      Mixpanel.trackWithProperties('Filtre Occasions', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, occasions: RestaurantsStore.MAP_OCCASIONS[occasion - 1].label});
-    });
+      _.map(this.state.occasions, (occasion) => {
+        Mixpanel.trackWithProperties('Filtre Occasions', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, occasions: RestaurantsStore.MAP_OCCASIONS[occasion - 1].label});
+      });
 
-    _.map(this.state.ambiences, (ambience) => {
-      Mixpanel.trackWithProperties('Filtre Ambiences', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, ambiences: RestaurantsStore.MAP_AMBIENCES[ambience - 1].label});
-    });
+      _.map(this.state.ambiences, (ambience) => {
+        Mixpanel.trackWithProperties('Filtre Ambiences', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, ambiences: RestaurantsStore.MAP_AMBIENCES[ambience - 1].label});
+      });
 
-    _.map(this.state.types, (type) => {
-      Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
-    });
+      _.map(this.state.types, (type) => {
+        Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
+      });
+    }
   };
 
   clearFilters = () => {
@@ -122,157 +126,6 @@ class Filtre extends Component {
           this.props.navigator.pop();
         }}/>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEEEEE', position: 'relative'}}>
-          <Overlay key="ambiences_overlay" isVisible={this.state.showOverlayAmbiences}>
-            <ToggleGroup
-              ref="togglegroupambiences"
-              maxSelection={7}
-              fifo={true}
-              selectedInitial={this.state.ambiences}
-              onSelect={(v, selected) => {
-                this.setState({ambiences: selected});
-              }}
-              onUnselect={(v, selected) => {
-                this.setState({ambiences: selected});
-              }}>
-              {(Toggle) => {
-                return (
-                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: -70, left: 0, right: 0, alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
-                    <Text style={styles.filtreTitleOverlay}>Ambiances</Text>
-                    <View style={styles.pastilleWrapperOverlay}>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle key="chic" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/chic.png')} label="Chic" value={1} />
-                        <Toggle key="festif" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/festif.png')} label="Festif" value={2} />
-                        <Toggle key="convivial" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/convivial.png')} label="Convivial" value={3} />
-                        <Toggle key="romantique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/romantique.png')} label="Romantique" value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle key="branche" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/branche.png')} label="Branché" value={5} />
-                        <Toggle key="typique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/typique.png')} label="Typique" value={6} />
-                        <Toggle key="cosy" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/cosy.png')} label="Cosy" value={7} />
-                      </View>
-                      <TouchableHighlight 
-                        underlayColor='rgba(0, 0, 0, 0.3)'
-                        style={styles.submitButtonOverlay} 
-                        onPress={() => this.setState({showOverlayAmbiences: false})}>
-                        <Text style={styles.submitText}>Valider</Text>
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                );
-              }}
-            </ToggleGroup>
-          </Overlay>
-
-          <Overlay key="occasions_overlay" isVisible={this.state.showOverlayOccasions}>
-            <ToggleGroup
-              ref="togglegroupoccasions"
-              maxSelection={9}
-              fifo={true}
-              selectedInitial={this.state.occasions}
-              onSelect={(v, selected) => {
-                this.setState({occasions: selected});
-              }}
-              onUnselect={(v, selected) => {
-                this.setState({occasions: selected});
-              }}>
-              {(Toggle) => {
-                return (
-                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: -70, left: 0, right: 0, alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
-                    <Text style={styles.filtreTitleOverlay}>Occasions</Text>
-                    <View style={styles.pastilleWrapperOverlay}>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label="Business" value={1} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label="Couple" value={2} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label="Famille" value={3} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Groupe" value={5} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/fast.png')} activeInitial={false} label="Rapide" value={8} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={9} />
-                      </View>
-                      <TouchableHighlight 
-                        underlayColor='rgba(0, 0, 0, 0.3)'
-                        style={styles.submitButtonOverlay}
-                        onPress={() => this.setState({showOverlayOccasions: false})}>
-                        <Text style={styles.submitText}>Valider</Text>
-                      </TouchableHighlight>
-                    </View>
-                  </View>
-                );
-              }}
-            </ToggleGroup>
-          </Overlay>
-
-          <Overlay key="types_overlay" isVisible={this.state.showOverlayTypes}>
-            <ToggleGroup
-              ref="togglegrouptypes"
-              maxSelection={23}
-              fifo={true}
-              selectedInitial={this.state.types}
-              onSelect={(v, selected) => {
-                this.setState({types: selected});
-              }}
-              onUnselect={(v, selected) => {
-                this.setState({types: selected});
-              }}>
-              {(Toggle) => {
-                return (
-                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: -70, left: 0, right: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
-                    <Text style={[styles.filtreTitleOverlay, {marginTop: 20, marginBottom: 10}]}>Types</Text>
-                    <ScrollView style={styles.pastilleWrapperOverlayScroll} automaticallyAdjustContentInsets={false} alignItems='center'>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/korean.png')} activeInitial={false} label="Coréen" value={1} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/thai.png')} activeInitial={false} label="Thai" value={2} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/chinese.png')} activeInitial={false} label="Chinois" value={3} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/indian.png')} activeInitial={false} label="Indien" value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/japanese.png')} activeInitial={false} label="Japonais" value={5} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/sushi.png')} activeInitial={false} label="Sushi" value={6} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_asia.png')} activeInitial={false} label="Autres Asie" value={7} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/french.png')} activeInitial={false} label="Français" value={8} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/italian.png')} activeInitial={false} label="Italien" value={9} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/pizza.png')} activeInitial={false} label="Pizza" value={10} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/burger.png')} activeInitial={false} label="Burger" value={11} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/street_food.png')} activeInitial={false} label="Street Food" value={12} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_europe.png')} activeInitial={false} label="Autres Europe" value={13} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/grill.png')} activeInitial={false} label="Viandes" value={14} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/oriental.png')} activeInitial={false} label="Oriental" value={15} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/mexican.png')} activeInitial={false} label="Mexicain" value={16} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/latino.png')} activeInitial={false} label="Autres Latino" value={17} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/seafood.png')} activeInitial={false} label="Fruits de mer" value={18} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/african.png')} activeInitial={false} label="Africain" value={19} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/creole.png')} activeInitial={false} label="Créole" value={20} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/crepes.png')} activeInitial={false} label="Crêpes" value={21} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/tapas.png')} activeInitial={false} label="Tapas" value={22} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/vegetarian.png')} activeInitial={false} label="Végétarien" value={23} />
-                      </View>
-                    </ScrollView>
-                    <TouchableHighlight
-                      underlayColor='rgba(0, 0, 0, 0.3)'
-                      style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 11, width: 160, left: (windowWidth - 200) / 2}]}
-                      onPress={() => this.setState({showOverlayTypes: false})}>
-                      <Text style={styles.submitText}>Valider</Text>
-                    </TouchableHighlight>
-                  </View>
-                );
-              }}
-            </ToggleGroup>
-          </Overlay>
-
           <ScrollView key="filter_scrollview" style={styles.container}>
             <ToggleGroup
               ref="togglegroupprices"
@@ -392,19 +245,175 @@ class Filtre extends Component {
               onPress={this.clearFilters}>
               <Text style={styles.resetText}>Réinitialiser</Text>
             </TouchableHighlight>
+            <TouchableHighlight 
+              underlayColor='rgba(0, 0, 0, 0.3)'
+              style={styles.submitButton}
+              onPress={() => {
+                this.setFilters();
+                this.props.navigator.pop();
+                MeActions.displayTabBar(true);
+              }}>
+              <Text style={styles.submitText}>Valider</Text>
+            </TouchableHighlight>
           </ScrollView>
-
-          <TouchableHighlight 
-            underlayColor='rgba(0, 0, 0, 0.3)'
-            style={styles.submitButton}
-            onPress={() => {
-              this.setFilters();
-              this.props.navigator.pop();
-              MeActions.displayTabBar(true);
-            }}>
-            <Text style={styles.submitText}>Valider</Text>
-          </TouchableHighlight>
         </View>
+
+        {this.state.showOverlayAmbiences ? [
+          <Overlay key="ambiences_overlay">
+            <ToggleGroup
+              ref="togglegroupambiences"
+              maxSelection={7}
+              fifo={true}
+              selectedInitial={this.state.ambiences}
+              onSelect={(v, selected) => {
+                this.setState({ambiences: selected});
+              }}
+              onUnselect={(v, selected) => {
+                this.setState({ambiences: selected});
+              }}>
+              {(Toggle) => {
+                return (
+                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
+                    <Text style={styles.filtreTitleOverlay}>Ambiances</Text>
+                    <View style={styles.pastilleWrapperOverlay}>
+                      <View style={styles.pastilleContainerOverlay}>
+                        <Toggle key="chic" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/chic.png')} label="Chic" value={1} />
+                        <Toggle key="festif" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/festif.png')} label="Festif" value={2} />
+                        <Toggle key="convivial" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/convivial.png')} label="Convivial" value={3} />
+                        <Toggle key="romantique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/romantique.png')} label="Romantique" value={4} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlay}>
+                        <Toggle key="branche" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/branche.png')} label="Branché" value={5} />
+                        <Toggle key="typique" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/typique.png')} label="Typique" value={6} />
+                        <Toggle key="cosy" size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/cosy.png')} label="Cosy" value={7} />
+                      </View>
+                      <TouchableHighlight 
+                        underlayColor='rgba(0, 0, 0, 0.3)'
+                        style={styles.submitButtonOverlay} 
+                        onPress={() => this.setState({showOverlayAmbiences: false})}>
+                        <Text style={styles.submitText}>Valider</Text>
+                      </TouchableHighlight>
+                    </View>
+                  </View>
+                );
+              }}
+            </ToggleGroup>
+          </Overlay>
+        ] : null}
+
+        {this.state.showOverlayOccasions ? [
+          <Overlay key="occasions_overlay">
+            <ToggleGroup
+              ref="togglegroupoccasions"
+              maxSelection={9}
+              fifo={true}
+              selectedInitial={this.state.occasions}
+              onSelect={(v, selected) => {
+                this.setState({occasions: selected});
+              }}
+              onUnselect={(v, selected) => {
+                this.setState({occasions: selected});
+              }}>
+              {(Toggle) => {
+                return (
+                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
+                    <Text style={styles.filtreTitleOverlay}>Occasions</Text>
+                    <View style={styles.pastilleWrapperOverlay}>
+                      <View style={styles.pastilleContainerOverlay}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label="Business" value={1} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label="Couple" value={2} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label="Famille" value={3} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label="Amis" value={4} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlay}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label="Groupe" value={5} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label="Brunch" value={6} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label="Terrasse" value={7} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/fast.png')} activeInitial={false} label="Rapide" value={8} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlay}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/date.png')} activeInitial={false} label="Date" value={9} />
+                      </View>
+                      <TouchableHighlight 
+                        underlayColor='rgba(0, 0, 0, 0.3)'
+                        style={styles.submitButtonOverlay}
+                        onPress={() => this.setState({showOverlayOccasions: false})}>
+                        <Text style={styles.submitText}>Valider</Text>
+                      </TouchableHighlight>
+                    </View>
+                  </View>
+                );
+              }}
+            </ToggleGroup>
+          </Overlay>
+        ] : null}
+
+        {this.state.showOverlayTypes ? [
+          <Overlay key="types_overlay">
+            <ToggleGroup
+              ref="togglegrouptypes"
+              maxSelection={23}
+              fifo={true}
+              selectedInitial={this.state.types}
+              onSelect={(v, selected) => {
+                this.setState({types: selected});
+              }}
+              onUnselect={(v, selected) => {
+                this.setState({types: selected});
+              }}>
+              {(Toggle) => {
+                return (
+                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
+                    <Text style={[styles.filtreTitleOverlay, {marginTop: 20, marginBottom: 10}]}>Types</Text>
+                    <ScrollView style={styles.pastilleWrapperOverlayScroll} automaticallyAdjustContentInsets={false} alignItems='center'>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/korean.png')} activeInitial={false} label="Coréen" value={1} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/thai.png')} activeInitial={false} label="Thai" value={2} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/chinese.png')} activeInitial={false} label="Chinois" value={3} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/indian.png')} activeInitial={false} label="Indien" value={4} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/japanese.png')} activeInitial={false} label="Japonais" value={5} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/sushi.png')} activeInitial={false} label="Sushi" value={6} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_asia.png')} activeInitial={false} label="Autres Asie" value={7} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/french.png')} activeInitial={false} label="Français" value={8} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/italian.png')} activeInitial={false} label="Italien" value={9} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/pizza.png')} activeInitial={false} label="Pizza" value={10} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/burger.png')} activeInitial={false} label="Burger" value={11} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/street_food.png')} activeInitial={false} label="Street Food" value={12} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_europe.png')} activeInitial={false} label="Autres Europe" value={13} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/grill.png')} activeInitial={false} label="Viandes" value={14} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/oriental.png')} activeInitial={false} label="Oriental" value={15} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/mexican.png')} activeInitial={false} label="Mexicain" value={16} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/latino.png')} activeInitial={false} label="Autres Latino" value={17} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/seafood.png')} activeInitial={false} label="Fruits de mer" value={18} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/african.png')} activeInitial={false} label="Africain" value={19} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/creole.png')} activeInitial={false} label="Créole" value={20} />
+                      </View>
+                      <View style={styles.pastilleContainerOverlayScroll}>
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/crepes.png')} activeInitial={false} label="Crêpes" value={21} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/tapas.png')} activeInitial={false} label="Tapas" value={22} />
+                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/vegetarian.png')} activeInitial={false} label="Végétarien" value={23} />
+                      </View>
+                    </ScrollView>
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0.3)'
+                      style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 11, width: 160, left: (windowWidth - 200) / 2}]}
+                      onPress={() => this.setState({showOverlayTypes: false})}>
+                      <Text style={styles.submitText}>Valider</Text>
+                    </TouchableHighlight>
+                  </View>
+                );
+              }}
+            </ToggleGroup>
+          </Overlay>
+        ] : null}
       </View>
     );
   };
@@ -432,7 +441,7 @@ var styles = StyleSheet.create({
     borderWidth: 1,
     width: 240,
     marginLeft: (windowWidth - 240) / 2,
-    marginBottom: marginBottom
+    marginBottom: 5
   },
   resetText: {
     flex: 1,
@@ -444,13 +453,13 @@ var styles = StyleSheet.create({
   submitButton : {
     backgroundColor: '#EF582D',
     borderRadius: 3,
-    padding: 15,
+    padding: 10,
     borderColor: '#EF582D',
-    position :'absolute',
     width: 160,
-    left: (windowWidth - 160) / 2,
-    bottom: 5
-  },
+    marginTop: 5,
+    marginBottom: 10,
+    marginLeft: (windowWidth - 160) / 2,
+   },
   submitButtonOverlay: {
     backgroundColor: 'rgba(239, 88, 45, 0.7)',
     borderRadius: 3,

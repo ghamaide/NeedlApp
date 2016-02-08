@@ -51,7 +51,6 @@ class RecoStep1 extends Component {
     return (
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
         RecoActions.setReco({restaurant: restaurant});
-        this.closeKeyboard();
         this.props.navigator.push(Step2.route());
       }}>
         <View style={styles.restaurantRowInner}>
@@ -91,9 +90,7 @@ class RecoStep1 extends Component {
     if (!this.state.query) {
       content = this.renderBlankScreen();
     } else if(this.state.status.restaurantsLoading) {
-      content = this.renderBlankScreen(<ProgressBarAndroid
-        indeterminate
-        styleAttr='normal' />
+      content = this.renderBlankScreen(<ProgressBarAndroid indeterminate />
         );
     } else if(this.state.status.restaurantsLoadingError) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
@@ -109,8 +106,7 @@ class RecoStep1 extends Component {
       <TextInput
         ref='searchBar'
         placeholder='Sélectionne ton restaurant'
-        hideBackground={true}
-        textFieldBackgroundColor='#DDDDDD'
+        style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
         onChangeText={this.onRestaurantQuery} />
 
       {!MeStore.getState().me.HAS_SHARED && !this.state.query ?

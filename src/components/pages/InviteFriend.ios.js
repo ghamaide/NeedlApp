@@ -123,11 +123,11 @@ class InviteFriend extends Page {
   searchContacts = (searchedText) => {
     var tempFilteredContacts = _.filter(this.state.contacts, function(contact) {
       if (typeof contact.familyName !== 'undefined' && typeof contact.givenName !== 'undefined') {
-        return ((contact.givenName.indexOf(searchedText) > -1) || (contact.familyName.indexOf(searchedText) > -1));
+        return ((contact.givenName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1) || (contact.familyName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1));
       } else if (typeof contact.familyName !== 'undefined') {
-        return contact.familyName.indexOf(searchedText) > -1;
+        return contact.familyName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
       } else if (typeof contact.givenName !== 'undefined') {
-        return  contact.givenName.indexOf(searchedText) > -1;
+        return  contact.givenName.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
       } else {
         return false;
       }
@@ -191,7 +191,6 @@ class InviteFriend extends Page {
   };
 
   renderPage() {
-    console.log(this.props.navigator.getCurrentRoutes());
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />

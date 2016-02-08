@@ -136,10 +136,10 @@ class Friends extends Page {
               progressBackgroundColor="#ffff00" />
           }> 
           <TextInput
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             ref='searchBar'
             placeholder='Rechercher'
             hideBackground={true}
-            textFieldBackgroundColor='#DDDDDD'
             onChangeText={this.searchFriends} />
           <ListView
             style={styles.friendsList}

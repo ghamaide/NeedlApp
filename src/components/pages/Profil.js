@@ -3,7 +3,6 @@
 import React, {StyleSheet, Dimensions, ScrollView, View, Image, NativeModules, RefreshControl} from 'react-native';
 
 import _ from 'lodash';
-import Overlay from 'react-native-overlay';
 
 import Carousel from '../ui/Carousel';
 import Page from '../ui/Page';
@@ -156,12 +155,6 @@ class Profil extends Page {
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
-
-          <Overlay isVisible={this.state.showUploadConfirmation}>
-            <View style={styles.uploadConfirmationContainer}>
-              <Text style={styles.uploadConfirmationText}>Ta liste a bien été récupérée et sera ajoutée à ta wishlist d'ici 24h</Text>
-            </View>
-          </Overlay>
 
           <View style={styles.infoContainer}>
             <Image source={{uri: profil.picture}} style={styles.image} />

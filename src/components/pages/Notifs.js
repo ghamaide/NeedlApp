@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, ScrollView, RefreshControl} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, ScrollView, RefreshControl, InteractionManager, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
 
 import _ from 'lodash';
 
@@ -29,7 +29,7 @@ class Notifs extends Page {
     };
   };
 
-  static notifsState() {
+  notifsState() {
     return {
       data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs.slice(0, 3)),
       loading: NotifsStore.loading(),
@@ -37,7 +37,12 @@ class Notifs extends Page {
     };
   };
 
-  state = Notifs.notifsState();
+  constructor(props) {
+    super(props);
+    
+    this.state = this.notifsState();
+    this.state.renderPlaceholderOnly = true;
+  }
 
   onFocus = (event) => {
     if (event.data.route.component === Notifs) {
@@ -67,8 +72,14 @@ class Notifs extends Page {
     }
   };
 
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({renderPlaceholderOnly: false});
+    });
+  }
+
   onNotifsChange = () => {
-    this.setState(Notifs.notifsState);
+    this.setState(this.notifsState());
   };
 
   onRefresh() {
@@ -131,6 +142,21 @@ class Notifs extends Page {
     );
   };
 
+  _renderPlaceholderView() {
+    var content;
+
+    if (Platform.OS === 'ios') {
+      content = <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />;
+    } else {
+      content = <ProgressBarAndroid indeterminate />;
+    }
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        {content}
+      </View>
+    );
+  };
+
   renderPage() {
     return (
       <View style={{flex: 1}}>
@@ -147,7 +173,6 @@ class Notifs extends Page {
           }>
           <ListView
             initialListSize={1}
-            renderToHardwareTextureAndroid={true} 
             pageSize={5}
             style={styles.notifsList}
             dataSource={this.state.data}

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl, InteractionManager, ActivityIndicatorIOS, ProgressBarAndroid, Platform} from 'react-native';
 
 import _ from 'lodash';
 
@@ -36,7 +36,7 @@ class Liste extends Page {
       // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
-      errors: RestaurantsStore.error()
+      errors: RestaurantsStore.error(),
     };
   };
 
@@ -44,7 +44,7 @@ class Liste extends Page {
     super(props);
 
     this.state = this.restaurantsState();
-    this.state.showsUserLocation = false;
+    this.state.renderPlaceholderOnly = true;
   };
 
   componentWillMount() {
@@ -58,6 +58,12 @@ class Liste extends Page {
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
   };
+
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(() => {
+      this.setState({renderPlaceholderOnly: false});
+    });
+  }
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
@@ -113,7 +119,26 @@ class Liste extends Page {
   	}
   };
 
+  _renderPlaceholderView() {
+    var content;
+
+    if (Platform.OS === 'ios') {
+      content = <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />;
+    } else {
+      content = <ProgressBarAndroid indeterminate />;
+    }
+    return (
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        {content}
+      </View>
+    );
+  };
+
   renderPage() {
+    if (this.state.renderPlaceholderOnly) {
+      return this._renderPlaceholderView();
+    }
+
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
@@ -124,8 +149,8 @@ class Liste extends Page {
               onRefresh={this.onRefresh}
               tintColor="#ff0000"
               title="Chargement..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#ffff00" />
+              colors={['#FFFFFF']}
+              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
             <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
             	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
@@ -134,17 +159,9 @@ class Liste extends Page {
     							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
     						</Text>
     				</TouchableHighlight>
-    				<ListView
-              key="list_restaurants"
-              renderToHardwareTextureAndroid={true} 
-              initialListSize={1}
-              pageSize={5}
-              dataSource={ds.cloneWithRows(this.state.data.slice(0, 3))}
-              renderRow={this.renderRestaurant}
-              renderHeaderWrapper={this.renderHeaderWrapper}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false} />
+    				{_.map(this.state.data.slice(0, 15), (restaurant) => {
+              return this.renderRestaurant(restaurant);
+            })}
         </ScrollView>
 			</View>
 		);
@@ -229,8 +246,6 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
-		paddingTop: 12,
-		paddingBottom: 10
 	},
 	filterContainerWrapper: {
 		backgroundColor: '#FFFFFF',
@@ -238,6 +253,9 @@ var styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 1,
 		margin: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 7
 	},
 	filterContainer: {
 		flex: 1,

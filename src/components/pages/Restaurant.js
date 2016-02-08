@@ -1,10 +1,11 @@
 'use strict';
 
-import React, {StyleSheet, View, ScrollView, MapView, Image, TouchableHighlight, RefreshControl, Dimensions} from 'react-native';
+import React, {StyleSheet, View, ScrollView, Image, TouchableHighlight, RefreshControl, Dimensions, Platform} from 'react-native';
 
 import _ from 'lodash';
 import RNComm from 'react-native-communications';
 import Mixpanel from 'react-native-mixpanel';
+import MapView from 'react-native-maps';
 
 import RestaurantElement from '../elements/Restaurant';
 import Button from '../elements/Button';
@@ -108,7 +109,9 @@ class Restaurant extends Page {
   };
 
   componentWillMount() {
-    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    if (Platform.OS === 'ios') { 
+      Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    }
     RestaurantsStore.listen(this.onRestaurantsChange);
     ProfilStore.listen(this.onProfilStoreUpdate);
     RestaurantsActions.fetchRestaurant(this.props.id);
@@ -160,7 +163,9 @@ class Restaurant extends Page {
   };
 
   call = () => {
-    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
+    if (Platform.OS === 'ios') { 
+      Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
+    }
     RNComm.phonecall(this.state.data.phone_number, false);
   };
 
@@ -492,19 +497,28 @@ class Restaurant extends Page {
             </View>
           </View>
 
-          <MapView key="restaurant_map" style={styles.mapContainer}
-            annotations={[
-              {
-                latitude: restaurant.latitude,
-                longitude: restaurant.longitude
-              }
-            ]}
+          <MapView
+            key="resturant_map"
+            ref="mapview"
+            style={styles.mapContainer} 
             region={{
               latitude: restaurant.latitude,
               longitude: restaurant.longitude,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01
-            }} />
+            }}>
+              <MapView.Marker
+                ref={restaurant.id}
+                key={restaurant.id}
+                coordinate={{latitude: restaurant.latitude, longitude: restaurant.longitude}}
+                pinColor='red'>
+                <MapView.Callout>
+                  <View>
+                    <Text>{restaurant.name}</Text>
+                  </View>
+                </MapView.Callout>
+              </MapView.Marker>
+          </MapView>
 
           <View key="restaurant_call_bottom" style={styles.callContainer}>
             <Text key="call_text" style={styles.reservationText}>Réserver une table</Text>

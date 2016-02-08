@@ -32,7 +32,7 @@ local.properties
 #
 node_modules/
 npm-debug.log
-binding*
+*.config.js
 
 # MixPanel
 #

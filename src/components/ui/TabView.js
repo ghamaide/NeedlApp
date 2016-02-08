@@ -52,7 +52,7 @@ class TabView extends Component {
   };
 
   onMeChange = () => {
-    this.setState({showTabBar: MeStore.getState().showTabBar});
+    // this.setState({showTabBar: MeStore.getState().showTabBar});
   };
 
   componentDidMount() {
@@ -71,46 +71,10 @@ class TabView extends Component {
     this.refs.tabs.resetTo(this.props.tabs[index]);
 
     this.props.onTab(index);
-    // var selected = this.state.selected;
-    // var nav = this.refs.tabs.subnav[selected];
-    // this.setState({selected: index});
-
-    // this.refs.tabs.jumpTo(this.refs.tabs.state.routeStack[index]);
-    // this.props.onTab(index);
-
-    // var newNav = this.refs.tabs.subnav[index];
-    // if (newNav) {
-    //   newNav.parent._emitDidFocus(_.extend({fromTabs: true}, opts, newNav.parent.state.routeStack[newNav.parent.state.observedTopOfStack]));
-    // }
-
-    // TimerMixin.setTimeout(() => {
-    //   if (nav) {
-    //     nav.resetTo(this.props.tabs[selected].component.route());
-    //   }
-    // }, 100);
   };
 
   renderScene = (tab, navigator) => {
-    console.log('render scene');
-    console.log(tab.component);
     return React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps));
-
-    // return (
-    //   <Navigator
-    //     style={{backgroundColor: '#FFFFFF'}}
-    //     initialRoute={tab.component.route()}
-    //     ref="views"
-    //     renderScene={(route, nav) => {
-    //       return React.createElement(route.component, _.extend({navigator: nav}, route.passProps));
-    //     }}
-    //     configureScene={() => {
-    //       return {
-    //         ...Navigator.SceneConfigs.FadeAndroid,
-    //         defaultTransitionVelocity: 1000,
-    //         gestures: {}
-    //       };
-    //     }} />
-    // );
   };
 
   render() {

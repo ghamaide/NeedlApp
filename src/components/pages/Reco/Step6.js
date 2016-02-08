@@ -44,7 +44,7 @@ class RecoStep6 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View>
-        <NavigationBar title="Occasions" rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
+        <NavigationBar title="Mot de la fin" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
         <ScrollView style={styles.container} scrollEnabled={false}>
           <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
             <Text style={styles.subtitle}>(Optionnel)</Text>
@@ -101,8 +101,8 @@ var styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     height: 120,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#DDDDDD',
+    textAlignVertical: 'top',
     color: '#444444'
   },
   progressBar: {
