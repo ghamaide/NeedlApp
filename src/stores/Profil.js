@@ -38,9 +38,9 @@ export class ProfilStore extends CachedStore {
 
       handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
 
-// ================================================================================================
+      handleEditSuccess: MeActions.EDIT_SUCCESS
 
-      handleMeEditSuccess: MeActions.EDIT_SUCCESS,
+// ================================================================================================
 
     });
   }
@@ -55,9 +55,9 @@ export class ProfilStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleFetchProfilsFailed() {
+  handleFetchProfilsFailed(err) {
     this.status.loading = false;
-    this.status.error = data.err;
+    this.status.error = err;
   }
 
   handleFetchProfil(id) {
@@ -112,6 +112,16 @@ export class ProfilStore extends CachedStore {
     this.status.loading = false;
   }
 
+  handleRemoveRecoSuccess(data) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    var newProfil = this.profils[index];
+    _.remove(newProfil.recommendations, (restaurantID) => {
+     return restaurantID === data.oldRestaurant.id;
+    });
+    console.log(newProfil);
+    this.profils[index] = newProfil;
+  }
+
   static error() {
     return this.getState().status.error;
   }
@@ -124,22 +134,15 @@ export class ProfilStore extends CachedStore {
     return _.find(this.getState().profils, function(o) {return o.id === id;});
   }
 
-  handleRemoveRecoSuccess(data) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    var newProfil = this.profils[index];
-    _.remove(newProfil.recommendations, (restaurantID) => {
-     return restaurantID === data.oldRestaurant.id;
-    });
-    console.log(newProfil);
-    this.profils[index] = newProfil;
+  static getProfils() {
+    return this.getState().profils;
   }
+  
+  handleEditSuccess(data) {
+    var index = _.find(this.getState().profils, function(o) {return o.id === MeStore.getState().me.id;});
 
-  handleMeEditSuccess() {
-    this.waitFor(MeStore);
-    var me = MeStore.getState().me;
-
-    //clone
-    this.profils[me.id] = _.merge({}, this.profils[me.id], {name: me.name});
+    this.profils[index].name = data.name;
+    this.profils[index].email = data.email;
   }
 }
 

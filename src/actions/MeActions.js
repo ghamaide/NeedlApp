@@ -37,12 +37,6 @@ export class MeActions {
     return err;
   }
 
-  cleanEditError() {
-    return function (dispatch) {
-      dispatch()
-    }
-  }
-
   hasBeenUploadWelcomed() {
     return function (dispatch) {
       dispatch();

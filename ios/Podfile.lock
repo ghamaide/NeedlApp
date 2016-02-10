@@ -1,15 +1,15 @@
 PODS:
-  - Branch (0.11.14)
-  - Mixpanel (2.9.1):
-    - Mixpanel/Mixpanel (= 2.9.1)
-  - Mixpanel/Mixpanel (2.9.1)
+  - Branch (0.11.15)
+  - Mixpanel (2.9.3):
+    - Mixpanel/Mixpanel (= 2.9.3)
+  - Mixpanel/Mixpanel (2.9.3)
 
 DEPENDENCIES:
   - Branch
   - Mixpanel
 
 SPEC CHECKSUMS:
-  Branch: 8f76ea498816981768f318f74624250a41620f54
-  Mixpanel: 5ca24b2a05f4c77fe9bcfe7671d681d0f3f8d76f
+  Branch: fde6f089f0ae4fd4a9e507a189a535435535c993
+  Mixpanel: b9ff1c5d41fc07037d4b813bf2799c050ee3e49b
 
 COCOAPODS: 0.39.0

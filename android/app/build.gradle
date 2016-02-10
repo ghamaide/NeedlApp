@@ -106,8 +106,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled enableProguardInReleaseBuilds
+            minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -132,5 +133,6 @@ dependencies {
     compile project(':react-native-maps')
     compile project(':react-native-facebook-login')
     compile project(':react-native-icons')
+    compile project(':react-native-vector-icons')
     compile project(':react-native-contacts')
 }

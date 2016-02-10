@@ -28,18 +28,11 @@ class Page extends Component {
       return this.renderLoading();
     }
 
-    if (this.state.data) {
-      return this.renderPage();
-    }
-
     if (this.state.error) {
       return this.renderError();
     }
 
-    if (this.state.loading || this.state.globalLoading || !this.state.data) {
-      return this.renderLoading();
-    }
-
+    return this.renderPage();
   };
 }
 

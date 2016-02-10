@@ -16,6 +16,8 @@ import com.AirMaps.AirPackage;
 
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
+import com.oblador.vectoricons.VectorIconsPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -48,6 +50,7 @@ public class MainActivity extends ReactActivity {
             new ReactNativeIcons(Arrays.asList(
                 new IconFont("fontawesome", "FontAwesome.otf")
             )),
+            new VectorIconsPackage(),
             new ReactNativeContacts(),
             new FacebookLoginPackage()
         );

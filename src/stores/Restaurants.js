@@ -15,6 +15,9 @@ export class RestaurantsStore extends CachedStore {
   constructor() {
     super();
 
+    this.showPersonalContent = true;
+    this.restaurants = [];
+
     this.filters = {
       prices: [],
       types: [],
@@ -22,20 +25,13 @@ export class RestaurantsStore extends CachedStore {
       occasions: []
     };
 
+    this.currentRegion = {};
     this.region = {
       latitude: 48.8534100,
       longitude: 2.3378000,
       longitudeDelta: 0.12,
       latitudeDelta: 0.065
     };
-
-    this.currentRegion = {};
-
-    this.showPersonalContent = true;
-
-    this.restoID = 0;
-
-    this.restaurants = [];
 
     this.status.loading = false;
     this.status.error = {};
@@ -69,12 +65,11 @@ export class RestaurantsStore extends CachedStore {
       handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleSaveReco: RecoActions.SAVE_RECO,
 
-// ================================================================================================
-
       handleRemoveReco: RestaurantsActions.REMOVE_RECO,
       handleRemoveRecoFailed: RestaurantsActions.REMOVE_RECO_FAILED,
-      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
+      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS
 
+// ================================================================================================
 
     });
   }
@@ -108,9 +103,9 @@ export class RestaurantsStore extends CachedStore {
   handleRestaurantFetched(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
-      this.restaurants[index] = restaurant;
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
     } else {
-      this.restaurants.push(_.extend(restaurant, {ON_MAP: true}));
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
     }
     this.status.loading = false;
   }
@@ -173,9 +168,9 @@ export class RestaurantsStore extends CachedStore {
   handleAddWishSuccess(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
-      this.restaurants[index] = restaurant;
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
     } else {
-      this.restaurants.push(_.extend(restaurant, {ON_MAP: true}));
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
     }
     this.status.loading = false;
   }
@@ -191,7 +186,7 @@ export class RestaurantsStore extends CachedStore {
 
   handleRemoveWishSuccess(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
-    this.restaurants[index] = _.extend(restaurant, {ON_MAP: restaurant.reviews.length + restaurant.friends_wishing.length > 0});
+    this.restaurants[index] = _.extend(restaurant, {subways: this.parseSubways(restaurant.subways), ON_MAP: restaurant.reviews.length + restaurant.friends_wishing.length > 0});
     this.status.loading = false;
   }
 
@@ -199,9 +194,9 @@ export class RestaurantsStore extends CachedStore {
     var restaurant = reco.restaurant;
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
-      this.restaurants[index] = restaurant;
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
     } else {
-      this.restaurants.push(_.extend(restaurant, {ON_MAP: true}));
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
     }
     this.status.loading = false;
   }

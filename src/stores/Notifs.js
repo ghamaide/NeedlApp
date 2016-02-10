@@ -31,9 +31,10 @@ export class NotifsStore extends CachedStore {
       handleNotifsFetched: NotifsActions.NOTIFS_FETCHED,
       handleNotifsFetchFailed: NotifsActions.NOTIFS_FETCH_FAILED,
 
+      setNotifsAsSeen: NotifsActions.NOTIFS_SEEN
+
 // ================================================================================================
 
-      setNotifsAsSeen: NotifsActions.NOTIFS_SEEN
     });
   }
 

@@ -22,26 +22,18 @@ class EditMe extends Component {
   };
 
   getEditState() {
-    var err = MeStore.getState().status.editingError;
-
-    if (err && !_.contains(this.state.errors, err)) {
-      this.state.errors.push(err);
-    }
-
     return {
-      me: _.clone(MeStore.getState()),
-      nom: (this.state && this.state.nom) || MeStore.getState().me.name,
-      email: (this.state && this.state.email) || MeStore.getState().me.email,
-      errors: this.state.errors
+      me: MeStore.getMe(),
+      name: MeStore.getMe().name,
+      email: MeStore.getMe().email,
+      loading: MeStore.loading(),
+      error: MeStore.error()
     };
   };
 
   constructor() {
     super();
 
-    this.state = {
-      errors: []
-    };
     this.state = this.getEditState();
   };
 
@@ -51,7 +43,6 @@ class EditMe extends Component {
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-    MeActions.cleanEditError();
   };
 
   onMeChange = () => {
@@ -59,12 +50,12 @@ class EditMe extends Component {
   };
 
   onSubmit = () => {
-    if (this.state.me.status.editing) {
+    if (this.state.loading) {
       return;
     }
     // aie... mais j'arrive pas à utiliser componentDidUpdate
-    MeActions.edit(this.state.nom, this.state.email, () => {
-      this.props.navigator.resetTo(Profil.route());
+    MeActions.edit(this.state.me.name, this.state.email, () => {
+      this.props.navigator.pop();
     });
   };
 
@@ -78,18 +69,18 @@ class EditMe extends Component {
             style={styles.input}
             ref="nom"
             textAlign="center"
-            onChangeText={(nom) => this.setState({nom})}
-            value={this.state.nom} />
+            onChangeText={(name) => this.setState({name: name})}
+            value={this.state.name} />
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             ref="email"
             textAlign="center"
-            onChangeText={(email) => this.setState({email})}
+            onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
           <TouchableHighlight style={styles.submitWrapper} onPress={this.onSubmit}>
             <View style={styles.submit}>
-              <Text style={styles.submitText}>{this.state.me.status.editing ? 'Validation...' : 'Valider'}</Text>
+              <Text style={styles.submitText}>{this.state.loading ? 'Validation...' : 'Valider'}</Text>
             </View>
           </TouchableHighlight>
         </View>

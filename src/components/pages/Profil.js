@@ -45,7 +45,7 @@ class Profil extends Page {
 
   profilState() {
     return {
-      data: ProfilStore.getProfil(this.currentProfil()),
+      profile: ProfilStore.getProfil(40),
       loading: ProfilStore.loading(),
       error: ProfilStore.error(),
     };
@@ -104,7 +104,8 @@ class Profil extends Page {
   };
 
   renderPage() {
-    var profil = this.state.data;
+    var profil = this.state.profile;
+    console.log(profil);
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
@@ -121,13 +122,11 @@ class Profil extends Page {
           refreshControl={
             <RefreshControl
               refreshing={this.state.loading}
-              onRefresh={() => {
-                ProfilActions.fetchProfil(this.currentProfil());
-              }}
+              onRefresh={this.onRefresh}
               tintColor="#ff0000"
               title="Chargement..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#ffff00" />
+              colors={['#FFFFFF']}
+              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
 
           <View style={styles.infoContainer}>

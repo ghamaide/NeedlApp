@@ -52,6 +52,10 @@ export class FriendsStore extends CachedStore {
     this.status.error = err;
   }
 
+  static getFriends() {
+    return this.getState().friends;
+  }
+
   static error() {
     return this.getState().status.friendsLoadingError;
   }

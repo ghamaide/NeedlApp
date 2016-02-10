@@ -28,11 +28,15 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
+    this.state = this.appState();
+  };
+
+  appState() {
+    return {
       notifsPastille: NotifsStore.nbUnseenNotifs(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
-    };
+    }
   };
 
   onPastillesChange = () => {
@@ -43,7 +47,7 @@ class App extends Component {
 
   onMeChange = () => {
     this.setState({
-      sendingVersion: MeStore.sendingVersion(),
+      loading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
@@ -118,7 +122,7 @@ class App extends Component {
               pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
-              component: Profil,
+              component: Notifs,
               name: 'Profil',
               icon: require('../assets/img/tabs/icons/account.png')
             }

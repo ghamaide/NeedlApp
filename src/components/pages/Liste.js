@@ -154,11 +154,10 @@ var styles = StyleSheet.create({
 		backgroundColor: '#FFFFFF',
 	},
 	filterContainerWrapper: {
-		backgroundColor: '#FFFFFF',
 		borderColor: '#EF582D',
 		borderWidth: 1,
 		borderRadius: 1,
-		margin: 5,
+    margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 7

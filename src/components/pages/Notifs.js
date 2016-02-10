@@ -131,8 +131,8 @@ class Notifs extends Page {
               onRefresh={this.onRefresh}
               tintColor="#ff0000"
               title="Chargement..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#ffff00" />
+              colors={['#FFFFFF']}
+              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
           {this.state.data.length > 0 ? [
             <ListView
@@ -140,7 +140,7 @@ class Notifs extends Page {
               initialListSize={1}
               pageSize={5}
               style={styles.notifsList}
-              dataSource={ds.cloneWithRows(this.state.data.slice(0, 15))}
+              dataSource={ds.cloneWithRows(this.state.data)}
               renderHeaderWrapper={this.renderHeaderWrapper}
               renderRow={this.renderNotif}
               contentInset={{top: 0}}

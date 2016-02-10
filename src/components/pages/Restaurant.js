@@ -146,13 +146,11 @@ class Restaurant extends Page {
           refreshControl={
             <RefreshControl
               refreshing={this.state.loading}
-              onRefresh={() => {
-                this.componentDidUpdate();
-              }}
+              onRefresh={this.onRefresh}
               tintColor="#ff0000"
               title="Chargement..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#ffff00" />
+              colors={['#FFFFFF']}
+              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
 
           <View key="restaurant_image" style={styles.header}>

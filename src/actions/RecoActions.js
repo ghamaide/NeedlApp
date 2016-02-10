@@ -46,7 +46,7 @@ export class RecoActions {
     return (dispatch) => {
       dispatch(reco);
 
-      this.fetchRestaurantRequest = request('GET', '/api/recommendations')
+      request('GET', '/api/recommendations')
         .query(qs.stringify({
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
@@ -60,12 +60,21 @@ export class RecoActions {
         }, { arrayFormat: 'brackets' }))
         .end((err, restaurant) => {
           if (err) {
-            return this.saveRecoFailed(err, reco);
+            return this.saveRecoFailed(err);
           }
 
           this.saveRecoSuccess(reco, restaurant);
         });
     }
+  }
+
+  saveRecoSuccess(reco, restaurant) {
+    reco.restaurant = restaurant;
+    return reco;
+  }
+
+  saveRecoFailed(err) {
+    return err;
   }
 
   getReco(restaurantId, restaurantName) {
@@ -110,15 +119,6 @@ export class RecoActions {
 
   getRecoSuccess(reco) {
     return reco;
-  }
-
-  saveRecoSuccess(reco, restaurant) {
-    reco.restaurant = restaurant;
-    return reco;
-  }
-
-  saveRecoFailed(err, reco) {
-    return {err: err, reco: reco};
   }
 }
 

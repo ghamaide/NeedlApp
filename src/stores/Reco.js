@@ -23,10 +23,10 @@ export class RecoStore {
 
       handleSetReco: RecoActions.SET_RECO,
 
-// ================================================================================================
-
       handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleSaveRecoFailed: RecoActions.SAVE_RECO_FAILED,
+
+// ================================================================================================
 
       handleGetReco: RecoActions.GET_RECO,
       handleGetRecoFailed: RecoActions.GET_RECO_FAILED,
@@ -52,6 +52,15 @@ export class RecoStore {
 
   handleSetReco(reco) {
     this.reco = reco;
+  }
+
+  handleSaveRecoSuccess() {
+    delete this.error;
+    this.saved = true;
+  }
+
+  handleSaveRecoFailed(err) {
+    this.error = err;
   }
 
   static error() {
@@ -83,16 +92,6 @@ export class RecoStore {
   handleGetRecoSuccess(reco) {
     this.reco = reco;
     this.loading = false;
-  }
-
-  handleSaveRecoSuccess() {
-    this.waitFor(RestaurantsStore.dispatchToken);
-    delete this.errSave;
-    this.saved = true;
-  }
-
-  handleSaveRecoFailed(data) {
-    this.errSave = data.err;
   }
 }
 

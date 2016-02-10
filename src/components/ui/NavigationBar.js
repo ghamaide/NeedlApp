@@ -2,7 +2,7 @@
 
 import React, {PixelRatio, StatusBarIOS, View, Component, StyleSheet, TouchableHighlight, TouchableOpacity, Image, Platform} from 'react-native';
 
-import {Icon} from 'react-native-icons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Text from '../ui/Text';
 
@@ -10,12 +10,12 @@ class BackButton extends Component {
   render() {
     return (
       <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent'}, this.props.style]}>
-        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', marginTop: 8, padding: 5, marginLeft: 7}}>
+        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', marginTop: 3, padding: 5, marginLeft: 7}}>
           <Icon
-            name='fontawesome|angle-left'
-            size={25}
-            color='#000000'
-            style={[{width: 17, height: 17, marginRight: 5}, this.props.style]}/>
+            name='angle-left'
+            size={17}
+            color='#333333'
+            style={[{marginRight: 10}, this.props.style]}/>
           <Text style={{fontSize: 14, marginTop: 1}}>{this.props.title}</Text>
         </View>
       </TouchableOpacity>
@@ -27,7 +27,7 @@ class NavBarButton extends Component {
   render() {
     if (this.props.image) {
       return (
-        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: (Platform.OS === 'ios' ? 0 : 5)}, this.props.style]}>
+        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
           <View style={{alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
             <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#000000'}} />
             <Text style={{fontSize: 11}}>{this.props.title}</Text>
@@ -36,8 +36,8 @@ class NavBarButton extends Component {
       );
     } else {
       return (
-        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: (Platform.OS === 'ios' ? 0 : 5)}, this.props.style]}>
-          <View style={{marginTop: 5, padding: 5, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
+        <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
+          <View style={{marginTop: (Platform.OS === 'ios' ? 3 : 2), padding: 5, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
             <Text style={{fontSize: 14, color: '#EF582D', fontWeight: '500', marginTop: 1}}>{this.props.title}</Text>
           </View>
         </TouchableOpacity>
@@ -67,7 +67,7 @@ class NavigationBar extends Component {
 
     return (
       <NavBar
-        style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 40, margin: 0}, this.props.style]}
+        style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
         title={titleConfig}
         rightButton={rightButtonConfig.title ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : []}
         leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
@@ -130,7 +130,7 @@ var styles = StyleSheet.create({
     height: (Platform.OS === 'ios' ? 20 : 0),
   },
   navBar: {
-    height: (Platform.OS === 'ios' ? 40 : 50),
+    height: (Platform.OS === 'ios' ? 40 : 40),
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -157,7 +157,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: (Platform.OS === 'ios' ? 9 : 15),
+    bottom: (Platform.OS === 'ios' ? 12 : 10),
     textAlign: 'center',
   }
 });

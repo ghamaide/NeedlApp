@@ -78,6 +78,7 @@
 	<string>Used to show where the user is located at on the main map</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>FontAwesome.ttf</string>
 		<string>Quicksand-Bold.otf</string>
 		<string>Quicksand-BoldItalic.otf</string>
 		<string>Quicksand-Italic.otf</string>
