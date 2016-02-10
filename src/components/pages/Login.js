@@ -10,26 +10,17 @@ import LoginActions from '../../actions/LoginActions';
 import MeStore from '../../stores/Me';
 
 class Login extends Component {
+  
   getLoginState() {
-    var err = MeStore.getState().status.loginFailedError;
-
-    if (err && !_.contains(this.state.errors, err) && err !== 'cancelled') {
-      this.state.errors.push(err);
-    }
-
     return {
       status: MeStore.getState().status,
       me: MeStore.getState().me,
-      errors: this.state.errors
     };
   };
 
   constructor() {
     super();
 
-    this.state = {
-      errors: []
-    };
     this.state = this.getLoginState();
   };
 

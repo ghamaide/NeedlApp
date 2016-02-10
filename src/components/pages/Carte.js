@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
@@ -38,12 +38,9 @@ class Carte extends Page {
   restaurantsState() {
     return {
       // we want the map even if it is still loading
-      data: RestaurantsStore.filteredRestaurants(),
+      data: RestaurantsStore.filteredRestaurants().slice(0, 15),
       loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),
-      isChanging: false,
-      showedCurrentPosition: MeStore.getState().showedCurrentPosition,
-      region: RestaurantsStore.getState().region
+      error: RestaurantsStore.error(),      
     };
   };
 
@@ -51,6 +48,8 @@ class Carte extends Page {
     super(props);
 
     this.state = this.restaurantsState();
+    this.state.region = RestaurantsStore.getState().region;
+    this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition,
     this.state.showsUserLocation = false;
     this.state.defaultLatitudeDelta = 10 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
@@ -60,11 +59,10 @@ class Carte extends Page {
       westLongitude: 2.25,
       eastLongitude: 2.42
     };
-    this.state.radius = 4000;
+    this.state.showChangeRegion = false;
   };
 
   startActions() {
-    RestaurantsActions.fetchRestaurants();
     this.setState({showsUserLocation: true});
 
     navigator.geolocation.getCurrentPosition(
@@ -87,20 +85,31 @@ class Carte extends Page {
 
   componentWillMount() {
     this.startActions();
+    RestaurantsStore.listen(this.onRestaurantsChange);
+  };
+
+  componentWillUnount() {
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
+  };
+
+  onRestaurantsChange = () => {
+    this.setState(this.restaurantsState());
+  };
+
+  onSubmitChangeRegion = () => {
+    var currentRegion = {
+      east: this.state.region.longitude + this.state.region.longitudeDelta / 2,
+      west:this.state.region.longitude - this.state.region.longitudeDelta / 2,
+      south:this.state.region.latitude - this.state.region.latitudeDelta / 2,
+      north:this.state.region.latitude + this.state.region.latitudeDelta / 2
+    };
+
+    RestaurantsActions.setRegion(currentRegion, this.state.region, () => {this.setState({showChangeRegion: false})});
   };
 
   onRegionChangeComplete = (region) => {
     this.setState({region: region, displayRestaurant: false});
-
-    var currentRegion = {
-      east: region.longitude + region.longitudeDelta / 2,
-      west:region.longitude - region.longitudeDelta / 2,
-      south:region.latitude - region.latitudeDelta / 2,
-      north:region.latitude + region.latitudeDelta / 2
-    };
-
-    RestaurantsActions.setRegion(currentRegion, region);
-    this.setState({data: RestaurantsStore.filteredRestaurants()});
+    this.setState({showChangeRegion: true});    
   };
 
   onMapPress = (zone) => {
@@ -175,45 +184,23 @@ class Carte extends Page {
             ] : []
           }
 
-            
-          {this.state.data.length && false ? [
-            <Carousel
-              key="carousel"
-              style={styles.carousel}
-              ref="carousel"
-              onPageChange={this.carouselOnPageChange}>
-              {_.map(this.state.data, (restaurant) => {
-                return (
-                  <RestaurantElement
-                    rank={_.findIndex(this.state.data, restaurant) + 1}
-                    isNeedl={restaurant.score <= 5}
-                    key={"restaurant_" + restaurant.id}
-                    name={restaurant.name}
-                    picture={restaurant.pictures[0]}
-                    type={restaurant.food[1]}
-                    budget={restaurant.price_range}
-                    height={120}
-                    onPress={() => {
-                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                    }}/>
-                );
-              })}
-            </Carousel>
-          ] : []}
+          {this.state.showChangeRegion ? [
+            <View key="change_region_button" style={styles.changeRegionButtonContainer}>
+              {this.state.loading ? [
+                Platform.OS === 'ios' ? <ActivityIndicatorIOS key="loading" animating={true} style={[{height: 40}]} size="small" /> : <ProgressBarAndroid key="loading" indeterminate /> 
+               ] : [
+                <TouchableHighlight key="button" onPress={this.onSubmitChangeRegion} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={{fontSize: 12, color: '#333333'}}>Rechercher dans cette zone</Text>
+                </TouchableHighlight>
+              ]}
+            </View>
+            ] : null}
 
-          {!this.state.data.length && !this.state.isChanging ? [        
+          {!this.state.data.length ? [        
             <View key="no_restaurants" style={styles.emptyTextContainer}>
               <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
             </View>
           ] : []}
-
-          <TouchableHighlight key="filter_button" style={styles.filterMessage} underlayColor="#FFFFFF" onPress={() => {
-          this.props.navigator.push(Filtre.route());
-        }}>
-            <Text style={styles.filterMessageText}>
-              {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
-            </Text>
-          </TouchableHighlight>
         </View>
 			</View>
 		);
@@ -225,28 +212,18 @@ var styles = StyleSheet.create({
     flex: 1,
     position: 'relative'
   },
-  filterMessage: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    padding: 12,
+  changeRegionButtonContainer: {
     position: 'absolute',
     top: 5,
     left: 5,
     right: 5,
-    height: 45,
+    height: 40,
+    width: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderColor: '#EF582D',
-    borderWidth: 1,
-    borderRadius: 1
-  },
-  filterMessageText: {
-    color: '#EF582D',
-    fontSize: 15,
-    fontWeight: '700',
-    textAlign: 'center'
-  },
-  imageRestaurant: {
-    flex: 1,
-    position: 'relative',
-    height: 120,
+    borderWidth: 1
   },
   restaurantContainer: {
     height: 120,
@@ -267,29 +244,6 @@ var styles = StyleSheet.create({
   emptyText: {
     padding: 10,
     color: '#FFFFFF'
-  },
-  imageRestaurantInfos: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)'    
-  },
-  imageRestaurantName: {
-    fontWeight: '900',
-    fontSize: 11,
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
-    color: 'white',
-    marginTop: 2,
-    position: 'absolute',
-    bottom: 30,
-    left: 5
-  },
-  targetContainer: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'transparent'
   }
 });
 

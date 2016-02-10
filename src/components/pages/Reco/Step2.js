@@ -39,7 +39,7 @@ class RecoStep2 extends Component {
             maxSelection={1}
             fifo={true}
             onSelect={(value) => {
-              reco.approved = value === 'approved';
+              reco.approved = (value === 'approved');
               reco.step2 = true;
   						
   						if (reco.approved) {

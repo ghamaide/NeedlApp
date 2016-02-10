@@ -10,13 +10,13 @@ import Text from './ui/Text';
 
 import Button from './elements/Button';
 
-import FriendsActions from '../actions/FriendsActions';
+import ProfilActions from '../actions/ProfilActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 import NotifsActions from '../actions/NotifsActions';
 import MeActions from '../actions/MeActions';
 
 import MeStore from '../stores/Me';
-import FriendsStore from '../stores/Friends';
+import ProfilStore from '../stores/Profil';
 import NotifsStore from '../stores/Notifs';
 import RestaurantsStore from '../stores/Restaurants';
 
@@ -31,9 +31,7 @@ class App extends Component {
     super(props);
 
     this.state = {
-      friendsPastille: FriendsStore.nbUnseenRequests(),
       notifsPastille: NotifsStore.nbUnseenNotifs(),
-      errors: [],
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
     };
@@ -41,22 +39,13 @@ class App extends Component {
 
   onPastillesChange = () => {
     this.setState({
-      friendsPastille: FriendsStore.nbUnseenRequests(),
       notifsPastille: NotifsStore.nbUnseenNotifs()
     });
   };
 
   onMeChange = () => {
-    var errors = this.state.errors;
-
-    var sendVersionError = MeStore.sendingVersionError();
-    if (sendVersionError && !_.contains(errors, sendVersionError)) {
-      errors.push(sendVersionError);
-    }
-
     this.setState({
       sendingVersion: MeStore.sendingVersion(),
-      errors: errors,
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
@@ -98,13 +87,13 @@ class App extends Component {
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
     MeActions.startActions.defer(this.props.version);
-    FriendsActions.fetchFriends.defer();
+    RestaurantsActions.fetchRestaurants.defer();
+    ProfilActions.fetchProfils.defer();
     NotifsActions.fetchNotifs.defer();
   };
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
-    FriendsStore.listen(this.onPastillesChange);
     NotifsStore.listen(this.onPastillesChange);
 
     PushNotificationIOS.requestPermissions();
@@ -121,7 +110,6 @@ class App extends Component {
   };
 
   componentWillUnmount() {
-    FriendsStore.unlisten(this.onPastillesChange);
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
   };
@@ -194,7 +182,6 @@ class App extends Component {
               component: Friends,
               name: 'Amis',
               icon: require('../assets/img/tabs/icons/friend.png'),
-              pastille: this.state.friendsPastille < 10 ? this.state.friendsPastille : '9+'
             },
             {
               component: RecoStep1,
@@ -225,11 +212,6 @@ var styles = StyleSheet.create({
   container: {
     padding: 20,
     alignItems: 'center'
-  },
-  loadingWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
   },
   title: {
     textAlign: 'center',

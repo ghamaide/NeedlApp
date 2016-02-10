@@ -19,7 +19,7 @@ import Restaurant from './Restaurant';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
 
-let notifsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
+let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class Notifs extends Page {
   static route() {
@@ -31,7 +31,7 @@ class Notifs extends Page {
 
   notifsState() {
     return {
-      data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs.slice(0, 3)),
+      data: NotifsStore.getState().notifs,
       loading: NotifsStore.loading(),
       error: NotifsStore.error()
     };
@@ -41,41 +41,19 @@ class Notifs extends Page {
     super(props);
     
     this.state = this.notifsState();
-    this.state.renderPlaceholderOnly = true;
   }
-
-  onFocus = (event) => {
-    if (event.data.route.component === Notifs) {
-      NotifsActions.fetchNotifs();
-      if (event.data.route.skipCache) {
-        this.setState({data: null});
-      }
-      this.IS_FOCUS = true;
-      return;
-    }
-
-    if (this.IS_FOCUS) {
-      this.IS_FOCUS = false;
-      NotifsActions.notifsSeen();
-    }
-  };
 
   componentWillMount() {
     NotifsStore.listen(this.onNotifsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  };
+  }
 
   componentWillUnmount() {
     NotifsStore.unlisten(this.onNotifsChange);
-    if (!!MeStore.getState().me.id) {
-      NotifsActions.notifsSeen();
-    }
+    NotifsActions.notifsSeen();
   };
 
   componentDidMount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({renderPlaceholderOnly: false});
-    });
+    NotifsActions.notifsSeen();
   }
 
   onNotifsChange = () => {
@@ -142,21 +120,6 @@ class Notifs extends Page {
     );
   };
 
-  _renderPlaceholderView() {
-    var content;
-
-    if (Platform.OS === 'ios') {
-      content = <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />;
-    } else {
-      content = <ProgressBarAndroid indeterminate />;
-    }
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        {content}
-      </View>
-    );
-  };
-
   renderPage() {
     return (
       <View style={{flex: 1}}>
@@ -171,17 +134,35 @@ class Notifs extends Page {
               colors={['#ff0000', '#00ff00', '#0000ff']}
               progressBackgroundColor="#ffff00" />
           }>
-          <ListView
-            initialListSize={1}
-            pageSize={5}
-            style={styles.notifsList}
-            dataSource={this.state.data}
-            renderHeaderWrapper={this.renderHeaderWrapper}
-            renderRow={this.renderNotif}
-            contentInset={{top: 0}}
-            scrollRenderAheadDistance={150}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false} />
+          {this.state.data.length > 0 ? [
+            <ListView
+              key='notifs'
+              initialListSize={1}
+              pageSize={5}
+              style={styles.notifsList}
+              dataSource={ds.cloneWithRows(this.state.data.slice(0, 15))}
+              renderHeaderWrapper={this.renderHeaderWrapper}
+              renderRow={this.renderNotif}
+              contentInset={{top: 0}}
+              scrollRenderAheadDistance={150}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false} />
+          ] : null}
+
+          {this.state.loading ? [
+            <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
+              {Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS
+                  key='loading_ios'
+                  color='#333333'
+                  animating={true}
+                  style={[{height: 80}]}
+                  size='large' />
+              ] : [
+                <ProgressBarAndroid key='loading_android' indeterminate />
+              ]}
+            </View>
+          ] : null}
         </ScrollView>
       </View>
     );

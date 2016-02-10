@@ -70,6 +70,9 @@ export class MeStore extends CachedStore {
     this.status.sendingVersionError = null;
 
     this.bindListeners({
+
+// ================================================================================================
+
       handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
 
       handleStartActions: MeActions.START_ACTIONS,

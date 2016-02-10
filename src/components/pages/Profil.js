@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Dimensions, ScrollView, View, Image, NativeModules, RefreshControl} from 'react-native';
+import React, {StyleSheet, Dimensions, ScrollView, View, Image, NativeModules, RefreshControl, Platform, ProgressBarAndroid, ActivityIndicatorIOS} from 'react-native';
 
 import _ from 'lodash';
 
@@ -43,56 +43,30 @@ class Profil extends Page {
     return this.props.id || MeStore.getState().me.id;
   };
 
-  getProfilState() {
-    var errors = this.state.errors;
-
-    var maskErr = ProfilStore.maskProfilError(this.currentProfil());
-    if (maskErr && !_.contains(errors, maskErr)) {
-      errors.push(maskErr);
-    }
-
-    var displayErr = ProfilStore.displayProfilError(this.currentProfil());
-    if (displayErr && !_.contains(errors, displayErr)) {
-      errors.push(displayErr);
-    }
-
-    var removeErr = FriendsStore.removeFriendshipError(this.currentProfil());
-    if (removeErr && !_.contains(errors, removeErr)) {
-      errors.push(removeErr);
-    }
-
+  profilState() {
     return {
-      data: ProfilStore.getState().profils[this.currentProfil()],
-      nbProfilMasking: ProfilStore.getState().status.profilMasking.length,
-      nbProfilDisplaying: ProfilStore.getState().status.profilDisplaying.length,
-      loading: ProfilStore.loading(this.currentProfil()),
-      error: ProfilStore.error(this.currentProfil()),
-      errors: errors
+      data: ProfilStore.getProfil(this.currentProfil()),
+      loading: ProfilStore.loading(),
+      error: ProfilStore.error(),
     };
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      errors: [],
-    };
-    this.state = this.getProfilState();
+    this.state = this.profilState();
   };
 
   componentWillMount() {
     ProfilStore.listen(this.onProfilsChange);
-    FriendsStore.listen(this.onProfilsChange);
-    ProfilActions.fetchProfil.defer(this.currentProfil());
   };
 
   componentWillUnmount() {
-    FriendsStore.unlisten(this.onProfilsChange);
     ProfilStore.unlisten(this.onProfilsChange);
   };
 
   onProfilsChange = () => {
-    this.setState(this.getProfilState());
+    this.setState(this.profilState());
   };
 
   renderRestaurants(title, restaurants, backgroundColor) {
@@ -192,31 +166,31 @@ class Profil extends Page {
               [
                 !profil.invisible ?
                   <Option
-  									key={profil.id}
-                    label={ProfilStore.maskProfilLoading(profil.id) ? 'Masque...' : 'Masquer ses recos'}
+                    key={'hide_reco_' + profil.id}
+                    label={ProfilStore.loading() ? 'Masque...' : 'Masquer ses recos'}
                     icon={require('../../assets/img/actions/icons/masquer.png')}
                     onPress={() => {
-                      if (ProfilStore.maskProfilLoading(profil.id)) {
+                      if (ProfilStore.loading()) {
                         return;
                       }
                       ProfilActions.maskProfil(profil.id);
                     }} /> :
                   <Option
-  									key={'showReco' + profil.id}
-                    label={ProfilStore.displayProfilLoading(profil.id) ? 'Affichage...' : 'Afficher ses recos'}
+                    key={'show_reco_' + profil.id}
+                    label={ProfilStore.loading() ? 'Affichage...' : 'Afficher ses recos'}
                     icon={require('../../assets/img/actions/icons/afficher.png')}
                     onPress={() => {
-                      if (ProfilStore.displayProfilLoading(profil.id)) {
+                      if (ProfilStore.loading()) {
                         return;
                       }
                       ProfilActions.displayProfil(profil.id);
                     }} />,
                 <Option
-  								key={'deleteFriend' + profil.id}
-                  label={FriendsStore.removeFriendshipLoading(profil.id) ? 'Suppression...' : 'Retirer de mes amis'}
+                  key={'delete_friend_' + profil.id}
+                  label={FriendsStore.loading() ? 'Suppression...' : 'Retirer de mes amis'}
                   icon={require('../../assets/img/actions/icons/retirer.png')}
                   onPress={() => {
-                    if (FriendsStore.removeFriendshipLoading(profil.id)) {
+                    if (FriendsStore.loading()) {
                       return;
                     }
                     FriendsActions.removeFriendship(profil.id, () => {
@@ -234,9 +208,6 @@ class Profil extends Page {
 }
 
 var styles = StyleSheet.create({
-  imageWrapper: {
-    flexDirection: 'row'
-  },
   infoContainer: {
     flex: 1,
     padding: 10,
@@ -282,16 +253,6 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     width: windowWidth - 30,
     margin: 5
-  },
-  uploadConfirmationContainer: {
-    backgroundColor: '#38E1B2',
-    padding: 12,
-    marginTop: 60
-  },
-  uploadConfirmationText: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-    textAlign: 'center'
   }
 });
 

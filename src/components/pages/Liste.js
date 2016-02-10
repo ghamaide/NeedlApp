@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl, InteractionManager, ActivityIndicatorIOS, ProgressBarAndroid, Platform} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl, ActivityIndicatorIOS, ProgressBarAndroid, Platform} from 'react-native';
 
 import _ from 'lodash';
 
@@ -33,7 +33,6 @@ class Liste extends Page {
 
   restaurantsState() {
     return {
-      // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
       errors: RestaurantsStore.error(),
@@ -51,18 +50,11 @@ class Liste extends Page {
   	if (!MeStore.getState().showTabBar) {
   		MeActions.displayTabBar(true);
   	}
-    RestaurantsActions.fetchRestaurants.defer();
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
-  };
-
-  componentDidMount() {
-    InteractionManager.runAfterInteractions(() => {
-      this.setState({renderPlaceholderOnly: false});
-    });
   }
 
   onRestaurantsChange = () => {
@@ -80,7 +72,6 @@ class Liste extends Page {
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
-        style={{overflow: 'hidden'}}
       	rank={_.findIndex(this.state.data, restaurant) + 1}
       	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
@@ -119,26 +110,7 @@ class Liste extends Page {
   	}
   };
 
-  _renderPlaceholderView() {
-    var content;
-
-    if (Platform.OS === 'ios') {
-      content = <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />;
-    } else {
-      content = <ProgressBarAndroid indeterminate />;
-    }
-    return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        {content}
-      </View>
-    );
-  };
-
   renderPage() {
-    if (this.state.renderPlaceholderOnly) {
-      return this._renderPlaceholderView();
-    }
-
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
@@ -159,9 +131,14 @@ class Liste extends Page {
     							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
     						</Text>
     				</TouchableHighlight>
-    				{_.map(this.state.data.slice(0, 15), (restaurant) => {
-              return this.renderRestaurant(restaurant);
-            })}
+    				<ListView
+              key="list_restaurants"
+              dataSource={ds.cloneWithRows(this.state.data.slice(0, 15))}
+              renderRow={this.renderRestaurant}
+              renderHeaderWrapper={this.renderHeaderWrapper}
+              contentInset={{top: 0}}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false} />
         </ScrollView>
 			</View>
 		);
@@ -169,77 +146,6 @@ class Liste extends Page {
 }
 
 var styles = StyleSheet.create({
-  restaurantRowWrapper: {
-		marginTop: 5,
-		marginBottom: 5,
-		backgroundColor: '#555555'
-	},
-	restaurantRow: {
-		flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-		height: 200,
-  },
-	restaurantImage: {
-		flex: 1,
-	},
-	restaurantInfos: {
-		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0)'		
-	},
-	restaurantName: {
-		fontWeight: '900',
-		fontSize: 15,
-		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 30,
-		left: 5
-	},
-	restaurantSubway: {
-		flex: 1,
-		flexDirection: 'row',
-		backgroundColor: 'rgba(0,0,0,0)',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		right: 5
-	},
-	restaurantSubwayImage: {
-		width: 15,
-		height: 15,
-		marginRight: 5
-	},
-	restaurantSubwayText: {
-		fontWeight: '900',
-		fontSize: 15,
-		color: 'white',
-		backgroundColor: 'rgba(0,0,0,0)',
-	},
-	restaurantBudget: {
-		flex: 1,
-		fontWeight: '900',
-		fontSize: 15,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		left: 45
-	},
-	restaurantType: {
-		flex: 1,
-		fontWeight: '900',
-		fontSize: 15,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		left: 5
-	},
 	filterMessageText: {
 		color: '#EF582D',
     fontSize: 15,
@@ -257,12 +163,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 7
 	},
-	filterContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center'
-  },
   emptyTextContainer: {
   	flex: 1,
   	marginTop: 40,

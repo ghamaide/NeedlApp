@@ -13,21 +13,20 @@ export class ProfilStore extends CachedStore {
   constructor() {
     super();
 
-    this.profils = {};
-    this.status.profilsLoading = [];
-    this.status.profilsLoadingError = {};
+    this.profil = {};
+    this.profils = [];
 
-    this.status.profilMasking = [];
-    this.status.profilMaskingError = {};
-    this.status.profilDisplaying = [];
-    this.status.profilDisplayingError = {};
-
+    this.status.loading = false;
+    this.status.error = {}
+  
     this.bindListeners({
+      handleFetchProfils: ProfilActions.fetchProfils,
+      handleFetchProfilsSuccess: ProfilActions.fetchProfilsSuccess,
+      handleFetchProfilsFailed: ProfilActions.fetchProfilsFailed,
+
       handleFetchProfil: ProfilActions.FETCH_PROFIL,
       handleProfilFetched: ProfilActions.PROFIL_FETCHED,
       handleProfilFetchFailed: ProfilActions.PROFIL_FETCH_FAILED,
-      handleMeEditSuccess: MeActions.EDIT_SUCCESS,
-      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
 
       handleMaskProfil: ProfilActions.MASK_PROFIL,
       handleMaskProfilFailed: ProfilActions.MASK_PROFIL_FAILED,
@@ -35,63 +34,104 @@ export class ProfilStore extends CachedStore {
 
       handleDisplayProfil: ProfilActions.DISPLAY_PROFIL,
       handleDisplayProfilFailed: ProfilActions.DISPLAY_PROFIL_FAILED,
-      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS
+      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+
+      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
+
+// ================================================================================================
+
+      handleMeEditSuccess: MeActions.EDIT_SUCCESS,
+
     });
   }
 
-  handleMaskProfil(id) {
-    this.status.profilMasking.push(id);
-    delete this.status.profilMaskingError[id];
+  handleFetchProfils() {
+    this.status.loading = true;
+    delete this.status.error;
   }
-  handleMaskProfilFailed(data) {
-    _.remove(this.status.profilMasking, function(id) {
-      return id === data.id;
-    });
-    this.status.profilMaskingError[data.id] = data.err;
+
+  handleFetchProfilsSuccess(profils) {
+    this.profils = profils.friends;
+    this.status.loading = false;
   }
+
+  handleFetchProfilsFailed() {
+    this.status.loading = false;
+    this.status.error = data.err;
+  }
+
+  handleFetchProfil(id) {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleProfilFetched(profil) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === profil.id;});
+    if (index > -1) {
+      this.profils[index] = profil;
+    } else {
+      this.profils.push(profil);
+    }
+    this.status.loading = false;
+  }
+
+  handleProfilFetchFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleMaskProfil() {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleMaskProfilFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
   handleMaskProfilSuccess(idProfil) {
-    _.remove(this.status.profilMasking, function(id) {
-      return id === idProfil;
-    });
-    this.profils[idProfil] = _.extend({}, this.profils[idProfil], {invisible: true});
-  }
-  static maskProfilError(id) {
-    return this.getState().status.profilMaskingError[id];
-  }
-  static maskProfilLoading(id) {
-    return _.contains(this.getState().status.profilMasking, id);
+    var index = _.findIndex(this.profils, function(o) {return o.id === idProfil;});
+    this.profils[index].invisible = true;
+    this.status.loading = false;
   }
 
-  handleDisplayProfil(id) {
-    this.status.profilDisplaying.push(id);
-    delete this.status.profilDisplayingError[id];
+  handleDisplayProfil() {
+    this.status.loading = true;
+    delete this.status.error;
   }
-  handleDisplayProfilFailed(data) {
-    _.remove(this.status.profilDisplaying, function(id) {
-      return id === data.id;
-    });
-    this.status.profilDisplayingError[data.id] = data.err;
+
+  handleDisplayProfilFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
   }
+
   handleDisplayProfilSuccess(idProfil) {
-    _.remove(this.status.profilDisplaying, function(id) {
-      return id === idProfil;
-    });
-    this.profils[idProfil] = _.extend({}, this.profils[idProfil], {invisible: false});
+    var index = _.findIndex(this.profils, function(o) {return o.id === idProfil;});
+    this.profils[index].invisible = false;
+    this.status.loading = false;
   }
-  static displayProfilError(id) {
-    return this.getState().status.profilDisplayingError[id];
+
+  static error() {
+    return this.getState().status.error;
   }
-  static displayProfilLoading(id) {
-    return _.contains(this.getState().status.profilDisplaying, id);
+
+  static loading() {
+    return this.getState().status.loading;
+  }
+
+  static getProfil(id) {
+    return _.find(this.getState().profils, function(o) {return o.id === id;});
   }
 
   handleRemoveRecoSuccess(data) {
-    var restaurant = data.oldRestaurant;
-    var newProfil = _.clone(this.profils[MeStore.getState().me.id]);
-    _.remove(newProfil.recommendations, (restau) => {
-     return restau.id === restaurant.id;
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    var newProfil = this.profils[index];
+    _.remove(newProfil.recommendations, (restaurantID) => {
+     return restaurantID === data.oldRestaurant.id;
     });
-    this.profils[MeStore.getState().me.id] = newProfil;
+    console.log(newProfil);
+    this.profils[index] = newProfil;
   }
 
   handleMeEditSuccess() {
@@ -100,37 +140,6 @@ export class ProfilStore extends CachedStore {
 
     //clone
     this.profils[me.id] = _.merge({}, this.profils[me.id], {name: me.name});
-  }
-
-  handleFetchProfil(id) {
-    this.status.profilsLoading.push(id);
-    delete this.status.profilsLoadingError[id];
-  }
-
-  handleProfilFetched(profil) {
-    this.profils[profil.id] = profil;
-    _.remove(this.status.profilsLoading, function(id) {
-      return id === profil.id;
-    });
-  }
-
-  handleProfilFetchFailed(data) {
-    _.remove(this.status.profilsLoading, function(id) {
-      return id === data.id;
-    });
-    this.status.profilsLoadingError[data.id] = data.err;
-  }
-
-  static error(id) {
-    return this.getState().status.profilsLoadingError[id];
-  }
-
-  static loading(id) {
-    return _.includes(this.getState().status.profilsLoading, id);
-  }
-
-  static profil(id) {
-    return this.getState().profils[id];
   }
 }
 

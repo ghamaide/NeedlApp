@@ -23,21 +23,23 @@ export class NotifsStore extends CachedStore {
     });
 
     this.notifs = [];
-    this.status.notifsLoading = false;
-    this.status.notifsLoadingError = {};
+    this.status.loading = false;
+    this.status.error = {};
 
     this.bindListeners({
       handleFetchNotifs: NotifsActions.FETCH_NOTIFS,
       handleNotifsFetched: NotifsActions.NOTIFS_FETCHED,
       handleNotifsFetchFailed: NotifsActions.NOTIFS_FETCH_FAILED,
 
+// ================================================================================================
+
       setNotifsAsSeen: NotifsActions.NOTIFS_SEEN
     });
   }
 
   handleFetchNotifs() {
-    this.status.notifsLoading = true;
-    delete this.status.notifsLoadingError;
+    this.status.loading = true;
+    delete this.status.error;
   }
 
   handleNotifsFetched(notifs) {
@@ -74,29 +76,12 @@ export class NotifsStore extends CachedStore {
     });
     // on est à jour
     this.status.notifsPush = 0;
-    this.status.notifsLoading = false;
+    this.status.loading = false;
   }
 
   handleNotifsFetchFailed(err) {
-    this.status.notifsLoading = false;
-    this.status.notifsLoadingError = err;
-  }
-
-  static error() {
-    return this.getState().status.notifsLoadingError;
-  }
-
-  static loading() {
-    return this.getState().status.notifsLoading;
-  }
-
-  static nbUnseenNotifs() {
-    return _.reduce(this.getState().notifs, function(unseen, notif) {
-      if (!notif.seen) {
-        return unseen + 1;
-      }
-      return unseen;
-    }, 0) + this.getState().status.notifsPush;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   setNotifsAsSeen() {
@@ -109,6 +94,23 @@ export class NotifsStore extends CachedStore {
   static isSeen(restaurantId, userId) {
     var notif = _.findWhere(this.getState().notifs, {'restaurant_id': restaurantId, 'user_id': userId});
     return notif && notif.seen;
+  }
+
+  static error() {
+    return this.getState().status.error;
+  }
+
+  static loading() {
+    return this.getState().status.loading;
+  }
+
+  static nbUnseenNotifs() {
+    return _.reduce(this.getState().notifs, function(unseen, notif) {
+      if (!notif.seen) {
+        return unseen + 1;
+      }
+      return unseen;
+    }, 0) + this.getState().status.notifsPush;
   }
 }
 

@@ -42,6 +42,7 @@ class RecoStep6 extends Component {
 
   render() {
     var reco = RecoStore.getReco();
+    console.log(reco);
     return (
       <View>
         <NavigationBar title="Mot de la fin" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
@@ -103,7 +104,7 @@ var styles = StyleSheet.create({
     height: 120,
     backgroundColor: '#DDDDDD',
     textAlignVertical: 'top',
-    color: '#444444'
+    color: '#000000'
   },
   progressBar: {
     top: -30,

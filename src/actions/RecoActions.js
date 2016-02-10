@@ -10,7 +10,7 @@ export class RecoActions {
 
   fetchRestaurants(query) {
     return (dispatch) => {
-      dispatch(query);
+      dispatch();
 
       if (this.fetchRestaurantRequest) {
         this.fetchRestaurantRequest.abort();
@@ -22,12 +22,24 @@ export class RecoActions {
           delete this.fetchRestaurantRequest;
 
           if (err) {
-            return this.restaurantsFetchFailed(err, query);
+            return this.restaurantsFetchFailed(err);
           }
 
-          this.restaurantsFetched(query, result);
+          this.restaurantsFetched(result);
         });
     }
+  }
+
+  restaurantsFetched(restaurants) {
+    return restaurants;
+  }
+
+  restaurantsFetchFailed(err) {
+    return err;
+  }
+
+  setReco(reco) {
+    return reco;
   }
 
   saveReco(reco) {
@@ -107,18 +119,6 @@ export class RecoActions {
 
   saveRecoFailed(err, reco) {
     return {err: err, reco: reco};
-  }
-
-  restaurantsFetched(query, restaurants) {
-    return {query: query, restaurants: restaurants};
-  }
-
-  restaurantsFetchFailed(err, query) {
-    return {err: err, query: query};
-  }
-
-  setReco(reco) {
-    return reco;
   }
 }
 
