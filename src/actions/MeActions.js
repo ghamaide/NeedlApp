@@ -1,6 +1,6 @@
 'use strict';
 
-import {Platform} from 'react-native';
+import {Platform, NetInfo} from 'react-native';
 
 import alt from '../alt';
 import request from '../utils/api';
@@ -168,6 +168,20 @@ export class MeActions {
     return function (dispatch) {
       dispatch();
     }
+  }
+
+  checkConnectivity() {
+    return (dispatch) => {
+      dispatch();
+
+      NetInfo.isConnected.fetch().done((isConnected) => {
+        return this.checkConnectivitySuccess(isConnected);
+      });
+    }
+  }
+
+  checkConnectivitySuccess(isConnected) {
+    return isConnected;
   }
 }
 

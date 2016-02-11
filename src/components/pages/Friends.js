@@ -58,7 +58,7 @@ class Friends extends Page {
 
   searchFriends = (searchedText) => {
     var newFilteredFriends = _.filter(this.state.friends, function(friend) {
-      return friend.name.indexOf(searchedText) > -1;
+      return friend.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
     });
 
     this.setState({filteredFriends: newFilteredFriends});

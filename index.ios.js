@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {AppRegistry, Component} from 'react-native';
+import React, {AppRegistry, Component, NetInfo} from 'react-native';
 
 import _ from 'lodash';
 
@@ -10,11 +10,12 @@ import FriendsStore from './src/stores/Friends';
 import RestaurantsStore from './src/stores/Restaurants';
 
 import Login from './src/components/pages/Login';
+import Connection from './src/components/pages/Connection';
 import App from './src/components/App';
 
 class NeedlIOS extends Component {
 
-  static getNeedlState() {
+  needlState() {
     return {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
@@ -24,7 +25,12 @@ class NeedlIOS extends Component {
     };
   };
 
-  state = NeedlIOS.getNeedlState();
+  constructor(props) {
+    super(props);
+
+    this.state = this.needlState();
+    this.state.isConnected = true;
+  };
 
   componentWillMount() {
     MeStore.listen(this.onReadyChange.bind(this));
@@ -38,15 +44,31 @@ class NeedlIOS extends Component {
     ProfilStore.unlisten(this.onReadyChange.bind(this));
     RestaurantsStore.unlisten(this.onReadyChange.bind(this));
     FriendsStore.unlisten(this.onReadyChange.bind(this));
+    NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChange);
+  };
+
+  componentDidMount() {
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      this.setState({isConnected});
+    });
+    NetInfo.isConnected.addEventListener('change', this.handleFirstConnectivityChange);
+  };
+
+  handleFirstConnectivityChange = (isConnected) => {
+    this.setState({isConnected});
   };
 
   onReadyChange = () => {
-    this.setState(NeedlIOS.getNeedlState());
+    this.setState(this.needlState());
   };
 
   render() {
     if (!this.state.ready) {
       return null;
+    }
+
+    if (!this.state.isConnected) {
+      return <Connection />
     }
 
     if (!this.state.loggedIn) {

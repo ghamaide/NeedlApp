@@ -70,7 +70,6 @@ class App extends Component {
 
   getNotificationTab(notification) {
     var notificationTab;
-    console.log(notification);
     switch(notification.data.type) {
       case 'reco':
         notificationTab = 3;

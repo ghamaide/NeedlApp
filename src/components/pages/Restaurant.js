@@ -129,9 +129,6 @@ class Restaurant extends Page {
   renderPage() {
     var restaurant = this.state.data;
 
-    console.log('====');
-    console.log(RestaurantsStore.getRecommenders(this.props.id));
-    console.log(this.state.reviewSelected);
     return (
       <View>
         {this.props.fromReco ? [

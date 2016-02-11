@@ -60,24 +60,24 @@ class App extends Component {
     MeActions.saveDeviceToken(deviceToken);
   };
 
-  getNotifTab(notif) {
-    var notifTab;
-    switch(notif.getData().type) {
+  getNotificationTab(notification) {
+    var notificationTab;
+    switch(notification.getData().type) {
       case 'reco':
-        notifTab = 3;
+        notificationTab = 3;
         break;
       case 'friend':
-        notifTab = 1;
+        notificationTab = 1;
         break;
     }
-    return notifTab;
+    return notificationTab;
   };
 
-  onNotification = (notif) => {
-    var notifTab = this.getNotifTab(notif);
+  onNotification = (notification) => {
+    var notificationTab = this.getNotificationTab(notification);
 
-    if (notifTab && AppStateIOS.currentState !== 'active') {
-      this.refs.tabs.resetToTab(notifTab, {skipCache: true});
+    if (notificationTab && AppStateIOS.currentState !== 'active') {
+      this.refs.tabs.resetToTab(notificationTab, {skipCache: true});
     }
   };
 

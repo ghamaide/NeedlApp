@@ -32,6 +32,8 @@ export class MeStore extends CachedStore {
 
     this.version = 0;
 
+    this.isConnected = false;
+
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
 
@@ -69,6 +71,9 @@ export class MeStore extends CachedStore {
       handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
 
       handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
+
+      handleCheckConnectivity: MeActions.checkConnectivity,
+      handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
 
 // ================================================================================================
 
@@ -201,6 +206,15 @@ export class MeStore extends CachedStore {
     this.showedCurrentPosition = showed;
   }
 
+  handleCheckConnectivity() {
+    this.status.loading = true;
+  }
+
+  handleCheckConnectivitySuccess(isConnected) {
+    this.isConnected = isConnected;
+    this.status.loading = false;
+  }
+
   static getMe() {
     return this.getState().me;
   }
@@ -215,6 +229,10 @@ export class MeStore extends CachedStore {
 
   static hasBeenUploadWelcomed() {
     return this.getState().hasBeenUploadWelcomed;
+  }
+
+  static isConnected() {
+    return this.getState().isConnected;
   }
 
 
