@@ -49,7 +49,6 @@ class App extends Component {
 
   onMeChange = () => {
     this.setState({
-      loading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
@@ -199,7 +198,7 @@ class App extends Component {
               pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
-              component: Notifs,
+              component: Profil,
               name: 'Profil',
               icon: require('../assets/img/tabs/icons/account.png')
             }

@@ -129,25 +129,23 @@ class Notifs extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
               colors={['#FFFFFF']}
               progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
-          {this.state.data.length > 0 ? [
-            <ListView
-              key='notifs'
-              initialListSize={1}
-              pageSize={5}
-              style={styles.notifsList}
-              dataSource={ds.cloneWithRows(this.state.data)}
-              renderHeaderWrapper={this.renderHeaderWrapper}
-              renderRow={this.renderNotif}
-              contentInset={{top: 0}}
-              scrollRenderAheadDistance={150}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false} />
-          ] : null}
+          <ListView
+            key='notifs'
+            initialListSize={10}
+            pageSize={5}
+            style={styles.notifsList}
+            dataSource={ds.cloneWithRows(this.state.data)}
+            renderHeaderWrapper={this.renderHeaderWrapper}
+            renderRow={this.renderNotif}
+            contentInset={{top: 0}}
+            scrollRenderAheadDistance={150}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false} />
 
           {this.state.loading ? [
             <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>

@@ -44,6 +44,7 @@ class Restaurant extends Page {
     return {
       id: this.props.id,
       data: RestaurantsStore.getRestaurant(this.props.id),
+      reviewSelected: RestaurantsStore.getRecommenders(this.props.id).length > 0 ? RestaurantsStore.getRecommenders(this.props.id)[0] : 0,
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),
     };
@@ -127,9 +128,10 @@ class Restaurant extends Page {
 
   renderPage() {
     var restaurant = this.state.data;
-    var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
-      return '€';
-    }).join('') + (restaurant.price_range > 3 ? '+' : '');
+
+    console.log('====');
+    console.log(RestaurantsStore.getRecommenders(this.props.id));
+    console.log(this.state.reviewSelected);
     return (
       <View>
         {this.props.fromReco ? [
@@ -147,7 +149,7 @@ class Restaurant extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
               colors={['#FFFFFF']}
               progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
@@ -182,11 +184,11 @@ class Restaurant extends Page {
           </View>
 
           <View key="restaurant_recommenders" style={styles.recoContainer}>
-            {_.remove(RestaurantsStore.getRecommenders(restaurant.id), function(id) {return id !== 553;}).length ?
+            {RestaurantsStore.getRecommenders(restaurant.id).length ?
               <View key="restaurant_recommenders_wrapper" >
-                <Text key="recommnders_text" style={styles.containerTitle}>Ils l'ont recommandé</Text>
+                <Text key="recommenders_text" style={styles.containerTitle}>Ils l'ont recommandé</Text>
                 <View key="carousel_container" style={{alignItems: 'center'}}>
-                  {_.remove(RestaurantsStore.getRecommenders(restaurant.id), function(id) {return id !== 553;}).length === 1 ?
+                  {RestaurantsStore.getRecommenders(restaurant.id).length === 1 ?
                     [
                       <Carousel
                         key="carouselReco"
@@ -206,7 +208,7 @@ class Restaurant extends Page {
                             reviewSelected: RestaurantsStore.getRecommenders(restaurant.id)[0]
                           });
                       }}>
-                        {_.map(_.remove(RestaurantsStore.getRecommenders(restaurant.id), function(id) {return id !== 553;}), (userId) => {
+                        {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
                           var profil = ProfilStore.getProfil(userId);
                           var source = profil ? {uri: profil.picture} : {};
 
@@ -235,10 +237,10 @@ class Restaurant extends Page {
                         rightFlecheStyle={{right: 0}}
                         onPageChange={(i) => {
                           this.setState({
-                            reviewSelected: _.remove(RestaurantsStore.getRecommenders(restaurant.id), function(id) {return id !== 553;})[i + 1]
+                            reviewSelected: RestaurantsStore.getRecommenders(restaurant.id)[i + 1]
                           });
                       }}>
-                        {_.map(_.remove(RestaurantsStore.getRecommenders(restaurant.id), function(id) {return id !== 553;}), (userId) => {
+                        {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
                           var profil = ProfilStore.getProfil(userId);
                           var source = profil ? {uri: profil.picture} : {};
 
@@ -267,17 +269,17 @@ class Restaurant extends Page {
                 : <Text key="no_recommenders" style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
               ]
             }
-            {(RestaurantsStore.getRecommenders(restaurant.id).length  && _.keys(restaurant.reviews).length && restaurant.reviews[this.state.reviewSelected]) ?
+            {RestaurantsStore.getRecommenders(restaurant.id).length ?
               <View key="restaurant_recommenders_reviews" style={styles.reviewBox}>
                 <View style={styles.triangleContainer}>
                   <View style={styles.triangle} />
                 </View>
-                <Text key="recommendation_text" style={styles.reviewText}>{restaurant.reviews[this.state.reviewSelected][0] || 'Je recommande !'}</Text>
-                <Text key="recommendation_author" style={styles.reviewAuthor}>{ProfilStore.getProfil(this.state.reviewSelected) && ProfilStore.getProfil(this.state.reviewSelected).name}</Text>
+                <Text key="recommendation_text" style={styles.reviewText}>{RestaurantsStore.getRecommendation(restaurant.id, this.state.reviewSelected).review || 'Je recommande !'}</Text>
+                <Text key="recommendation_author" style={styles.reviewAuthor}>{ProfilStore.getProfil(this.state.reviewSelected).fullname}</Text>
               </View>
               : null}
 
-            {!_.contains(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id) ?
+            {!_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id) ?
               <Option
                 key="recommandation_button"
                 style={styles.recoButton}
@@ -372,8 +374,8 @@ class Restaurant extends Page {
               </View>
             : <Text key="no_wishlist" style={styles.containerTitle}>Pas encore d'ami qui veut y aller</Text>}
 
-            {(!_.contains(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) &&
-                      !_.contains(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
+            {(!_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) &&
+                      !_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
               <View>
                 <Text key="no_wishlist" style={styles.containerTitle}>Ajouter sur votre wishlist</Text>
                 <Option
@@ -475,10 +477,10 @@ class Restaurant extends Page {
             <Button key="call_button" style={styles.button} label="Appeler" onPress={this.call} />
           </View>
 
-          {(_.contains(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ||
-                      _.contains(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
+          {(_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ||
+                      _.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
             <Options key="restaurant_buttons" >
-              {_.contains(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ?
+              {_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ?
               [
                 <Option
                   key="wihlist_remove"

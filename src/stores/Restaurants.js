@@ -286,21 +286,31 @@ export class RestaurantsStore extends CachedStore {
       return false;
     }
 
-    return _.map(restaurant.friends_wishing || [], function(id) {
+    return _.map(restaurant.my_friends_wishing || [], function(id) {
       return parseInt(id);
     });
   }
 
   static getRecommenders(id) {
     var restaurant = this.getRestaurant(id);
-
     if (!restaurant) {
       return false;
     }
 
-    return _.map(restaurant.friends_recommending || [], function(recommendation) {
-      return parseInt(recommendation);
+    var ids = _.map(restaurant.my_friends_recommending, function(friend) {
+      return friend.id;
     });
+
+    return _.remove(ids, function(id) {return id !== 553});
+  }
+
+  static getRecommendation(restaurantId, userId) {
+    var restaurant = this.getRestaurant(restaurantId);
+    if (!restaurant) {
+      return false;
+    }
+
+    return _.find(restaurant.my_friends_recommending, function(friend) {return friend.id === userId});
   }
 
   static searchable() {
@@ -378,7 +388,7 @@ export class RestaurantsStore extends CachedStore {
       return true;
     });
 
-    return _.sortByOrder(filteredRestaurants, ['score'], ['desc']);
+    return _.reverse(_.sortBy(filteredRestaurants, ['score']));
   }
 
   static filterActive() {

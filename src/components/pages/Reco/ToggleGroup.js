@@ -12,7 +12,7 @@ function toggle (group) {
       return <Toggle {...this.props}
         onSelect={group.onSelect}
         onUnselect={group.onUnselect}
-        active={_.contains(group.getSelection(), this.props.value)} />;
+        active={_.includes(group.getSelection(), this.props.value)} />;
     }
   };
 };

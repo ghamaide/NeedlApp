@@ -24,8 +24,6 @@ class EditMe extends Component {
   getEditState() {
     return {
       me: MeStore.getMe(),
-      name: MeStore.getMe().name,
-      email: MeStore.getMe().email,
       loading: MeStore.loading(),
       error: MeStore.error()
     };
@@ -35,6 +33,8 @@ class EditMe extends Component {
     super();
 
     this.state = this.getEditState();
+    this.state.name = MeStore.getMe().name;
+    this.state.email = MeStore.getMe().email;
   };
 
   componentDidMount() {
@@ -54,7 +54,7 @@ class EditMe extends Component {
       return;
     }
     // aie... mais j'arrive pas à utiliser componentDidUpdate
-    MeActions.edit(this.state.me.name, this.state.email, () => {
+    MeActions.edit(this.state.name, this.state.email, () => {
       this.props.navigator.pop();
     });
   };

@@ -21,6 +21,7 @@ import FriendsActions from '../../actions/FriendsActions';
 import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 import FriendsStore from '../../stores/Friends';
+import RestaurantsStore from '../../stores/Restaurants';
 
 import Restaurant from './Restaurant';
 import EditMe from './EditMe';
@@ -45,7 +46,7 @@ class Profil extends Page {
 
   profilState() {
     return {
-      profile: ProfilStore.getProfil(40),
+      profile: ProfilStore.getProfil(this.currentProfil()),
       loading: ProfilStore.loading(),
       error: ProfilStore.error(),
     };
@@ -70,9 +71,6 @@ class Profil extends Page {
   };
 
   renderRestaurants(title, restaurants, backgroundColor) {
-    restaurants = _.uniq(restaurants, (restaurant) => {
-      return restaurant.id;
-    });
     return (
       <View style={[styles.restaurantsWrapper, {backgroundColor: backgroundColor}]}>
         <Text style={styles.restaurantsWrapperTitle}>{title}</Text>
@@ -82,15 +80,16 @@ class Profil extends Page {
           automaticallyAdjustContentInsets={false}
           horizontal={true}
           showsHorizontalScrollIndicator={false}>
-          {_.map(restaurants, (restaurant) => {
+          {_.map(restaurants, (id) => {
+            var restaurant = RestaurantsStore.getRestaurant(id);
             return (
               <RestaurantElement
                 height={150}
                 style={{marginLeft: 5, marginRight: 5, backgroundColor: 'transparent', width: windowWidth - 65}}
                 key={restaurant.id}
                 name={restaurant.name}
-                picture={restaurant.picture}
-                type={restaurant.type}
+                picture={restaurant.pictures[0]}
+                type={restaurant.food[1]}
                 budget={restaurant.price_range}
                 underlayColor='#EEEEEE'
                 onPress={() => {
@@ -105,7 +104,6 @@ class Profil extends Page {
 
   renderPage() {
     var profil = this.state.profile;
-    console.log(profil);
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
@@ -123,7 +121,7 @@ class Profil extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
               colors={['#FFFFFF']}
               progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
@@ -132,7 +130,7 @@ class Profil extends Page {
           <View style={styles.infoContainer}>
             <Image source={{uri: profil.picture}} style={styles.image} />
             <View style={styles.textInfoContainer}>
-              <Text style={styles.profilName}>{profil.name}</Text>
+              <Text style={styles.profilName}>{profil.fullname}</Text>
               <Text style={styles.profilNbRecos}>{profil.recommendations.length} reco{profil.recommendations.length > 1 && 's'}</Text>
             </View>
           </View>

@@ -9,14 +9,13 @@ import java.util.List;
 
 import com.magus.fblogin.FacebookLoginPackage;
 
-import com.smixx.reactnativeicons.ReactNativeIcons;
-import com.smixx.reactnativeicons.IconFont;
-
 import com.AirMaps.AirPackage;
 
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 import com.oblador.vectoricons.VectorIconsPackage;
+
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import
 
 public class MainActivity extends ReactActivity {
 
@@ -44,15 +43,15 @@ public class MainActivity extends ReactActivity {
    */
     @Override
     protected List<ReactPackage> getPackages() {
+        
+        
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
             new AirPackage(),
-            new ReactNativeIcons(Arrays.asList(
-                new IconFont("fontawesome", "FontAwesome.otf")
-            )),
             new VectorIconsPackage(),
             new ReactNativeContacts(),
-            new FacebookLoginPackage()
+            new FacebookLoginPackage(),
+            new ReactNativePushNotificationPackage(this)
         );
     }
 }

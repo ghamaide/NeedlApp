@@ -42,7 +42,6 @@ class RecoStep6 extends Component {
 
   render() {
     var reco = RecoStore.getReco();
-    console.log(reco);
     return (
       <View>
         <NavigationBar title="Mot de la fin" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      

@@ -132,7 +132,7 @@ dependencies {
     compile "com.facebook.react:react-native:0.19.+"
     compile project(':react-native-maps')
     compile project(':react-native-facebook-login')
-    compile project(':react-native-icons')
     compile project(':react-native-vector-icons')
     compile project(':react-native-contacts')
+    compile project(':react-native-push-notification')
 }

@@ -32,7 +32,6 @@ export class MeStore extends CachedStore {
 
     this.version = 0;
 
-
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
 

@@ -1,7 +1,11 @@
 'use strict';
 
+import {Platform} from 'react-native';
+
 import alt from '../alt';
 import request from '../utils/api';
+
+import MeStore from '../stores/Me';
 
 export class MeActions {
 
@@ -47,7 +51,7 @@ export class MeActions {
     return (dispatch) => {
       request('POST', '/api/users/new_parse_installation.json')
         .send({
-          'device_type': 'ios',
+          'device_type': Platform.OS,
           'device_token': token
         })
         .end((err) => {

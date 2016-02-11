@@ -37,7 +37,7 @@ class Login extends Component {
   };
 
   onLogin = () => {
-    if (!this.state.status.loggingIn) {
+    if (!this.state.status.loading) {
       LoginActions.login();
     }
   };
@@ -59,7 +59,7 @@ class Login extends Component {
 
         <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor="#308edc">
           <Text style={styles.loginBtnText}>
-            {this.state.status.loggingIn ? 'Connexion...' : 'Se connecter avec Facebook'}
+            {this.state.status.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>
         </TouchableHighlight>
       </View>
@@ -94,7 +94,6 @@ var styles = StyleSheet.create({
   logoImageWrapper: {
     flex: 1,
     backgroundColor: 'transparent',
-    // text size * 2 + interline,
     justifyContent: 'center',
     marginBottom: 120
   },

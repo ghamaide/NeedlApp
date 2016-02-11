@@ -31,8 +31,8 @@ class Friends extends Page {
 
   friendsState() {
     return {
-      friends: ProfilStore.getProfils(),
-      filteredFriends: ProfilStore.getProfils(),
+      friends: ProfilStore.getFriends(),
+      filteredFriends: ProfilStore.getFriends(),
       loading: ProfilStore.loading(),
       error: ProfilStore.error(),
     };
@@ -122,7 +122,7 @@ class Friends extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
               colors={['#FFFFFF']}
               progressBackgroundColor="rgba(0, 0, 0, 0.5)" />

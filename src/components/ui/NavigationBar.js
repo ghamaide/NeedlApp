@@ -16,7 +16,7 @@ class BackButton extends Component {
             size={17}
             color='#333333'
             style={[{marginRight: 10}, this.props.style]}/>
-          <Text style={{fontSize: 14, marginTop: 1}}>{this.props.title}</Text>
+          <Text style={{color:'#333333', fontSize: 14, marginTop: 1}}>{this.props.title}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -30,7 +30,7 @@ class NavBarButton extends Component {
         <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
           <View style={{alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
             <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#000000'}} />
-            <Text style={{fontSize: 11}}>{this.props.title}</Text>
+            <Text style={{color:'#333333', fontSize: 11}}>{this.props.title}</Text>
           </View>
         </TouchableOpacity>
       );

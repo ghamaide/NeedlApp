@@ -41,8 +41,8 @@ export class FriendsStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleFriendsFetched(friends) {
-    this.friends = friends;
+  handleFriendsFetched(data) {
+    this.friends = data.friends;
     this.status.notifsPush = 0;
     this.status.loading = false;
   }

@@ -15,6 +15,7 @@ export class ProfilStore extends CachedStore {
 
     this.profil = {};
     this.profils = [];
+    this.friends = [];
 
     this.status.loading = false;
     this.status.error = {}
@@ -51,7 +52,8 @@ export class ProfilStore extends CachedStore {
   }
 
   handleFetchProfilsSuccess(profils) {
-    this.profils = profils.friends;
+    this.friends = profils.friends;
+    this.profils = _.concat(profils.friends, profils.me);
     this.status.loading = false;
   }
 
@@ -118,8 +120,12 @@ export class ProfilStore extends CachedStore {
     _.remove(newProfil.recommendations, (restaurantID) => {
      return restaurantID === data.oldRestaurant.id;
     });
-    console.log(newProfil);
     this.profils[index] = newProfil;
+  }
+  
+  handleEditSuccess(data) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    this.profils[index] = _.extend(this.profils[index], {fullname : data.name});
   }
 
   static error() {
@@ -137,12 +143,9 @@ export class ProfilStore extends CachedStore {
   static getProfils() {
     return this.getState().profils;
   }
-  
-  handleEditSuccess(data) {
-    var index = _.find(this.getState().profils, function(o) {return o.id === MeStore.getState().me.id;});
 
-    this.profils[index].name = data.name;
-    this.profils[index].email = data.email;
+  static getFriends() {
+    return this.getState().friends;
   }
 }
 

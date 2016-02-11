@@ -3,6 +3,7 @@
 import React, {Component, View, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
+import PushNotification from 'react-native-push-notification';
 
 import TabView from './ui/TabView';
 import Text from './ui/Text';
@@ -59,17 +60,26 @@ class App extends Component {
     MeActions.saveDeviceToken(deviceToken);
   };
 
-  getNotifTab(notif) {
-    var notifTab;
-    switch(notif.getData().type) {
+  onNotification = (notification) => {
+    var notificationTab = this.getNotificationTab(notification);
+
+    if (notificationTab) {
+      this.refs.tabs.resetToTab(notifTab, {skipCache: true});
+    }
+  };
+
+  getNotificationTab(notification) {
+    var notificationTab;
+    console.log(notification);
+    switch(notification.data.type) {
       case 'reco':
-        notifTab = 3;
+        notificationTab = 3;
         break;
       case 'friend':
-        notifTab = 1;
+        notificationTab = 1;
         break;
     }
-    return notifTab;
+    return notificationTab;
   };
 
   startActions() {
@@ -83,6 +93,15 @@ class App extends Component {
     MeStore.listen(this.onMeChange);
     NotifsStore.listen(this.onPastillesChange);
 
+    PushNotification.configure({
+      onRegister: function(token) {
+          this.onDeviceToken(token);
+      },
+      onNotification: function(notification) {
+          this.onNotification(notification);
+      }
+    });
+
     this.startActions();
   };
 
@@ -95,7 +114,7 @@ class App extends Component {
     return (
       <View style={{flex: 1}}>
         <TabView 
-          ref="tabs"
+          ref='tabs'
           onTab={(tab) => {
             this.setState({tab});
           }}
@@ -122,7 +141,7 @@ class App extends Component {
               pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
-              component: Notifs,
+              component: Profil,
               name: 'Profil',
               icon: require('../assets/img/tabs/icons/account.png')
             }

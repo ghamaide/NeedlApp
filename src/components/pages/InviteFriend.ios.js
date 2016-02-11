@@ -199,10 +199,10 @@ class InviteFriend extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#ffff00" />
+              colors={['#FFFFFF']}
+              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
           }>
           <SearchBar
             ref='searchBar'

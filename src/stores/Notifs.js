@@ -45,7 +45,10 @@ export class NotifsStore extends CachedStore {
 
   handleNotifsFetched(notifs) {
     this.notifs = _.map(notifs, (notif) => {
-      var oldNotif = _.findWhere(this.notifs, {'restaurant_id': notif.restaurant_id, 'user_id': notif.user_id});
+
+      var index = _.findIndex(this.notifs, {'restaurant_id': notif.restaurant_id, 'user_id': notif.user_id});
+      var oldNotif = this.notifs[index];
+      
       notif.seen = oldNotif && oldNotif.seen;
 
       if (notif.date.indexOf("January") > -1) {
@@ -93,8 +96,9 @@ export class NotifsStore extends CachedStore {
   }
 
   static isSeen(restaurantId, userId) {
-    var notif = _.findWhere(this.getState().notifs, {'restaurant_id': restaurantId, 'user_id': userId});
-    return notif && notif.seen;
+    var notifs = this.getState().notifs;
+    var index = _.findIndex(notifs, {'restaurant_id': restaurantId, 'user_id': userId});
+    return notifs[index] && notifs[index].seen;
   }
 
   static error() {

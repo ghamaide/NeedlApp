@@ -3,6 +3,7 @@
 import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl, ActivityIndicatorIOS, ProgressBarAndroid, Platform} from 'react-native';
 
 import _ from 'lodash';
+import PushNotification from 'react-native-push-notification';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -119,7 +120,7 @@ class Liste extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#ff0000"
+              tintColor="#EF582D"
               title="Chargement..."
               colors={['#FFFFFF']}
               progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
@@ -139,6 +140,21 @@ class Liste extends Page {
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false} />
+
+            {this.state.loading ? [
+              <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
+                {Platform.OS === 'ios' ? [
+                  <ActivityIndicatorIOS
+                    key='loading_ios'
+                    color='#333333'
+                    animating={true}
+                    style={[{height: 80}]}
+                    size='large' />
+                ] : [
+                  <ProgressBarAndroid key='loading_android' indeterminate />
+                ]}
+              </View>
+            ] : null}
         </ScrollView>
 			</View>
 		);
@@ -152,6 +168,7 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
+    fontFamily: 'test'
 	},
 	filterContainerWrapper: {
 		borderColor: '#EF582D',
