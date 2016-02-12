@@ -44,11 +44,11 @@ class InviteFriend extends Page {
 
     var uploadingContactsError = MeStore.uploadingContactsError();
     var sendingMessageError = MeStore.sendingMessageError();
-    if (uploadingContactsError && !_.contains(errors, uploadingContactsError)) {
+    if (uploadingContactsError && !_.includes(errors, uploadingContactsError)) {
       errors.push(uploadingContactsError);
     }
 
-    if (sendingMessageError && !_.contains(errors, sendingMessageError)) {
+    if (sendingMessageError && !_.includes(errors, sendingMessageError)) {
       errors.push(sendingMessageError);
     }
 
@@ -71,7 +71,7 @@ class InviteFriend extends Page {
   getContacts() {
     Contacts.getAll((err, retrievedContacts) => {
       retrievedContacts = _.map(retrievedContacts, (contact) => {
-        if (!_.contains(MeStore.getState().uploadedContacts, contact.recordID)) {
+        if (!_.includes(MeStore.getState().uploadedContacts, contact.recordID)) {
           contact.invitationSent = false;
         } else {
           contact.invitationSent = true;

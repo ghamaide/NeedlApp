@@ -76,39 +76,19 @@ class TabView extends Component {
   render() {
     return (
      <View style={styles.tabbarContainer}>
-      	<Navigator
-          style={{backgroundColor: '#FFFFFF'}}
-          initialRouteStack={this.props.tabs}
+      	<NavigatorIOS
+          style={styles.tabbarContent}
+          navigator={navigator}
           initialRoute={this.props.tabs[this.props.initialSelected || 0]}
           ref="tabs"
+          navigationBarHidden={true}
           key="navigator"
-          renderScene={(tab, navigator) => {
-            var index = navigator.getCurrentRoutes().indexOf(tab);    
-            return (    
-             <NavigatorIOS    
-               style={styles.tabbarContent}    
-               navigator={navigator}
-               tabsMaster={this}
-               key={index}   
-               index={index} 
-               navigationBarHidden={true}  
-               itemWrapperStyle={styles.tabbarContentWrapper}    
-               initialRoute={tab.component.route()}   
-               initialSkipCache={this.props.initialSkipCache} />   
-             );
-          }}
-          configureScene={() => {
-            return {
-              ...Navigator.SceneConfigs.FadeAndroid,
-              defaultTransitionVelocity: 1000,
-              gestures: {}
-            };
-          }} />
+          initialSkipCache={this.props.initialSkipCache} />
 
         {this.state.showTabBar ? [
 					<View key="tabBar" style={styles.tabbarTabs}>
           	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.name, tab.icon, tab.pastille, tab.hasShared);
+            	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
           	})}
         	</View>
         ] : []}

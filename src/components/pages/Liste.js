@@ -134,14 +134,14 @@ class Liste extends Page {
     				</TouchableHighlight>
     				<ListView
               key="list_restaurants"
-              dataSource={ds.cloneWithRows(this.state.data.slice(0, 15))}
+              dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
               renderRow={this.renderRestaurant}
               renderHeaderWrapper={this.renderHeaderWrapper}
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false} />
 
-            {this.state.loading ? [
+            {this.state.loading && false ? [
               <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
                 {Platform.OS === 'ios' ? [
                   <ActivityIndicatorIOS

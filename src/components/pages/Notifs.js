@@ -139,7 +139,7 @@ class Notifs extends Page {
             initialListSize={10}
             pageSize={5}
             style={styles.notifsList}
-            dataSource={ds.cloneWithRows(this.state.data)}
+            dataSource={ds.cloneWithRows(this.state.data.slice(0, 10))}
             renderHeaderWrapper={this.renderHeaderWrapper}
             renderRow={this.renderNotif}
             contentInset={{top: 0}}
@@ -147,7 +147,7 @@ class Notifs extends Page {
             automaticallyAdjustContentInsets={false}
             showsVerticalScrollIndicator={false} />
 
-          {this.state.loading ? [
+          {this.state.loading && false ? [
             <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
               {Platform.OS === 'ios' ? [
                 <ActivityIndicatorIOS

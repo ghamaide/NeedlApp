@@ -176,7 +176,7 @@ export class MeStore extends CachedStore {
   }
 
   handleSendMessageContactSuccess(id) {
-    if (!_.contains(this.uploadedContacts, id)) {
+    if (!_.includes(this.uploadedContacts, id)) {
       this.uploadedContacts.push(id);  
     }
     this.status.loading = false;

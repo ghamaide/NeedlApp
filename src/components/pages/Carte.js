@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
+import React, {StyleSheet, View, TouchableHighlight, Image, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
@@ -12,6 +12,7 @@ import Carousel from '../ui/Carousel';
 import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
+import PriceMarker from '../elements/PriceMarker';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
@@ -38,7 +39,7 @@ class Carte extends Page {
   restaurantsState() {
     return {
       // we want the map even if it is still loading
-      data: RestaurantsStore.filteredRestaurants().slice(0, 15),
+      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 15),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),      
     };
@@ -97,6 +98,8 @@ class Carte extends Page {
   };
 
   onSubmitChangeRegion = () => {
+    console.log('1');
+    this.setState({loading: true});
     var currentRegion = {
       east: this.state.region.longitude + this.state.region.longitudeDelta / 2,
       west:this.state.region.longitude - this.state.region.longitudeDelta / 2,
@@ -116,17 +119,10 @@ class Carte extends Page {
      this.setState({displayRestaurant: false});
   };
 
-  onMarkerSelect = (marker) => {
-    // trigger event marker
-    console.log('on marker select');
-    console.log(marker);
-    // this.setState({displayRestaurant: true});
-  };
-
   onSelect = (event) => {
     // trigger event marker
     console.log('on select');
-    console.log(event);
+    console.log(event.target);
     // this.setState({displayRestaurant: true});
   };
 
@@ -145,9 +141,9 @@ class Carte extends Page {
             onPress={this.onMapPress}
             onMarkerSelect={this.onMarkerSelect}>
             
-            {_.map(this.state.data, (restaurant) => {
-              var myRestaurant = _.contains(restaurant.friends_recommending, MeStore.getState().me.id);
-              myRestaurant = myRestaurant || _.contains(restaurant.friends_wishing, MeStore.getState().me.id);
+            {_.map(this.state.restaurants, (restaurant) => {
+              var myRestaurant = _.includes(restaurant.friends_recommending, MeStore.getState().me.id);
+              myRestaurant = myRestaurant || _.includes(restaurant.friends_wishing, MeStore.getState().me.id);
               var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
                 <MapView.Marker
@@ -156,10 +152,17 @@ class Carte extends Page {
                   coordinate={coordinates}
                   onSelect={this.onSelect}
                   pinColor={myRestaurant ? 'green' : 'red'}>
+                  <PriceMarker budget={restaurant.price_range} />
                   <MapView.Callout>
-                    <View>
-                      <Text>{restaurant.name}</Text>
-                    </View>
+                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
+                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
+                        <View>
+                          <Text style={{color: '#333333', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
+                          <Text style={{color: '#333333', fontSize: 13}}>{restaurant.food[1]}</Text>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
                   </MapView.Callout>
                 </MapView.Marker>
               );
@@ -169,7 +172,7 @@ class Carte extends Page {
           {this.state.displayRestaurant ? [
             <View style={styles.restaurantContainer}>
               <RestaurantElement
-                rank={_.findIndex(this.state.data, this.state.restaurant) + 1}
+                rank={_.findIndex(this.state.restaurants, this.state.restaurant) + 1}
                 isNeedl={this.state.restaurant.score <= 5}
                 key={"restaurant_" + this.state.restaurant.id}
                 name={this.state.restaurant.name}
@@ -195,12 +198,6 @@ class Carte extends Page {
               ]}
             </View>
             ] : null}
-
-          {!this.state.data.length ? [        
-            <View key="no_restaurants" style={styles.emptyTextContainer}>
-              <Text style={styles.emptyText}>Pas de restaurants dans cette zone</Text>
-            </View>
-          ] : []}
         </View>
 			</View>
 		);
@@ -211,6 +208,13 @@ var styles = StyleSheet.create({
   restaurantsMap: {
     flex: 1,
     position: 'relative'
+  },
+  restaurantContainer: {
+    height: 120,
+    position: 'absolute',
+    bottom: 5,
+    left: 5,
+    right: 5,
   },
   changeRegionButtonContainer: {
     position: 'absolute',
@@ -224,26 +228,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderColor: '#EF582D',
     borderWidth: 1
-  },
-  restaurantContainer: {
-    height: 120,
-    position: 'absolute',
-    bottom: 5,
-    left: 5,
-    right: 5,
-  },
-  emptyTextContainer: {
-    position: 'absolute',
-    bottom: (windowHeight - 134) / 2,
-    left: 0,
-    width: windowWidth,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  emptyText: {
-    padding: 10,
-    color: '#FFFFFF'
   }
 });
 

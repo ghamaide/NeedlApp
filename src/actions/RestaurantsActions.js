@@ -141,12 +141,12 @@ export class RestaurantsActions {
     return (dispatch) => {
       dispatch();
       
-      this.setRegionSuccess({currentRegion: currentRegion, region: region});
-      callback();
-    }
+      this.setRegionSuccess({currentRegion: currentRegion, region: region}, callback);
+     }
   }
 
-  setRegionSuccess(data) {
+  setRegionSuccess(data, callback) {
+    callback();
     return data;
   }
 

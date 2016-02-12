@@ -178,12 +178,12 @@ class App extends Component {
           tabs={[
             {
               component: Liste,
-              name: 'Découvrir',
+              title: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
             },
             {
               component: Friends,
-              name: 'Amis',
+              title: 'Amis',
               icon: require('../assets/img/tabs/icons/friend.png'),
             },
             {
@@ -193,13 +193,13 @@ class App extends Component {
             },
             {
               component: Notifs,
-              name: 'Notifs',
+              title: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
               pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
               component: Profil,
-              name: 'Profil',
+              title: 'Profil',
               icon: require('../assets/img/tabs/icons/account.png')
             }
           ]}

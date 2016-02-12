@@ -370,7 +370,7 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      if(!showPersonalContent && _.contains(restaurant.friends_recommending, MeStore.getState().me.id)) {
+      if(!showPersonalContent && _.includes(restaurant.friends_recommending, MeStore.getState().me.id)) {
         return false;
       }
 
