@@ -11,3 +11,5 @@ include ':react-native-contacts'
 project(':react-native-contacts').projectDir = new File(settingsDir, '../node_modules/react-native-contacts/android')
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = file('../node_modules/react-native-push-notification/RNPushNotificationAndroid')
+include ':react-native-icons'
+project(':react-native-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-icons/android')

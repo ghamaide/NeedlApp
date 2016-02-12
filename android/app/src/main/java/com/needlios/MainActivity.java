@@ -1,6 +1,7 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
+import com.smixx.reactnativeicons.ReactNativeIcons;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -47,6 +48,7 @@ public class MainActivity extends ReactActivity {
         
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+        new ReactNativeIcons(),
             new AirPackage(),
             new VectorIconsPackage(),
             new ReactNativeContacts(),

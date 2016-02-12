@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, View, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
+import React, {DeviceEventEmitter, Component, View, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
 import PushNotification from 'react-native-push-notification';

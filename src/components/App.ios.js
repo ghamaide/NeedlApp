@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
+import React, {DeviceEventEmitter, Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
@@ -21,6 +21,8 @@ import NotifsStore from '../stores/Notifs';
 import RestaurantsStore from '../stores/Restaurants';
 
 import Profil from './pages/Profil';
+import Restaurant from './pages/Restaurant';
+import Carte from './pages/Carte';
 import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
 import Liste from './pages/Liste';
@@ -87,6 +89,22 @@ class App extends Component {
     }
   };
 
+  onQuickActionShortcut = (data) => {
+    switch(data.type) {
+      case 'fr.needl.map':
+        this.refs.tabs.resetToTab(0);
+        this.refs.tabs.refs.tabs.replace(Carte.route());
+        break;
+      case 'fr.needl.top_rated_restaurant':
+        var top_rated_restaurant = RestaurantsStore.filteredRestaurants()[0] || RestaurantsStore.getRestaurants()[0];
+        this.refs.tabs.resetToTab(0);
+        if (typeof top_rated_restaurant !== 'undefined') {
+          this.refs.tabs.refs.tabs.push(Restaurant.route({id: top_rated_restaurant.id}, top_rated_restaurant.name));
+        }
+        break;
+    }
+  };
+
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
     MeActions.startActions.defer(this.props.version);
@@ -103,6 +121,8 @@ class App extends Component {
     PushNotificationIOS.addEventListener('register', this.onDeviceToken);
     PushNotificationIOS.addEventListener('notification', this.onNotification);
     AppStateIOS.addEventListener('change', this.onAppStateChange);
+
+    DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
 
     var coldNotif = PushNotificationIOS.popInitialNotification();
     if (coldNotif) {

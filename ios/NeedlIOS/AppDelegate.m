@@ -12,6 +12,7 @@
 #import "RCTRootView.h"
 #import "RCTUtils.h"
 #import "Mixpanel.h"
+#import "RNQuickActionManager.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
@@ -114,6 +115,12 @@ Class RCTPushNotificationManager = nil;
                                                         openURL:url
                                               sourceApplication:sourceApplication
                                                      annotation:annotation];
+}
+
+// 3D Touch
+
+- (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded)) completionHandler {
+  [RNQuickActionManager onQuickActionPress:shortcutItem completionHandler:completionHandler];
 }
 
 // Notifications
