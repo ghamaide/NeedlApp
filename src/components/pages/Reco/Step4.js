@@ -39,7 +39,7 @@ class RecoStep4 extends Component {
       <View style={{flex: 1}}>
         <NavigationBar title="Points forts" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
         <View style={styles.container}> 
-          <Text style={styles.title}>Sélectionne une ou plusieurs points forts</Text>
+          <Text style={styles.title}>Sélectionne un ou plusieurs points forts</Text>
            <ToggleGroup
             ref="togglegroup"
             maxSelection={7}

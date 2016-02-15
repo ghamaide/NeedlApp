@@ -1,9 +1,11 @@
 'use strict';
 
-import React, {DeviceEventEmitter, Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
+import React, {DeviceEventEmitter, Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight, LinkingIOS} from 'react-native';
 
 import _ from 'lodash';
 import Overlay from 'react-native-overlay';
+import DeviceInfo from 'react-native-device-info';
+import Branch from 'react-native-branch';
 
 import TabView from './ui/TabView';
 import Text from './ui/Text';
@@ -105,9 +107,27 @@ class App extends Component {
     }
   };
 
+  _handleOpenURL = (event) => {
+    console.log(event.url.replace('needl://', ''));
+    switch(event.url.replace('needl://', '')) {
+      case 'friends':
+        this.refs.tabs.resetToTab(1);
+        break;
+      case 'notifs':
+        this.refs.tabs.resetToTab(3);
+        break;
+      case 'profil':
+        this.refs.tabs.resetToTab(4);
+        break;
+      case 'home':
+        this.refs.tabs.resetToTab(0);
+        break;
+    }
+  };
+
   startActions() {
     PushNotificationIOS.setApplicationIconBadgeNumber(0);
-    MeActions.startActions.defer(this.props.version);
+    MeActions.startActions.defer(DeviceInfo.getVersion());
     RestaurantsActions.fetchRestaurants.defer();
     ProfilActions.fetchProfils.defer();
     NotifsActions.fetchNotifs.defer();
@@ -120,9 +140,29 @@ class App extends Component {
     PushNotificationIOS.requestPermissions();
     PushNotificationIOS.addEventListener('register', this.onDeviceToken);
     PushNotificationIOS.addEventListener('notification', this.onNotification);
+
     AppStateIOS.addEventListener('change', this.onAppStateChange);
 
     DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
+
+    LinkingIOS.addEventListener('url', this._handleOpenURL);
+
+    Branch.getInitSessionResultPatiently(({params, error}) => {
+      console.log('0');
+      console.log(params);
+    });
+    
+    Branch.setIdentity(MeStore.getState().me.id.toString());
+
+    Branch.getLatestReferringParams((params) => { 
+      console.log('1');
+      console.log(params);
+    });
+
+    Branch.getFirstReferringParams((params) => { 
+      console.log('2');
+      console.log(params);
+    });
 
     var coldNotif = PushNotificationIOS.popInitialNotification();
     if (coldNotif) {
@@ -133,9 +173,22 @@ class App extends Component {
   };
 
   componentWillUnmount() {
+    LinkingIOS.removeEventListener('url', this._handleOpenURL);
+    
+    Branch.logout();
+
+    PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
+    PushNotificationIOS.removeEventListener('notification', this.onNotification);
+
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
   };
+
+  componentDidMount() {
+   var url = LinkingIOS.popInitialURL();
+   console.log(url);
+  }
+
 
   render() {
     return (
@@ -166,7 +219,7 @@ class App extends Component {
             </View>
             <Text style={styles.title}>Ton app est unique !</Text>
             <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
-            <Button label="On y va !" onPress={() => {
+            <Button label='On y va !' onPress={() => {
               MeActions.hasBeenUploadWelcomed();
             }} style={{margin: 5}}/>
           </ScrollView>
@@ -184,14 +237,14 @@ class App extends Component {
             </View>
             <Text style={styles.title}>Ton app a été updatée !</Text>
             <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
-            <Button label="Passer" onPress={() => {
+            <Button label='Passer' onPress={() => {
               MeActions.showedUpdateMessage();
             }} style={{margin: 5}}/>
           </ScrollView>
         </Overlay>
 
         <TabView 
-          ref="tabs"
+          ref='tabs'
           onTab={(tab) => {
             this.setState({tab});
           }}

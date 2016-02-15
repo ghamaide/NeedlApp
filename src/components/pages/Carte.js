@@ -98,7 +98,6 @@ class Carte extends Page {
   };
 
   onSubmitChangeRegion = () => {
-    console.log('1');
     this.setState({loading: true});
     var currentRegion = {
       east: this.state.region.longitude + this.state.region.longitudeDelta / 2,
@@ -122,7 +121,7 @@ class Carte extends Page {
   onSelect = (event) => {
     // trigger event marker
     console.log('on select');
-    console.log(event.target);
+    console.log(event);
     // this.setState({displayRestaurant: true});
   };
 

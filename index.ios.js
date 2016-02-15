@@ -75,7 +75,7 @@ class NeedlIOS extends Component {
       return <Login />;
     }
 
-    return <App version={this.props.version} />;
+    return <App />;
   };
 }
 

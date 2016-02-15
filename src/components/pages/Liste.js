@@ -1,9 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, RefreshControl, ActivityIndicatorIOS, ProgressBarAndroid, Platform} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView} from 'react-native';
 
 import _ from 'lodash';
 import PushNotification from 'react-native-push-notification';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -115,47 +116,24 @@ class Liste extends Page {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
-				<ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.loading}
-              onRefresh={this.onRefresh}
-              tintColor="#EF582D"
-              title="Chargement..."
-              colors={['#FFFFFF']}
-              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
-          }>
-            <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
-            	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
-    				}}>
-    						<Text style={styles.filterMessageText}>
-    							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
-    						</Text>
-    				</TouchableHighlight>
-    				<ListView
-              key="list_restaurants"
-              dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
-              renderRow={this.renderRestaurant}
-              renderHeaderWrapper={this.renderHeaderWrapper}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false} />
 
-            {this.state.loading && false ? [
-              <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
-                {Platform.OS === 'ios' ? [
-                  <ActivityIndicatorIOS
-                    key='loading_ios'
-                    color='#333333'
-                    animating={true}
-                    style={[{height: 80}]}
-                    size='large' />
-                ] : [
-                  <ProgressBarAndroid key='loading_android' indeterminate />
-                ]}
-              </View>
-            ] : null}
-        </ScrollView>
+        <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+        	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
+				}}>
+						<Text style={styles.filterMessageText}>
+							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
+						</Text>
+				</TouchableHighlight>
+				<RefreshableListView
+          key="list_restaurants"
+          refreshDescription="Chargement..."
+          loadData={this.onRefresh}
+          dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
+          renderRow={this.renderRestaurant}
+          renderHeaderWrapper={this.renderHeaderWrapper}
+          contentInset={{top: 0}}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false} />
 			</View>
 		);
   };
@@ -195,7 +173,8 @@ var styles = StyleSheet.create({
   numberRestaurants: {
   	textAlign: 'center',
   	color: '#444444',
-  	padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
   	fontSize: 13,
   	textDecorationLine: 'underline'
   }

@@ -1,7 +1,6 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
-import com.smixx.reactnativeicons.ReactNativeIcons;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -16,7 +15,9 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 import com.oblador.vectoricons.VectorIconsPackage;
 
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;  // <--- Import
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
+import com.learnium.RNDeviceInfo.*;
 
 public class MainActivity extends ReactActivity {
 
@@ -48,8 +49,8 @@ public class MainActivity extends ReactActivity {
         
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-        new ReactNativeIcons(),
             new AirPackage(),
+            new RNDeviceInfo(),
             new VectorIconsPackage(),
             new ReactNativeContacts(),
             new FacebookLoginPackage(),

@@ -10,8 +10,13 @@
 #import "AppDelegate.h"
 
 #import "RCTRootView.h"
+#import "RCTLinkingManager.h"
 #import "RCTUtils.h"
+
 #import "Mixpanel.h"
+
+#import "RNBranch.h"
+
 #import "RNQuickActionManager.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
@@ -24,7 +29,9 @@ Class RCTPushNotificationManager = nil;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   NSURL *jsCodeLocation;
+  
   [Mixpanel sharedInstanceWithToken:@"1637bf7dde195b7909f4c3efd151e26d"];
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
 
   /**
    * Loading JavaScript code - uncomment the one you want.
@@ -50,13 +57,9 @@ Class RCTPushNotificationManager = nil;
 
 //  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
-  NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"];
-
-  NSDictionary *props = @{@"version" : version};
-
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"NeedlIOS"
-                                               initialProperties:props
+                                               initialProperties:nil
                                                    launchOptions:launchOptions];
 
   RCTPushNotificationManager = NSClassFromString(@"RCTPushNotificationManager");
@@ -76,15 +79,8 @@ Class RCTPushNotificationManager = nil;
   }
   
   UIImage *image = [UIImage imageNamed:launchImageName];
- 
-  //flipping image to apply it as background color
-  UIGraphicsBeginImageContext(image.size);
-  CGContextDrawImage(UIGraphicsGetCurrentContext(),CGRectMake(0.,0., image.size.width, image.size.height),image.CGImage);
-  UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
-  UIGraphicsEndImageContext();
   
-  
-  rootView.backgroundColor = [UIColor colorWithPatternImage:resultImage];
+  rootView.backgroundColor = [UIColor colorWithPatternImage:image];
 
   // Create loading view
   
@@ -110,11 +106,19 @@ Class RCTPushNotificationManager = nil;
   [FBSDKAppEvents activateApp];
 }
 
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  return [[FBSDKApplicationDelegate sharedInstance] application:application
-                                                        openURL:url
-                                              sourceApplication:sourceApplication
-                                                     annotation:annotation];
+  if ([[url scheme] isEqualToString:@"fb1624037477816607"]) {
+    return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                          openURL:url
+                                                sourceApplication:sourceApplication
+                                                       annotation:annotation];
+  } else if (![RNBranch handleDeepLink:url]) {
+    return [RCTLinkingManager application:application openURL:url
+                        sourceApplication:sourceApplication annotation:annotation];
+  } else {
+    return YES;
+  }
 }
 
 // 3D Touch
@@ -152,5 +156,11 @@ Class RCTPushNotificationManager = nil;
 //    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
 //  }
 //}
+
+// Branch deep-linking
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+  return [RNBranch continueUserActivity:userActivity];
+}
 
 @end

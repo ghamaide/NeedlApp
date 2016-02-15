@@ -1,10 +1,11 @@
 'use strict';
 
-import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules, ScrollView, RefreshControl, Platform} from 'react-native';
+import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules, ScrollView, Platform} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -91,7 +92,7 @@ class Friends extends Page {
   };
 
   renderHeader = (refreshingIndicator) => {
-    var nbPot = FriendsStore.getState().data.friends.length;
+    var nbPot = ProfilStore.getFriends().length;
 
     if (nbPot) {
       return (
@@ -117,44 +118,35 @@ class Friends extends Page {
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriend.route())} />
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.loading}
-              onRefresh={this.onRefresh}
-              tintColor="#EF582D"
-              title="Chargement..."
-              colors={['#FFFFFF']}
-              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
-          }>
-          {Platform.OS === 'ios' ? [
-            <SearchBar
-              key="search"
-              ref='searchBar'
-              placeholder='Rechercher'
-              hideBackground={true}
-              textFieldBackgroundColor='#DDDDDD'
-              onChangeText={this.searchFriends} />
-          ] : [
-            <TextInput
-              key="search"
-              style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
-              ref='searchBar'
-              placeholder='Rechercher'
-              hideBackground={true}
-              onChangeText={this.searchFriends} />
-          ]}
-          <ListView
-            style={styles.friendsList}
-            dataSource={friendsSource.cloneWithRows(this.state.filteredFriends)}
-            renderRow={this.renderFriend}
-            renderHeaderWrapper={this.renderHeader}
-            contentInset={{top: 0}}
-            scrollRenderAheadDistance={150}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false}
-            onScroll={this.closeKeyboard} />
-        </ScrollView>
+        {Platform.OS === 'ios' ? [
+          <SearchBar
+            key="search"
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.searchFriends} />
+        ] : [
+          <TextInput
+            key="search"
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            onChangeText={this.searchFriends} />
+        ]}
+        <RefreshableListView
+          style={styles.friendsList}
+          refreshDescription="Chargement..."
+          loadData={this.onRefresh}
+          dataSource={friendsSource.cloneWithRows(this.state.filteredFriends)}
+          renderRow={this.renderFriend}
+          renderHeaderWrapper={this.renderHeader}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false}
+          onScroll={this.closeKeyboard} />
       </View>
     );
   };

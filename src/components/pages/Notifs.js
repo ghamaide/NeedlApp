@@ -1,8 +1,9 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, ScrollView, RefreshControl, InteractionManager, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
+import React, {StyleSheet, View, Image, TouchableHighlight, ScrollView, ListView} from 'react-native';
 
 import _ from 'lodash';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -89,7 +90,7 @@ class Notifs extends Page {
   };
 
   renderNotif = (notif) => {
-    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {};
+    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {color: '#333333'};
     var blockColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {backgroundColor: '#EF582D'} : {};
 
     return (
@@ -124,44 +125,17 @@ class Notifs extends Page {
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Notifs" />
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.loading}
-              onRefresh={this.onRefresh}
-              tintColor="#EF582D"
-              title="Chargement..."
-              colors={['#FFFFFF']}
-              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
-          }>
-          <ListView
-            key='notifs'
-            initialListSize={10}
-            pageSize={5}
-            style={styles.notifsList}
-            dataSource={ds.cloneWithRows(this.state.data.slice(0, 10))}
-            renderHeaderWrapper={this.renderHeaderWrapper}
-            renderRow={this.renderNotif}
-            contentInset={{top: 0}}
-            scrollRenderAheadDistance={150}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false} />
-
-          {this.state.loading && false ? [
-            <View key='loading' style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(255, 255, 255, 0.8)', alignItems: 'center', justifyContent: 'center'}}>
-              {Platform.OS === 'ios' ? [
-                <ActivityIndicatorIOS
-                  key='loading_ios'
-                  color='#333333'
-                  animating={true}
-                  style={[{height: 80}]}
-                  size='large' />
-              ] : [
-                <ProgressBarAndroid key='loading_android' indeterminate />
-              ]}
-            </View>
-          ] : null}
-        </ScrollView>
+        <RefreshableListView
+          key='notifs'
+          refreshDescription="Chargement..."
+          loadData={this.onRefresh}
+          style={styles.notifsList}
+          dataSource={ds.cloneWithRows(this.state.data)}
+          renderRow={this.renderNotif}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false} />
       </View>
     );
   };

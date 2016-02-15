@@ -3,6 +3,7 @@
 import React, {DeviceEventEmitter, Component, View, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
+import DeviceInfo from 'react-native-device-info';
 import PushNotification from 'react-native-push-notification';
 
 import TabView from './ui/TabView';
@@ -82,7 +83,7 @@ class App extends Component {
   };
 
   startActions() {
-    MeActions.startActions.defer(this.props.version);
+    MeActions.startActions.defer(DeviceInfo.getVersion());
     RestaurantsActions.fetchRestaurants.defer();
     ProfilActions.fetchProfils.defer();
     NotifsActions.fetchNotifs.defer();

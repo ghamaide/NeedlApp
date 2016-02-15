@@ -1,6 +1,6 @@
 {
   "name": "NeedlIOS",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": true,
   "scripts": {
     "start": "react-native start"
@@ -12,9 +12,11 @@
     "qs": "^4.0.0",
     "react-native": "^0.19.0",
     "react-native-animatable": "^0.4.0",
+    "react-native-branch": "0.0.2",
     "react-native-carousel": "^0.4.3",
     "react-native-communications": "^0.2.3",
     "react-native-contacts": "^0.2.1",
+    "react-native-device-info": "^0.8.3",
     "react-native-facebook-login": "^1.0.3",
     "react-native-file-transfer": "0.0.3",
     "react-native-grid-view": "^0.3.7",
