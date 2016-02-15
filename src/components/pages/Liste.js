@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, Platform} from 'react-native';
 
 import _ from 'lodash';
 import PushNotification from 'react-native-push-notification';
@@ -143,7 +143,7 @@ var styles = StyleSheet.create({
 	filterMessageText: {
 		color: '#EF582D',
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
     fontFamily: 'test'

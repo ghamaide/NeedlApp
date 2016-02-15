@@ -153,7 +153,7 @@ var styles = StyleSheet.create({
   navBarTitleText: {
     fontSize: 14,
     color: '#333333',
-    fontWeight: '500',
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     position: 'absolute',
     left: 0,
     right: 0,

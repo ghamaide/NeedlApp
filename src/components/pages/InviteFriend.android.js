@@ -159,6 +159,7 @@ class InviteFriend extends Page {
           placeholder='Rechercher'
           style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
           onChangeText={this.searchContacts}
+          placeholderTextColor='#333333'
           onSearchButtonPress={this.closeKeyboard} />
         <RefreshableListView
           refreshDescription="Chargement..."

@@ -110,7 +110,6 @@ var styles = StyleSheet.create({
     position: 'absolute',
     bottom: 32,
     left: 10,
-    fontWeight: '500'
   },
   restaurantType: {
     flex: 1,
@@ -121,7 +120,6 @@ var styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: 10,
-    fontWeight: '500'
   },
   restaurantPrice: {
     flex: 1,
@@ -131,7 +129,6 @@ var styles = StyleSheet.create({
     bottom: 10,
     right: 10,
     color: '#FFFFFF',
-    fontWeight: '400'
   },
   restaurantSubway: {
     flex: 1,
@@ -148,7 +145,6 @@ var styles = StyleSheet.create({
     marginRight: 5
   },
   restaurantSubwayText: {
-    fontWeight: '900',
     fontSize: 14,
     color: 'white',
     backgroundColor: 'rgba(0,0,0,0)',

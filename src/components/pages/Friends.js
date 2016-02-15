@@ -132,6 +132,7 @@ class Friends extends Page {
             style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             ref='searchBar'
             placeholder='Rechercher'
+            placeholderTextColor='#333333'
             hideBackground={true}
             onChangeText={this.searchFriends} />
         ]}
@@ -180,7 +181,7 @@ var styles = StyleSheet.create({
   friendName: {
     color: '#000000',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: '500'
   },
   friendRecos: {
     color: '#444444',

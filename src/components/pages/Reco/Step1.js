@@ -129,6 +129,7 @@ class RecoStep1 extends Component {
         <TextInput
           key="search"
           ref='searchBar'
+          placeholderTextColor='#333333'
           placeholder='Sélectionne ton restaurant'
           style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
           onChangeText={this.onRestaurantQuery} />
