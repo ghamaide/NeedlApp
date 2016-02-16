@@ -1,6 +1,8 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, Component, View, TouchableHighlight} from 'react-native';
+
+import Text from '../ui/Text';
 
 class Button extends Component {
 
@@ -12,7 +14,7 @@ class Button extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

@@ -9,26 +9,24 @@ export class RecoStore {
 
   constructor() {
     this.restaurants = [];
-    this.query = null;
+    this.reco = {};
+
     this.saved = false;
 
-    this.status = {};
-    this.status.restaurantsLoading = [];
-    this.status.restaurantsLoadingError = {};
-
-    this.status.getRecoLoading = false;
-    this.status.getRecoError = null;
-
-    this.status.reco = {};
+    this.loading = false;
+    this.error = {};
 
     this.bindListeners({
       handleFetchRestaurants: RecoActions.FETCH_RESTAURANTS,
       handleRestaurantsFetched: RecoActions.RESTAURANTS_FETCHED,
       handleRestaurantsFetchFailed: RecoActions.RESTAURANTS_FETCH_FAILED,
+
+      handleSetReco: RecoActions.SET_RECO,
+
       handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleSaveRecoFailed: RecoActions.SAVE_RECO_FAILED,
 
-      handleSetReco: RecoActions.SET_RECO,
+// ================================================================================================
 
       handleGetReco: RecoActions.GET_RECO,
       handleGetRecoFailed: RecoActions.GET_RECO_FAILED,
@@ -36,82 +34,64 @@ export class RecoStore {
     });
   }
 
-  handleGetReco(restaurantId) {
-    this.status.getRecoLoading = false;
-    this.status.getRecoError = null;
-    this.status.getRecoLoading = restaurantId;
+  handleFetchRestaurants() {
+    this.restaurants = [];
+    this.loading = true;
+    delete this.error;
   }
 
-  handleGetRecoFailed(data) {
-    if (this.status.getRecoLoading !== data.restaurantId) {
-      return;
-    }
-    this.status.getRecoLoading = false;
-    this.status.getRecoError = data.err;
+  handleRestaurantsFetched(restaurants) {
+    this.restaurants = restaurants;
+    this.loading = false;
   }
 
-  handleGetRecoSuccess(reco) {
-    this.status.reco = reco;
-    this.status.getRecoLoading = false;
-    this.status.getRecoError = null;
+  handleRestaurantsFetchFailed(err) {
+    this.loading = false;
+    this.error = err;
   }
 
   handleSetReco(reco) {
-    this.status.reco = reco;
+    this.reco = reco;
   }
 
   handleSaveRecoSuccess() {
-    this.waitFor(RestaurantsStore.dispatchToken);
-    delete this.errSave;
+    delete this.error;
     this.saved = true;
   }
 
-  handleSaveRecoFailed(data) {
-    this.errSave = data.err;
-  }
-
-  handleFetchRestaurants(query) {
-    this.query = query;
-    this.restaurants = [];
-    this.status.restaurantsLoading = true;
-    delete this.status.restaurantsLoadingError;
-  }
-
-  handleRestaurantsFetched(data) {
-    if (data.query !== this.query) {
-      return;
-    }
-
-    this.restaurants = data.restaurants;
-    this.status.restaurantsLoading = false;
-  }
-
-  handleRestaurantsFetchFailed(data) {
-    if (data.query !== this.query) {
-      return;
-    }
-    this.status.restaurantsLoading = false;
-    this.status.restaurantsLoadingError = data.err;
+  handleSaveRecoFailed(err) {
+    this.error = err;
   }
 
   static error() {
-    return this.getState().status.restaurantsLoadingError;
+    return this.getState().error;
   }
 
   static loading() {
-    return this.getState().status.restaurantsLoading;
+    return this.getState().loading;
   }
 
   static getReco() {
-    return this.getState().status.reco;
+    return this.getState().reco;
   }
 
-  static getRecoLoading() {
-    return !!this.getState().status.getRecoLoading;
+  static getQueryRestaurants() {
+    return this.getState().restaurants;
   }
 
-  static getRecoErr() {
-    return this.getState().status.getRecoError;
+  handleGetReco(restaurantId) {
+    this.loading = true;
+    delete this.error;
+  }
+
+  handleGetRecoFailed(data) {
+    this.loading = false;
+    this.error = data.err;
+  }
+
+  handleGetRecoSuccess(reco) {
+    this.reco = reco;
+    this.loading = false;
   }
 }
 

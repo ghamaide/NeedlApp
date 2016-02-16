@@ -1,20 +1,25 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Text, TouchableHighlight, Image, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, Platform} from 'react-native';
+
 import _ from 'lodash';
+import PushNotification from 'react-native-push-notification';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import RestaurantsActions from '../../actions/RestaurantsActions';
-import RestaurantsStore from '../../stores/Restaurants';
-import MeStore from '../../stores/Me';
 import MeActions from '../../actions/MeActions';
 
-import Page from '../ui/Page';
-import RestaurantElement from '../elements/Restaurant';
-import ErrorToast from '../ui/ErrorToast';
+import RestaurantsStore from '../../stores/Restaurants';
+import MeStore from '../../stores/Me';
+
 import Filtre from './Filtre';
 import Carte from './Carte';
-import BoxesRestaurants from './BoxesRestaurants';
 import Restaurant from './Restaurant';
 import Help from './Help';
 
@@ -24,44 +29,31 @@ class Liste extends Page {
   static route() {
     return {
       component: Liste,
-      title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/other/icons/map.png'),
-      onRightButtonPress() {
-				this.replace(Carte.route());
-      }
+      title: 'Restaurants'
     };
-  }
+  };
 
   restaurantsState() {
     return {
-      // we want the map even if it is still loading
       data: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
       errors: RestaurantsStore.error(),
-			dataSource: ds.cloneWithRows(RestaurantsStore.filteredRestaurants()),
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.restaurantsState();
-    this.state.showsUserLocation = false;
-  }
-
-  onFocus = (event) => {
-    if (event.data.route.component === Liste) {
-      RestaurantsActions.fetchRestaurants();
-    }
-  }
+    this.state.renderPlaceholderOnly = true;
+  };
 
   componentWillMount() {
   	if (!MeStore.getState().showTabBar) {
   		MeActions.displayTabBar(true);
   	}
     RestaurantsStore.listen(this.onRestaurantsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
@@ -69,15 +61,15 @@ class Liste extends Page {
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
-  }
+  };
 
   onRefresh = () => {
   	RestaurantsActions.fetchRestaurants();
-  }
+  };
 
   onPressText = () => {
   	this.props.navigator.push(Help.route("Aide", {from: "liste"}));
-  }
+  };
 
 	renderRestaurant = (restaurant) => {
     return (
@@ -98,7 +90,7 @@ class Liste extends Page {
           this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
         }}/>
     );
-  }
+  };
 
   renderHeaderWrapper = (refreshingIndicator) => {
   	if (!this.state.data.length) {
@@ -118,132 +110,53 @@ class Liste extends Page {
 	   		</View>
   		);
   	}
-  }
+  };
 
   renderPage() {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-				<TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
-        	this.props.navigator.push(Filtre.route());
+        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+
+        <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+        	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
 				}}>
 						<Text style={styles.filterMessageText}>
 							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
 						</Text>
 				</TouchableHighlight>
 				<RefreshableListView
-					key="list_restaurants"
-					dataSource={this.state.dataSource}
-					renderRow={this.renderRestaurant}
-					renderHeaderWrapper={this.renderHeaderWrapper}
-					contentInset={{top: 0}}
-          scrollRenderAheadDistance={150}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
+          key="list_restaurants"
+          refreshDescription="Chargement..."
           loadData={this.onRefresh}
-          refreshDescription="Refreshing..." />
-
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
-        })}
+          dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
+          renderRow={this.renderRestaurant}
+          renderHeaderWrapper={this.renderHeaderWrapper}
+          contentInset={{top: 0}}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false} />
 			</View>
 		);
-  }
+  };
 }
 
 var styles = StyleSheet.create({
-  restaurantRowWrapper: {
-		marginTop: 5,
-		marginBottom: 5,
-		backgroundColor: '#555555'
-	},
-	restaurantRow: {
-		flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-		height: 200,
-  },
-	restaurantImage: {
-		flex: 1,
-	},
-	restaurantInfos: {
-		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0)'		
-	},
-	restaurantName: {
-		fontWeight: '900',
-		fontSize: 15,
-		flex: 1,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 30,
-		left: 5
-	},
-	restaurantSubway: {
-		flex: 1,
-		flexDirection: 'row',
-		backgroundColor: 'rgba(0,0,0,0)',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		right: 5
-	},
-	restaurantSubwayImage: {
-		width: 15,
-		height: 15,
-		marginRight: 5
-	},
-	restaurantSubwayText: {
-		fontWeight: '900',
-		fontSize: 15,
-		color: 'white',
-		backgroundColor: 'rgba(0,0,0,0)',
-	},
-	restaurantBudget: {
-		flex: 1,
-		fontWeight: '900',
-		fontSize: 15,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		left: 45
-	},
-	restaurantType: {
-		flex: 1,
-		fontWeight: '900',
-		fontSize: 15,
-		backgroundColor: 'rgba(0,0,0,0)',
-		color: 'white',
-		marginTop: 2,
-		position: 'absolute',
-		bottom: 5,
-		left: 5
-	},
 	filterMessageText: {
 		color: '#EF582D',
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     textAlign: 'center',
 		backgroundColor: '#FFFFFF',
-		paddingTop: 12,
-		paddingBottom: 10
+    fontFamily: 'test'
 	},
 	filterContainerWrapper: {
-		backgroundColor: '#FFFFFF',
 		borderColor: '#EF582D',
 		borderWidth: 1,
 		borderRadius: 1,
-		margin: 5,
+    margin: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 7
 	},
-	filterContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center'
-  },
   emptyTextContainer: {
   	flex: 1,
   	marginTop: 40,
@@ -260,9 +173,12 @@ var styles = StyleSheet.create({
   numberRestaurants: {
   	textAlign: 'center',
   	color: '#444444',
-  	padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
   	fontSize: 13,
-  	textDecorationLine: 'underline'
+  	textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    textDecorationColor: '#444444'
   }
 });
 

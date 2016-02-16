@@ -1,7 +1,10 @@
 'use strict';
 
+import {Platform, NetInfo} from 'react-native';
+
 import alt from '../alt';
 import request from '../utils/api';
+
 import MeStore from '../stores/Me';
 
 export class MeActions {
@@ -38,12 +41,6 @@ export class MeActions {
     return err;
   }
 
-  cleanEditError() {
-    return function (dispatch) {
-      dispatch()
-    }
-  }
-
   hasBeenUploadWelcomed() {
     return function (dispatch) {
       dispatch();
@@ -54,20 +51,13 @@ export class MeActions {
     return (dispatch) => {
       request('POST', '/api/users/new_parse_installation.json')
         .send({
-          'device_type': 'ios',
+          'device_type': Platform.OS,
           'device_token': token
         })
         .end((err) => {
-          console.log(err);
-        });
-    }
-  }
-
-  resetBadgeNumber() {
-    return (dispatch) => {
-      request('GET', '/api/users/reset_badge_to_zero')
-        .end((err) => {
-          console.log(err);
+          if (err) {
+            console.log(err);
+          }
         });
     }
   }
@@ -131,31 +121,36 @@ export class MeActions {
     return display;
   }
 
-  setVersion(version) {
-    return version;
-  }
-
-  sendVersion(version) {
+  startActions(version) {
     return (dispatch) => {
+      dispatch();
+
       request('GET', '/api/users/update_version')
         .query({
           'version' : version
         })
         .end((err, result) => {
           if(err) {
-            return this.sendVersionFailed(err);
+            return this.startActionsFailed(err);
           }
 
-          this.sendVersionSuccess(result.is_last_version);
+          request('GET', '/api/users/reset_badge_to_zero')
+            .end((err2) => {
+              if (err2) {
+                return this.startActionsFailed(err2);
+              }
+
+              this.startActionsSuccess(result.is_last_version);
+          });
         });
     }
   }
 
-  sendVersionSuccess(result) {
+  startActionsSuccess(result) {
     return result;
   }
 
-  sendVersionFailed(err) {
+  startActionsFailed(err) {
     return err;
   }
 
@@ -173,6 +168,20 @@ export class MeActions {
     return function (dispatch) {
       dispatch();
     }
+  }
+
+  checkConnectivity() {
+    return (dispatch) => {
+      dispatch();
+
+      NetInfo.isConnected.fetch().done((isConnected) => {
+        return this.checkConnectivitySuccess(isConnected);
+      });
+    }
+  }
+
+  checkConnectivitySuccess(isConnected) {
+    return isConnected;
   }
 }
 

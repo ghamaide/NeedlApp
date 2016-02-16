@@ -1,19 +1,24 @@
 'use strict';
 
-import React, {StyleSheet, Text, View, Image, ListView, TouchableHighlight, NativeModules} from 'react-native';
-import _ from 'lodash';
+import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules, ScrollView, Platform} from 'react-native';
 
-import RefreshableListView from 'react-native-refreshable-listview';
+import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
-
-import FriendsActions from '../../actions/FriendsActions';
-import FriendsStore from '../../stores/Friends';
+import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
+import Text from '../ui/Text';
+import TextInput from '../ui/TextInput';
+import NavigationBar from '../ui/NavigationBar';
+
+import ProfilActions from '../../actions/ProfilActions';
+
+import FriendsStore from '../../stores/Friends';
+import ProfilStore from '../../stores/Profil';
+
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
-import FriendsRequests from './FriendsRequests';
 
 let friendsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -21,76 +26,54 @@ class Friends extends Page {
   static route() {
     return {
       component: Friends,
-      title: 'Amis',
-      rightButtonTitle: 'Inviter',
-      onRightButtonPress() {
-        this.push(InviteFriend.route());
-      }
+      title: 'Amis'
     };
-  }
+  };
 
   friendsState() {
     return {
-      data: (FriendsStore.getState().data.friends.length || !FriendsStore.loading()) && {
-        friends: FriendsStore.getState().data.friends,
-        filteredFriends : FriendsStore.getState().data.friends
-      },
-      loading: FriendsStore.loading(),
-      error: FriendsStore.error(),
-      nbRequests: _.filter(FriendsStore.getState().data.requests, (friend) => {
-        return !friend.accepted && !friend.refused;
-      }).length
+      friends: ProfilStore.getFriends(),
+      filteredFriends: ProfilStore.getFriends(),
+      loading: ProfilStore.loading(),
+      error: ProfilStore.error(),
     };
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = this.friendsState();
-  }
-
-  onFocus = (event) => {
-    if (event.data.route.component === Friends && event.data.route.fromTabs) {
-      FriendsActions.fetchFriends();
-      if (event.data.route.skipCache) {
-        this.setState({data: null});
-       }
-    }
-  }
+  };
 
   componentWillMount() {
     FriendsStore.listen(this.onFriendsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
-  }
+  };
 
   componentWillUnmount() {
     FriendsStore.unlisten(this.onFriendsChange);
-  }
+  };
 
   onFriendsChange = () => {
     this.setState(this.friendsState());
-  }
+  };
 
   searchFriends = (searchedText) => {
-    var newFilteredFriends = _.filter(this.state.data.friends, function(friend) {
-      return friend.name.indexOf(searchedText) > -1;
+    var newFilteredFriends = _.filter(this.state.friends, function(friend) {
+      return friend.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
     });
 
-    var filteredData = {
-      friends: this.state.data.friends,
-      filteredFriends: newFilteredFriends
-    }
-
-    this.setState({data: filteredData});
-  }
+    this.setState({filteredFriends: newFilteredFriends});
+  };
 
   closeKeyboard = () => {
-    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  }
+    if (Platform.OS === 'ios') {
+      NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+    }
+  };
 
   onRefresh = () => {
-    FriendsActions.fetchFriends();
-  }
+    ProfilActions.fetchProfils();
+  };
 
   renderFriend = (friend) => {
     return (
@@ -106,10 +89,10 @@ class Friends extends Page {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 
   renderHeader = (refreshingIndicator) => {
-    var nbPot = FriendsStore.getState().data.friends.length;
+    var nbPot = ProfilStore.getFriends().length;
 
     if (nbPot) {
       return (
@@ -129,44 +112,45 @@ class Friends extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast key="error" value={JSON.stringify(err)} appBar={true} />;
-        })}
-        {this.state.nbRequests ?
-          <TouchableHighlight onPress={() => {
-            this.props.navigator.push(FriendsRequests.route());
-          }}>
-            <View style={styles.nbRequestsContainer}>
-              <Text style={styles.nbRequestsText}>{this.state.nbRequests} demande{this.state.nbRequests > 1 ? 's' : ''} en attente</Text>
-            </View>
-          </TouchableHighlight>
-          : null}
-        <SearchBar
-          ref='searchBar'
-          placeholder='Search'
-          hideBackground={true}
-          textFieldBackgroundColor='#DDDDDD'
-          onChangeText={this.searchFriends} />
+        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriend.route())} />
+        {Platform.OS === 'ios' ? [
+          <SearchBar
+            key="search"
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.searchFriends} />
+        ] : [
+          <TextInput
+            key="search"
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+            ref='searchBar'
+            placeholder='Rechercher'
+            placeholderTextColor='#333333'
+            hideBackground={true}
+            onChangeText={this.searchFriends} />
+        ]}
         <RefreshableListView
           style={styles.friendsList}
-          dataSource={friendsSource.cloneWithRows(this.state.data.filteredFriends)}
+          refreshDescription="Chargement..."
+          loadData={this.onRefresh}
+          dataSource={friendsSource.cloneWithRows(this.state.filteredFriends)}
           renderRow={this.renderFriend}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
-          loadData={this.onRefresh}
-          onScroll={this.closeKeyboard}
-          refreshDescription="Refreshing..." />
+          onScroll={this.closeKeyboard} />
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({
@@ -197,21 +181,11 @@ var styles = StyleSheet.create({
   friendName: {
     color: '#000000',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: '500'
   },
   friendRecos: {
     color: '#444444',
     fontSize: 14
-  },
-  nbRequestsContainer: {
-    backgroundColor: '#38E1B2',
-    padding: 10
-  },
-  nbRequestsText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-    textAlign: 'center'
   },
   emptyContainer: {
     flex: 1,

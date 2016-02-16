@@ -1,11 +1,13 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, TouchableHighlight, Text, Image} from 'react-native';
+import React, {StyleSheet, Component, View, TouchableHighlight, Image} from 'react-native';
+
+import Text from '../ui/Text';
 
 class Option extends Component {
   static defaultProps = {
     onPress() {}
-  }
+  };
 
   render() {
     return (
@@ -16,7 +18,7 @@ class Option extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

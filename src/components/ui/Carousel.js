@@ -6,24 +6,24 @@ import _ from 'lodash';
 class Carousel extends Component{
   defaultProps = {
     insetMargin: 0
-  }
+  };
 
   state = {
     width: 0,
     offset: 0,
     page: 0
-  }
+  };
 
   setNativeProps() {
     this.refs.view.setNativeProps.apply(null, arguments);
-  }
+  };
 
   pageChange(i, from) {
     this.setState({page: i});
     if (this.props.onPageChange) {
       this.props.onPageChange(i, from);
     }
-  }
+  };
 
   goToPage(i, from) {
     var pagesToGo = i - this.state.page;
@@ -32,7 +32,7 @@ class Carousel extends Component{
     } else if (pagesToGo <= 0) {
       this.goBackward(-pagesToGo, from);
     }
-  }
+  };
 
   goForward = (i, from) => {
 
@@ -48,7 +48,7 @@ class Carousel extends Component{
       });
       this.pageChange(this.state.page + 1, from);
     }
-  }
+  };
 
   goBackward = (i, from) => {
     var size = this.state.width - ((this.props.insetMargin || 0) * 2);
@@ -63,7 +63,7 @@ class Carousel extends Component{
       });
       this.pageChange(this.state.page - 1, from);
     }
-  }
+  };
 
   render() {
     var children = !_.isArray(this.props.children) ? [this.props.children] : _.without(_.flatten(this.props.children), null);
@@ -138,15 +138,15 @@ class Carousel extends Component{
           : null}
       </View>
     );
-  }
+  };
 
   isScrolling () {
     return this.state.scrolling;
-  }
+  };
 
   shouldComponentUpdate (props, state) {
     return state.scrolling !== true;
-  }
+  };
 
   onAnimationEnd = (e) => {
     this.setState({
@@ -158,14 +158,14 @@ class Carousel extends Component{
     var page = Math.round((e.nativeEvent.contentOffset.x) / (size));
 
     this.pageChange(page);
-  }
+  };
 
   onScroll = (e) => {
     this.setState({
       scrolling: true,
       offset: e.nativeEvent.contentOffset.x
     });
-  }
+  };
 }
 
 var styles = StyleSheet.create({

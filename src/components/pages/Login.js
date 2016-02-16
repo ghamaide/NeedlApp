@@ -1,57 +1,46 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, Text, View, Image} from 'react-native';
+import React, {StyleSheet, TouchableHighlight, Component, View, Image} from 'react-native';
 import _ from 'lodash';
 
-import MeStore from '../../stores/Me';
+import Text from '../ui/Text';
+
 import LoginActions from '../../actions/LoginActions';
-import ErrorToast from '../ui/ErrorToast';
 
-import FBSDKLogin, {FBSDKLoginButton} from 'react-native-fbsdklogin';
-import FBSDKCore, {FBSDKAccessToken} from 'react-native-fbsdkcore';
-
+import MeStore from '../../stores/Me';
 
 class Login extends Component {
+  
   getLoginState() {
-    var err = MeStore.getState().status.loginFailedError;
-
-    if (err && !_.contains(this.state.errors, err) && err !== 'cancelled') {
-      this.state.errors.push(err);
-    }
-
     return {
       status: MeStore.getState().status,
       me: MeStore.getState().me,
-      errors: this.state.errors
     };
-  }
+  };
 
   constructor() {
     super();
 
-    this.state = {
-      errors: []
-    };
     this.state = this.getLoginState();
-  }
+  };
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-  }
+  };
 
   onMeChange = () => {
     this.setState(this.getLoginState());
-  }
+  };
 
   onLogin = () => {
-    if (!this.state.status.loggingIn) {
+    if (!this.state.status.loading) {
       LoginActions.login();
     }
-  }
+  };
 
   render() {
     return (
@@ -70,16 +59,12 @@ class Login extends Component {
 
         <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor="#308edc">
           <Text style={styles.loginBtnText}>
-            {this.state.status.loggingIn ? 'Connexion...' : 'Se connecter avec Facebook'}
+            {this.state.status.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>
         </TouchableHighlight>
-
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast forceTrueValue value={JSON.stringify(err)} />;
-        })}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({
@@ -109,7 +94,6 @@ var styles = StyleSheet.create({
   logoImageWrapper: {
     flex: 1,
     backgroundColor: 'transparent',
-    // text size * 2 + interline,
     justifyContent: 'center',
     marginBottom: 120
   },

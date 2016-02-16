@@ -1,11 +1,16 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, Text, TextInput, View} from 'react-native';
+import React, {StyleSheet, TouchableHighlight, Component, TextInput, View} from 'react-native';
+
 import _ from 'lodash';
+import NavigationBar from '../ui/NavigationBar';
+
+import Text from '../ui/Text';
 
 import MeStore from '../../stores/Me';
+
 import MeActions from '../../actions/MeActions';
-import ErrorToast from '../ui/ErrorToast';
+
 import Profil from './Profil';
 
 class EditMe extends Component {
@@ -14,86 +19,74 @@ class EditMe extends Component {
       component: EditMe,
       title: 'Modification'
     };
-  }
+  };
 
   getEditState() {
-    var err = MeStore.getState().status.editingError;
-
-    if (err && !_.contains(this.state.errors, err)) {
-      this.state.errors.push(err);
-    }
-
     return {
-      me: _.clone(MeStore.getState()),
-      nom: (this.state && this.state.nom) || MeStore.getState().me.name,
-      email: (this.state && this.state.email) || MeStore.getState().me.email,
-      errors: this.state.errors
+      me: MeStore.getMe(),
+      loading: MeStore.loading(),
+      error: MeStore.error()
     };
-  }
+  };
 
   constructor() {
     super();
 
-    this.state = {
-      errors: []
-    };
     this.state = this.getEditState();
-  }
+    this.state.name = MeStore.getMe().name;
+    this.state.email = MeStore.getMe().email;
+  };
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
-    MeActions.cleanEditError();
-  }
+  };
 
   onMeChange = () => {
     this.setState(this.getEditState());
-  }
+  };
 
   onSubmit = () => {
-    if (this.state.me.status.editing) {
+    if (this.state.loading) {
       return;
     }
     // aie... mais j'arrive pas à utiliser componentDidUpdate
-    MeActions.edit(this.state.nom, this.state.email, () => {
-      this.props.navigator.resetTo(Profil.route());
+    MeActions.edit(this.state.name, this.state.email, () => {
+      this.props.navigator.pop();
     });
-  }
+  };
 
   render() {
     return (
-      <View>
+      <View style={{flex: 1}}>
+        <NavigationBar title="Modification" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.editContainer}>
           <Text style={styles.label}>Nom</Text>
           <TextInput
             style={styles.input}
             ref="nom"
             textAlign="center"
-            onChangeText={(nom) => this.setState({nom})}
-            value={this.state.nom} />
+            onChangeText={(name) => this.setState({name: name})}
+            value={this.state.name} />
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             ref="email"
             textAlign="center"
-            onChangeText={(email) => this.setState({email})}
+            onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
           <TouchableHighlight style={styles.submitWrapper} onPress={this.onSubmit}>
             <View style={styles.submit}>
-              <Text style={styles.submitText}>{this.state.me.status.editing ? 'Validation...' : 'Valider'}</Text>
+              <Text style={styles.submitText}>{this.state.loading ? 'Validation...' : 'Valider'}</Text>
             </View>
           </TouchableHighlight>
         </View>
-
-        {_.map(this.state.errors, (err) => {
-          return <ErrorToast value={JSON.stringify(err)} appBar={true} />;
-        })}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

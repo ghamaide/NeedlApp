@@ -8,6 +8,7 @@ import MeActions from '../actions/MeActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 import ProfilActions from '../actions/ProfilActions';
+
 import CachedStore from './CachedStore';
 
 export class MeStore extends CachedStore {
@@ -31,32 +32,32 @@ export class MeStore extends CachedStore {
 
     this.version = 0;
 
+    this.isConnected = false;
+
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
 
-    this.status.uploadingContacts = false;
-    this.status.uploadingContactsError = null;
-
-    this.status.sendingMessage = false;
-    this.status.sendingMessageError = null;
-
-    this.status.sendingVersion = false;
-    this.status.sendingVersionError = null;
+    this.status.loading = false;
+    this.status.error = {};
 
     this.bindListeners({
+
       handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
+
+      handleStartActions: MeActions.START_ACTIONS,
+      handleStartActionsFailed: MeActions.START_ACTIONS_FAILED,
+      handleStartActionsSuccess: MeActions.START_ACTIONS_SUCCESS,
 
       handleLoginSuccess: LoginActions.LOGIN_SUCCESS,
       handleLoginFailed: LoginActions.LOGIN_FAILED,
       handleLogout: LoginActions.LOGOUT,
       handleLogin: LoginActions.LOGIN,
       handleLoginCancelled: LoginActions.LOGIN_CANCELLED,
+
       handleEditSuccess: MeActions.EDIT_SUCCESS,
       handleEditFailed: MeActions.EDIT_FAILED,
       handleEdit: MeActions.EDIT,
-      handleCleanEditError: MeActions.CLEAN_EDIT_ERROR,
-      handleProfilFetched: ProfilActions.PROFIL_FETCHED,
-
+      
       handleUploadContacts : MeActions.UPLOAD_CONTACTS,
       handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
       handleUploadContactsFailed : MeActions.UPLOAD_CONTACTS_FAILED,
@@ -67,66 +68,58 @@ export class MeStore extends CachedStore {
 
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
       
-      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
-      
       handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
 
       handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
 
-      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
+      handleCheckConnectivity: MeActions.checkConnectivity,
+      handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
 
-      handleSetVersion: MeActions.SET_VERSION,
+// ================================================================================================
 
-      handleSendVersionSuccess: MeActions.SEND_VERSION_SUCCESS,
-      handleSendVersionFailed: MeActions.SEND_VERSION_FAILED
+      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
+
+      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE
+
     });
-  }
-
-  handleUploadList() {
-    this.status.uploadingList = true;
-    this.status.uploadingListError = null;
-  }
-
-  handleUploadListFailed(err) {
-    this.status.uploadingList = false;
-    this.status.uploadingListError = err;
-  }
-
-  handleUploadListSuccess() {
-    this.status.uploadingList = false;
-  }
-
-  handleProfilFetched(profil) {
-    if (profil.id === this.me.id) {
-      this.me = _.extend({}, this.me, {
-        name: profil.name,
-        email: profil.email
-      });
-    }
-  }
-
-  handleCleanEditError() {
-    delete this.status.editingError;
   }
 
   handleSaveRecoSuccess() {
     this.me.HAS_SHARED = true;
   }
 
+  handleStartActions() {
+    this.showedCurrentPosition = false;
+    delete this.status.error;
+  }
+
+  handleStartActionsFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleStartActionsSuccess(result) {
+    this.status.error = null;
+    if (!result && !this.dismissedUpdateMessage) {
+      this.showedUpdateMessage = false;
+    }
+    this.status.loading = false;
+  }
+
   handleLoginSuccess(me) {
-    this.status.loggingIn = false;
     this.me = me.user;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.status.loading = false;
   }
 
   handleLoginFailed(err) {
-    this.status.loggingIn = false;
-    this.status.loginFailedError = err;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   handleLoginCancelled() {
-    this.status.loggingIn = false;
-    delete this.status.loginFailedError;
+    this.status.loading = false;
+    delete this.status.error;
   }
 
   handleLogout() {
@@ -134,21 +127,21 @@ export class MeStore extends CachedStore {
   }
 
   handleLogin() {
-    this.status.loggingIn = true;
-    delete this.status.loginFailedError;
+    this.status.loading = true;
+    delete this.status.error;
   }
 
   handleEdit() {
-    this.status.editing = true;
+    this.status.loading = true;
   }
 
   handleEditFailed(err) {
-    this.status.editing = false;
-    this.status.editingError = err;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   handleEditSuccess(data) {
-    this.status.editing = false;
+    this.status.loading = false;
     this.me.name = data.name;
     this.me.email = data.email;
   }
@@ -158,35 +151,35 @@ export class MeStore extends CachedStore {
   }
 
   handleUploadContacts() {
-    this.status.uploadingContacts = true;
-    this.status.uploadingContactsError = null;
+    this.status.loading = true;
+    delete this.status.error;
   }
 
   handleUploadContactsFailed(err) {
-    this.status.uploadingContacts = false;
-    this.status.uploadingContactsError = err;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   handleUploadContactsSuccess() {
-    this.status.uploadingContacts = false;
+    this.status.loading = false;
     this.hasUploadedContacts = true;
   }
 
   handleSendMessageContact() {
-    this.status.sendingMessage = true;
-    this.status.sendingMessageError = null;
+    this.status.loading = true;
+    delete this.status.sendingMessageError;
   }
 
   handleSendMessageContactFailed(err) {
-    this.status.sendingMessage = false;
-    this.status.sendingMessageError = err;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   handleSendMessageContactSuccess(id) {
-    this.status.sendingMessage = false;
-    if (!_.contains(this.uploadedContacts, id)) {
+    if (!_.includes(this.uploadedContacts, id)) {
       this.uploadedContacts.push(id);  
     }
+    this.status.loading = false;
   }
 
   handleDisplayTabBar(display) {
@@ -194,70 +187,66 @@ export class MeStore extends CachedStore {
   }
 
   handleSendVersionFailed(err) {
-    this.status.sendingVersion = false;
-    this.status.sendingVersionError = err;
+    this.status.loading = false;
+    this.status.error = err;
   }
 
   handleSendVersionSuccess(result) {
-    this.status.sendingVersionError = null;
-    this.status.sendingVersion = false;
     if (!result && !this.dismissedUpdateMessage) {
       this.showedUpdateMessage = false;
     }
-    
+    this.status.loading = false;
   }
 
   handleSendVersion() {
-    this.status.sendingVersion = true;
-  }
-
-  handleSetVersion(version) {
-    this.version = version;
-  }
-
-  handleShowedUpdateMessage() {
-    this.showedUpdateMessage = true;
-    this.dismissedUpdateMessage = true;
+    this.status.loading = true;
   }
 
   handleShowedCurrentPosition(showed) {
     this.showedCurrentPosition = showed;
   }
 
-  handleHideOverlayMapTutorial() {
-    this.showOverlayMapTutorial = false;
+  handleCheckConnectivity() {
+    this.status.loading = true;
   }
 
-  static uploadingContactsError() {
-    return this.getState().status.uploadingContactsError;
+  handleCheckConnectivitySuccess(isConnected) {
+    this.isConnected = isConnected;
+    this.status.loading = false;
   }
 
-  static uploadingContacts() {
-    return this.getState().status.uploadingContacts;
+  static getMe() {
+    return this.getState().me;
   }
 
-  static sendingMessageError() {
-    return this.getState().status.sendingMessageError;
+  static error() {
+    return this.getState().status.error;
   }
 
-  static sendingMessage() {
-    return this.getState().status.sendingMessage;
-  }
-
-  static sendingVersion() {
-    return this.getState().status.sendingVersion;
-  }
-
-  static sendingVersionError() {
-    return this.getState().status.sendingVersionError;
-  }
-
-  static showedUpdateMessage() {
-    return this.getState().showedUpdateMessage;
+  static loading() {
+    return this.getState().status.loading;
   }
 
   static hasBeenUploadWelcomed() {
     return this.getState().hasBeenUploadWelcomed;
+  }
+
+  static isConnected() {
+    return this.getState().isConnected;
+  }
+
+
+  handleShowedUpdateMessage() {
+    this.showedUpdateMessage = true;
+    this.dismissedUpdateMessage = true;
+  }
+
+  handleHideOverlayMapTutorial() {
+    this.showOverlayMapTutorial = false;
+  }
+
+  static showedUpdateMessage() {
+    return this.getState().showedUpdateMessage;
   }
 
   static showOverlayMapTutorial() {

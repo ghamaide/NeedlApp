@@ -1,93 +1,60 @@
 package com.needlios;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.KeyEvent;
-
-import com.facebook.react.LifecycleState;
-import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.ReactRootView;
-import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
+import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
-import com.facebook.soloader.SoLoader;
 
-import android.content.Intent;
+import java.util.Arrays;
+import java.util.List;
+
 import com.magus.fblogin.FacebookLoginPackage;
 
-public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
+import com.AirMaps.AirPackage;
 
-    private ReactInstanceManager mReactInstanceManager;
-    private ReactRootView mReactRootView;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
-    private FacebookLoginPackage mFacebookLoginPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
+import com.learnium.RNDeviceInfo.*;
+
+public class MainActivity extends ReactActivity {
+
+    /**
+     * Returns the name of the main component registered from JavaScript.
+     * This is used to schedule rendering of the component.
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mReactRootView = new ReactRootView(this);
-
-        mFacebookLoginPackage = new FacebookLoginPackage(this);
-
-        mReactInstanceManager = ReactInstanceManager.builder()
-                .setApplication(getApplication())
-                .setBundleAssetName("index.android.bundle")
-                .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
-                .addPackage(mFacebookLoginPackage)
-                .setUseDeveloperSupport(BuildConfig.DEBUG)
-                .setInitialLifecycleState(LifecycleState.RESUMED)
-                .build();
-
-        mReactRootView.startReactApplication(mReactInstanceManager, "NeedlIOS", null);
-
-        setContentView(mReactRootView);
+    protected String getMainComponentName() {
+        return "NeedlIOS";
     }
 
+    /**
+     * Returns whether dev mode should be enabled.
+     * This enables e.g. the dev menu.
+     */
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU && mReactInstanceManager != null) {
-            mReactInstanceManager.showDevOptionsDialog();
-            return true;
-        }
-        return super.onKeyUp(keyCode, event);
+    protected boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
     }
 
+   /**
+   * A list of packages used by the app. If the app uses additional views
+   * or modules besides the default ones, add more packages here.
+   */
     @Override
-    public void onBackPressed() {
-      if (mReactInstanceManager != null) {
-        mReactInstanceManager.onBackPressed();
-      } else {
-        super.onBackPressed();
-      }
-    }
-
-    @Override
-    public void invokeDefaultOnBackPressed() {
-      super.onBackPressed();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onPause();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onResume(this, this);
-        }
-    }
-
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        mFacebookLoginPackage.handleActivityResult(requestCode, resultCode, data);
+    protected List<ReactPackage> getPackages() {
+        
+        
+        return Arrays.<ReactPackage>asList(
+            new MainReactPackage(),
+            new AirPackage(),
+            new RNDeviceInfo(),
+            new VectorIconsPackage(),
+            new ReactNativeContacts(),
+            new FacebookLoginPackage(),
+            new ReactNativePushNotificationPackage(this)
+        );
     }
 }

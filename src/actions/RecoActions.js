@@ -1,6 +1,7 @@
 'use strict';
 
 import alt from '../alt';
+
 import _ from 'lodash';
 import request from '../utils/api';
 import qs from 'qs';
@@ -9,7 +10,7 @@ export class RecoActions {
 
   fetchRestaurants(query) {
     return (dispatch) => {
-      dispatch(query);
+      dispatch();
 
       if (this.fetchRestaurantRequest) {
         this.fetchRestaurantRequest.abort();
@@ -21,19 +22,31 @@ export class RecoActions {
           delete this.fetchRestaurantRequest;
 
           if (err) {
-            return this.restaurantsFetchFailed(err, query);
+            return this.restaurantsFetchFailed(err);
           }
 
-          this.restaurantsFetched(query, result);
+          this.restaurantsFetched(result);
         });
     }
+  }
+
+  restaurantsFetched(restaurants) {
+    return restaurants;
+  }
+
+  restaurantsFetchFailed(err) {
+    return err;
+  }
+
+  setReco(reco) {
+    return reco;
   }
 
   saveReco(reco) {
     return (dispatch) => {
       dispatch(reco);
 
-      this.fetchRestaurantRequest = request('GET', '/api/recommendations')
+      request('GET', '/api/recommendations')
         .query(qs.stringify({
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
@@ -47,12 +60,21 @@ export class RecoActions {
         }, { arrayFormat: 'brackets' }))
         .end((err, restaurant) => {
           if (err) {
-            return this.saveRecoFailed(err, reco);
+            return this.saveRecoFailed(err);
           }
 
           this.saveRecoSuccess(reco, restaurant);
         });
     }
+  }
+
+  saveRecoSuccess(reco, restaurant) {
+    reco.restaurant = restaurant;
+    return reco;
+  }
+
+  saveRecoFailed(err) {
+    return err;
   }
 
   getReco(restaurantId, restaurantName) {
@@ -96,27 +118,6 @@ export class RecoActions {
   }
 
   getRecoSuccess(reco) {
-    return reco;
-  }
-
-  saveRecoSuccess(reco, restaurant) {
-    reco.restaurant = restaurant;
-    return reco;
-  }
-
-  saveRecoFailed(err, reco) {
-    return {err: err, reco: reco};
-  }
-
-  restaurantsFetched(query, restaurants) {
-    return {query: query, restaurants: restaurants};
-  }
-
-  restaurantsFetchFailed(err, query) {
-    return {err: err, query: query};
-  }
-
-  setReco(reco) {
     return reco;
   }
 }

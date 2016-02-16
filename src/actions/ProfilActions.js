@@ -7,7 +7,7 @@ export class ProfilActions {
 
   fetchProfil(id) {
     return (dispatch) => {
-      //dispatch(id);
+      dispatch(id);
 
       request('GET', '/api/users/' + id)
         .end((err, result) => {
@@ -28,9 +28,32 @@ export class ProfilActions {
     return {err: err, id: id};
   }
 
+  fetchProfils() {
+    return (dispatch) => {
+      dispatch();
+      
+      request('GET', '/api/friendships')
+        .end((err, result) => {
+          if (err) {
+            return this.fetchProfilsFailed(err);
+          }
+
+          this.fetchProfilsSuccess(result);
+        });
+    }
+  }
+
+  fetchProfilsSuccess(friends) {
+    return friends;
+  }
+
+  fetchProfilsFailed(err) {
+    return err;
+  }
+
   maskProfil(id) {
     return (dispatch) => {
-      dispatch(id);
+      dispatch();
 
       request('GET', '/api/friendships')
         .query({
@@ -39,7 +62,7 @@ export class ProfilActions {
         })
         .end((err) => {
           if (err) {
-            return this.maskProfilFailed(id, err);
+            return this.maskProfilFailed(err);
           }
 
           this.maskProfilSuccess(id);
@@ -51,11 +74,11 @@ export class ProfilActions {
     return id;
   }
 
-  maskProfilFailed(id, err) {
-    return {id: id, err: err};
+  maskProfilFailed(err) {
+    return err;
   }
 
-  displayProfil(id) {
+  displayProfil() {
     return (dispatch) => {
       dispatch(id);
 
@@ -66,7 +89,7 @@ export class ProfilActions {
         })
         .end((err) => {
           if (err) {
-            return this.displayProfilFailed(id, err);
+            return this.displayProfilFailed(err);
           }
 
           this.displayProfilSuccess(id);
@@ -78,8 +101,8 @@ export class ProfilActions {
     return id;
   }
 
-  displayProfilFailed(id, err) {
-    return {id: id, err: err};
+  displayProfilFailed(err) {
+    return err;
   }
 }
 

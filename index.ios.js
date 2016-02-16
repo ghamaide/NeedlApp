@@ -1,72 +1,21 @@
 'use strict';
 
-import React, {AppRegistry, Component, StyleSheet, Text, View, TextInput} from 'react-native';
-
-var OldText = Text;
-
-class NewText extends OldText {
-  defaultProps = {
-    customFont: false
-  }
-
-  render() {
-    var props = _.clone(this.props);
-
-    if (this.props.customFont) {
-      return super.render();
-    }
-
-    if (_.isArray(this.props.style)){
-      props.style.push({fontFamily: 'Quicksand-Regular'});
-    } else if (props.style) {
-      props.style = [props.style, {fontFamily: 'Quicksand-Regular'}];
-    } else {
-      props.style = {fontFamily: 'Quicksand-Regular'};
-    }
-
-    this.props = props;
-
-    return super.render();
-  }
-}
-
-React.Text = NewText;
-
-var OldTextInput = TextInput;
-
-class NewTextInput extends OldTextInput {
-  defaultProps = {}
-  render() {
-    var props = _.clone(this.props);
-
-    if (_.isArray(this.props.style)){
-      props.style.push({fontFamily: 'Quicksand-Regular'});
-    } else if (props.style) {
-      props.style = [props.style, {fontFamily: 'Quicksand-Regular'}];
-    } else {
-      props.style = {fontFamily: 'Quicksand-Regular'};
-    }
-
-    this.props = props;
-
-    return super.render();
-  }
-}
-
-React.TextInput = NewTextInput;
+import React, {AppRegistry, Component, NetInfo} from 'react-native';
 
 import _ from 'lodash';
-import Login from './src/components/pages/Login';
-import App from './src/components/App';
+
 import MeStore from './src/stores/Me';
-import MeActions from './src/actions/MeActions';
 import ProfilStore from './src/stores/Profil';
 import FriendsStore from './src/stores/Friends';
 import RestaurantsStore from './src/stores/Restaurants';
 
+import Login from './src/components/pages/Login';
+import Connection from './src/components/pages/Connection';
+import App from './src/components/App';
+
 class NeedlIOS extends Component {
 
-  static getNeedlState() {
+  needlState() {
     return {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
@@ -74,33 +23,52 @@ class NeedlIOS extends Component {
               RestaurantsStore.getState().status.ready,
       loggedIn: !!MeStore.getState().me.id
     };
-  }
+  };
 
-  state = NeedlIOS.getNeedlState()
+  constructor(props) {
+    super(props);
+
+    this.state = this.needlState();
+    this.state.isConnected = true;
+  };
 
   componentWillMount() {
-    MeActions.setVersion(this.props.version);
-    MeActions.showedCurrentPosition(false);
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));
     FriendsStore.listen(this.onReadyChange.bind(this));
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onReadyChange.bind(this));
     ProfilStore.unlisten(this.onReadyChange.bind(this));
     RestaurantsStore.unlisten(this.onReadyChange.bind(this));
     FriendsStore.unlisten(this.onReadyChange.bind(this));
-  }
+    NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChange);
+  };
+
+  componentDidMount() {
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      this.setState({isConnected});
+    });
+    NetInfo.isConnected.addEventListener('change', this.handleFirstConnectivityChange);
+  };
+
+  handleFirstConnectivityChange = (isConnected) => {
+    this.setState({isConnected});
+  };
 
   onReadyChange = () => {
-    this.setState(NeedlIOS.getNeedlState());
-  }
+    this.setState(this.needlState());
+  };
 
   render() {
     if (!this.state.ready) {
       return null;
+    }
+
+    if (!this.state.isConnected) {
+      return <Connection />
     }
 
     if (!this.state.loggedIn) {
@@ -108,7 +76,7 @@ class NeedlIOS extends Component {
     }
 
     return <App />;
-  }
+  };
 }
 
 AppRegistry.registerComponent('NeedlIOS', () => NeedlIOS);

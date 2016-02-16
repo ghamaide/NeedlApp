@@ -1,6 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, TextInput, Dimensions, ScrollView} from 'react-native';
+import React, {StyleSheet, Component, View, Dimensions, ScrollView} from 'react-native';
+
+import Text from '../../ui/Text';
+import TextInput from '../../ui/TextInput';
+import NavigationBar from '../../ui/NavigationBar';
 
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
@@ -15,50 +19,54 @@ class RecoStep6 extends Component {
       component: RecoStep6,
       title: 'Mot de la fin',
       rightButtonTitle: 'Valider',
-      onRightButtonPress() {
-        var reco = RecoStore.getReco();
-        // hack pour le fucking title ..
-        // because resetTo does not change title if only one page in the stack
-        var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
-        this.resetTo(StepSave.route(title));
-      }
     };
-  }
+  };
 
   state = {
     keyboardSpace: 0,
     characterNbRemaining: 140
-  }
+  };
 
   handleChange(characterNb) {
     var temp = 140 - characterNb; 
     this.setState({characterNbRemaining: temp});
-  }
+  };
+
+  onRightButtonPress = () => {
+    var reco = RecoStore.getReco();
+    // hack pour le fucking title ..
+    // because resetTo does not change title if only one page in the stack
+    var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
+    this.props.navigator.resetTo(StepSave.route(title));
+  };
 
   render() {
     var reco = RecoStore.getReco();
     return (
-      <ScrollView style={styles.container} scrollEnabled={false}>
-        <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
-          <Text style={styles.subtitle}>(Optionnel)</Text>
-          <Text style={styles.title}>Taille d'un tweet</Text>
-          <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
-          <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
-            maxLength={140}
-            multiline={true}
-            value={reco.review}
-            onChangeText={(review) => {
-              reco.review = review;
-              this.forceUpdate();
-              this.handleChange(reco.review.length);
-            }} />
-        </View>
-        <View style={styles.progressBar}>
-          <View style={styles.progressBarCompleted} />
-        </View>
-      </ScrollView>
+      <View>
+        <NavigationBar title="Mot de la fin" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
+        <ScrollView style={styles.container} scrollEnabled={false}>
+          <View style={{flex: 1, alignItems: 'flex-start', justifyContent: 'center'}}>
+            <Text style={styles.subtitle}>(Optionnel)</Text>
+            <Text style={styles.title}>Taille d'un tweet</Text>
+            <Text style={styles.character}>{this.state.characterNbRemaining} caractère{this.state.characterNbRemaining > 1 ? 's' : ''}...</Text>
+            <TextInput ref="review" placeholder="Un plat t'a particulièrement plu ?" style={styles.reviewInput}
+              maxLength={140}
+              multiline={true}
+              value={reco.review}
+              onChangeText={(review) => {
+                reco.review = review;
+                this.forceUpdate();
+                this.handleChange(reco.review.length);
+              }} />
+          </View>
+          <View style={styles.progressBar}>
+            <View style={styles.progressBarCompleted} />
+          </View>
+        </ScrollView>
+      </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({
@@ -93,9 +101,9 @@ var styles = StyleSheet.create({
     padding: 10,
     margin: 5,
     height: 120,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    color: '#444444'
+    backgroundColor: '#DDDDDD',
+    textAlignVertical: 'top',
+    color: '#000000'
   },
   progressBar: {
     top: -30,

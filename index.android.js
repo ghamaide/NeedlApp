@@ -1,20 +1,21 @@
 'use strict';
 
-import React, {AppRegistry, Component, StyleSheet, Text, View, TextInput} from 'react-native';
+import React, {AppRegistry, Component, NetInfo} from 'react-native';
 
 import _ from 'lodash';
-import Login from './srcAndroid/components/pages/Login';
-import App from './srcAndroid/components/App';
-//import EditMe from './srcAndroid/components/pages/EditMe';
-import MeStore from './srcAndroid/stores/Me';
-import MeActions from './srcAndroid/actions/MeActions';
-import ProfilStore from './srcAndroid/stores/Profil';
-import FriendsStore from './srcAndroid/stores/Friends';
-import RestaurantsStore from './srcAndroid/stores/Restaurants';
+
+import MeStore from './src/stores/Me';
+import ProfilStore from './src/stores/Profil';
+import FriendsStore from './src/stores/Friends';
+import RestaurantsStore from './src/stores/Restaurants';
+
+import Login from './src/components/pages/Login';
+import Connection from './src/components/pages/Connection';
+import App from './src/components/App';
 
 class NeedlIOS extends Component {
 
-  static getNeedlState() {
+  needlState() {
     return {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
@@ -22,40 +23,59 @@ class NeedlIOS extends Component {
               RestaurantsStore.getState().status.ready,
       loggedIn: !!MeStore.getState().me.id
     };
-  }
+  };
 
-  state = NeedlIOS.getNeedlState()
+  constructor(props) {
+    super(props);
+
+    this.state = this.needlState();
+    this.state.isConnected = true;
+  };
 
   componentWillMount() {
-    MeActions.showedCurrentPosition(false);
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));
     FriendsStore.listen(this.onReadyChange.bind(this));
-  }
+  };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onReadyChange.bind(this));
     ProfilStore.unlisten(this.onReadyChange.bind(this));
     RestaurantsStore.unlisten(this.onReadyChange.bind(this));
     FriendsStore.unlisten(this.onReadyChange.bind(this));
-  }
+  };
+
+  componentDidMount() {
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      this.setState({isConnected});
+    });
+    NetInfo.isConnected.addEventListener('change', this.handleFirstConnectivityChange);
+  };
+
+  handleFirstConnectivityChange = (isConnected) => {
+    this.setState({isConnected});
+  };
 
   onReadyChange = () => {
-    this.setState(NeedlIOS.getNeedlState());
-  }
+    this.setState(this.needlState());
+  };
 
   render() {
     if (!this.state.ready) {
       return null;
     }
 
+    if (!this.state.isConnected) {
+      return <Connection />
+    }
+
     if (!this.state.loggedIn) {
       return <Login />;
     }
-
+    
     return <App />;
-  }
+  };
 }
 
 AppRegistry.registerComponent('NeedlIOS', () => NeedlIOS);

@@ -1,17 +1,19 @@
 'use strict';
 
-import React, {Component, Image, Text, View, Animated, Easing, TouchableHighlight} from 'react-native';
+import React, {Component, Image, View, Animated, Easing, TouchableHighlight} from 'react-native';
+
+import Text from '../../ui/Text';
 
 class Toggle extends Component {
   static defaultProps = {
     active: false,
     onSelect() {},
     onUnselect() {}
-  }
+  };
 
   state = {
     bounceValue: new Animated.Value(1)
-  }
+  };
 
   componentWillUpdate(nextProps) {
     if (!this.props.active && nextProps.active) {
@@ -29,7 +31,7 @@ class Toggle extends Component {
         })
       ]).start();
     }
-  }
+  };
 
   render() {
 
@@ -85,7 +87,7 @@ class Toggle extends Component {
         ] : []}
       </View>
     );
-  }
+  };
 }
 
 export default Toggle;

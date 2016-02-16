@@ -1,20 +1,26 @@
 'use strict';
 
-import React, {StyleSheet, Text, ListView, View, Image, TouchableHighlight} from 'react-native';
+import React, {StyleSheet, View, Image, TouchableHighlight, ScrollView, ListView} from 'react-native';
+
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import Page from '../ui/Page';
+import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
+
+import RestaurantElement from '../elements/Restaurant';
+
 import NotifsActions from '../../actions/NotifsActions';
+
 import NotifsStore from '../../stores/Notifs';
 import MeStore from '../../stores/Me';
 
-import Page from '../ui/Page';
-import RestaurantElement from '../elements/Restaurant';
 import Restaurant from './Restaurant';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
 
-let notifsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
+let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class Notifs extends Page {
   static route() {
@@ -22,55 +28,43 @@ class Notifs extends Page {
       component: Notifs,
       title: 'Notifs'
     };
-  }
+  };
 
-  static notifsState() {
+  notifsState() {
     return {
-      data: (NotifsStore.getState().notifs.length || !NotifsStore.loading()) && notifsSource.cloneWithRows(NotifsStore.getState().notifs),
+      data: NotifsStore.getState().notifs,
       loading: NotifsStore.loading(),
-      error: NotifsStore.error(),
-      loggedIn: !!MeStore.getState().me.id
+      error: NotifsStore.error()
     };
-  }
+  };
 
-  state = Notifs.notifsState()
-
-  onFocus = (event) => {
-    if (event.data.route.component === Notifs && event.data.route.fromTabs) {
-      NotifsActions.fetchNotifs();
-      if (event.data.route.skipCache) {
-        this.setState({data: null});
-      }
-      this.IS_FOCUS = true;
-      return;
-    }
-
-    if (this.IS_FOCUS) {
-      this.IS_FOCUS = false;
-      NotifsActions.notifsSeen();
-    }
+  constructor(props) {
+    super(props);
+    
+    this.state = this.notifsState();
   }
 
   componentWillMount() {
     NotifsStore.listen(this.onNotifsChange);
-    this.props.navigator.navigationContext.addListener('didfocus', this.onFocus);
   }
 
   componentWillUnmount() {
     NotifsStore.unlisten(this.onNotifsChange);
-    if (!!MeStore.getState().me.id) {
-      NotifsActions.notifsSeen();
-    }
+    NotifsActions.notifsSeen();
+  };
+
+  componentDidMount() {
+    NotifsActions.notifsSeen();
   }
 
   onNotifsChange = () => {
-    this.setState(Notifs.notifsState);
-  }
+    this.setState(this.notifsState());
+  };
 
   onRefresh() {
     NotifsActions.notifsSeen();
     NotifsActions.fetchNotifs();
-  }
+  };
 
   renderHeaderWrapper = (refreshingIndicator) => {
     var nbPot = NotifsStore.getState().notifs.length;
@@ -93,10 +87,10 @@ class Notifs extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderNotif = (notif) => {
-    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {};
+    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {color: '#333333'};
     var blockColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {backgroundColor: '#EF582D'} : {};
 
     return (
@@ -125,29 +119,31 @@ class Notifs extends Page {
         </View>
       </View>
     );
-  }
+  };
 
   renderPage() {
-
     return (
-      <RefreshableListView
-        style={styles.notifsList}
-        dataSource={this.state.data}
-        renderHeaderWrapper={this.renderHeaderWrapper}
-        renderRow={this.renderNotif}
-        contentInset={{top: 0}}
-        scrollRenderAheadDistance={150}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        loadData={this.onRefresh}
-        refreshDescription="Refreshing..." />
+      <View style={{flex: 1}}>
+        <NavigationBar title="Notifs" />
+        <RefreshableListView
+          key='notifs'
+          refreshDescription="Chargement..."
+          loadData={this.onRefresh}
+          style={styles.notifsList}
+          dataSource={ds.cloneWithRows(this.state.data)}
+          renderRow={this.renderNotif}
+          contentInset={{top: 0}}
+          scrollRenderAheadDistance={150}
+          automaticallyAdjustContentInsets={false}
+          showsVerticalScrollIndicator={false} />
+      </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({
   notifsList: {
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#FFFFFF',
   },
   notifRow: {
     paddingLeft: 0,

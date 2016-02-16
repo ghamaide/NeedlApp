@@ -10,7 +10,7 @@ class Options extends Component {
         {this.props.children}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

@@ -1,24 +1,26 @@
 'use strict';
 
-import React, {StyleSheet, Component, Text, View, ActivityIndicatorIOS} from 'react-native';
+import React, {StyleSheet, Component, View, ProgressBarAndroid, Platform, ActivityIndicatorIOS} from 'react-native';
+
+import Text from '../../ui/Text';
+
+import Button from '../../elements/Button';
 
 import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+
 import RecoActions from '../../../actions/RecoActions';
+
 import Restaurant from '../Restaurant';
 import Liste from '../Liste';
-import Button from '../../elements/Button';
 
 class RecoStepSave extends Component {
   static route(title) {
     return {
       component: RecoStepSave,
-      // hack: a cause des deux resetToConsécutifs, on est obligé
-      // de setter le titre tel qu'il sera appres
-      // pour pas rester avec un Merci...
       title: title
     };
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -26,13 +28,13 @@ class RecoStepSave extends Component {
     this.state = {
       hasShared: MeStore.getState().me.HAS_SHARED
     };
-  }
+  };
 
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
-    this.props.navigator.resetTo(Restaurant.route({id: id}, reco.restaurant.name));
-  }
+    this.props.navigator.resetTo(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
+  };
 
   onRecoChange = () => {
     if (RecoStore.getState().saved) {
@@ -42,32 +44,29 @@ class RecoStepSave extends Component {
       return this.goToRestaurant();
     }
 
-    this.setState({
-      err: RecoStore.getState().errSave
-    });
-  }
+    this.setState({error: RecoStore.error()});
+  };
 
   componentDidMount() {
     RecoStore.listen(this.onRecoChange);
     var reco = RecoStore.getReco();
     RecoActions.saveReco(reco);
-  }
+  };
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoChange);
-  }
-
+  };
 
   render() {
     var content;
 
     var reco = RecoStore.getReco();
 
-    if (!this.state.err) {
-      content = <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />;
+    if (!this.state.error) {
+      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" /> : <ProgressBarAndroid indeterminate />); 
     }
 
-    if (this.state.err && this.state.err.notice) {
+    if (this.state.error && this.state.error.notice) {
       content = <View style={styles.errorBlock}>
         <Text style={{color: 'white'}}>{this.state.err.notice}</Text>
         <Button style={styles.errorButton}
@@ -76,7 +75,7 @@ class RecoStepSave extends Component {
       </View>;
     }
 
-    if (this.state.err && !this.state.err.notice) {
+    if (this.state.error && !this.state.error.notice) {
       content = <View style={styles.errorBlock}>
         <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
@@ -93,7 +92,7 @@ class RecoStepSave extends Component {
         {content}
       </View>
     );
-  }
+  };
 }
 
 var styles = StyleSheet.create({

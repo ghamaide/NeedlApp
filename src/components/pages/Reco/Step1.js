@@ -1,17 +1,24 @@
 'use strict';
 
-import React, {NativeModules, View, Component, Text, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image} from 'react-native';
+import React, {NativeModules, View, Component, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image, Platform, ProgressBarAndroid} from 'react-native';
+
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
 
+import Text from '../../ui/Text';
+import TextInput from '../../ui/TextInput';
+import NavigationBar from '../../ui/NavigationBar';
+
 import RecoActions from '../../../actions/RecoActions';
+
 import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+
 import Step2 from './Step2';
 import Step3 from './Step3';
 
-let restaurantsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
+let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class RecoStep1 extends Component {
   static route() {
@@ -19,32 +26,39 @@ class RecoStep1 extends Component {
       component: RecoStep1,
       title: 'Sélection'
     };
-  }
+  };
 
-  static getRecoState() {
-    var state = RecoStore.getState();
-    state.nb = state.restaurants && state.restaurants.length;
-    state.restaurants = restaurantsSource.cloneWithRows(state.restaurants || []);
-    return state;
-  }
+  getRecoState = () => {
+    return {
+      restaurants: RecoStore.getQueryRestaurants(),
+      loading: RecoStore.loading(),
+      error: RecoStore.error()
+    };
+  };
 
-  state = RecoStep1.getRecoState()
+  constructor(props) {
+    super(props);
+
+    this.state = this.getRecoState();
+  }
 
   componentWillMount() {
     RecoStore.listen(this.onRecoChange);
-  }
+  };
 
   componentWillUnmount() {
     RecoStore.unlisten(this.onRecoChange);
-  }
+  };
 
   onRecoChange = () => {
-    this.setState(RecoStep1.getRecoState());
-  }
+    this.setState(this.getRecoState());
+  };
 
   closeKeyboard = () => {
-    NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  }
+    if (Platform.OS === 'ios') {
+      NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+    }
+  };
 
   renderRestaurant = (restaurant) => {
     return (
@@ -59,20 +73,20 @@ class RecoStep1 extends Component {
         </View>
       </TouchableHighlight> 
     );
-  }
+  };
 
   renderRestaurants() {
     return (
       <ListView
         style={styles.restaurantsList}
-        dataSource={this.state.restaurants}
+        dataSource={ds.cloneWithRows(this.state.restaurants || [])}
         renderRow={this.renderRestaurant}
         contentInset={{top: 0}}
         onScroll={this.closeKeyboard}
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false} />
     );
-  }
+  };
 
   renderBlankScreen(content) {
     return (
@@ -82,22 +96,18 @@ class RecoStep1 extends Component {
         </View>
       </TouchableHighlight>
     );
-  }
+  };
 
   render() {
     var content;
 
     if (!this.state.query) {
       content = this.renderBlankScreen();
-    } else if(this.state.status.restaurantsLoading) {
-      content = this.renderBlankScreen(<ActivityIndicatorIOS
-        animating={true}
-        style={[{height: 80}]}
-        size="large" />
-        );
-    } else if(this.state.status.restaurantsLoadingError) {
+    } else if(this.state.loading) {
+      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
+    } else if(this.state.error) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
-    } else if (!this.state.nb) {
+    } else if (this.state.restaurants.length < 1) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Pas de résultat</Text>);
     } else {
       content = this.renderRestaurants();
@@ -105,12 +115,25 @@ class RecoStep1 extends Component {
 
     return (
      <View style={styles.container}>
-      <SearchBar
-        ref='searchBar'
-        placeholder='Sélectionne ton restaurant'
-        hideBackground={true}
-        textFieldBackgroundColor='#DDDDDD'
-        onChangeText={this.onRestaurantQuery} />
+      <NavigationBar title="Séléction" />
+      
+      {Platform.OS === 'ios' ? [
+        <SearchBar
+          key="search"
+          ref='searchBar'
+          placeholder='Sélectionne ton restaurant'
+          hideBackground={true}
+          textFieldBackgroundColor='#DDDDDD'
+          onChangeText={this.onRestaurantQuery} />
+      ] : [
+        <TextInput
+          key="search"
+          ref='searchBar'
+          placeholderTextColor='#333333'
+          placeholder='Sélectionne ton restaurant'
+          style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+          onChangeText={this.onRestaurantQuery} />
+      ]}
 
       {!MeStore.getState().me.HAS_SHARED && !this.state.query ?
         <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
@@ -132,11 +155,12 @@ class RecoStep1 extends Component {
 
      </View>
     );
-  }
+  };
 
   onRestaurantQuery = (query) => {
     RecoActions.fetchRestaurants(query);
-  }
+    this.setState({query: query});
+  };
 }
 
 var styles = StyleSheet.create({

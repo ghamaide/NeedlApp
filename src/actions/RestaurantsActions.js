@@ -7,7 +7,7 @@ export class RestaurantsActions {
 
   fetchRestaurants() {
     return (dispatch) => {
-      // dispatch();
+      dispatch();
 
       request('GET', '/api/restaurants')
         .end((err, result) => {
@@ -29,7 +29,7 @@ export class RestaurantsActions {
 
   fetchRestaurant(id) {
     return (dispatch) => {
-      // dispatch(id);
+      dispatch(id);
 
       request('GET', '/api/restaurants/' + id)
         .end((err, result) => {
@@ -106,7 +106,7 @@ export class RestaurantsActions {
 
   removeReco(restaurant, callback) {
     return (dispatch) => {
-      dispatch(restaurant);
+      dispatch();
 
       request('GET', '/api/recommendations')
         .query({
@@ -115,7 +115,7 @@ export class RestaurantsActions {
         })
         .end((err, restaurants) => {
           if (err) {
-            return this.removeRecoFailed(err, restaurant);
+            return this.removeRecoFailed(err);
           }
 
           this.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
@@ -125,20 +125,33 @@ export class RestaurantsActions {
     }
   }
 
-  removeRecoFailed(err, restaurant) {
-    return {err: err, restaurant: restaurant};
+  removeRecoFailed(err) {
+    return err;
   }
 
-  removeRecoSuccess(restaurant) {
-    return restaurant;
+  removeRecoSuccess(data) {
+    return data;
   }
 
   setFilter(label, ids) {
     return {label: label, ids: ids};
   }
 
-  setRegion(radius, long, lat, deltaLong, deltaLat, longCentre, latCentre, width, mapHeight) {
-    return {radius: radius, long: long, lat: lat, deltaLong: deltaLong, deltaLat: deltaLat, longCentre: longCentre, latCentre: latCentre, width: width, mapHeight: mapHeight};
+  setRegion(currentRegion, region, callback) {
+    return (dispatch) => {
+      dispatch();
+      
+      this.setRegionSuccess({currentRegion: currentRegion, region: region}, callback);
+     }
+  }
+
+  setRegionSuccess(data, callback) {
+    callback();
+    return data;
+  }
+
+  setDisplayPersonal(display) {
+    return display;
   }
 
   clearFilters() {
