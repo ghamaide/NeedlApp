@@ -13,6 +13,7 @@ import Text from './ui/Text';
 import Button from './elements/Button';
 
 import ProfilActions from '../actions/ProfilActions';
+import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 import NotifsActions from '../actions/NotifsActions';
 import MeActions from '../actions/MeActions';
@@ -29,6 +30,7 @@ import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
 import Liste from './pages/Liste';
 import RecoStep1 from './pages/Reco/Step1';
+import RecoStep3 from './pages/Reco/Step3';
 
 class App extends Component {
   constructor(props) {
@@ -107,9 +109,37 @@ class App extends Component {
     }
   };
 
-  _handleOpenURL = (event) => {
-    console.log(event.url.replace('needl://', ''));
-    switch(event.url.replace('needl://', '')) {
+  getParameterByName = (name, url) => {
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  };
+
+  isInteger = (number) => {
+    if (number === parseInt(number, 10)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  handleOpenURL = (event) => {
+    var newURL = event.url.replace('needl://', '');
+    var id = this.getParameterByName('id', newURL);
+    var index = _.findIndex(newURL, function(char) {return char === '?'});
+    if (index > -1) {
+      newURL = newURL.substring(0, index);
+    }
+    switch(newURL) {
+      case 'user':
+        this.refs.tabs.resetToTab(1);
+        if (!isNaN(id)) {
+          this.refs.tabs.refs.tabs.push(Profil.route({id: parseInt(id)}));
+        }
+        break;
       case 'friends':
         this.refs.tabs.resetToTab(1);
         break;
@@ -121,6 +151,24 @@ class App extends Component {
         break;
       case 'home':
         this.refs.tabs.resetToTab(0);
+        break;
+      case 'map':
+        this.refs.tabs.resetToTab(0);
+        this.refs.tabs.refs.tabs.replace(Carte.route());
+        break;
+      case 'restaurant':
+        this.refs.tabs.resetToTab(0);
+        if (!isNaN(id)) {
+          this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(id)}));
+        }
+        break;
+      case 'recommendation':
+        this.refs.tabs.resetToTab(0)
+        if (!isNaN(id)) {
+          var restaurant = RestaurantsStore.getRestaurant(parseInt(id));
+          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, approved: true, step2: true});
+          this.refs.tabs.refs.tabs.push(RecoStep3.route())
+        }
         break;
     }
   };
@@ -145,23 +193,23 @@ class App extends Component {
 
     DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
 
-    LinkingIOS.addEventListener('url', this._handleOpenURL);
+    LinkingIOS.addEventListener('url', this.handleOpenURL);
 
     Branch.getInitSessionResultPatiently(({params, error}) => {
       console.log('0');
-      console.log(params);
+      // console.log(params);
     });
     
     Branch.setIdentity(MeStore.getState().me.id.toString());
 
     Branch.getLatestReferringParams((params) => { 
       console.log('1');
-      console.log(params);
+      // console.log(params);
     });
 
     Branch.getFirstReferringParams((params) => { 
       console.log('2');
-      console.log(params);
+      // console.log(params);
     });
 
     var coldNotif = PushNotificationIOS.popInitialNotification();
@@ -173,7 +221,7 @@ class App extends Component {
   };
 
   componentWillUnmount() {
-    LinkingIOS.removeEventListener('url', this._handleOpenURL);
+    LinkingIOS.removeEventListener('url', this.handleOpenURL);
     
     Branch.logout();
 
@@ -183,12 +231,6 @@ class App extends Component {
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
   };
-
-  componentDidMount() {
-   var url = LinkingIOS.popInitialURL();
-   console.log(url);
-  }
-
 
   render() {
     return (

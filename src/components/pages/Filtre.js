@@ -22,7 +22,7 @@ var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 
 class Filtre extends Component {
-  static route(passProps) {
+  static route() {
     return {
       component: Filtre
     };

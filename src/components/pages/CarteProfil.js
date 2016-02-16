@@ -32,6 +32,7 @@ class CarteProfil extends Page {
   static route(props) {
     return {
       component: CarteProfil,
+      title: 'Carte Profil',
       passProps: props
     };
   };

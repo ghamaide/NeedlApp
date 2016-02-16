@@ -30,7 +30,11 @@ class RecoStep3 extends Component {
     };
   };
 
-  state = {};
+  constructor(props) {
+    super(props);
+
+    this.state = {};
+  };
 
   onRecoUpdate = () => {
     this.setState({
@@ -87,6 +91,7 @@ class RecoStep3 extends Component {
     }
 
     var reco = RecoStore.getReco();
+    console.log(reco);
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Ambiances" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />

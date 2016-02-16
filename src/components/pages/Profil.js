@@ -32,10 +32,10 @@ var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 
 class Profil extends Page {
-  static route(props, title) {
+  static route(props) {
     return {
       component: Profil,
-      title: title || 'Profil',
+      title: 'Profil',
       passProps: props,
     };
   };

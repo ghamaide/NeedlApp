@@ -176,7 +176,9 @@ var styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
   	fontSize: 13,
-  	textDecorationLine: 'underline'
+  	textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    textDecorationColor: '#444444'
   }
 });
 

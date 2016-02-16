@@ -31,8 +31,7 @@ class Carte extends Page {
   static route() {
     return {
       component: Carte,
-      title: 'Restaurants',
-      rightButtonIcon: require('../../assets/img/other/icons/map.png')
+      title: 'Carte',
     };
   };
 

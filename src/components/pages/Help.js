@@ -10,10 +10,10 @@ import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
 
 class Help extends Component {
-  static route(title, props) {
+  static route(props) {
     return {
       component: Help,
-      title: title,
+      title: 'Help',
       passProps: props
     };
   };
