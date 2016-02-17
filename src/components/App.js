@@ -1,16 +1,17 @@
 'use strict';
 
-import React, {DeviceEventEmitter, Component, AppStateIOS, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight, LinkingIOS} from 'react-native';
+import React, {Linking, DeviceEventEmitter, Platform, Component, AppState, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
-import Overlay from 'react-native-overlay';
 import DeviceInfo from 'react-native-device-info';
+import PushNotification from 'react-native-push-notification';
 import Branch from 'react-native-branch';
 
 import TabView from './ui/TabView';
 import Text from './ui/Text';
 
 import Button from './elements/Button';
+import Overlay from './elements/Overlay';
 
 import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
@@ -66,9 +67,19 @@ class App extends Component {
     MeActions.saveDeviceToken(deviceToken);
   };
 
+  onNotification = (notification) => {
+    var notificationTab = this.getNotificationTab(notification);
+
+    if (notificationTab && AppState.currentState !== 'active') {
+      this.refs.tabs.resetToTab(notificationTab, {skipCache: true});
+    }
+  };
+
   getNotificationTab(notification) {
     var notificationTab;
-    switch(notification.getData().type) {
+    var type = Platform.OS === 'ios' ? notification.getData().type : notification.data.type;
+
+    switch(type) {
       case 'reco':
         notificationTab = 3;
         break;
@@ -77,14 +88,6 @@ class App extends Component {
         break;
     }
     return notificationTab;
-  };
-
-  onNotification = (notification) => {
-    var notificationTab = this.getNotificationTab(notification);
-
-    if (notificationTab && AppStateIOS.currentState !== 'active') {
-      this.refs.tabs.resetToTab(notificationTab, {skipCache: true});
-    }
   };
 
   onAppStateChange = (state) => {
@@ -118,21 +121,18 @@ class App extends Component {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
   };
 
-  isInteger = (number) => {
-    if (number === parseInt(number, 10)) {
-      return true;
+  handleOpenURL = (event, from) => {
+    if (from === 'closed_app') {
+      var newURL = event.replace('needl://', '');
     } else {
-      return false;
+      var newURL = event.url.replace('needl://', '');
     }
-  };
-
-  handleOpenURL = (event) => {
-    var newURL = event.url.replace('needl://', '');
-    var id = this.getParameterByName('id', newURL);
     var index = _.findIndex(newURL, function(char) {return char === '?'});
     if (index > -1) {
+      var id = this.getParameterByName('id', newURL);
       newURL = newURL.substring(0, index);
     }
+
     switch(newURL) {
       case 'user':
         this.refs.tabs.resetToTab(1);
@@ -174,7 +174,10 @@ class App extends Component {
   };
 
   startActions() {
-    PushNotificationIOS.setApplicationIconBadgeNumber(0);
+    if (Platform.OS === 'ios') {
+      PushNotificationIOS.setApplicationIconBadgeNumber(0);
+    }
+
     MeActions.startActions.defer(DeviceInfo.getVersion());
     RestaurantsActions.fetchRestaurants.defer();
     ProfilActions.fetchProfils.defer();
@@ -185,106 +188,81 @@ class App extends Component {
     MeStore.listen(this.onMeChange);
     NotifsStore.listen(this.onPastillesChange);
 
-    PushNotificationIOS.requestPermissions();
-    PushNotificationIOS.addEventListener('register', this.onDeviceToken);
-    PushNotificationIOS.addEventListener('notification', this.onNotification);
+    AppState.addEventListener('change', this.onAppStateChange);
 
-    AppStateIOS.addEventListener('change', this.onAppStateChange);
+    if (Platform.OS === 'ios') {
+      PushNotificationIOS.requestPermissions();
+      PushNotificationIOS.addEventListener('register', this.onDeviceToken);
+      PushNotificationIOS.addEventListener('notification', this.onNotification);
+      
+      DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
 
-    DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
-
-    LinkingIOS.addEventListener('url', this.handleOpenURL);
-
-    Branch.getInitSessionResultPatiently(({params, error}) => {
-      console.log('0');
-      // console.log(params);
-    });
+      Linking.addEventListener('url', this.handleOpenURL);
     
-    Branch.setIdentity(MeStore.getState().me.id.toString());
+      Branch.getInitSessionResultPatiently(({params, error}) => {
+        console.log('0');
+        // console.log(params);
+      });
+      
+      Branch.setIdentity(MeStore.getState().me.id.toString());
 
-    Branch.getLatestReferringParams((params) => { 
-      console.log('1');
-      // console.log(params);
-    });
+      Branch.getLatestReferringParams((params) => { 
+        console.log('1');
+        // console.log(params);
+      });
 
-    Branch.getFirstReferringParams((params) => { 
-      console.log('2');
-      // console.log(params);
-    });
+      Branch.getFirstReferringParams((params) => { 
+        console.log('2');
+        // console.log(params);
+      });
 
-    var coldNotif = PushNotificationIOS.popInitialNotification();
-    if (coldNotif) {
-      this.notifLaunchTab = this.getNotifTab(coldNotif);
+      var coldNotif = PushNotificationIOS.popInitialNotification();
+      if (coldNotif) {
+        this.notifLaunchTab = this.getNotifTab(coldNotif);
+      }
+    } else {
+      PushNotification.configure({
+        onRegister: function(token) {
+            this.onDeviceToken(token);
+        },
+        onNotification: function(notification) {
+            this.onNotification(notification);
+        }
+      });
     }
 
     this.startActions();
   };
 
   componentWillUnmount() {
-    LinkingIOS.removeEventListener('url', this.handleOpenURL);
-    
-    Branch.logout();
-
-    PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
-    PushNotificationIOS.removeEventListener('notification', this.onNotification);
-
     NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
+
+    AppState.removeEventListener('change', this.onAppStateChange);
+
+    if (Platform.OS === 'ios') {
+      PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
+      PushNotificationIOS.removeEventListener('notification', this.onNotification);
+
+      Linking.removeEventListener('url', this.handleOpenURL);
+
+      Branch.logout();
+    }
   };
+
+  componentDidMount() {
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        this.handleOpenURL(url, 'closed_app');
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
 
   render() {
     return (
       <View style={{flex: 1}}>
-        <Overlay isVisible={this.state.showOverlayMapTutorial}>
-          <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
-            <ScrollView
-              style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.container}>
-              <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
-              <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
-            </ScrollView>
-          </TouchableHighlight>
-        </Overlay>
-
-        <Overlay isVisible={!this.state.hasBeenUploadWelcomed}>
-          <ScrollView
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
-            contentInset={{top: 0}}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.container}>
-            <View style={styles.avatarWrapper}>
-              <Image style={styles.avatar} source={require('../assets/img/other/icons/personal.png')} />
-            </View>
-            <Text style={styles.title}>Ton app est unique !</Text>
-            <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
-            <Button label='On y va !' onPress={() => {
-              MeActions.hasBeenUploadWelcomed();
-            }} style={{margin: 5}}/>
-          </ScrollView>
-        </Overlay>
-
-        <Overlay isVisible={(typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage)}>
-          <ScrollView
-            style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
-            contentInset={{top: 0}}
-            automaticallyAdjustContentInsets={false}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.container}>
-            <View style={styles.avatarWrapper}>
-              <Image style={styles.avatar} source={require('../assets/img/tabs/icons/home.png')} />
-            </View>
-            <Text style={styles.title}>Ton app a été updatée !</Text>
-            <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
-            <Button label='Passer' onPress={() => {
-              MeActions.showedUpdateMessage();
-            }} style={{margin: 5}}/>
-          </ScrollView>
-        </Overlay>
-
         <TabView 
           ref='tabs'
           onTab={(tab) => {
@@ -321,6 +299,62 @@ class App extends Component {
           initialSkipCache={!!this.notifLaunchTab}
           initialSelected={this.notifLaunchTab || 0}
           tabsBlocked={false} />
+
+        {this.state.showOverlayMapTutorial ? [
+          <Overlay key="overlay_map_tutorial">
+            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
+              <ScrollView
+                style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
+                contentInset={{top: 0}}
+                automaticallyAdjustContentInsets={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.container}>
+                <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
+                <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+              </ScrollView>
+            </TouchableHighlight>
+          </Overlay>
+        ] : null}
+
+        {!this.state.hasBeenUploadWelcomed ? [
+          <Overlay key="has_been_upload_welcomed">
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              contentInset={{top: 0}}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              <View style={styles.avatarWrapper}>
+                <Image style={styles.avatar} source={require('../assets/img/other/icons/personal.png')} />
+              </View>
+              <Text style={styles.title}>Ton app est unique !</Text>
+              <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
+              <Button label='On y va !' onPress={() => {
+                MeActions.hasBeenUploadWelcomed();
+              }} style={{margin: 5}}/>
+            </ScrollView>
+          </Overlay>
+        ] : null}
+
+        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage? [
+          <Overlay key="show_update_message">
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              contentInset={{top: 0}}
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              <View style={styles.avatarWrapper}>
+                <Image style={styles.avatar} source={require('../assets/img/tabs/icons/home.png')} />
+              </View>
+              <Text style={styles.title}>Ton app a été updatée !</Text>
+              <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
+              <Button label='Passer' onPress={() => {
+                MeActions.showedUpdateMessage();
+              }} style={{margin: 5}}/>
+            </ScrollView>
+          </Overlay>
+        ] : null}
       </View>
     );
   };

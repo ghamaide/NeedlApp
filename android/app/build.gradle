@@ -72,7 +72,7 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 
 android {
     compileSdkVersion 23
@@ -106,7 +106,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
@@ -129,7 +129,7 @@ android {
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:0.19.+"
+    compile "com.facebook.react:react-native:0.20.+"
     compile project(':react-native-maps')
     compile project(':react-native-facebook-login')
     compile project(':react-native-vector-icons')

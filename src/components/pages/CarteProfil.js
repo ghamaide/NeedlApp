@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio, Platform} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
@@ -12,6 +12,7 @@ import Carousel from '../ui/Carousel';
 import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
+import PriceMarker from '../elements/PriceMarker';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
@@ -43,8 +44,9 @@ class CarteProfil extends Page {
 
   mapState() {
     return {
-      // we want the map even if it is still loading
       profile: ProfilStore.getProfil(this.currentProfil()),
+      loading: ProfilStore.loading(),
+      error: ProfilStore.error()
     };
   };
 
@@ -110,7 +112,6 @@ class CarteProfil extends Page {
 
   renderPage() {
     var profile = this.state.profile;
-    console.log(profile);
     return (
   		<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
@@ -132,8 +133,7 @@ class CarteProfil extends Page {
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}
-                  onSelect={this.onSelect}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
+                  onSelect={this.onSelect}>
                   <PriceMarker budget={restaurant.price_range} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
@@ -156,8 +156,7 @@ class CarteProfil extends Page {
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}
-                  onSelect={this.onSelect}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
+                  onSelect={this.onSelect}>
                   <PriceMarker budget={restaurant.price_range} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
