@@ -78,7 +78,7 @@ export class ProfilActions {
     return err;
   }
 
-  displayProfil() {
+  displayProfil(id) {
     return (dispatch) => {
       dispatch(id);
 

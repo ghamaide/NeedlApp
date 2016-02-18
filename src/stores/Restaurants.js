@@ -233,6 +233,10 @@ export class RestaurantsStore extends CachedStore {
     return newSubways;
   }
 
+  static getRestaurants() {
+    return this.getState().restaurants;
+  }
+
   static getRestaurant(id) {
     return _.find(this.getState().restaurants, function(o) {return o.id === id;});
   }
