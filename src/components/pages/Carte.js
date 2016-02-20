@@ -8,7 +8,6 @@ import MapView from 'react-native-maps';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import Carousel from '../ui/Carousel';
 import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
@@ -150,7 +149,7 @@ class Carte extends Page {
                   coordinate={coordinates}
                   onSelect={this.onSelect}
                   pinColor={myRestaurant ? 'green' : 'red'}>
-                  <PriceMarker budget={restaurant.price_range} />
+                  <PriceMarker text={_.findIndex(this.state.restaurants, restaurant) + 1} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>

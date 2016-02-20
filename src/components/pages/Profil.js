@@ -5,7 +5,6 @@ import React, {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules,
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
 
-import Carousel from '../ui/Carousel';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -136,7 +135,7 @@ class Profil extends Page {
               <TouchableHighlight
                 underlayColor='rgba(0, 0, 0, 0)'
                 key={'edit_' + profil.id}
-                style={styles.leftButtonContainer}
+                style={[styles.leftButtonContainer, {borderColor: '#AAAAAA'}]}
                 onPress={() => this.props.navigator.push(EditMe.route())}>
                 <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier mon profil</Text>
               </TouchableHighlight>
@@ -144,7 +143,7 @@ class Profil extends Page {
               !profil.invisible ? [
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={styles.leftButtonContainer}
+                  style={[styles.leftButtonContainer, {backgroundColor: '#38E1B2', borderColor: '#38E1B2'}]}
                   key={'hide_reco_' + profil.id}
                   onPress={() => {
                     if (ProfilStore.loading()) {
@@ -157,7 +156,7 @@ class Profil extends Page {
               ] : [
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={styles.leftButtonContainer}
+                  style={[styles.leftButtonContainer, {backgroundColor: 'red', borderColor: 'red'}]}
                   key={'show_reco_' + profil.id}
                   onPress={() => {
                     if (ProfilStore.loading()) {
@@ -165,7 +164,7 @@ class Profil extends Page {
                     }
                     ProfilActions.displayProfil(profil.id);
                   }}>
-                  <Text style={styles.buttonText}>{ProfilStore.loading() ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
+                  <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>{ProfilStore.loading() ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
                 </TouchableHighlight>
               ]
             ]}
@@ -188,7 +187,7 @@ class Profil extends Page {
                   onPress={this.contactUs}>
                   <View style={{flexDirection: 'row'}}>
                     <Image source={require('../../assets/img/actions/icons/chat.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                    <Text style={styles.buttonText}>Nous contacter</Text>
+                    <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
                   </View>
                 </TouchableHighlight>
                 <TouchableHighlight
@@ -198,7 +197,7 @@ class Profil extends Page {
                   onPress={() => LoginActions.logout}>
                   <View style={{flexDirection: 'row'}}>
                     <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                    <Text style={styles.buttonText}>Me Déconnecter</Text>
+                    <Text style={[styles.buttonText, {marginTop: 3}]}>Me Déconnecter</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -217,7 +216,10 @@ class Profil extends Page {
                     });
                     this.forceUpdate();
                   }}>
-                  <Text>{FriendsStore.loading() ? 'Suppression...' : 'Retirer de mes amis'}</Text>
+                  <View style={{flexDirection: 'row'}}>
+                    <Image source={require('../../assets/img/actions/icons/retirer.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
+                    <Text style={[styles.buttonText, {marginTop: 3}]}>{FriendsStore.loading() ? 'Suppression...' : 'Retirer de mes amis'}</Text>
+                  </View>
                 </TouchableHighlight>
               </View>
             ]}
@@ -326,7 +328,6 @@ var styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 5,
     borderRadius: 5,
-    borderColor: '#AAAAAA',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center'
@@ -365,7 +366,6 @@ var styles = StyleSheet.create({
   buttonText: {
     color: '#555555',
     fontSize: 13,
-    marginTop: 3
   },
   dropdownButton: {
     padding: 10,

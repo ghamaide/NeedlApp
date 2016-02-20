@@ -8,16 +8,14 @@ class PriceMarker extends Component {
   };
 
   render() {
-    var budget = _.map(_.range(0, Math.min(3, this.props.budget)), function() {
-      return '€';
-    }).join('') + (this.props.budget > 3 ? '+' : '');
+    var backgroundColor = this.props.backgroundColor ? this.props.backgroundColor : '#EF582D';
 
     return (
       <View style={styles.container}>
-        <View style={styles.bubble}>
-          <Text style={styles.budget}>{budget}</Text>
+        <View style={[styles.bubble, {backgroundColor: backgroundColor, borderColor: backgroundColor}]}>
+          <Text style={styles.budget}>{this.props.text}</Text>
         </View>
-        <View style={styles.triangle} />
+        <View style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
       </View>
     );
   };
@@ -33,11 +31,9 @@ var styles = StyleSheet.create({
     width: 40,
     flexDirection: 'row',
     alignSelf: 'flex-start',
-    backgroundColor: '#EF582D',
     justifyContent: 'center',
     padding: 4,
     borderRadius: 3,
-    borderColor: '#EF582D',
     borderWidth: 0.5,
   },
   budget: {
@@ -54,7 +50,6 @@ var styles = StyleSheet.create({
     borderBottomWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#EF582D',
     marginLeft: 16,
     transform: [
       {rotate: '180deg'}

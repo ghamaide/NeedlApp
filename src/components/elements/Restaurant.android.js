@@ -4,7 +4,6 @@ import React, {StyleSheet, Component, Image, View, TouchableHighlight, processCo
 
 import _ from 'lodash';
 
-import Carousel from '../ui/Carousel';
 import Text from '../ui/Text';
 
 class Restaurant extends Component {

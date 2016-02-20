@@ -80,7 +80,7 @@ export class ProfilActions {
 
   displayProfil(id) {
     return (dispatch) => {
-      dispatch(id);
+      dispatch();
 
       request('GET', '/api/friendships')
         .query({

@@ -68,7 +68,7 @@ class Liste extends Page {
   };
 
   onPressText = () => {
-  	this.props.navigator.push(Help.route("Aide", {from: "liste"}));
+  	this.props.navigator.push(Help.route({from: "liste"}));
   };
 
 	renderRestaurant = (restaurant) => {
@@ -101,13 +101,13 @@ class Liste extends Page {
 	  				<Text style={styles.emptyText}>Tu n'as pas de restaurants avec ces critères. Essaie de modifier les filtres ou de changer de lieu sur la carte.</Text>
 	  			</View>
 	  		</View>
-  		);
-  	} else {
-  		return (
-  			<View>
+      );
+    } else {
+      return (
+        <View>
 	   			{refreshingIndicator}
-					<Text key="number_restaurants" style={styles.numberRestaurants} onPress={this.onPressText}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants classés" : "restaurant classé"} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
-	   		</View>
+          <Text key="number_restaurants" onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants classés" : "restaurant classé"} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
+        </View>
   		);
   	}
   };

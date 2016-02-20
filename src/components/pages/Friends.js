@@ -20,7 +20,7 @@ import ProfilStore from '../../stores/Profil';
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
 
-let friendsSource = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
+let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class Friends extends Page {
   static route() {
@@ -33,7 +33,9 @@ class Friends extends Page {
   friendsState() {
     return {
       friends: ProfilStore.getFriends(),
+      experts: ProfilStore.getFriends(),
       filteredFriends: ProfilStore.getFriends(),
+      filteredExperts: ProfilStore.getFriends(),
       loading: ProfilStore.loading(),
       error: ProfilStore.error(),
     };
@@ -43,6 +45,8 @@ class Friends extends Page {
     super(props);
 
     this.state = this.friendsState();
+    this.state.friendsActive = true;
+    this.state.expertsActive = false;
   };
 
   componentWillMount() {
@@ -65,6 +69,14 @@ class Friends extends Page {
     this.setState({filteredFriends: newFilteredFriends});
   };
 
+  searchExperts = (searchedText) => {
+    var newFilteredExperts = _.filter(this.state.experts, function(expert) {
+      return expert.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
+    });
+
+    this.setState({filteredExperts: newFilteredExperts});
+  };
+
   closeKeyboard = () => {
     if (Platform.OS === 'ios') {
       NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
@@ -73,6 +85,18 @@ class Friends extends Page {
 
   onRefresh = () => {
     ProfilActions.fetchProfils();
+  };
+
+  onPressFriend = (from) => {
+    if (from === 'friends') {
+      this.setState({friendsActive: true});
+      this.setState({expertsActive: false});
+    }
+
+    if (from === 'experts') {
+      this.setState({expertsActive: true});
+      this.setState({friendsActive: false});
+    }
   };
 
   renderFriend = (friend) => {
@@ -134,13 +158,27 @@ class Friends extends Page {
             placeholder='Rechercher'
             placeholderTextColor='#333333'
             hideBackground={true}
-            onChangeText={this.searchFriends} />
+            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchExperts} />
         ]}
+        <View style={styles.friendsButtonContainer}>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={[styles.friendsButton, {backgroundColor: this.state.friendsActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressFriend('friends')}>
+            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#EF582D'}}>Amis</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={[styles.friendsButton, {backgroundColor: this.state.expertsActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressFriend('experts')}>
+            <Text style={{color: this.state.expertsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
+          </TouchableHighlight>
+        </View>
         <RefreshableListView
           style={styles.friendsList}
           refreshDescription="Chargement..."
           loadData={this.onRefresh}
-          dataSource={friendsSource.cloneWithRows(this.state.filteredFriends)}
+          dataSource={this.state.friendsActive ? ds.cloneWithRows(this.state.filteredFriends) : ds.cloneWithRows(this.state.filteredExperts)}
           renderRow={this.renderFriend}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
@@ -221,6 +259,19 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     color: '#EF582D',
+  },
+  friendsButtonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#EF582D',
+    borderRadius: 5
+  },
+  friendsButton: {
+    flex: 1,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

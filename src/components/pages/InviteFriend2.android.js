@@ -1,17 +1,15 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, NativeModules} from 'react-native';
+import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, ScrollView} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
-import SearchBar from 'react-native-search-bar';
 import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
+import TextInput from '../ui/TextInput';
 import NavigationBar from '../ui/NavigationBar';
-
-import FriendCard from '../elements/FriendCard';
 
 import MeStore from '../../stores/Me'
 
@@ -50,62 +48,29 @@ class InviteFriend extends Page {
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
+    this.getContacts();
   };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
   };
 
-  componentDidMount() {
-    this.checkPermission();
-  };
-
-  checkPermission() {
-    Contacts.checkPermission( (err, permission) => {
-      if(permission === 'undefined'){
-        Contacts.requestPermission( (err, permission) => {
-          this.getContacts();
-        })
-      }
-      if(permission === 'authorized'){
-        this.getContacts();
-      }
-      if(permission === 'denied'){
-        this.authorizeShowContacts();
-      }
-    });
-  };
-
   getContacts() {
     Contacts.getAll((err, retrievedContacts) => {
-      if(err && err.type === 'permissionDenied'){
-        this.authorizeShowContacts();
-      } else {
-        retrievedContacts = _.map(retrievedContacts, (contact) => {
-          if (!_.includes(MeStore.getState().uploadedContacts, contact.recordID)) {
-            contact.invitationSent = false;
-          } else {
-            contact.invitationSent = true;
-          }
-          return contact;
-        });
-        this.setState({contacts : retrievedContacts});
-        this.setState({filteredContacts : retrievedContacts});
-        if (!this.state.hasUploadedContacts) {
-          MeActions.uploadContacts(retrievedContacts);
+      retrievedContacts = _.map(retrievedContacts, (contact) => {
+        if (!_.includes(MeStore.getState().uploadedContacts, contact.recordID)) {
+          contact.invitationSent = false;
+        } else {
+          contact.invitationSent = true;
         }
+        return contact;
+      });
+      this.setState({contacts : retrievedContacts});
+      this.setState({filteredContacts : retrievedContacts});
+      if (!this.state.hasUploadedContacts) {
+        MeActions.uploadContacts(retrievedContacts);
       }
-    })
-  };
-
-  authorizeShowContacts() {
-    AlertIOS.alert(
-      "Vous n'avez pas autorisé Needl à avoir accès à vos contacts",
-      "Vous pouvez changer ca dans 'Settings -> Privacy'",
-      [
-        {text: 'OK', onPress: () => this.props.navigator.pop()},
-      ]
-    );
+    });
   };
 
   searchContacts = (searchedText) => {
@@ -142,7 +107,7 @@ class InviteFriend extends Page {
                 style={styles.imageCheck}
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [
-              !this.state.uploadingContacts ? [
+              !this.state.loading ? [
                 <TouchableHighlight style={styles.imageWrapper} onPress={() => {
                   var updatedContacts = _.map(this.state.contacts, (row) => {
                     if (contact.recordID === row.recordID) {
@@ -161,10 +126,7 @@ class InviteFriend extends Page {
                 </TouchableHighlight>
               ] : [
                 <View style={styles.loadingWrapper}>
-                  <ActivityIndicatorIOS
-                  animating={true}
-                  style={[{height: 40}]}
-                  size="large" />
+                  <ProgressBarAndroid indeterminate />
                 </View>
               ]
             ]}
@@ -175,21 +137,20 @@ class InviteFriend extends Page {
 
   onRefresh = () => {
     this.setState({hasUploadedContacts: false});
-    this.checkPermission();
   };
 
   renderPage() {
     return (
       <View style={{flex: 1}}>
         <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
-        <SearchBar
+        <TextInput
           ref='searchBar'
           placeholder='Rechercher'
-          hideBackground={true}
-          textFieldBackgroundColor='#DDDDDD'
+          style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
           onChangeText={this.searchContacts}
+          placeholderTextColor='#333333'
           onSearchButtonPress={this.closeKeyboard} />
-        <ListView
+        <RefreshableListView
           refreshDescription="Chargement..."
           loadData={this.onRefresh}
           style={styles.contactsList}

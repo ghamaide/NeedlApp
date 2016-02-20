@@ -97,7 +97,7 @@ class TabView extends Component {
         {this.state.showTabBar ? [
 					<View key="tabBar" style={styles.tabbarTabs}>
           	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.name, tab.icon, tab.pastille, tab.hasShared);
+            	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
           	})}
         	</View>
         ] : []}

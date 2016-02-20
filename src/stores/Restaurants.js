@@ -8,6 +8,7 @@ import RecoActions from '../actions/RecoActions';
 import ProfilActions from '../actions/ProfilActions';
 import CachedStore from './CachedStore';
 import MeStore from './Me';
+import ProfilStore from './Profil';
 import RecoStore from './Reco';
 
 export class RestaurantsStore extends CachedStore {
@@ -51,6 +52,8 @@ export class RestaurantsStore extends CachedStore {
 
       handleMaskProfilSuccess: ProfilActions.MASK_PROFIL_SUCCESS,
 
+      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+
       handleSetRegion: RestaurantsActions.SET_REGION,
       handleSetRegionSuccess: RestaurantsActions.SET_REGION_SUCCESS,
 
@@ -83,7 +86,7 @@ export class RestaurantsStore extends CachedStore {
     var newRestaurants = restaurants;
 
     _.each(newRestaurants, (restaurant) => {
-      return _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+      return _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
     });
 
     this.restaurants = newRestaurants;
@@ -103,9 +106,9 @@ export class RestaurantsStore extends CachedStore {
   handleRestaurantFetched(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
-      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
     } else {
-      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)}));
     }
     this.status.loading = false;
   }
@@ -132,6 +135,14 @@ export class RestaurantsStore extends CachedStore {
 
       if (_.isEqual(restaurant.friends_recommending, [id]) || _.isEqual(restaurant.friends_wishing, [id])) {
         restaurant.ON_MAP = false;
+      }
+    });
+  }
+
+  handleDisplayProfilSuccess(id) {
+    _.map(this.restaurants, (restaurant) => {
+      if (restaurant.ON_MAP = false &&_.includes(restaurant.friends_wishing, id) || _.includes(restaurant.friends_recommending, id)) {
+        restaurant.ON_MAP = true;
       }
     });
   }
@@ -233,6 +244,23 @@ export class RestaurantsStore extends CachedStore {
     return newSubways;
   }
 
+  isOnMap(restaurant) {
+    var index = 0;
+    var friends_recommending_and_friends_wishing = _.concat(restaurant.friends_wishing, restaurant.friends_recommending);
+    _.forEach(friends_recommending_and_friends_wishing, (friendId) => {
+      if (friendId === 553) {
+        index += 1;
+      } else if (!ProfilStore.getProfil(friendId).invisible) {
+        index += 1;
+      }
+    });
+    if (index > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   static getRestaurants() {
     return this.getState().restaurants;
   }
@@ -290,8 +318,12 @@ export class RestaurantsStore extends CachedStore {
       return false;
     }
 
-    return _.map(restaurant.my_friends_wishing || [], function(id) {
-      return parseInt(id);
+    var visible_friends_wishing = _.filter(restaurant.my_friends_wishing, function(friend) {
+      return !friend.invisible;
+    });
+
+    return _.map(visible_friends_wishing, function(friend) {
+      return friend.id;
     });
   }
 
@@ -301,11 +333,19 @@ export class RestaurantsStore extends CachedStore {
       return false;
     }
 
-    var ids = _.map(restaurant.my_friends_recommending, function(friend) {
+    var visible_friends_recommending = _.filter(restaurant.my_friends_recommending, function(friend) {
+      return !friend.invisible;
+    });
+
+    var ids = _.map(visible_friends_recommending, function(friend) {
       return friend.id;
     });
 
-    return _.remove(ids, function(id) {return id !== 553});
+    if (_.includes(ids, 553) && ids.length === 1) {
+      return ids;
+    } else {
+      return _.remove(ids, function(id) {return id !== 553});
+    }
   }
 
   static getRecommendation(restaurantId, userId) {

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Linking, DeviceEventEmitter, Platform, Component, AppState, View, PushNotificationIOS, Image, StyleSheet, ScrollView, TouchableHighlight} from 'react-native';
+import React, {AppState, Component, DeviceEventEmitter, Image, Linking, Platform, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';

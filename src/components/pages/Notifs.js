@@ -32,7 +32,7 @@ class Notifs extends Page {
 
   notifsState() {
     return {
-      data: NotifsStore.getState().notifs,
+      notifs: NotifsStore.getState().notifs,
       loading: NotifsStore.loading(),
       error: NotifsStore.error()
     };
@@ -130,7 +130,7 @@ class Notifs extends Page {
           refreshDescription="Chargement..."
           loadData={this.onRefresh}
           style={styles.notifsList}
-          dataSource={ds.cloneWithRows(this.state.data)}
+          dataSource={ds.cloneWithRows(this.state.notifs)}
           renderRow={this.renderNotif}
           contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
