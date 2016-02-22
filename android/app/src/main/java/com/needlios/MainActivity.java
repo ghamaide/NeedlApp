@@ -15,7 +15,8 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 
 import com.oblador.vectoricons.VectorIconsPackage;
 
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.oney.gcm.GcmPackage;
+import io.neson.react.notification.NotificationPackage;
 
 import com.learnium.RNDeviceInfo.*;
 
@@ -54,7 +55,8 @@ public class MainActivity extends ReactActivity {
             new VectorIconsPackage(),
             new ReactNativeContacts(),
             new FacebookLoginPackage(),
-            new ReactNativePushNotificationPackage(this)
+            new GcmPackage(),
+            new NotificationPackage(this)
         );
     }
 }

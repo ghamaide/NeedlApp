@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-import React, {Component, StyleSheet, View, Text} from 'react-native';
+import React, {Component, Image, Platform, StyleSheet, Text, View } from 'react-native';
 
 class PriceMarker extends Component {
   constructor(props) {
@@ -15,7 +15,11 @@ class PriceMarker extends Component {
         <View style={[styles.bubble, {backgroundColor: backgroundColor, borderColor: backgroundColor}]}>
           <Text style={styles.budget}>{this.props.text}</Text>
         </View>
-        <View style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
+        {Platform.OS === 'ios' ? [
+          <View style={[styles.triangle, styles.triangleIOS, {borderBottomColor: backgroundColor}]} />
+        ] : [
+          <View style={[styles.triangle, styles.triangleAndroid, {borderBottomColor: backgroundColor}]} />
+        ]}
       </View>
     );
   };
@@ -45,15 +49,23 @@ var styles = StyleSheet.create({
     height: 0,
     backgroundColor: 'transparent',
     borderStyle: 'solid',
-    borderLeftWidth: 4,
-    borderRightWidth: 4,
-    borderBottomWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    marginLeft: 16,
     transform: [
       {rotate: '180deg'}
     ]
+  },
+  triangleAndroid: {
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 2,
+    marginLeft: 19
+  },
+  triangleIOS: {
+    borderLeftWidth: 4,
+    borderRightWidth: 4,
+    borderBottomWidth: 8,
+    marginLeft: 16
   }
 });
 

@@ -4,7 +4,8 @@ import React, {AppState, Component, DeviceEventEmitter, Image, Linking, Platform
 
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
-import PushNotification from 'react-native-push-notification';
+import GcmAndroid from 'react-native-gcm-android';
+import Notification from 'react-native-system-notification';
 import Branch from 'react-native-branch';
 
 import TabView from './ui/TabView';
@@ -32,6 +33,18 @@ import Notifs from './pages/Notifs';
 import Liste from './pages/Liste';
 import RecoStep1 from './pages/Reco/Step1';
 import RecoStep3 from './pages/Reco/Step3';
+
+if (Platform.OS === 'android' && GcmAndroid.launchNotification) {
+  console.log('---1---');
+  console.log('GcmAndroid.launchNotification:', GcmAndroid.launchNotification);
+  var notification = GcmAndroid.launchNotification;
+  var info = JSON.parse(notification.info);
+  Notification.create({
+    subject: info.subject,
+    message: info.message,
+  });
+  GcmAndroid.stopService();
+}
 
 class App extends Component {
   constructor(props) {
@@ -64,10 +77,14 @@ class App extends Component {
   };
 
   onDeviceToken = (deviceToken) => {
+    console.log('---0---');
+    console.log(deviceToken);
     MeActions.saveDeviceToken(deviceToken);
   };
 
   onNotification = (notification) => {
+    console.log('---2---');
+    console.log(notification);
     var notificationTab = this.getNotificationTab(notification);
 
     if (notificationTab && AppState.currentState !== 'active') {
@@ -200,19 +217,16 @@ class App extends Component {
       Linking.addEventListener('url', this.handleOpenURL);
     
       Branch.getInitSessionResultPatiently(({params, error}) => {
-        console.log('0');
         // console.log(params);
       });
       
       Branch.setIdentity(MeStore.getState().me.id.toString());
 
       Branch.getLatestReferringParams((params) => { 
-        console.log('1');
         // console.log(params);
       });
 
       Branch.getFirstReferringParams((params) => { 
-        console.log('2');
         // console.log(params);
       });
 
@@ -220,15 +234,6 @@ class App extends Component {
       if (coldNotif) {
         this.notifLaunchTab = this.getNotifTab(coldNotif);
       }
-    } else {
-      PushNotification.configure({
-        onRegister: function(token) {
-            this.onDeviceToken(token);
-        },
-        onNotification: function(notification) {
-            this.onNotification(notification);
-        }
-      });
     }
 
     this.startActions();
@@ -258,7 +263,37 @@ class App extends Component {
     }).catch((err) => {
       console.log(err);
     })
-  }
+
+    if (Platform.OS === 'android') {
+      console.log('---4---');
+      GcmAndroid.addEventListener('register', this.onDeviceToken);
+
+      GcmAndroid.addEventListener('registerError', function(error){
+        console.log('---5---');
+        console.log('registerError', error.message);
+      });
+
+      GcmAndroid.addEventListener('notification', function(notification){
+        console.log('---6---');
+        console.log('receive gcm notification', notification);
+        console.log('GcmAndroid.isInForeground', GcmAndroid.isInForeground);
+        var info = JSON.parse(notification.data.info);
+        // if (!GcmAndroid.isInForeground) {
+          Notification.create({
+            subject: info.subject,
+            message: info.message,
+          });
+        // }
+      });
+
+      DeviceEventEmitter.addListener('sysNotificationClick', function(e) {
+        console.log('---7---');
+        console.log('sysNotificationClick', e);
+      });
+
+      GcmAndroid.requestPermissions();
+    }
+  };
 
   render() {
     return (
