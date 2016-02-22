@@ -127,6 +127,7 @@ export class MeActions {
 
       request('GET', '/api/users/update_version')
         .query({
+          'platform': Platform.OS,
           'version' : version
         })
         .end((err, result) => {

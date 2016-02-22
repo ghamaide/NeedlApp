@@ -78,9 +78,9 @@ export class ProfilActions {
     return err;
   }
 
-  displayProfil() {
+  displayProfil(id) {
     return (dispatch) => {
-      dispatch(id);
+      dispatch();
 
       request('GET', '/api/friendships')
         .query({

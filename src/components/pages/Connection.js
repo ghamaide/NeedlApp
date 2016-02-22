@@ -61,7 +61,7 @@ class Connection extends Component {
             <ProgressBarAndroid key='loading_android' indeterminate />
           ]
         ] : [
-          <TouchableHighlight style={styles.button} underlayColor='rgba(0, 0, 0, 0)' onPress={this.onPress}>
+          <TouchableHighlight key="try_again" style={styles.button} underlayColor='rgba(0, 0, 0, 0)' onPress={this.onPress}>
             <Text style={styles.buttonText}>Réessayer</Text>
           </TouchableHighlight>
         ]}

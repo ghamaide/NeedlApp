@@ -5,7 +5,6 @@ import React, {StyleSheet, Component, Image, View, TouchableHighlight, processCo
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
 
-import Carousel from '../ui/Carousel';
 import Text from '../ui/Text';
 
 class Restaurant extends Component {
@@ -36,7 +35,7 @@ class Restaurant extends Component {
                 <Text style={{color: '#FFFFFF'}}>
                    , {budget}
                 </Text>
-                <Text style={{color: '#999999'}}>
+                <Text style={{color: '#AAAAAA'}}>
                   {emptyBudget}
                 </Text>
               </Text>
@@ -56,19 +55,9 @@ class Restaurant extends Component {
                 <Image style={styles.imageNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
               </View>
              : null}
-            {!this.props.isNeedl && this.props.rank === 1 ?
+            {!this.props.isNeedl && this.props.rank ?
               <View style={styles.imageRank}>
-                <Text style={[styles.imageRankText, {marginLeft: 1}]}>#1</Text>
-              </View>
-             : null}
-            {!this.props.isNeedl && this.props.rank === 2 ?
-              <View style={styles.imageRank}>
-                <Text style={styles.imageRankText}>#2</Text>
-              </View>
-             : null}
-            {!this.props.isNeedl && this.props.rank === 3 ?
-              <View style={styles.imageRank}>
-                <Text style={styles.imageRankText}>#3</Text>
+                <Text style={styles.imageRankText}>#{this.props.rank}</Text>
               </View>
              : null}
           </View>
@@ -112,7 +101,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     bottom: 32,
     left: 10,
-    fontWeight: '500'
+    fontWeight: '400'
   },
   restaurantType: {
     flex: 1,
@@ -123,7 +112,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10,
     left: 10,
-    fontWeight: '500'
+    fontWeight: '400'
   },
   restaurantPrice: {
     flex: 1,
@@ -147,10 +136,11 @@ var styles = StyleSheet.create({
   restaurantSubwayImage: {
     width: 15,
     height: 15,
-    marginRight: 5
+    marginRight: 5,
+    marginTop: 1
   },
   restaurantSubwayText: {
-    fontWeight: '900',
+    fontWeight: '400',
     fontSize: 14,
     color: 'white',
     backgroundColor: 'rgba(0,0,0,0)',
@@ -173,21 +163,21 @@ var styles = StyleSheet.create({
     tintColor: '#FFFFFF'
   },
   imageRank: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     position: 'absolute',
     top: 5,
     right: 5,
-    borderRadius: 15,
+    borderRadius: 16,
     borderColor: '#FFFFFF',
-    borderWidth: 1,
-    padding: 6.1,
+    borderWidth: .5,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   imageRankText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '500'
   }
 });
 

@@ -34,10 +34,8 @@ class Help extends Component {
   };
 
   componentDidMount() {
-    if (Platform.OS === 'ios') { 
-      Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-      Mixpanel.trackWithProperties('Help Page From ' + this.props.from, {id: MeStore.getState().me.id, user: MeStore.getState().me.name});
-    }
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+    Mixpanel.trackWithProperties('Help Page From ' + this.props.from, {id: MeStore.getState().me.id, user: MeStore.getState().me.name});
   };
 
   render() {

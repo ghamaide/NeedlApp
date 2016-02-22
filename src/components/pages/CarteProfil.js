@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio} from 'react-native';
+import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio, Platform} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
@@ -8,10 +8,10 @@ import MapView from 'react-native-maps';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import Carousel from '../ui/Carousel';
 import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
+import PriceMarker from '../elements/PriceMarker';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
@@ -43,8 +43,9 @@ class CarteProfil extends Page {
 
   mapState() {
     return {
-      // we want the map even if it is still loading
       profile: ProfilStore.getProfil(this.currentProfil()),
+      loading: ProfilStore.loading(),
+      error: ProfilStore.error()
     };
   };
 
@@ -110,7 +111,15 @@ class CarteProfil extends Page {
 
   renderPage() {
     var profile = this.state.profile;
-    console.log(profile);
+    var recommendations_and_wishes = _.concat(profile.recommendations, profile.wishes);
+    var restaurants = [];
+    _.forEach(recommendations_and_wishes, (restaurantId) => {
+      var restaurant = RestaurantsStore.getRestaurant(restaurantId);
+      restaurants.push(_.extend(restaurant, {from: _.includes(restaurant.friends_wishing, this.currentProfil()) ? 'wish' : 'recommendation'}));
+    });
+    
+    var sortedRestaurants = _.reverse(_.sortBy(restaurants, ['score']));
+
     return (
   		<View style={{flex: 1, position: 'relative'}}>
         <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
@@ -125,40 +134,15 @@ class CarteProfil extends Page {
             onRegionChangeComplete={this.onRegionChangeComplete}
             onPress={this.onMapPress}
             onMarkerSelect={this.onMarkerPress}>     
-            {_.map(profile.recommendations, (recommendationId) => {
-              var restaurant = RestaurantsStore.getRestaurant(recommendationId);
+            {_.map(sortedRestaurants, (restaurant) => {
+              console.log(restaurant);
               var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}
-                  onSelect={this.onSelect}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
-                  <PriceMarker budget={restaurant.price_range} />
-                  <MapView.Callout>
-                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
-                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                        <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
-                        <View>
-                          <Text style={{color: '#333333', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
-                          <Text style={{color: '#333333', fontSize: 13}}>{restaurant.food[1]}</Text>
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                  </MapView.Callout>
-                </MapView.Marker>
-              );
-            })}
-            {_.map(profile.wishes, (wishId) => {
-              var restaurant = RestaurantsStore.getRestaurant(wishId);
-              var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
-              return (
-                <MapView.Marker
-                  key={restaurant.id}
-                  coordinate={coordinates}
-                  onSelect={this.onSelect}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
-                  <PriceMarker budget={restaurant.price_range} />
+                  onSelect={this.onSelect}>
+                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#38E1B2' : '#EF582D'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>

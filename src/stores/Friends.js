@@ -32,6 +32,10 @@ export class FriendsStore extends CachedStore {
       handleFriendsFetched: FriendsActions.FRIENDS_FETCHED,
       handleFriendsFetchFailed: FriendsActions.FRIENDS_FETCH_FAILED,
 
+      handleRemoveFriendship: FriendsActions.REMOVE_FRIENDSHIP,
+      handleRemoveFriendshipFailed: FriendsActions.REMOVE_FRIENDSHIP_FAILED,
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS
+
 // ================================================================================================
     });
   }
@@ -52,16 +56,33 @@ export class FriendsStore extends CachedStore {
     this.status.error = err;
   }
 
+  handleRemoveFriendship() {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleRemoveFriendshipFailed(error) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleRemoveFriendshipSuccess(idProfil) {
+    this.status.loading = false;
+    this.friends = _.filter(this.data.friends, function(friend) {
+      return friend.id !== idProfil;
+    });
+  }
+
   static getFriends() {
     return this.getState().friends;
   }
 
   static error() {
-    return this.getState().status.friendsLoadingError;
+    return this.getState().status.error;
   }
 
   static loading() {
-    return this.getState().status.friendsLoading;
+    return this.getState().status.loading;
   }
 }
 

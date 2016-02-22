@@ -1,11 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, TextInput, View} from 'react-native';
+import React, {Component, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import NavigationBar from '../ui/NavigationBar';
 
 import Text from '../ui/Text';
+import TextInput from '../ui/TextInput';
 
 import MeStore from '../../stores/Me';
 

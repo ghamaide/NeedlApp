@@ -1,11 +1,12 @@
 'use strict';
 
-import React, {StyleSheet, View, ScrollView, Image, TouchableHighlight, RefreshControl, Dimensions, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
+import React, {ActivityIndicatorIOS, Dimensions, Image, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import RNComm from 'react-native-communications';
 import Mixpanel from 'react-native-mixpanel';
 import MapView from 'react-native-maps';
+import Swiper from 'react-native-swiper'
 
 import RestaurantElement from '../elements/Restaurant';
 import Button from '../elements/Button';
@@ -30,6 +31,7 @@ import RecoStep3 from './Reco/Step3';
 import Help from './Help';
 
 var windowHeight = Dimensions.get('window').height;
+var windowWidth = Dimensions.get('window').width;
 
 class Restaurant extends Page {
   static route(props, title) {
@@ -44,7 +46,6 @@ class Restaurant extends Page {
     return {
       id: this.props.id,
       data: RestaurantsStore.getRestaurant(this.props.id),
-      reviewSelected: RestaurantsStore.getRecommenders(this.props.id).length > 0 ? RestaurantsStore.getRecommenders(this.props.id)[0] : 0,
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),
     };
@@ -61,9 +62,7 @@ class Restaurant extends Page {
   };
 
   componentWillMount() {
-    if (Platform.OS === 'ios') { 
-      Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-    }
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
@@ -112,29 +111,22 @@ class Restaurant extends Page {
   };
 
   call = () => {
-    if (Platform.OS === 'ios') { 
-      Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
-    }
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
     RNComm.phonecall(this.state.data.phone_number, false);
   };
 
-  centerReco = () => {
-    this.refs.carouselReco.goToPage(-1);
-  };
-
   onPressText = () => {
-    this.props.navigator.push(Help.route("Aide", {from: "restaurant"}));
+    this.props.navigator.push(Help.route({from: 'restaurant'}));
   };
 
   renderPage() {
     var restaurant = this.state.data;
-
     return (
       <View>
         {this.props.fromReco ? [
-          <NavigationBar key="navbar" title={restaurant.name} />
+          <NavigationBar key='navbar' title={restaurant.name} />
         ] : [
-          <NavigationBar key="navbar" title={restaurant.name} leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar key='navbar' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         ]}
         <ScrollView
           style={{flex: 1, height: windowHeight - 120}}
@@ -146,21 +138,17 @@ class Restaurant extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor="#EF582D"
-              title="Chargement..."
+              tintColor='#EF582D'
+              title='Chargement...'
               colors={['#FFFFFF']}
-              progressBackgroundColor="rgba(0, 0, 0, 0.5)" />
+              progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
           }>
 
-          <View key="restaurant_image" style={styles.header}>
+          <View key='restaurant_image' style={styles.header}>
             <Carousel
-              key="carouselRestaurant"
-              ref="carouselRestaurant" 
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                position: 'relative'
-              }}>
+              key='carouselRestaurant'
+              ref='carouselRestaurant' 
+              style={{flexDirection: 'row', flex: 1, position: 'relative'}}>
               {_.map(restaurant.pictures, (picture) => {
                 return (
                   <RestaurantElement
@@ -175,208 +163,148 @@ class Restaurant extends Page {
             </Carousel>
           </View>
 
-          <View key="restaurant_call_top" style={[styles.callContainer]}>
-            <Text key="call_text" style={styles.reservationText}>Réserver une table</Text>
-            <Button key="call_button" style={styles.button} label="Appeler" onPress={this.call} />
+          <View key='restaurant_call_top' style={[styles.callContainer]}>
+            <Text key='call_text' style={styles.reservationText}>Réserver une table</Text>
+            <Button key='call_button' style={styles.button} label='Appeler' onPress={this.call} />
           </View>
 
-          <View key="restaurant_recommenders" style={styles.recoContainer}>
-            {RestaurantsStore.getRecommenders(restaurant.id).length ?
-              <View key="restaurant_recommenders_wrapper" >
-                <Text key="recommenders_text" style={styles.containerTitle}>Ils l'ont recommandé</Text>
-                <View key="carousel_container" style={{alignItems: 'center'}}>
-                  {RestaurantsStore.getRecommenders(restaurant.id).length === 1 ?
-                    [
-                      <Carousel
-                        key="carouselReco"
-                        ref="carouselReco" 
-                        style={{
-                          flexDirection: 'row',
-                          height: 80,
-                          width: 80,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'transparent'
-                        }} 
-                        elemSize={80}
-                        insetMargin={0} 
-                        onPageChange={(i) => {
-                          this.setState({
-                            reviewSelected: RestaurantsStore.getRecommenders(restaurant.id)[0]
-                          });
-                      }}>
-                        {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
-                          var profil = ProfilStore.getProfil(userId);
-                          var source = profil ? {uri: profil.picture} : {};
-
-                          return (
-                            <View key={"profile_container_" + userId} style={styles.avatarWrapper}>
-                              <Image key={"profile_" + userId} style={styles.avatar} source={source} />
+          <View key='restaurant_recommenders' style={styles.recoContainer}>
+            {RestaurantsStore.getRecommenders(restaurant.id).length ? [
+              <View key='restaurant_recommenders_wrapper'>
+                <Text style={styles.containerTitle}>Ils l'ont recommandé</Text>
+                <Swiper 
+                  style={styles.wrapper}
+                  showsButtons={false}
+                  height={200}
+                  width={windowWidth - 40}
+                  autoplay={Platform.OS === 'ios' ? true : false}
+                  autoplayTimeout={3}
+                  paginationStyle={{bottom: Platform.OS === 'ios' ? -7 : -1}}
+                  dot={<View style={{backgroundColor:'rgba(0,0,0,.2)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
+                  activeDot={<View style={{backgroundColor: '#EF582D', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
+                  {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
+                      if (userId === 553) {
+                        return (
+                          <View key='needl_reco' style={styles.slide}>
+                            <View style={[styles.avatarWrapper, {backgroundColor: '#EF582D'}]}>
+                              <TouchableHighlight onPress={this.onPressText} underlayColor='rgba(0, 0, 0, 0)'>
+                                <Image style={styles.avatarNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
+                              </TouchableHighlight>
                             </View>
-                          );
-                        })}
-                      </Carousel>
-                    ] : [
-                      <Carousel
-                        key="carouselReco"
-                        ref="carouselReco"
-                        style={{
-                          flexDirection: 'row',
-                          height: 80,
-                          width: 240,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'transparent'
-                        }}
-                        elemSize={80}
-                        insetMargin={80}
-                        leftFlecheStyle={{marginLeft: -35}}
-                        rightFlecheStyle={{right: 0}}
-                        onPageChange={(i) => {
-                          this.setState({
-                            reviewSelected: RestaurantsStore.getRecommenders(restaurant.id)[i + 1]
-                          });
-                      }}>
-                        {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
-                          var profil = ProfilStore.getProfil(userId);
-                          var source = profil ? {uri: profil.picture} : {};
-
-                          return (
-                            <View key={"profile_container_" + userId} style={styles.avatarWrapper}>
-                              <Image key={"profile_" + userId} style={styles.avatar} source={source} />
+                            <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
+                              <View style={styles.triangleContainer}>
+                                <View style={styles.triangle} />
+                              </View>
+                              <Text style={[styles.reviewText, {textDecorationLine: 'underline'}]} onPress={this.onPressText}>Labellisé valeur sûre par Needl (+)</Text>
                             </View>
-                          );
-                        })}
-                      </Carousel>
-                    ]
-                  }
-                </View>
-              </View>
-              : [ restaurant.score <= 5 ?
-                <View key="review_needl" style={{alignItems: 'center', marginBottom: 10}}>
-                  <View key="profile_container_553" style={[styles.avatarWrapper, {backgroundColor: '#EF582D'}]}>
-                    <TouchableHighlight onPress={this.onPressText} underlayColor='rgba(0, 0, 0, 0)'>
-                      <Image key="profile_553" style={styles.avatarNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
-                    </TouchableHighlight>
-                  </View>
-                  <View key="needl_review" style={styles.reviewNeedl}>
-                    <Text key="recommendation_text" style={[styles.reviewText, {textDecorationLine: 'underline'}]} onPress={this.onPressText}>Labellisé valeur sûre par Needl (+)</Text>
-                  </View>
-                </View>
-                : <Text key="no_recommenders" style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
-              ]
-            }
-            {RestaurantsStore.getRecommenders(restaurant.id).length ?
-              <View key="restaurant_recommenders_reviews" style={styles.reviewBox}>
-                <View style={styles.triangleContainer}>
-                  <View style={styles.triangle} />
-                </View>
-                <Text key="recommendation_text" style={styles.reviewText}>{RestaurantsStore.getRecommendation(restaurant.id, this.state.reviewSelected).review || 'Je recommande !'}</Text>
-                <Text key="recommendation_author" style={styles.reviewAuthor}>{ProfilStore.getProfil(this.state.reviewSelected).fullname}</Text>
-              </View>
-              : null}
+                          </View>
+                        );
+                      } else {
+                        var profil = ProfilStore.getProfil(userId);
+                        var source = profil ? {uri: profil.picture} : {};
 
-            {!_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id) ?
+                        return (
+                          <View key={'reco_' + profil.id} style={styles.slide}>
+                            <View style={styles.avatarWrapper}>
+                              <Image style={styles.avatar} source={source} />
+                            </View>
+                            <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
+                              <View style={styles.triangleContainer}>
+                                <View style={styles.triangle} />
+                              </View>
+                              <Text style={styles.reviewText}>{RestaurantsStore.getRecommendation(restaurant.id, profil.id).review || 'Je recommande !'}</Text>
+                              <Text style={styles.reviewAuthor}>{profil.fullname}</Text>
+                            </View>
+                          </View>
+                        );
+                      }
+                  })}
+                </Swiper>
+              </View>
+            ] : [
+              <Text key='no_recommenders' style={styles.containerTitle}>Aucun ami ne l'a recommandé</Text>
+            ]}
+
+            {!_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id) ? [
               <Option
-                key="recommandation_button"
+                key='recommandation_button'
                 style={styles.recoButton}
                 label={'Je recommande'}
                 icon={require('../../assets/img/actions/icons/japprouve.png')}
                 onPress={() => {this.approuve(false);}} />
-              : null}
+            ] : null}
           </View>
 
-          {RestaurantsStore.getRecommenders(restaurant.id).length && restaurant.ambiences && restaurant.ambiences.length ?
-            <View key="restaurant_ambiences" style={styles.wishContainer}>
-              <Text key="restaurant_ambiences_text" style={styles.containerTitle}>Ambiances</Text>
-              <View key="restaurant_ambiences_slice1" style={styles.toggleBox}>
+          {restaurant.ambiences.length ?
+            <View key='restaurant_ambiences' style={styles.wishContainer}>
+              <Text style={styles.containerTitle}>Ambiances</Text>
+              <View style={styles.toggleBox}>
                 {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                  return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, "#444444");
+                  return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, '#444444');
                 })}
               </View>
             </View>
             : null
           }
 
-          {RestaurantsStore.getRecommenders(restaurant.id).length && restaurant.strengths && restaurant.strengths.length ?
-            <View key="restaurant_strengths" style={styles.recoContainer}>
-              <Text key="restaurant_strengths_text" style={styles.containerTitle}>Points forts</Text>
-              <View key="restaurant_strengths_slice1" style={styles.toggleBox}>
+          {restaurant.strengths && restaurant.strengths.length ?
+            <View key='restaurant_strengths' style={styles.recoContainer}>
+              <Text style={styles.containerTitle}>Points forts</Text>
+              <View style={styles.toggleBox}>
                 {_.map(restaurant.strengths.slice(0, 3), (strength) => {
-                	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, "#444444");
+                	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, '#444444');
                 })}
               </View>
             </View>
             : null}
           
-          <View key="restaurant_wishlist" style={styles.wishContainer}>
-            {_.remove(RestaurantsStore.getWishers(restaurant.id), function(id) {return id !== MeStore.getState().me.id;}).length ?
-              <View key="restaurant_wishlist_wrapper" style={{alignItems: 'center'}}>
-                <Text key="restaurant_wishlist_text" style={styles.containerTitle}>Ils ont envie d'y aller</Text>        
-                {_.remove(RestaurantsStore.getWishers(restaurant.id), function(id) {return id !== MeStore.getState().me.id;}).length === 1 ?
-                  [
-                    <Carousel 
-                      key="carouselWish"
-                      ref="carouselWish"
-                      style={{
-                        flexDirection: 'row',
-                        height: 80,
-                        width: 80,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'transparent'
-                      }}
-                      elemSize={80}
-                      insetMargin={0}>
-                      {_.map(_.remove(RestaurantsStore.getWishers(restaurant.id), function(id) {return id !== MeStore.getState().me.id;}), (userId) => {
-                        var profil = ProfilStore.getProfil(userId);
-                        var source = profil ? {uri: profil.picture} : {};
-
-                        return (
-                          <View key={"profile_container_" + userId} style={styles.avatarWrapper}>
-                            <Image key={"profile_" + userId} style={styles.avatar} source={source} />
-                          </View>
-                        );
-                      })}
-                    </Carousel>
-                  ] : [
-                    <Carousel 
-                      key="carouselWish"
-                      ref="carouselWish"
-                      style={{
-                        flexDirection: 'row',
-                        height: 80,
-                        width: 240,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: 'transparent'
-                      }}
-                      elemSize={80}
-                      insetMargin={80}
-                      leftFlecheStyle={{marginLeft: -35}}
-                      rightFlecheStyle={{right: 0}}>
-                      {_.map(_.remove(RestaurantsStore.getWishers(restaurant.id), function(id) {return id !== MeStore.getState().me.id;}), (userId) => {
-                        var profil = ProfilStore.getProfil(userId);
-                        var source = profil ? {uri: profil.picture} : {};
-
-                        return (
-                          <View key={"profile_container_" + userId} style={styles.avatarWrapper}>
-                            <Image key={"profile_" + userId} style={styles.avatar} source={source} />
-                          </View>
-                        );
-                      })}
-                    </Carousel>
-                  ]
-                }
+          <View key='restaurant_wishlist' style={styles.wishContainer}>
+            {RestaurantsStore.getWishers(restaurant.id).length ? [
+              <View key='restaurant_wishlist_wrapper' style={{alignItems: 'center'}}>
+                <Text style={styles.containerTitle}>Ils ont envie d'y aller</Text>        
+                {RestaurantsStore.getWishers(restaurant.id).length === 1 ? [
+                  <Carousel 
+                    key='carouselWish'
+                    style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
+                    elemSize={80}
+                    insetMargin={0}>
+                    {_.map(RestaurantsStore.getWishers(restaurant.id), (userId) => {
+                      var profil = ProfilStore.getProfil(userId);
+                      var source = profil ? {uri: profil.picture} : {};
+                      return (
+                        <View key='wishers' style={styles.avatarWrapper}>
+                          <Image style={styles.avatar} source={source} />
+                        </View>
+                      );
+                    })}
+                  </Carousel>
+                ] : [
+                  <Carousel 
+                    key='carouselWish'
+                    style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
+                    elemSize={80}
+                    insetMargin={80}
+                    leftFlecheStyle={{marginLeft: -35}}
+                    rightFlecheStyle={{right: 0}}>
+                    {_.map(RestaurantsStore.getWishers(restaurant.id), (userId) => {
+                      var profil = ProfilStore.getProfil(userId);
+                      var source = profil ? {uri: profil.picture} : {};
+                      return (
+                        <View key='wishers' style={styles.avatarWrapper}>
+                          <Image style={styles.avatar} source={source} />
+                        </View>
+                      );
+                    })}
+                  </Carousel>
+                ]}
               </View>
-            : <Text key="no_wishlist" style={styles.containerTitle}>Pas encore d'ami qui veut y aller</Text>}
+            ] : null}
 
             {(!_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) &&
                       !_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
-              <View>
-                <Text key="no_wishlist" style={styles.containerTitle}>Ajouter sur votre wishlist</Text>
+              <View key='add_wishlist'>
+                <Text style={styles.containerTitle}>Ajouter sur votre wishlist</Text>
                 <Option
-                  key="wihlist_button"
                   style={styles.recoButton}
                   label={RestaurantsStore.loading() ? 'Enregistrement...' : 'Sur ma wishlist'}
                   icon={require('../../assets/img/actions/icons/aessayer.png')}
@@ -391,10 +319,10 @@ class Restaurant extends Page {
           </View>
 
           {RestaurantsStore.hasMenu(restaurant.id) ?
-            <View key="restaurant_menu" style={styles.recoContainer}>
+            <View key='restaurant_menu' style={styles.recoContainer}>
               <Text style={styles.containerTitle}>Sélection du chef</Text>
               {RestaurantsStore.hasMenuEntree(restaurant.id) ?
-                <View key="menu_starter" style={styles.menuInnerContainer}>
+                <View key='menu_starter' style={styles.menuInnerContainer}>
                   <Text style={styles.menuTitle}>Entrées</Text>
                   {restaurant.starter1 ? <Text style={styles.menuPlat}>{restaurant.starter1}</Text> : null}
                   {restaurant.description_starter1 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_starter1}</Text> : null}
@@ -404,9 +332,9 @@ class Restaurant extends Page {
                   {restaurant.description_starter2 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_starter2}</Text> : null}
                   {restaurant.price_starter2 ? <Text style={styles.menuPlat}>{restaurant.price_starter2}€</Text> : null}
                 </View>
-                : null}
+              : null}
               {RestaurantsStore.hasMenuMainCourse(restaurant.id) ?
-                <View key="menu_main_course" style={styles.menuInnerContainer}>
+                <View key='menu_main_course' style={styles.menuInnerContainer}>
                   <Text style={styles.menuTitle}>Plats</Text>
                   {restaurant.main_course1 ? <Text style={styles.menuPlat}>{restaurant.main_course1}</Text> : null}
                   {restaurant.description_main_course1 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_main_course1}</Text> : null}
@@ -420,9 +348,9 @@ class Restaurant extends Page {
                   {restaurant.description_main_course3 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_main_course3}</Text> : null}
                   {restaurant.price_main_course3 ? <Text style={styles.menuPlat}>{restaurant.price_main_course3}€</Text> : null}
                 </View>
-                : null}
+              : null}
               {RestaurantsStore.hasMenuDessert(restaurant.id) ?
-                <View key="menu_dessert" style={styles.menuInnerContainer}>
+                <View key='menu_dessert' style={styles.menuInnerContainer}>
                   <Text style={styles.menuTitle}>Desserts</Text>
                   {restaurant.dessert1 ? <Text style={styles.menuPlat}>{restaurant.dessert1}</Text> : null}
                   {restaurant.description_dessert1 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_dessert1}</Text> : null}
@@ -432,23 +360,22 @@ class Restaurant extends Page {
                   {restaurant.description_dessert2 ? <Text style={[styles.menuPlat, styles.menuDescription]} customFont={true}>{restaurant.description_dessert2}</Text> : null}
                   {restaurant.price_dessert2 ? <Text style={styles.menuPlat}>{restaurant.price_dessert2}€</Text> : null}
                 </View>
-                : null}
+              : null}
             </View>
-            : null
-          }
+          : null}
 
-          <View key="restaurant_infos" style={[styles.lieuContainer, RestaurantsStore.hasMenu(restaurant.id) ? {backgroundColor: '#E0E0E0'} : {}]}>
-            <Text key="restaurant_location" style={styles.containerTitle}>Lieu</Text>
-            <Text key="restaurant_adress" style={styles.address}>{restaurant.address}</Text>
-            <View key="restaurant_subway_wrapper" style={styles.metroContainer}>
-              <Image key="subway_image" source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
-              <Text key="restaurant_subway" style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
+          <View key='restaurant_infos' style={[styles.lieuContainer, RestaurantsStore.hasMenu(restaurant.id) ? {backgroundColor: '#E0E0E0'} : {}]}>
+            <Text style={styles.containerTitle}>Adresse</Text>
+            <Text style={styles.address}>{restaurant.address}</Text>
+            <View style={styles.metroContainer}>
+              <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
+              <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
             </View>
           </View>
 
           <MapView
-            key="restaurant_map"
-            ref="mapview"
+            key='restaurant_map'
+            ref='mapview'
             style={styles.mapContainer} 
             region={{
               latitude: restaurant.latitude,
@@ -469,18 +396,17 @@ class Restaurant extends Page {
               </MapView.Marker>
           </MapView>
 
-          <View key="restaurant_call_bottom" style={styles.callContainer}>
-            <Text key="call_text" style={styles.reservationText}>Réserver une table</Text>
-            <Button key="call_button" style={styles.button} label="Appeler" onPress={this.call} />
+          <View key='restaurant_call_bottom' style={styles.callContainer}>
+            <Text style={styles.reservationText}>Réserver une table</Text>
+            <Button style={styles.button} label='Appeler' onPress={this.call} />
           </View>
 
           {(_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ||
                       _.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
-            <Options key="restaurant_buttons" >
-              {_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ?
-              [
+            <Options key='restaurant_buttons' >
+              {_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ? [
                 <Option
-                  key="wihlist_remove"
+                  key='wihlist_remove'
                   label={RestaurantsStore.loading() ? 'Suppression...' : 'Retirer de ma wishlist'}
                   icon={require('../../assets/img/actions/icons/unlike.png')}
                   onPress={() => {
@@ -493,14 +419,12 @@ class Restaurant extends Page {
                       }
                     });
                   }} />
-              ]
-              :
-              [
-                <Option key="reco_modification" label="Modifier ma reco" icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
+              ] : [
+                <Option key='reco_modification' label='Modifier ma reco' icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
                   this.approuve(true);
                 }} />,
                 <Option
-                  key="reco_remove"
+                  key='reco_remove'
                   label={RestaurantsStore.loading() ? 'Suppression...' : 'Supprimer ma reco'}
                   icon={require('../../assets/img/actions/icons/poubelle.png')}
                   onPress={() => {
@@ -513,8 +437,7 @@ class Restaurant extends Page {
                       }
                     });
                   }} />
-              ]
-              }
+              ]}
             </Options>
             : null }
         </ScrollView>
@@ -587,32 +510,27 @@ var styles = StyleSheet.create({
     color: '#444444'
   },
   avatarWrapper: {
-    height: 60,
-    width: 60,
-    margin: 10,
-    borderRadius: 30
+    height: 50,
+    width: 50,
+    marginBottom: 20,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   avatar: {
-    height: 60,
-    width: 60,
-    borderRadius: 30
+    height: 50,
+    width: 50,
+    borderRadius: 25,
   },
   avatarNeedl: {
-    height: 40,
-    width: 40,
-    margin: 10
-  },
-  reviewBox: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 5,
-    marginTop: 10,
-    marginBottom: 10,
-    padding: 10,
-    alignItems: 'center'
+    height: 30,
+    width: 30,
+    margin: 10,
   },
   triangleContainer: {
     top: -10,
-    position: 'relative'
+    position: 'relative',
+    left: (windowWidth / 2) - 30
   },
   triangle: {
     height: 15,
@@ -635,6 +553,7 @@ var styles = StyleSheet.create({
     color: '#444444'
   },
   recoButton: {
+    marginTop: 20,
     backgroundColor: '#38E1B2'
   },
   toggleBox: {
@@ -643,7 +562,7 @@ var styles = StyleSheet.create({
   },
   toggle: {
     margin: 10,
-    backgroundColor: "#38E1B2"
+    backgroundColor: '#38E1B2'
   },
   menuInnerContainer: {
     alignItems: 'center',
@@ -663,6 +582,11 @@ var styles = StyleSheet.create({
   },
   menuDescription: {
     fontFamily: 'Quicksand-Italic'
+  },
+  slide: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   }
 });
 

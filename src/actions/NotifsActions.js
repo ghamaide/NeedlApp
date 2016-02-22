@@ -14,7 +14,6 @@ export class NotifsActions {
           if (err) {
             return this.notifsFetchFailed(err);
           }
-
           this.notifsFetched(result);
         });
     }

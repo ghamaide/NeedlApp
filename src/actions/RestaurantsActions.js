@@ -36,6 +36,7 @@ export class RestaurantsActions {
           if (err) {
             return this.restaurantFetchFailed(err, id);
           }
+
           this.restaurantFetched(result);
         });
     }
