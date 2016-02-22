@@ -1,27 +1,27 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, TouchableHighlight, Image, ScrollView, Platform} from 'react-native';
+import React, {Image, ListView, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import PushNotification from 'react-native-push-notification';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
 
-import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
-import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
+import RestaurantsStore from '../../stores/Restaurants';
 
-import Filtre from './Filtre';
 import Carte from './Carte';
-import Restaurant from './Restaurant';
+import Filtre from './Filtre';
 import Help from './Help';
+import Restaurant from './Restaurant';
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -140,43 +140,43 @@ class Liste extends Page {
 }
 
 var styles = StyleSheet.create({
-	filterMessageText: {
-		color: '#EF582D',
+  filterMessageText: {
+    color: '#EF582D',
     fontSize: 15,
     fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     textAlign: 'center',
-		backgroundColor: '#FFFFFF',
+    backgroundColor: '#FFFFFF',
     fontFamily: 'test'
-	},
-	filterContainerWrapper: {
-		borderColor: '#EF582D',
-		borderWidth: 1,
-		borderRadius: 1,
+  },
+  filterContainerWrapper: {
+    borderColor: '#EF582D',
+    borderWidth: 1,
+    borderRadius: 1,
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 7
-	},
+  },
   emptyTextContainer: {
-  	flex: 1,
-  	marginTop: 40,
-  	alignItems: 'center',
-  	justifyContent: 'center'
+    flex: 1,
+    marginTop: 40,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyText: {
-  	flex: 1,
-  	textAlign: 'center',
-  	padding: 20,
-  	fontSize: 15,
-  	fontWeight: '600'
+    flex: 1,
+    textAlign: 'center',
+    padding: 20,
+    fontSize: 15,
+    fontWeight: '600'
   },
   numberRestaurants: {
-  	textAlign: 'center',
-  	color: '#444444',
+    textAlign: 'center',
+    color: '#444444',
     marginLeft: 10,
     marginRight: 10,
-  	fontSize: 13,
-  	textDecorationLine: 'underline',
+    fontSize: Platform.OS === 'ios' ? 13 : 11,
+    textDecorationLine: 'underline',
     textDecorationStyle: 'solid',
     textDecorationColor: '#444444'
   }

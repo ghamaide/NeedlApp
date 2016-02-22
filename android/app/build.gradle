@@ -138,5 +138,6 @@ dependencies {
     compile project(':RNDeviceInfo')
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile project(':RNGcmAndroid')
-    compile project(':react-native-system-notification') 
+    compile project(':react-native-system-notification')
+    compile project(':RNMixpanel')
 }

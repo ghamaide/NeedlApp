@@ -20,6 +20,8 @@ import io.neson.react.notification.NotificationPackage;
 
 import com.learnium.RNDeviceInfo.*;
 
+import com.kevinejohn.RNMixpanel.*;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -56,7 +58,8 @@ public class MainActivity extends ReactActivity {
             new ReactNativeContacts(),
             new FacebookLoginPackage(),
             new GcmPackage(),
-            new NotificationPackage(this)
+            new NotificationPackage(this),
+            new RNMixpanel()
         );
     }
 }

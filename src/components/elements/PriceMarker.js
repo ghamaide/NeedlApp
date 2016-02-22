@@ -16,9 +16,9 @@ class PriceMarker extends Component {
           <Text style={styles.budget}>{this.props.text}</Text>
         </View>
         {Platform.OS === 'ios' ? [
-          <View style={[styles.triangle, styles.triangleIOS, {borderBottomColor: backgroundColor}]} />
+          <View style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
         ] : [
-          <View style={[styles.triangle, styles.triangleAndroid, {borderBottomColor: backgroundColor}]} />
+          <View style={[styles.rectangle, {backgroundColor: backgroundColor}]} />
         ]}
       </View>
     );
@@ -51,21 +51,18 @@ var styles = StyleSheet.create({
     borderStyle: 'solid',
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
+    borderLeftWidth: 4,
+    borderRightWidth: 4,
+    borderBottomWidth: 8,
+    marginLeft: 16,
     transform: [
       {rotate: '180deg'}
     ]
   },
-  triangleAndroid: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 2,
-    marginLeft: 19
-  },
-  triangleIOS: {
-    borderLeftWidth: 4,
-    borderRightWidth: 4,
-    borderBottomWidth: 8,
-    marginLeft: 16
+  rectangle: {
+    height: 6,
+    width: 4,
+    marginLeft: 18
   }
 });
 

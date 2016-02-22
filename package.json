@@ -24,7 +24,7 @@
     "react-native-gifted-listview": "0.0.12",
     "react-native-linear-gradient": "^0.3.2",
     "react-native-maps": "^0.3.0",
-    "react-native-mixpanel": "0.0.4",
+    "react-native-mixpanel": "0.0.7",
     "react-native-overlay": "^0.4.1",
     "react-native-push-notification": "^1.0.2",
     "react-native-quick-actions": "^0.1.2",

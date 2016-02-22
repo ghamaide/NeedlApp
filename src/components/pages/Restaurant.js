@@ -62,9 +62,7 @@ class Restaurant extends Page {
   };
 
   componentWillMount() {
-    if (Platform.OS === 'ios') { 
-      Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-    }
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
@@ -113,9 +111,7 @@ class Restaurant extends Page {
   };
 
   call = () => {
-    if (Platform.OS === 'ios') { 
-      Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
-    }
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
     RNComm.phonecall(this.state.data.phone_number, false);
   };
 
