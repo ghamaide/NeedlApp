@@ -258,55 +258,37 @@ class Restaurant extends Page {
             </View>
             : null}
           
+
           <View key='restaurant_wishlist' style={styles.wishContainer}>
             {RestaurantsStore.getWishers(restaurant.id).length ? [
               <View key='restaurant_wishlist_wrapper' style={{alignItems: 'center'}}>
                 <Text style={styles.containerTitle}>Ils ont envie d'y aller</Text>        
-                {RestaurantsStore.getWishers(restaurant.id).length === 1 ? [
-                  <Carousel 
-                    key='carouselWish'
-                    style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
-                    elemSize={80}
-                    insetMargin={0}>
-                    {_.map(RestaurantsStore.getWishers(restaurant.id), (userId) => {
-                      var profil = ProfilStore.getProfil(userId);
-                      var source = profil ? {uri: profil.picture} : {};
-                      return (
-                        <View key='wishers' style={styles.avatarWrapper}>
-                          <Image style={styles.avatar} source={source} />
-                        </View>
-                      );
-                    })}
-                  </Carousel>
-                ] : [
-                  <Carousel 
-                    key='carouselWish'
-                    style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
-                    elemSize={80}
-                    insetMargin={80}
-                    leftFlecheStyle={{marginLeft: -35}}
-                    rightFlecheStyle={{right: 0}}>
-                    {_.map(RestaurantsStore.getWishers(restaurant.id), (userId) => {
-                      var profil = ProfilStore.getProfil(userId);
-                      var source = profil ? {uri: profil.picture} : {};
-                      return (
-                        <View key='wishers' style={styles.avatarWrapper}>
-                          <Image style={styles.avatar} source={source} />
-                        </View>
-                      );
-                    })}
-                  </Carousel>
-                ]}
+                <Carousel 
+                  key='carouselWish'
+                  style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
+                  elemSize={80}
+                  insetMargin={0}>
+                  {_.map(RestaurantsStore.getWishers(restaurant.id), (userId) => {
+                    var profil = ProfilStore.getProfil(userId);
+                    var source = profil ? {uri: profil.picture} : {};
+                    return (
+                      <View key='wishers' style={styles.avatarWrapper}>
+                        <Image style={styles.avatar} source={source} />
+                      </View>
+                    );
+                  })}
+                </Carousel>
               </View>
-            ] : null}
+            ] : [
+              <Text key='no_wishers' style={{textAlign: 'center'}}>Aucun ami ne l'a sur sa wishlist pour l'instant</Text>
+            ]}
 
             {(!_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) &&
                       !_.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
               <View key='add_wishlist'>
-                <Text style={styles.containerTitle}>Ajouter sur votre wishlist</Text>
                 <Option
                   style={styles.recoButton}
-                  label={RestaurantsStore.loading() ? 'Enregistrement...' : 'Sur ma wishlist'}
+                  label={RestaurantsStore.loading() ? 'Enregistrement...' : 'Ajouter à ma wishlist'}
                   icon={require('../../assets/img/actions/icons/aessayer.png')}
                   onPress={() => {
                     if (RestaurantsStore.loading()) {

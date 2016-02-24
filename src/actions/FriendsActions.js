@@ -58,6 +58,34 @@ export class FriendsActions {
   removeFriendshipFailed(id, err) {
     return err;
   }
+
+  searchContacts(query) {
+    return (dispatch) => {
+      dispatch();
+
+      request('GET', '/api/users')
+        .query({
+          query: query
+        })
+        .end((err, result) => {
+          // console.log('----');
+          // console.log(err);
+          if (err) {
+            this.searchContactsFailed(err);
+          }
+
+          this.searchContactsSuccess(result);
+        });
+    }
+  }
+
+  searchContactsFailed(err) {
+    return err;
+  }
+
+  searchContactsSuccess(result) {
+    return result;
+  }
 }
 
 export default alt.createActions(FriendsActions);

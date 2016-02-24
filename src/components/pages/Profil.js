@@ -168,19 +168,29 @@ class Profil extends Page {
                 </TouchableHighlight>
               ]
             ]}
-            <TouchableHighlight
-              underlayColor='rgba(0, 0, 0, 0)'
-              style={styles.rightButtonContainer}
-              key={'dropdown_' + profil.id}
-              onPress={this.showButtons}>
-              <View style={styles.triangle} />
-            </TouchableHighlight>
+            {Platform.OS === 'ios' ? [
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={styles.rightButtonContainer}
+                key={'dropdown_' + profil.id}
+                onPress={this.showButtons}>
+                  <View style={styles.triangle} />
+              </TouchableHighlight>
+            ] : [
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={styles.rightButtonContainer}
+                key={'dropdown_' + profil.id}
+                onPress={this.showButtons}>
+                <Image source={require('../../assets/img/other/icons/triangle_down.png')} style={{transform: [{rotate: '180deg'}], height: 10, width: 10, tintColor: '#AAAAAA'}} />              
+              </TouchableHighlight>
+            ]}
           </View>
 
           <Collapsible duration={500} align='center' collapsed={!this.state.isOpened}>
             {MeStore.getState().me.id === profil.id ? [
               <View key={'buttons_' + profil.id}>
-                <TouchableHighlight
+                {/*<TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
                   key={"contact" + profil.id}
@@ -190,6 +200,7 @@ class Profil extends Page {
                     <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
                   </View>
                 </TouchableHighlight>
+                */}
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
@@ -279,7 +290,6 @@ class Profil extends Page {
               })
             : null}
           </View>
-
         </ScrollView>
       </View>
     );

@@ -166,7 +166,7 @@ class Carte extends Page {
             })}
           </MapView>
 
-          {this.state.displayRestaurant ? [
+          {this.state.displayRestaurant && false ? [
             <View style={styles.restaurantContainer}>
               <RestaurantElement
                 rank={_.findIndex(this.state.restaurants, this.state.restaurant) + 1}
@@ -184,7 +184,7 @@ class Carte extends Page {
             ] : []
           }
 
-          {this.state.showChangeRegion ? [
+          {this.state.showChangeRegion && false ? [
             <View key="change_region_button" style={styles.changeRegionButtonContainer}>
               {this.state.loading ? [
                 Platform.OS === 'ios' ? <ActivityIndicatorIOS key="loading" animating={true} style={[{height: 40}]} size="small" /> : <ProgressBarAndroid key="loading" indeterminate /> 

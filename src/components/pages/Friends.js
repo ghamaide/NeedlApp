@@ -19,6 +19,7 @@ import ProfilStore from '../../stores/Profil';
 
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
+import InviteFriendTemp from './InviteFriendTemp';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -130,7 +131,7 @@ class Friends extends Page {
       <View style={styles.emptyContainer}>
         {refreshingIndicator}
         <View style={styles.textContainerWrapper}>
-          <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriend.route())}>
+          <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriendTemp.route())}>
             <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
           </TouchableHighlight>
         </View>
@@ -141,7 +142,7 @@ class Friends extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriend.route())} />
+        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
         {Platform.OS === 'ios' ? [
           <SearchBar
             key="search"
@@ -160,6 +161,7 @@ class Friends extends Page {
             hideBackground={true}
             onChangeText={this.state.friendsActive ? this.searchFriends : this.searchExperts} />
         ]}
+        { /*
         <View style={styles.friendsButtonContainer}>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
@@ -174,6 +176,7 @@ class Friends extends Page {
             <Text style={{color: this.state.expertsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
           </TouchableHighlight>
         </View>
+        */}
         <RefreshableListView
           style={styles.friendsList}
           refreshDescription="Chargement..."

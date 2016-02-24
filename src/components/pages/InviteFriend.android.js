@@ -4,7 +4,6 @@ import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, 
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
-import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -150,9 +149,7 @@ class InviteFriend extends Page {
           onChangeText={this.searchContacts}
           placeholderTextColor='#333333'
           onSearchButtonPress={this.closeKeyboard} />
-        <RefreshableListView
-          refreshDescription="Chargement..."
-          loadData={this.onRefresh}
+        <ListView
           style={styles.contactsList}
           dataSource={contactsSource.cloneWithRows(this.state.filteredContacts)}
           renderRow={this.renderContact}
