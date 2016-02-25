@@ -1,19 +1,19 @@
 'use strict';
 
-import React, {StyleSheet, Component, View} from 'react-native';
+import React, {Component, StyleSheet, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
-import Text from '../../ui/Text';
 import NavigationBar from '../../ui/NavigationBar';
+import Text from '../../ui/Text';
 
 import RecoActions from '../../../actions/RecoActions';
 
 import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
 
-import StepSave from './StepSave';
 import Step3 from './Step3';
+import StepSave from './StepSave';
 
 class RecoStep2 extends Component {
   static route() {
@@ -32,7 +32,7 @@ class RecoStep2 extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Statut" />
+        <NavigationBar title="Statut" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.container}>
           <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
           <ToggleGroup
@@ -41,15 +41,12 @@ class RecoStep2 extends Component {
             onSelect={(value) => {
               reco.approved = (value === 'approved');
               reco.step2 = true;
-  						
-  						if (reco.approved) {
-  							return this.props.navigator.push(Step3.route());
-  						}
 
-  						// hack pour le fucking title ..
-  						// because resetTo does not change title if only one page in the stack
-          		var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
-          		this.props.navigator.resetTo(StepSave.route(title));
+              if (reco.approved) {
+                return this.props.navigator.push(Step3.route());
+              }
+
+              this.props.navigator.resetTo(StepSave.route());
             }}
             onUnselect={() => {
               delete reco.approved;

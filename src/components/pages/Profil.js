@@ -95,6 +95,10 @@ class Profil extends Page {
     }
   };
 
+  onRefresh = () => {
+    ProfilActions.fetchProfil(this.currentProfil());
+  };
+
   renderPage() {
     var profil = this.state.profile;
 

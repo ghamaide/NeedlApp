@@ -28,7 +28,7 @@ class Page extends Component {
       return this.renderLoading();
     }
 
-    if (!_.isEmpty(this.state.error)) {
+    if (__DEV__ && !_.isEmpty(this.state.error)) {
       return this.renderError();
     }
 

@@ -6,10 +6,10 @@ import _ from 'lodash';
 import Contacts from 'react-native-contacts';
 import SearchBar from 'react-native-search-bar';
 
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
-import NavigationBar from '../ui/NavigationBar';
 
 import FriendsStore from '../../stores/Friends'
 import MeStore from '../../stores/Me'

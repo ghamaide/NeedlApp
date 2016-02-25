@@ -36,8 +36,7 @@ class Carte extends Page {
 
   restaurantsState() {
     return {
-      // we want the map even if it is still loading
-      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 15),
+      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 18),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),      
     };
@@ -113,19 +112,19 @@ class Carte extends Page {
   };
 
   onMapPress = (zone) => {
-     this.setState({displayRestaurant: false});
+     // this.setState({displayRestaurant: false});
   };
 
   onSelect = (event) => {
     // trigger event marker
-    console.log('on select');
-    console.log(event);
+    // console.log('on select');
+    // console.log(event);
     // this.setState({displayRestaurant: true});
   };
 
   renderPage() {
     return (
-  		<View style={{flex: 1, position: 'relative'}}>
+      <View style={{flex: 1, position: 'relative'}}>
         <NavigationBar key="navbar" image={require('../../assets/img/other/icons/list.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
         <View key="mapcontainer" style={{flex: 1, position: 'relative'}}>
           <MapView
@@ -166,25 +165,7 @@ class Carte extends Page {
             })}
           </MapView>
 
-          {this.state.displayRestaurant && false ? [
-            <View style={styles.restaurantContainer}>
-              <RestaurantElement
-                rank={_.findIndex(this.state.restaurants, this.state.restaurant) + 1}
-                isNeedl={this.state.restaurant.score <= 5}
-                key={"restaurant_" + this.state.restaurant.id}
-                name={this.state.restaurant.name}
-                picture={this.state.restaurant.pictures[0]}
-                type={this.state.restaurant.food[1]}
-                budget={this.state.restaurant.price_range}
-                height={120}
-                onPress={() => {
-                  this.props.navigator.push(Restaurant.route({id: this.state.restaurant.id}, this.state.restaurant.name));
-                }}/>
-              </View>
-            ] : []
-          }
-
-          {this.state.showChangeRegion && false ? [
+          {this.state.showChangeRegion ? [
             <View key="change_region_button" style={styles.changeRegionButtonContainer}>
               {this.state.loading ? [
                 Platform.OS === 'ios' ? <ActivityIndicatorIOS key="loading" animating={true} style={[{height: 40}]} size="small" /> : <ProgressBarAndroid key="loading" indeterminate /> 
@@ -194,10 +175,10 @@ class Carte extends Page {
                 </TouchableHighlight>
               ]}
             </View>
-            ] : null}
+          ] : null}
         </View>
-			</View>
-		);
+      </View>
+    );
   };
 }
 

@@ -23,7 +23,6 @@ export class RecoStore {
 
       handleSetReco: RecoActions.SET_RECO,
 
-      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleSaveRecoFailed: RecoActions.SAVE_RECO_FAILED,
 
 // ================================================================================================
@@ -52,11 +51,6 @@ export class RecoStore {
 
   handleSetReco(reco) {
     this.reco = reco;
-  }
-
-  handleSaveRecoSuccess() {
-    delete this.error;
-    this.saved = true;
   }
 
   handleSaveRecoFailed(err) {

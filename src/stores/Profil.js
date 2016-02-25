@@ -1,12 +1,16 @@
 'use strict';
 
-import alt from '../alt';
 import _ from 'lodash';
-import ProfilActions from '../actions/ProfilActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
+
+import alt from '../alt';
+
+import CachedStore from './CachedStore';
+
 import MeActions from '../actions/MeActions';
 import MeStore from './Me';
-import CachedStore from './CachedStore';
+import ProfilActions from '../actions/ProfilActions';
+import RestaurantsActions from '../actions/RestaurantsActions';
+import RecoActions from '../actions/RecoActions';
 
 export class ProfilStore extends CachedStore {
 
@@ -37,7 +41,11 @@ export class ProfilStore extends CachedStore {
       handleDisplayProfilFailed: ProfilActions.DISPLAY_PROFIL_FAILED,
       handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
 
+      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
       handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
+
+      handleAddWishSuccess: RestaurantsActions.ADD_WISH_SUCCESS,
+      handleRemoveWishSuccess: RestaurantsActions.REMOVE_WISH_SUCCESS,
 
       handleEditSuccess: MeActions.EDIT_SUCCESS
 
@@ -69,6 +77,16 @@ export class ProfilStore extends CachedStore {
 
   handleProfilFetched(profil) {
     var index = _.findIndex(this.profils, function(o) {return o.id === profil.id;});
+    var newProfil = profil;
+    var recommendations = _.map(newProfil.recommendations ,(recommendation) => {
+      return recommendation.id;
+    });
+    var wishes = _.map(newProfil.wishes ,(wish) => {
+      return wish.id;
+    });
+    newProfil.recommendations = recommendations;
+    newProfil.wishes = wishes;
+
     if (index > -1) {
       this.profils[index] = profil;
     } else {
@@ -120,6 +138,33 @@ export class ProfilStore extends CachedStore {
     _.remove(newProfil.recommendations, (restaurantID) => {
      return restaurantID === data.oldRestaurant.id;
     });
+    this.profils[index] = newProfil;
+  }
+
+  handleRemoveWishSuccess(restaurant) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    var newProfil = this.profils[index];
+    _.remove(newProfil.wishes, (restaurantID) => {
+     return restaurantID === restaurant.id;
+    });
+    this.profils[index] = newProfil;
+  }
+
+  handleSaveRecoSuccess(reco) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    var newProfil = this.profils[index];
+    if (reco.approved) {
+      newProfil.recommendations.push(reco.restaurant.id);
+    } else {
+      newProfil.wishes.push(reco.restaurant.id);
+    }
+    this.profils[index] = newProfil;
+  }
+
+  handleAddWishSuccess(restaurant) {
+    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
+    var newProfil = this.profils[index];
+    newProfil.wishes.push(restaurant.id);
     this.profils[index] = newProfil;
   }
   

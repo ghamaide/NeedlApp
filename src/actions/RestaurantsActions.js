@@ -73,6 +73,7 @@ export class RestaurantsActions {
   }
 
   addWishSuccess(restaurant) {
+    console.log('lol');
     return restaurant;
   }
 
@@ -90,9 +91,9 @@ export class RestaurantsActions {
             return this.removeWishFailed(err, restaurant);
           }
 
-          this.removeWishSuccess(restaurantUpdated);
-
           callback();
+
+          this.removeWishSuccess(restaurantUpdated);
         });
     }
   }
@@ -119,9 +120,9 @@ export class RestaurantsActions {
             return this.removeRecoFailed(err);
           }
 
-          this.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
-
           callback();
+
+          this.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
         });
     }
   }

@@ -3,32 +3,33 @@
 import React, {ActivityIndicatorIOS, Dimensions, Image, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import RNComm from 'react-native-communications';
-import Mixpanel from 'react-native-mixpanel';
 import MapView from 'react-native-maps';
+import Mixpanel from 'react-native-mixpanel';
+import RNComm from 'react-native-communications';
 import Swiper from 'react-native-swiper'
 
-import RestaurantElement from '../elements/Restaurant';
 import Button from '../elements/Button';
-import Options from '../elements/Options';
 import Option from '../elements/Option';
+import Options from '../elements/Options';
+import RestaurantElement from '../elements/Restaurant';
 
-import Page from '../ui/Page';
 import Carousel from '../ui/Carousel';
-import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
+import Page from '../ui/Page';
+import Text from '../ui/Text';
 
-import RestaurantsActions from '../../actions/RestaurantsActions';
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
-import ProfilStore from '../../stores/Profil';
 import MeStore from '../../stores/Me';
+import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
-import Toggle from './Reco/Toggle';
-import RecoStep3 from './Reco/Step3';
 import Help from './Help';
+import Liste from './Liste';
+import RecoStep3 from './Reco/Step3';
+import Toggle from './Reco/Toggle';
 
 var windowHeight = Dimensions.get('window').height;
 var windowWidth = Dimensions.get('window').width;
@@ -121,10 +122,11 @@ class Restaurant extends Page {
 
   renderPage() {
     var restaurant = this.state.data;
+    console.log(restaurant);
     return (
       <View>
         {this.props.fromReco ? [
-          <NavigationBar key='navbar' title={restaurant.name} />
+          <NavigationBar key='navbar' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route())} />
         ] : [
           <NavigationBar key='navbar' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         ]}
@@ -213,7 +215,7 @@ class Restaurant extends Page {
                                 <View style={styles.triangle} />
                               </View>
                               <Text style={styles.reviewText}>{RestaurantsStore.getRecommendation(restaurant.id, profil.id).review || 'Je recommande !'}</Text>
-                              <Text style={styles.reviewAuthor}>{profil.fullname}</Text>
+                              <Text style={styles.reviewAuthor}>{profil.fullname || profil.name}</Text>
                             </View>
                           </View>
                         );

@@ -117,26 +117,26 @@ class Friends extends Page {
   };
 
   renderHeader = (refreshingIndicator) => {
-    var nbPot = ProfilStore.getFriends().length;
+    var friendNumber = ProfilStore.getFriends().length;
 
-    if (nbPot) {
+    if (friendNumber) {
       return (
         <View>
           {refreshingIndicator}
         </View>
       );
-    }
-
-    return (
-      <View style={styles.emptyContainer}>
-        {refreshingIndicator}
-        <View style={styles.textContainerWrapper}>
-          <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriendTemp.route())}>
-            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
-          </TouchableHighlight>
+    } else {
+      return (
+        <View style={styles.emptyContainer}>
+          {refreshingIndicator}
+          <View style={styles.textContainerWrapper}>
+            <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriendTemp.route())}>
+              <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
+            </TouchableHighlight>
+          </View>
         </View>
-      </View>
-    );
+      );
+    }
   };
 
   renderPage() {
@@ -161,7 +161,7 @@ class Friends extends Page {
             hideBackground={true}
             onChangeText={this.state.friendsActive ? this.searchFriends : this.searchExperts} />
         ]}
-        { /*
+        { /* on update, remove
         <View style={styles.friendsButtonContainer}>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'

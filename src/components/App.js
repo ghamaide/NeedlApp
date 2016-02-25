@@ -371,7 +371,7 @@ class App extends Component {
           </Overlay>
         ] : null}
 
-        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage? [
+        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage && false ? [
           <Overlay key="show_update_message">
             <ScrollView
               style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}

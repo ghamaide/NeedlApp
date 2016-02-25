@@ -42,12 +42,13 @@ export class RecoActions {
     return reco;
   }
 
-  saveReco(reco) {
+  saveReco(reco, callback) {
     return (dispatch) => {
       dispatch(reco);
 
       request('GET', '/api/recommendations')
         .query(qs.stringify({
+          friends_thanking: reco.friends_thanking,
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
@@ -64,6 +65,7 @@ export class RecoActions {
           }
 
           this.saveRecoSuccess(reco, restaurant);
+          callback();
         });
     }
   }

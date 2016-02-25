@@ -6,19 +6,20 @@ import Text from '../../ui/Text';
 
 import Button from '../../elements/Button';
 
-import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+import RecoStore from '../../../stores/Reco';
+import RestaurantsStore from '../../../stores/Restaurants';
 
 import RecoActions from '../../../actions/RecoActions';
 
-import Restaurant from '../Restaurant';
 import Liste from '../Liste';
+import Restaurant from '../Restaurant';
 
 class RecoStepSave extends Component {
   static route(title) {
     return {
       component: RecoStepSave,
-      title: title
+      title: 'StepSave'
     };
   };
 
@@ -33,28 +34,12 @@ class RecoStepSave extends Component {
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
-    this.props.navigator.resetTo(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
-  };
-
-  onRecoChange = () => {
-    if (RecoStore.getState().saved) {
-      if (!this.state.hasShared) {
-        return this.props.navigator.resetTo(Liste.route());
-      }
-      return this.goToRestaurant();
-    }
-
-    this.setState({error: RecoStore.error()});
+    this.props.navigator.replace(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
   };
 
   componentDidMount() {
-    RecoStore.listen(this.onRecoChange);
     var reco = RecoStore.getReco();
-    RecoActions.saveReco(reco);
-  };
-
-  componentWillUnmount() {
-    RecoStore.unlisten(this.onRecoChange);
+    RecoActions.saveReco(reco, this.goToRestaurant);
   };
 
   render() {

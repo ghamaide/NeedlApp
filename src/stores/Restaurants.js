@@ -34,6 +34,8 @@ export class RestaurantsStore extends CachedStore {
       latitudeDelta: 0.065
     };
 
+    this.saved = false;
+
     this.status.loading = false;
     this.status.error = {};
 
@@ -209,6 +211,7 @@ export class RestaurantsStore extends CachedStore {
     } else {
       this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
     }
+    this.saved = true;
     this.status.loading = false;
   }
 
@@ -226,8 +229,13 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleRemoveRecoSuccess(data) {
-    this.handleRestaurantsFetched(data.restaurants);
-    this.status.loading = false;    
+    var showRestaurant = _.findIndex(data.restaurants, function(restaurant) {return restaurant.id === data.oldRestaurant.id}) > -1;
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === data.oldRestaurant.id;});
+    this.restaurants[index] = _.extend(data.oldRestaurant, {ON_MAP: showRestaurant});
+    this.status.loading = false;
+
+    // this.handleRestaurantsFetched(data.restaurants);
+    // this.status.loading = false;    
   }
 
   parseSubways(subways) {

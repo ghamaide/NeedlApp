@@ -14,7 +14,6 @@ class TabView extends Component {
 
     this.state = {
       selected: this.props.initialSelected || 0,
-      rerender: 0
     };
   };
 
@@ -76,23 +75,23 @@ class TabView extends Component {
   render() {
     return (
      <View style={styles.tabbarContainer}>
-      	<NavigatorIOS
+        <NavigatorIOS
           style={styles.tabbarContent}
           navigator={navigator}
           initialRoute={this.props.tabs[this.props.initialSelected || 0]}
-          ref="tabs"
+          ref='tabs'
           navigationBarHidden={true}
-          key="navigator"
+          key='navigator'
           initialSkipCache={this.props.initialSkipCache} />
 
         {this.state.showTabBar ? [
-					<View key="tabBar" style={styles.tabbarTabs}>
-          	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
-          	})}
-        	</View>
+          <View key='tabBar' style={styles.tabbarTabs}>
+            {_.map(this.props.tabs, (tab, index) => {
+              return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
+            })}
+          </View>
         ] : []}
-    	</View>
+      </View>
     );
   };
 }

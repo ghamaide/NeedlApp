@@ -135,7 +135,6 @@ class CarteProfil extends Page {
             onPress={this.onMapPress}
             onMarkerSelect={this.onMarkerPress}>     
             {_.map(sortedRestaurants, (restaurant) => {
-              console.log(restaurant);
               var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
               return (
                 <MapView.Marker

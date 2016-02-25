@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, Component, Image, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
+import React, {BackAndroid, Component, Image, Navigator, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -14,7 +14,7 @@ class TabView extends Component {
 
     this.state = {
       selected: this.props.initialSelected || 0,
-      rerender: 0
+      lastPress: 0
     };
   };
 
@@ -55,14 +55,36 @@ class TabView extends Component {
     // this.setState({showTabBar: MeStore.getState().showTabBar});
   };
 
+  hardwareBackPress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
+
+    if (delta < 500) {
+      return false;
+    } else if (this.refs.tabs.getCurrentRoutes().length > 1) {
+      this.refs.tabs.pop();
+      this.setState({
+        lastPress: new Date().getTime()
+      });
+      return true;
+    } else {
+      this.setState({
+        lastPress: new Date().getTime()
+      });
+      return true;
+    }
+  };
+
   componentDidMount() {
     MeStore.listen(this.onMeChange);
+    BackAndroid.addEventListener('hardwareBackPress', this.hardwareBackPress);
     this.setState({showTabBar: MeStore.getState().showTabBar});
     this.props.onTab(this.state.selected);
+
   };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
+    BackAndroid.removeEventListener('hardwareBackPress', this.hardwareBackPress);
   };
 
   resetToTab(index, opts) {
