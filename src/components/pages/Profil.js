@@ -105,9 +105,9 @@ class Profil extends Page {
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
-          <NavigationBar key='navbarfromtab' image={require('../../assets/img/other/icons/map.png')} title={profil.fullname} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
+          <NavigationBar key='navbarfromtab' image={require('../../assets/img/other/icons/map.png')} title={profil.fullname || profil.name} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
         ] : [
-          <NavigationBar key='navbarfrompush' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title={profil.fullname} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+          <NavigationBar key='navbarfrompush' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title={profil.fullname || profil.name} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
         ]}
         <ScrollView
           contentInset={{top: 0}}

@@ -282,7 +282,7 @@ class Restaurant extends Page {
                 </Carousel>
               </View>
             ] : [
-              <Text key='no_wishers' style={{textAlign: 'center'}}>Aucun ami ne l'a sur sa wishlist pour l'instant</Text>
+              <Text key='no_wishers' style={{textAlign: 'center', color: '#333333'}}>Aucun ami ne l'a mis sur sa wishlist pour l'instant</Text>
             ]}
 
             {(!_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) &&
