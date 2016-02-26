@@ -1,19 +1,19 @@
 'use strict';
 
-import React, {Dimensions, NativeModules, View, Component, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image, Platform, ProgressBarAndroid} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
+import SearchBar from 'react-native-search-bar';
 
+import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
-import NavigationBar from '../../ui/NavigationBar';
 
 import RecoActions from '../../../actions/RecoActions';
 
-import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+import RecoStore from '../../../stores/Reco';
 
 import Step2 from './Step2';
 import Step3 from './Step3';
@@ -105,7 +105,7 @@ class RecoStep1 extends Component {
     if (!this.state.query) {
       content = this.renderBlankScreen();
     } else if(this.state.loading) {
-      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
+      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
     } else if(this.state.error) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
     } else if (this.state.restaurants.length < 1) {
@@ -116,11 +116,11 @@ class RecoStep1 extends Component {
 
     return (
      <View style={styles.container}>
-      <NavigationBar title="Séléction" />
+      <NavigationBar title='Séléction' />
       
       {Platform.OS === 'ios' ? [
         <SearchBar
-          key="search"
+          key='search'
           ref='searchBar'
           placeholder='Sélectionne ton restaurant'
           hideBackground={true}
@@ -128,7 +128,7 @@ class RecoStep1 extends Component {
           onChangeText={this.onRestaurantQuery} />
       ] : [
         <TextInput
-          key="search"
+          key='search'
           ref='searchBar'
           placeholderTextColor='#333333'
           placeholder='Sélectionne ton restaurant'
@@ -140,9 +140,9 @@ class RecoStep1 extends Component {
         <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
           <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 40}}>
             <Animatable.Image
-              animation="slideInDown"
-              iterationCount="infinite"
-              direction="alternate"
+              animation='slideInDown'
+              iterationCount='infinite'
+              direction='alternate'
               duration={1000}
               style={styles.arrowUp}
               source={require('../../../assets/img/other/icons/arrow_up.png')} />

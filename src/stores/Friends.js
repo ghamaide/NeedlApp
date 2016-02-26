@@ -2,11 +2,14 @@
 
 import {PushNotificationIOS} from 'react-native';
 
-import alt from '../alt';
 import _ from 'lodash';
+
+import alt from '../alt';
+
 import FriendsActions from '../actions/FriendsActions';
-import MeStore from './Me';
+
 import CachedStore from './CachedStore';
+import MeStore from './Me';
 
 export class FriendsStore extends CachedStore {
 

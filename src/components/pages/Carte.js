@@ -1,30 +1,25 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
+import React, {ActivityIndicatorIOS, Image, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
 
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import NavigationBar from '../ui/NavigationBar';
 
-import RestaurantElement from '../elements/Restaurant';
 import PriceMarker from '../elements/PriceMarker';
 
-import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
-import RestaurantsStore from '../../stores/Restaurants';
 import MeStore from '../../stores/Me';
+import RestaurantsStore from '../../stores/Restaurants';
 
-import Filtre from './Filtre';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
-
-var windowWidth = Dimensions.get('window').width;
-var windowHeight = Dimensions.get('window').height;
 
 class Carte extends Page {
   static route() {
@@ -125,11 +120,11 @@ class Carte extends Page {
   renderPage() {
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key="navbar" image={require('../../assets/img/other/icons/list.png')} title="Carte" rightButtonTitle="Liste" onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
-        <View key="mapcontainer" style={{flex: 1, position: 'relative'}}>
+        <NavigationBar key='navbar' image={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
+        <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
-            key="map"
-            ref="mapview"
+            key='map'
+            ref='mapview'
             style={styles.restaurantsMap}
             showsUserLocation={this.state.showsUserLocation}
             region={this.state.region}
@@ -166,11 +161,11 @@ class Carte extends Page {
           </MapView>
 
           {this.state.showChangeRegion ? [
-            <View key="change_region_button" style={styles.changeRegionButtonContainer}>
+            <View key='change_region_button' style={styles.changeRegionButtonContainer}>
               {this.state.loading ? [
-                Platform.OS === 'ios' ? <ActivityIndicatorIOS key="loading" animating={true} style={[{height: 40}]} size="small" /> : <ProgressBarAndroid key="loading" indeterminate /> 
+                Platform.OS === 'ios' ? <ActivityIndicatorIOS key='loading' animating={true} style={[{height: 40}]} size='small' /> : <ProgressBarAndroid key='loading' indeterminate /> 
                ] : [
-                <TouchableHighlight key="button" onPress={this.onSubmitChangeRegion} underlayColor='rgba(0, 0, 0, 0)'>
+                <TouchableHighlight key='button' onPress={this.onSubmitChangeRegion} underlayColor='rgba(0, 0, 0, 0)'>
                   <Text style={{fontSize: 12, color: '#333333'}}>Rechercher dans cette zone</Text>
                 </TouchableHighlight>
               ]}

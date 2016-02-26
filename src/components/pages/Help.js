@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Image, View, Platform} from 'react-native';
+import React, {Component, Image, Platform, StyleSheet, View} from 'react-native';
 
 import Mixpanel from 'react-native-mixpanel';
 
@@ -42,7 +42,7 @@ class Help extends Component {
     if (this.props.from === 'liste') {
       return (
         <View style={{flex: 1}}>
-          <NavigationBar title="Aide" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
           <View style={styles.container}>
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatar} source={require('../../assets/img/other/icons/algorithm.png')} />
@@ -56,7 +56,7 @@ class Help extends Component {
     } else if (this.props.from === 'restaurant') {
       return (
         <View style={{flex: 1}}>        
-          <NavigationBar title="Aide" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
           <View style={styles.container}>
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatar} source={require('../../assets/img/tabs/icons/home.png')} />

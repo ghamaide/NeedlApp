@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {PixelRatio, StatusBarIOS, View, Component, StyleSheet, TouchableHighlight, TouchableOpacity, Image, Platform} from 'react-native';
+import React, {Component, Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 

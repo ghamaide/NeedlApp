@@ -68,7 +68,7 @@ class Liste extends Page {
   };
 
   onPressText = () => {
-  	this.props.navigator.push(Help.route({from: "liste"}));
+  	this.props.navigator.push(Help.route({from: 'liste'}));
   };
 
 	renderRestaurant = (restaurant) => {
@@ -84,7 +84,7 @@ class Liste extends Page {
         height={200}
         marginTop={5}
         marginBottom={5}
-        underlayColor={"#FFFFFF"}
+        underlayColor={'#FFFFFF'}
         key={restaurant.id}
         onPress={() => {
           this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
@@ -106,7 +106,7 @@ class Liste extends Page {
       return (
         <View>
 	   			{refreshingIndicator}
-          <Text key="number_restaurants" onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? "restaurants classés" : "restaurant classé"} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
+          <Text key='number_restaurants' onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? 'restaurants classés' : 'restaurant classé'} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
         </View>
   		);
   	}
@@ -115,9 +115,9 @@ class Liste extends Page {
   renderPage() {
 		return (
 			<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title="Restaurants" rightButtonTitle="Carte" onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
 
-        <TouchableHighlight key="filter_button" style={styles.filterContainerWrapper} underlayColor="#FFFFFF" onPress={() => {
+        <TouchableHighlight key='filter_button' style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
         	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
 				}}>
 						<Text style={styles.filterMessageText}>
@@ -125,8 +125,8 @@ class Liste extends Page {
 						</Text>
 				</TouchableHighlight>
 				<RefreshableListView
-          key="list_restaurants"
-          refreshDescription="Chargement..."
+          key='list_restaurants'
+          refreshDescription='Chargement...'
           loadData={this.onRefresh}
           dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
           renderRow={this.renderRestaurant}

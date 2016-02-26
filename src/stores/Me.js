@@ -1,13 +1,14 @@
 'use strict';
 
-import alt from '../alt';
 import _ from 'lodash';
+
+import alt from '../alt';
 
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
+import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
-import ProfilActions from '../actions/ProfilActions';
 
 import CachedStore from './CachedStore';
 

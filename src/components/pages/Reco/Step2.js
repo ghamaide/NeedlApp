@@ -31,9 +31,9 @@ class RecoStep2 extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Statut" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar title='Statut' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.container}>
-          <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
+          <Text style={styles.title}>As-tu déjà testé le restaurant '{reco.restaurant.name}' ?</Text>
           <ToggleGroup
             maxSelection={1}
             fifo={true}
@@ -60,7 +60,7 @@ class RecoStep2 extends Component {
                     style={styles.pastille}
                     icon={require('../../../assets/img/actions/icons/japprouve.png')}
                     activeInitial={false}
-                    label="Je recommande"
+                    label='Je recommande'
                     value={'approved'} />
                   <Toggle
                     size={60}
@@ -68,7 +68,7 @@ class RecoStep2 extends Component {
                     style={styles.pastille}
                     icon={require('../../../assets/img/actions/icons/aessayer.png')}
                     activeInitial={false}
-                    label="Sur ma wishlist"
+                    label='Sur ma wishlist'
                     value={'totry'} />
                 </View>
               );

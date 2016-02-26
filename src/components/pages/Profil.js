@@ -6,28 +6,26 @@ import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
 import RNComm from 'react-native-communications';
 
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import NavigationBar from '../ui/NavigationBar';
 
 import RestaurantElement from '../elements/Restaurant';
-import Options from '../elements/Options';
-import Option from '../elements/Option';
 
+import FriendsActions from '../../actions/FriendsActions';
 import LoginActions from '../../actions/LoginActions';
 import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
-import FriendsActions from '../../actions/FriendsActions';
 
+import FriendsStore from '../../stores/Friends';
 import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
-import FriendsStore from '../../stores/Friends';
 import RestaurantsStore from '../../stores/Restaurants';
 
-import Restaurant from './Restaurant';
+import CarteProfil from './CarteProfil';
 import EditMe from './EditMe';
 import Friends from './Friends';
-import CarteProfil from './CarteProfil';
+import Restaurant from './Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
@@ -202,7 +200,7 @@ class Profil extends Page {
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
-                  key={"contact" + profil.id}
+                  key={'contact' + profil.id}
                   onPress={this.contactUs}>
                   <View style={{flexDirection: 'row'}}>
                     <Image source={require('../../assets/img/actions/icons/chat.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
@@ -212,7 +210,7 @@ class Profil extends Page {
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
-                  key={"logout_" + profil.id}
+                  key={'logout_' + profil.id}
                   onPress={() => LoginActions.logout}>
                   <View style={{flexDirection: 'row'}}>
                     <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />

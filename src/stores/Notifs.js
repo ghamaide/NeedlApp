@@ -2,10 +2,12 @@
 
 import {PushNotificationIOS} from 'react-native';
 
-import alt from '../alt';
 import _ from 'lodash';
 
+import alt from '../alt';
+
 import NotifsActions from '../actions/NotifsActions';
+
 import CachedStore from './CachedStore';
 
 export class NotifsStore extends CachedStore {
@@ -51,30 +53,30 @@ export class NotifsStore extends CachedStore {
       
       notif.seen = oldNotif && oldNotif.seen;
 
-      if (notif.date.indexOf("January") > -1) {
-        notif.date = notif.date.replace("January", "Janvier");
-      } else if (notif.date.indexOf("February") > -1) {
-        notif.date = notif.date.replace("February", "Février");
-      } else if (notif.date.indexOf("March") > -1) {
-        notif.date = notif.date.replace("March", "Mars");
-      } else if (notif.date.indexOf("April") > -1) {
-        notif.date = notif.date.replace("April", "Avril");
-      } else if (notif.date.indexOf("May") > -1) {
-        notif.date = notif.date.replace("May", "Mai");
-      } else if (notif.date.indexOf("June") > -1) {
-        notif.date = notif.date.replace("June", "Juin");
-      } else if (notif.date.indexOf("July") > -1) {
-        notif.date = notif.date.replace("July", "Juillet");
-      } else if (notif.date.indexOf("August") > -1) {
-        notif.date = notif.date.replace("August", "Août");
-      } else if (notif.date.indexOf("September") > -1) {
-        notif.date = notif.date.replace("September", "Septembre");
-      } else if (notif.date.indexOf("October") > -1) {
-        notif.date = notif.date.replace("October", "Octobre");
-      } else if (notif.date.indexOf("November") > -1) {
-        notif.date = notif.date.replace("November", "Novembre");
-      } else if (notif.date.indexOf("December") > -1) {
-        notif.date = notif.date.replace("December", "Décembre");
+      if (notif.date.indexOf('January') > -1) {
+        notif.date = notif.date.replace('January', 'Janvier');
+      } else if (notif.date.indexOf('February') > -1) {
+        notif.date = notif.date.replace('February', 'Février');
+      } else if (notif.date.indexOf('March') > -1) {
+        notif.date = notif.date.replace('March', 'Mars');
+      } else if (notif.date.indexOf('April') > -1) {
+        notif.date = notif.date.replace('April', 'Avril');
+      } else if (notif.date.indexOf('May') > -1) {
+        notif.date = notif.date.replace('May', 'Mai');
+      } else if (notif.date.indexOf('June') > -1) {
+        notif.date = notif.date.replace('June', 'Juin');
+      } else if (notif.date.indexOf('July') > -1) {
+        notif.date = notif.date.replace('July', 'Juillet');
+      } else if (notif.date.indexOf('August') > -1) {
+        notif.date = notif.date.replace('August', 'Août');
+      } else if (notif.date.indexOf('September') > -1) {
+        notif.date = notif.date.replace('September', 'Septembre');
+      } else if (notif.date.indexOf('October') > -1) {
+        notif.date = notif.date.replace('October', 'Octobre');
+      } else if (notif.date.indexOf('November') > -1) {
+        notif.date = notif.date.replace('November', 'Novembre');
+      } else if (notif.date.indexOf('December') > -1) {
+        notif.date = notif.date.replace('December', 'Décembre');
       }
       return notif;
     });

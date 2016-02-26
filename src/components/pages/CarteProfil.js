@@ -1,32 +1,28 @@
 'use strict';
 
-import React, {StyleSheet, View, TouchableHighlight, Image, PixelRatio, Platform} from 'react-native';
+import React, {Image, PixelRatio, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
 
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
-import NavigationBar from '../ui/NavigationBar';
 
-import RestaurantElement from '../elements/Restaurant';
 import PriceMarker from '../elements/PriceMarker';
+import RestaurantElement from '../elements/Restaurant';
 
-import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeActions from '../../actions/MeActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
-import RestaurantsStore from '../../stores/Restaurants';
-import ProfilStore from '../../stores/Profil';
 import MeStore from '../../stores/Me';
+import ProfilStore from '../../stores/Profil';
+import RestaurantsStore from '../../stores/Restaurants';
 
 import Filtre from './Filtre';
 import Profil from './Profil';
 import Restaurant from './Restaurant';
-
-
-var windowWidth = Dimensions.get('window').width;
-var windowHeight = Dimensions.get('window').height;
 
 class CarteProfil extends Page {
   static route(props) {
@@ -122,11 +118,11 @@ class CarteProfil extends Page {
 
     return (
   		<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key="navbar" image={require('../../assets/img/tabs/icons/account.png')} title="Carte" rightButtonTitle="Profil" onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
-        <View key="mapcontainer" style={{flex: 1, position: 'relative'}}>
+        <NavigationBar key='navbar' image={require('../../assets/img/tabs/icons/account.png')} title='Carte' rightButtonTitle='Profil' onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
+        <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
-            key="map"
-            ref="mapview"
+            key='map'
+            ref='mapview'
             style={styles.restaurantsMap}
             showsUserLocation={this.state.showsUserLocation}
             region={this.state.region}

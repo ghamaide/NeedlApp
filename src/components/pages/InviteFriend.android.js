@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, ListView, View, Image, TouchableHighlight, AlertIOS, ScrollView} from 'react-native';
+import React, {Image, ListView, StyleSheet, View, TouchableHighlight} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
@@ -102,7 +102,7 @@ class InviteFriend extends Page {
             <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
             {this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
               <Image
-                key={"check_" + contact.recordID}
+                key={'check_' + contact.recordID}
                 style={styles.imageCheck}
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [
@@ -141,7 +141,7 @@ class InviteFriend extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Inviter" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar title='Inviter' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <TextInput
           ref='searchBar'
           placeholder='Rechercher'

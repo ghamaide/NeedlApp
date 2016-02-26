@@ -1,11 +1,11 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ScrollView, Dimensions} from 'react-native';
+import React, {Component, Dimensions, ScrollView, StyleSheet, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
-import Text from '../../ui/Text';
 import NavigationBar from '../../ui/NavigationBar';
+import Text from '../../ui/Text';
 
 import RecoStore from '../../../stores/Reco';
 
@@ -37,11 +37,11 @@ class RecoStep4 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Points forts" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />      
+        <NavigationBar title='Points forts' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle='Valider' onRightButtonPress={this.onRightButtonPress} />      
         <View style={styles.container}> 
           <Text style={styles.title}>Sélectionne un ou plusieurs points forts</Text>
            <ToggleGroup
-            ref="togglegroup"
+            ref='togglegroup'
             maxSelection={7}
             fifo={true}
             selectedInitial={reco.strengths}
@@ -54,17 +54,17 @@ class RecoStep4 extends Component {
             {(Toggle) => {
               return <View style={{alignItems: 'center'}}>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cuisine.png')} activeInitial={false} label="Cuisine" value={1} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/service.png')} activeInitial={false} label="Service" value={2} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cadre.png')} activeInitial={false} label="Cadre" value={3} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cuisine.png')} activeInitial={false} label='Cuisine' value={1} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/service.png')} activeInitial={false} label='Service' value={2} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/cadre.png')} activeInitial={false} label='Cadre' value={3} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/original.png')} activeInitial={false} label="Original" value={4} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/copieux.png')} activeInitial={false} label="Copieux" value={5} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/vins.png')} activeInitial={false} label="Vins" value={6} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/original.png')} activeInitial={false} label='Original' value={4} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/copieux.png')} activeInitial={false} label='Copieux' value={5} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/vins.png')} activeInitial={false} label='Vins' value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/qtiteprix.png')} activeInitial={false} label="Qté Prix" value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/points_forts/icons/qtiteprix.png')} activeInitial={false} label='Qté Prix' value={7} />
                 </View>
               </View>;
             }}

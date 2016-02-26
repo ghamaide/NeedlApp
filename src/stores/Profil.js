@@ -4,12 +4,12 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
-import CachedStore from './CachedStore';
-
 import MeActions from '../actions/MeActions';
-import MeStore from './Me';
 import ProfilActions from '../actions/ProfilActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
+
+import CachedStore from './CachedStore';
+import MeStore from './Me';
 import RecoActions from '../actions/RecoActions';
 
 export class ProfilStore extends CachedStore {

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Image, View, TouchableHighlight, processColor} from 'react-native';
+import React, {Component, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -26,9 +26,9 @@ class Restaurant extends Component {
       <View renderToHardwareTextureAndroid={true} key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.picture} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.picture}}>
           <View style={styles.restaurantInfos}>
-            <Text key="restaurant_name" style={styles.restaurantName}>{this.props.name}</Text>
+            <Text key='restaurant_name' style={styles.restaurantName}>{this.props.name}</Text>
             {budget ? [
-              <Text key="restaurant_budget" style={styles.restaurantType}>
+              <Text key='restaurant_budget' style={styles.restaurantType}>
                 {this.props.type}
                 <Text style={{color: '#FFFFFF'}}>
                    , {budget}
@@ -38,7 +38,7 @@ class Restaurant extends Component {
                 </Text>
               </Text>
             ] : [
-              <Text key="restaurant_budget" style={styles.restaurantType}>{this.props.type}</Text>
+              <Text key='restaurant_budget' style={styles.restaurantType}>{this.props.type}</Text>
             ]}
             {this.props.subway ?
               <View style={styles.restaurantSubway}>

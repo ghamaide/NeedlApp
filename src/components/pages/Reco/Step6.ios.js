@@ -5,9 +5,9 @@ import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Mixpanel from 'react-native-mixpanel';
 
+import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
-import NavigationBar from '../../ui/NavigationBar';
 
 import MeStore from '../../../stores/Me';
 import ProfilStore from '../../../stores/Profil';
@@ -112,12 +112,12 @@ class RecoStep6 extends Component {
     var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== 553});
     return (
       <View>
-        <NavigationBar title="Publier" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <ScrollView onScroll={this.closeKeyboard} style={styles.container} scrollEnabled={true}>
           <View style={styles.recoContainer}>
             <TextInput 
-              ref="review"
-              placeholder="Un mot de la fin ? Un plat à ne pas manquer ?"
+              ref='review'
+              placeholder='Un mot de la fin ? Un plat à ne pas manquer ?'
               placeholderTextColor='#555555'
               style={styles.reviewInput}
               maxLength={140}
@@ -132,7 +132,7 @@ class RecoStep6 extends Component {
           </View>
           
           {false ? [ // on update, remove
-            <View key="recommenders" style={styles.thanksContainer}>
+            <View key='recommenders' style={styles.thanksContainer}>
               <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
               <ScrollView 
                 style={styles.thanksScroller}

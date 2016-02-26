@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, Image, ListView, TouchableHighlight, NativeModules, ScrollView, Platform} from 'react-native';
+import React, {Image, ListView, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
@@ -102,7 +102,7 @@ class Friends extends Page {
 
   renderFriend = (friend) => {
     return (
-      <TouchableHighlight style={styles.friendRowWrapper} underlayColor="#FFFFFF" onPress={() => {
+      <TouchableHighlight style={styles.friendRowWrapper} underlayColor='#FFFFFF' onPress={() => {
         this.props.navigator.push(Profil.route({id: friend.id}, friend.name));
       }}>
         <View style={styles.friendRow}>
@@ -142,10 +142,10 @@ class Friends extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Amis" rightButtonTitle="Inviter" onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
+        <NavigationBar title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
         {Platform.OS === 'ios' ? [
           <SearchBar
-            key="search"
+            key='search'
             ref='searchBar'
             placeholder='Rechercher'
             hideBackground={true}
@@ -153,7 +153,7 @@ class Friends extends Page {
             onChangeText={this.searchFriends} />
         ] : [
           <TextInput
-            key="search"
+            key='search'
             style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             ref='searchBar'
             placeholder='Rechercher'
@@ -179,7 +179,7 @@ class Friends extends Page {
         */}
         <RefreshableListView
           style={styles.friendsList}
-          refreshDescription="Chargement..."
+          refreshDescription='Chargement...'
           loadData={this.onRefresh}
           dataSource={this.state.friendsActive ? ds.cloneWithRows(this.state.filteredFriends) : ds.cloneWithRows(this.state.filteredExperts)}
           renderRow={this.renderFriend}

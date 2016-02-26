@@ -146,12 +146,12 @@ class App extends Component {
   };
 
   getParameterByName = (name, url) => {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
         results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
   };
 
   handleOpenURL = (event, from) => {
@@ -342,7 +342,7 @@ class App extends Component {
           tabsBlocked={false} />
 
         {this.state.showOverlayMapTutorial ? [
-          <Overlay key="overlay_map_tutorial">
+          <Overlay key='overlay_map_tutorial'>
             <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
               <ScrollView
                 style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
@@ -358,7 +358,7 @@ class App extends Component {
         ] : null}
 
         {!this.state.hasBeenUploadWelcomed ? [
-          <Overlay key="has_been_upload_welcomed">
+          <Overlay key='has_been_upload_welcomed'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
               contentInset={{top: 0}}
@@ -378,7 +378,7 @@ class App extends Component {
         ] : null}
 
         {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage && false ? [
-          <Overlay key="show_update_message">
+          <Overlay key='show_update_message'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
               contentInset={{top: 0}}

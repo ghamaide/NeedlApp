@@ -1,17 +1,15 @@
 'use strict';
 
-import React, {StyleSheet, Dimensions, TouchableHighlight, Component, View, Image, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
+import React, {Component, Dimensions, Image, ActivityIndicatorIOS, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
+
 import _ from 'lodash';
 
 import Text from '../ui/Text';
 
 import LoginActions from '../../actions/LoginActions';
-
 import MeActions from '../../actions/MeActions';
 
 import MeStore from '../../stores/Me';
-
-var windowWidth = Dimensions.get('window').width;
 
 class Connection extends Component {
  
@@ -61,7 +59,7 @@ class Connection extends Component {
             <ProgressBarAndroid key='loading_android' indeterminate />
           ]
         ] : [
-          <TouchableHighlight key="try_again" style={styles.button} underlayColor='rgba(0, 0, 0, 0)' onPress={this.onPress}>
+          <TouchableHighlight key='try_again' style={styles.button} underlayColor='rgba(0, 0, 0, 0)' onPress={this.onPress}>
             <Text style={styles.buttonText}>Réessayer</Text>
           </TouchableHighlight>
         ]}

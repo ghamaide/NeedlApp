@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {StyleSheet, TouchableHighlight, Component, View, Image} from 'react-native';
+import React, {Component, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
+
 import _ from 'lodash';
 
 import Text from '../ui/Text';
@@ -57,7 +58,7 @@ class Login extends Component {
           </View>
         </View>
 
-        <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor="#308edc">
+        <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='#308edc'>
           <Text style={styles.loginBtnText}>
             {this.state.status.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>

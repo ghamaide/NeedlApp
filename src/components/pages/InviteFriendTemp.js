@@ -113,8 +113,8 @@ class InviteFriend extends Page {
 
   authorizeShowContacts() {
     AlertIOS.alert(
-      "Vous n'avez pas autorisé Needl à avoir accès à vos contacts",
-      "Vous pouvez changer ca dans 'Réglages -> Confidentialité'",
+      'Vous n'avez pas autorisé Needl à avoir accès à vos contacts',
+      'Vous pouvez changer ca dans 'Réglages -> Confidentialité'',
       [
         {text: 'OK', onPress: () => this.props.navigator.pop()},
       ]
@@ -181,7 +181,7 @@ class InviteFriend extends Page {
             <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
             {this.state.phoneContacts[_.findIndex(this.state.phoneContacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
               <Image
-                key={"check_" + contact.recordID}
+                key={'check_' + contact.recordID}
                 style={styles.imageCheck}
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [
@@ -208,7 +208,7 @@ class InviteFriend extends Page {
                     <ActivityIndicatorIOS
                       animating={true}
                       style={[{height: 40}]}
-                      size="large" />
+                      size='large' />
                   ] : [
                     <ProgressBarAndroid indeterminate />
                   ]}

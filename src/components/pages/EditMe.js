@@ -63,20 +63,20 @@ class EditMe extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Modification" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar title='Modification' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.editContainer}>
           <Text style={styles.label}>Nom</Text>
           <TextInput
             style={styles.input}
-            ref="nom"
-            textAlign="center"
+            ref='nom'
+            textAlign='center'
             onChangeText={(name) => this.setState({name: name})}
             value={this.state.name} />
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
-            ref="email"
-            textAlign="center"
+            ref='email'
+            textAlign='center'
             onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
           <TouchableHighlight style={styles.submitWrapper} onPress={this.onSubmit}>

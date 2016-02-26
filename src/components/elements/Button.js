@@ -1,11 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, TouchableHighlight} from 'react-native';
+import React, {Component, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Text from '../ui/Text';
 
 class Button extends Component {
-
   render() {
     return (
       <TouchableHighlight style={[styles.buttonWrapper, this.props.style]} onPress={this.props.onPress}>

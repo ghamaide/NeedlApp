@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ActivityIndicatorIOS} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -14,7 +14,7 @@ class Page extends Component {
         <ActivityIndicatorIOS
         animating={true}
         style={[{height: 80}]}
-        size="large" />
+        size='large' />
       </View>
     );
   };

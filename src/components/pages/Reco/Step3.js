@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ActivityIndicatorIOS, Dimensions, Platform, ProgressBarAndroid} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Dimensions, Platform, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -8,8 +8,8 @@ import request from '../../../utils/api';
 
 import Button from '../../elements/Button';
 
-import Text from '../../ui/Text';
 import NavigationBar from '../../ui/NavigationBar';
+import Text from '../../ui/Text';
 
 import ToggleGroup from './ToggleGroup';
 
@@ -69,14 +69,14 @@ class RecoStep3 extends Component {
       var content;
 
       if (this.state.loading) {
-        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" /> : <ProgressBarAndroid indeterminate />);
+        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />);
       }
 
       if (this.state.error) {
         content = <View style={styles.errorBlock}>
           <Text style={{color: 'white'}}>Une erreur est survenue</Text>
           <Button style={styles.errorButton}
-            label="Réessayer"
+            label='Réessayer'
             onPress={() => {
               RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);
             }} />
@@ -93,11 +93,11 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Ambiances" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
+        <NavigationBar title='Ambiances' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle='Valider' onRightButtonPress={this.onRightButtonPress} />
         <View style={styles.container}>
           <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
           <ToggleGroup
-            ref="togglegroup"
+            ref='togglegroup'
             maxSelection={5}
             fifo={true}
             selectedInitial={reco.ambiances}
@@ -110,18 +110,18 @@ class RecoStep3 extends Component {
             {(Toggle) => {
               return <View style={{alignItems: 'center'}}>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label="Convivial" value={3} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label='Chic' value={1} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label='Festif' value={2} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label='Convivial' value={3} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label="Branché" value={5} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Typique" value={6} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label='Romantique' value={4} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label='Branché' value={5} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label='Typique' value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label="Cosy" value={7} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label='Cosy' value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label='Inclassable' value={8} />
                 </View>
               </View>;
             }}

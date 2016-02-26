@@ -105,8 +105,8 @@ class TabView extends Component {
       	<Navigator
           style={{backgroundColor: '#FFFFFF'}}
           initialRoute={this.props.tabs[this.props.initialSelected || 0]}
-          ref="tabs"
-          key="navigator"
+          ref='tabs'
+          key='navigator'
           renderScene={this.renderScene}
           configureScene={() => {
             return {
@@ -117,7 +117,7 @@ class TabView extends Component {
           }} />
 
         {this.state.showTabBar ? [
-					<View key="tabBar" style={styles.tabbarTabs}>
+					<View key='tabBar' style={styles.tabbarTabs}>
           	{_.map(this.props.tabs, (tab, index) => {
             	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
           	})}

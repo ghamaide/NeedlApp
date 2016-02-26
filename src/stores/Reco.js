@@ -1,7 +1,9 @@
 'use strict';
 
 import alt from '../alt';
+
 import RecoActions from '../actions/RecoActions';
+
 import MeStore from './Me';
 import RestaurantsStore from './Restaurants';
 

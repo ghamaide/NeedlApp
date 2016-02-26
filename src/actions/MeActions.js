@@ -1,6 +1,6 @@
 'use strict';
 
-import {Platform, NetInfo} from 'react-native';
+import {NetInfo, Platform} from 'react-native';
 
 import alt from '../alt';
 import request from '../utils/api';

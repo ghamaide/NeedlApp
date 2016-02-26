@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View, Image, TouchableHighlight, ScrollView, ListView} from 'react-native';
+import React, {Image, ListView, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
@@ -124,10 +124,10 @@ class Notifs extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Notifs" />
+        <NavigationBar title='Notifs' />
         <RefreshableListView
           key='notifs'
-          refreshDescription="Chargement..."
+          refreshDescription='Chargement...'
           loadData={this.onRefresh}
           style={styles.notifsList}
           dataSource={ds.cloneWithRows(this.state.notifs)}

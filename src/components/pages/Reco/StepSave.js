@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ProgressBarAndroid, Platform, ActivityIndicatorIOS} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Platform, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 
 import Text from '../../ui/Text';
 
@@ -48,14 +48,14 @@ class RecoStepSave extends Component {
     var reco = RecoStore.getReco();
 
     if (!this.state.error) {
-      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" /> : <ProgressBarAndroid indeterminate />); 
+      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
     }
 
     if (this.state.error && this.state.error.notice) {
       content = <View style={styles.errorBlock}>
         <Text style={{color: 'white'}}>{this.state.err.notice}</Text>
         <Button style={styles.errorButton}
-          label="Ok !"
+          label='Ok !'
           onPress={this.goToRestaurant} />
       </View>;
     }
@@ -64,7 +64,7 @@ class RecoStepSave extends Component {
       content = <View style={styles.errorBlock}>
         <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
-          label="Réessayer"
+          label='Réessayer'
           onPress={() => {
             RecoActions.saveReco(reco);
           }} />
