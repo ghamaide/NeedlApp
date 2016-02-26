@@ -42,7 +42,7 @@ class RecoStep2 extends Component {
               reco.step2 = true;
 
               if (reco.approved) {
-                return this.props.navigator.push(Step.route());
+                return this.props.navigator.push(Step3.route());
               }
 
               this.props.navigator.resetTo(StepSave.route());

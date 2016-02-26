@@ -3,6 +3,7 @@
 import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Mixpanel from 'react-native-mixpanel';
 import SendIntentAndroid from 'react-native-send-intent';
 
 import Text from '../../ui/Text';
@@ -27,9 +28,13 @@ class RecoStep6 extends Component {
   };
 
   state = {
-    keyboardSpace: 0,
+    eyboardSpace: 0,
     characterNbRemaining: 140,
     thanksIds: []
+  };
+
+  componentDidMount() {
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
   };
 
   handleChange = (characterNb) => {
@@ -76,12 +81,13 @@ class RecoStep6 extends Component {
 
   inviteFriend = () => {
     var reco = RecoStore.getReco();
-    SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expérience sur Needl. Tu peux venir le récupérer ici : http://download.needl-app.com/invite');
+    SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation');
+    Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
   };
 
   render() {
     var reco = RecoStore.getReco();
-    var recommenders = RestaurantsStore.getRecommenders(reco.restaurant.id);
+    var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== 553});
     return (
       <View>
         <NavigationBar title="Publier" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
@@ -103,7 +109,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {true ? [ // on update, remove
+          {false ? [ // on update, remove
             <View key="recommenders" style={styles.thanksContainer}>
               <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
               <ScrollView 

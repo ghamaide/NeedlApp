@@ -3,6 +3,7 @@
 import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Mixpanel from 'react-native-mixpanel';
 
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
@@ -29,6 +30,10 @@ class RecoStep6 extends Component {
     keyboardSpace: 0,
     characterNbRemaining: 140,
     thanksIds: []
+  };
+
+  componentDidMount() {
+    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
   };
 
   handleChange = (characterNb) => {
@@ -80,27 +85,26 @@ class RecoStep6 extends Component {
   inviteFriend = () => {
     var reco = RecoStore.getReco();
     NativeModules.RNMessageComposer.composeMessageWithArgs({
-      'messageText': 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expérience sur Needl. Tu peux venir le récupérer ici : http://download.needl-app.com/invite',
+      'messageText': 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
     }, (result) => {
       switch(result) {
         case NativeModules.RNMessageComposer.Sent:
-          console.log('the message has been sent');
+          Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
           break;
         case NativeModules.RNMessageComposer.Cancelled:
-          console.log('user cancelled sending the message');
+          // console.log('user cancelled sending the message');
           break;
         case NativeModules.RNMessageComposer.Failed:
-          console.log('failed to send the message');
+          // console.log('failed to send the message');
           break;
         case NativeModules.RNMessageComposer.NotSupported:
-          console.log('this device does not support sending texts');
+          // console.log('this device does not support sending texts');
           break;
         default:
-          console.log('something unexpected happened');
+          // console.log('something unexpected happened');
           break;
       }
     });
-    //SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expérience sur Needl. Tu peux venir le récupérer ici.');
   };
 
   render() {
@@ -127,7 +131,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {true ? [ // on update, remove
+          {false ? [ // on update, remove
             <View key="recommenders" style={styles.thanksContainer}>
               <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
               <ScrollView 

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {NativeModules, View, Component, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image, Platform, ProgressBarAndroid} from 'react-native';
+import React, {Dimensions, NativeModules, View, Component, StyleSheet, ListView, ActivityIndicatorIOS, TouchableHighlight, Image, Platform, ProgressBarAndroid} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
@@ -91,7 +91,7 @@ class RecoStep1 extends Component {
 
   renderBlankScreen(content) {
     return (
-      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={styles.viewContainer} onPress={this.closeKeyboard}>
+      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={[styles.viewContainer, {height: Dimensions.get('window').height - 50}]} onPress={this.closeKeyboard}>
         <View>
           {content}
         </View>
@@ -194,7 +194,7 @@ var styles = StyleSheet.create({
   viewContainer: {
     backgroundColor: 'transparent',
     alignItems: 'center',
-    padding: 10,
+    padding: 10
   },
   noResultText: {
     fontWeight: 'bold',

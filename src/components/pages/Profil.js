@@ -4,6 +4,7 @@ import React, {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules,
 
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
+import RNComm from 'react-native-communications';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -97,6 +98,10 @@ class Profil extends Page {
 
   onRefresh = () => {
     ProfilActions.fetchProfil(this.currentProfil());
+  };
+
+  contactUs = () => {
+    RNComm.email(['contact@needl-app.com'], '', '', 'J\'ai une question !', '');
   };
 
   renderPage() {
@@ -194,7 +199,7 @@ class Profil extends Page {
           <Collapsible duration={500} align='center' collapsed={!this.state.isOpened}>
             {MeStore.getState().me.id === profil.id ? [
               <View key={'buttons_' + profil.id}>
-                {/*<TouchableHighlight
+                <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
                   key={"contact" + profil.id}
@@ -204,7 +209,6 @@ class Profil extends Page {
                     <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
                   </View>
                 </TouchableHighlight>
-                */}
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
