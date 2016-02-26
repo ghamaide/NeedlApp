@@ -63,6 +63,7 @@ class RecoStep1 extends Component {
   renderRestaurant = (restaurant) => {
     return (
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
+        // check if already reco or wish
         RecoActions.setReco({restaurant: restaurant});
         this.closeKeyboard();
         this.props.navigator.push(Step2.route());

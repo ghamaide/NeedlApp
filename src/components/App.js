@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {AppState, Component, DeviceEventEmitter, Image, Linking, Platform, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Alert, AppState, Component, DeviceEventEmitter, Image, Linking, Platform, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -233,16 +233,22 @@ class App extends Component {
       Linking.addEventListener('url', this.handleOpenURL);
     
       Branch.getInitSessionResultPatiently(({params, error}) => {
+        // console.log('1');
         // console.log(params);
       });
       
       Branch.setIdentity(MeStore.getState().me.id.toString());
 
-      Branch.getLatestReferringParams((params) => { 
+      Branch.getFirstReferringParams((params) => {
+        // console.log('2');
         // console.log(params);
+        if (params.from === 'friend_invitation') {
+          // do something because he arrived from friend invitation 
+        }
       });
 
-      Branch.getFirstReferringParams((params) => { 
+      Branch.getLatestReferringParams((params) => {
+        // console.log('3');
         // console.log(params);
       });
 

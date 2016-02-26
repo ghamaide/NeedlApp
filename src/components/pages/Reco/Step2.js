@@ -27,7 +27,6 @@ class RecoStep2 extends Component {
   state = {};
 
   render() {
-
     var reco = RecoStore.getReco();
 
     return (
@@ -43,7 +42,7 @@ class RecoStep2 extends Component {
               reco.step2 = true;
 
               if (reco.approved) {
-                return this.props.navigator.push(Step3.route());
+                return this.props.navigator.push(Step.route());
               }
 
               this.props.navigator.resetTo(StepSave.route());

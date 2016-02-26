@@ -22,6 +22,8 @@ import com.learnium.RNDeviceInfo.*;
 
 import com.kevinejohn.RNMixpanel.*;
 
+import com.burnweb.rnsendintent.RNSendIntentPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -59,7 +61,8 @@ public class MainActivity extends ReactActivity {
             new FacebookLoginPackage(),
             new GcmPackage(),
             new NotificationPackage(this),
-            new RNMixpanel()
+            new RNMixpanel(),
+            new RNSendIntentPackage()
         );
     }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -37,9 +37,7 @@ class RecoStep6 extends Component {
   };
 
   closeKeyboard = () => {
-    if (Platform.OS ==='ios') {
-      this.refs.review.blur();
-    }
+    this.refs.review.blur();
   };
 
   onRightButtonPress = () => {
@@ -80,12 +78,34 @@ class RecoStep6 extends Component {
   };
 
   inviteFriend = () => {
-    // see what to do ...
+    var reco = RecoStore.getReco();
+    NativeModules.RNMessageComposer.composeMessageWithArgs({
+      'messageText': 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expérience sur Needl. Tu peux venir le récupérer ici : http://download.needl-app.com/invite',
+    }, (result) => {
+      switch(result) {
+        case NativeModules.RNMessageComposer.Sent:
+          console.log('the message has been sent');
+          break;
+        case NativeModules.RNMessageComposer.Cancelled:
+          console.log('user cancelled sending the message');
+          break;
+        case NativeModules.RNMessageComposer.Failed:
+          console.log('failed to send the message');
+          break;
+        case NativeModules.RNMessageComposer.NotSupported:
+          console.log('this device does not support sending texts');
+          break;
+        default:
+          console.log('something unexpected happened');
+          break;
+      }
+    });
+    //SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expérience sur Needl. Tu peux venir le récupérer ici.');
   };
 
   render() {
     var reco = RecoStore.getReco();
-    var recommenders = RestaurantsStore.getRecommenders(reco.restaurant.id);
+    var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== 553});
     return (
       <View>
         <NavigationBar title="Publier" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
@@ -107,7 +127,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {false ? [ // on update, remove
+          {true ? [ // on update, remove
             <View key="recommenders" style={styles.thanksContainer}>
               <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
               <ScrollView 

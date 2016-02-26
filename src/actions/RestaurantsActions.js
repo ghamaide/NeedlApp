@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash';
 import alt from '../alt';
 import request from '../utils/api';
 
@@ -73,7 +74,6 @@ export class RestaurantsActions {
   }
 
   addWishSuccess(restaurant) {
-    console.log('lol');
     return restaurant;
   }
 
@@ -120,9 +120,9 @@ export class RestaurantsActions {
             return this.removeRecoFailed(err);
           }
 
-          callback();
-
           this.removeRecoSuccess({restaurants: restaurants, oldRestaurant: restaurant});
+
+          callback();
         });
     }
   }

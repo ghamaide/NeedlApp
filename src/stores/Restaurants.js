@@ -229,13 +229,19 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleRemoveRecoSuccess(data) {
-    var showRestaurant = _.findIndex(data.restaurants, function(restaurant) {return restaurant.id === data.oldRestaurant.id}) > -1;
+    var indexData = _.findIndex(data.restaurants, function(restaurant) {return restaurant.id === data.oldRestaurant.id});
     var index = _.findIndex(this.restaurants, function(o) {return o.id === data.oldRestaurant.id;});
-    this.restaurants[index] = _.extend(data.oldRestaurant, {ON_MAP: showRestaurant});
-    this.status.loading = false;
 
-    // this.handleRestaurantsFetched(data.restaurants);
-    // this.status.loading = false;    
+    if (indexData > -1) {
+      var restaurant = data.restaurants[indexData];
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
+    } else {
+      this.restaurants[index].ON_MAP = false;
+      _.remove(this.restaurants[index].my_friends_recommending, (friend) => {
+        return friend.id === MeStore.getState().me.id;
+      });
+    }
+    this.status.loading = false;
   }
 
   parseSubways(subways) {

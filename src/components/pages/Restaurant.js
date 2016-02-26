@@ -122,7 +122,6 @@ class Restaurant extends Page {
 
   renderPage() {
     var restaurant = this.state.data;
-    console.log(restaurant);
     return (
       <View>
         {this.props.fromReco ? [
