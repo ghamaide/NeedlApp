@@ -35,7 +35,7 @@ class Liste extends Page {
 
   restaurantsState() {
     return {
-      data: RestaurantsStore.filteredRestaurants(),
+      restaurants: RestaurantsStore.filteredRestaurants(),
       loading: RestaurantsStore.loading(),
       errors: RestaurantsStore.error(),
     };
@@ -74,7 +74,7 @@ class Liste extends Page {
 	renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
-      	rank={_.findIndex(this.state.data, restaurant) + 1}
+      	rank={_.findIndex(this.state.restaurants, restaurant) + 1}
       	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         picture={restaurant.pictures[0]}
@@ -93,49 +93,52 @@ class Liste extends Page {
   };
 
   renderHeaderWrapper = (refreshingIndicator) => {
-  	if (!this.state.data.length) {
-  		return(
-  			<View>
-	 				{refreshingIndicator}
-	  			<View style={styles.emptyTextContainer}>
-	  				<Text style={styles.emptyText}>Tu n'as pas de restaurants avec ces critères. Essaie de modifier les filtres ou de changer de lieu sur la carte.</Text>
-	  			</View>
-	  		</View>
-      );
-    } else {
+    var restaurantNumber = this.state.restaurants.length;
+    if (restaurantNumber > 0) {
       return (
         <View>
-	   			{refreshingIndicator}
-          <Text key='number_restaurants' onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.data.length} {this.state.data.length > 1 ? 'restaurants classés' : 'restaurant classé'} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
+          {refreshingIndicator}
+          {
+            //<Text key='number_restaurants' onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.restaurants.length} {this.state.restaurants.length > 1 ? 'restaurants classés' : 'restaurant classé'} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
+          }
         </View>
-  		);
-  	}
+      );
+    } else {
+      return(
+        <View>
+          {refreshingIndicator}
+          <View style={styles.emptyTextContainer}>
+            <Text style={styles.emptyText}>Tu n'as pas de restaurants avec ces critères. Essaie de modifier les filtres ou de changer de lieu sur la carte.</Text>
+          </View>
+        </View>
+      );
+    }
   };
 
   renderPage() {
-		return (
-			<View style={{flex: 1, position: 'relative'}}>
+    return (
+      <View style={{flex: 1, position: 'relative'}}>
         <NavigationBar image={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
 
         <TouchableHighlight key='filter_button' style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
         	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
-				}}>
-						<Text style={styles.filterMessageText}>
-							{RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
-						</Text>
-				</TouchableHighlight>
-				<RefreshableListView
+        }}>
+            <Text style={styles.filterMessageText}>
+              {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
+            </Text>
+        </TouchableHighlight>
+        <RefreshableListView
           key='list_restaurants'
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
-          dataSource={ds.cloneWithRows(this.state.data.slice(0, 18))}
+          dataSource={ds.cloneWithRows(this.state.restaurants.slice(0, 18))}
           renderRow={this.renderRestaurant}
           renderHeaderWrapper={this.renderHeaderWrapper}
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
-			</View>
-		);
+      </View>
+    );
   };
 }
 

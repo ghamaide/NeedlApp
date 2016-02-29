@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import LoginActions from '../actions/LoginActions';
 import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
@@ -42,6 +43,8 @@ export class RestaurantsStore extends CachedStore {
     this.status.error = {};
 
     this.bindListeners({
+      handleLogout: LoginActions.LOGOUT,
+
       handleFetchRestaurants: RestaurantsActions.FETCH_RESTAURANTS,
       handleRestaurantsFetched: RestaurantsActions.RESTAURANTS_FETCHED,
       handleRestaurantsFetchFailed: RestaurantsActions.RESTAURANTS_FETCH_FAILED,
@@ -79,6 +82,25 @@ export class RestaurantsStore extends CachedStore {
 // ================================================================================================
 
     });
+  }
+
+  handleLogout() {
+    this.showPersonalContent = true;
+    this.restaurants = [];
+    this.filters = {
+      prices: [],
+      types: [],
+      ambiences: [],
+      occasions: []
+    };
+    this.currentRegion = {};
+    this.region = {
+      latitude: 48.8534100,
+      longitude: 2.3378000,
+      longitudeDelta: 0.12,
+      latitudeDelta: 0.065
+    };
+    this.saved = false;
   }
 
   handleFetchRestaurants() {

@@ -29,7 +29,8 @@ class RecoStep6 extends Component {
   state = {
     keyboardSpace: 0,
     characterNbRemaining: 140,
-    thanksIds: []
+    friendsThanksIds: [],
+    expertsThanksIds: []
   };
 
   componentDidMount() {
@@ -47,20 +48,39 @@ class RecoStep6 extends Component {
 
   onRightButtonPress = () => {
     var reco = RecoStore.getReco();
-    reco.friends_thanking = this.state.thanksIds;
+    reco.friends_thanking = this.state.friendsThanksIds;
+    reco.experts_thanking = this.state.expertsThanksIds;
     this.props.navigator.resetTo(StepSave.route());
   };
 
   thankRecommender = (recommenderId) => {
-    var thanksIds = this.state.thanksIds;
-    if (!_.includes(thanksIds, recommenderId)) {
-      thanksIds.push(recommenderId);
-      this.setState({thanksIds: thanksIds});
+    var friendsThanksIds = this.state.friendsThanksIds;
+    var expertsThanksIds = this.state.expertsThanksIds;
+
+    var friends = _.map(ProfilStore.getFriends(), (friend) => {
+      return friend.id;
+    });
+    var isExpert = !_.includes(friends, recommenderId);
+    if (isExpert) {
+      if (!_.includes(expertsThanksIds, recommenderId)) {
+        expertsThanksIds.push(recommenderId);
+        this.setState({expertsThanksIds: expertsThanksIds});
+      } else {
+        expertsThanksIds = _.filter(expertsThanksIds, (id) => {
+          return id !== recommenderId;
+        });
+        this.setState({expertsThanksIds: expertsThanksIds});
+      }
     } else {
-      thanksIds = _.filter(thanksIds, (id) => {
-        return id !== recommenderId;
-      });
-      this.setState({thanksIds: thanksIds});
+      if (!_.includes(friendsThanksIds, recommenderId)) {
+        friendsThanksIds.push(recommenderId);
+        this.setState({friendsThanksIds: friendsThanksIds});
+      } else {
+        friendsThanksIds = _.filter(friendsThanksIds, (id) => {
+          return id !== recommenderId;
+        });
+        this.setState({friendsThanksIds: friendsThanksIds});
+      }
     }
   };
 
@@ -117,7 +137,7 @@ class RecoStep6 extends Component {
           <View style={styles.recoContainer}>
             <TextInput 
               ref='review'
-              placeholder='Un mot de la fin ? Un plat à ne pas manquer ?'
+              placeholder='Le mot de la fin ? Un plat à ne pas manquer ?'
               placeholderTextColor='#555555'
               style={styles.reviewInput}
               maxLength={140}
@@ -131,7 +151,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {false ? [ // on update, remove
+          {true ? [ // on update, remove
             <View key='recommenders' style={styles.thanksContainer}>
               <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
               <ScrollView 

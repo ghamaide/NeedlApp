@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Animatable from 'react-native-animatable';
@@ -91,11 +91,13 @@ class RecoStep1 extends Component {
 
   renderBlankScreen(content) {
     return (
-      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={[styles.viewContainer, {height: Dimensions.get('window').height - 50}]} onPress={this.closeKeyboard}>
-        <View>
-          {content}
-        </View>
-      </TouchableHighlight>
+      <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false}>
+        <TouchableHighlight style={{padding: 10, height: Dimensions.get('window').height - 160}} onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)'>
+          <View>
+            {content}
+          </View>
+        </TouchableHighlight>
+      </ScrollView>
     );
   };
 
@@ -103,7 +105,12 @@ class RecoStep1 extends Component {
     var content;
 
     if (!this.state.query) {
-      content = this.renderBlankScreen();
+      content = this.renderBlankScreen(
+        <View style={{height: Dimensions.get('window').height - 160, justifyContent: 'center', alignItems: 'center'}}>
+          <Text style={styles.firstMessageText}>Recommande tes restaurants préférés à tes amis !</Text>
+          <Text style={[styles.firstMessageText, {marginTop: 20}]}>Tips : Chaque recommandation que tu fais te permet de bénéficier d'une suggestion de restaurants plus personnalisée</Text>
+        </View>
+      );
     } else if(this.state.loading) {
       content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
     } else if(this.state.error) {
@@ -115,46 +122,30 @@ class RecoStep1 extends Component {
     }
 
     return (
-     <View style={styles.container}>
-      <NavigationBar title='Séléction' />
+      <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={true} style={styles.container}>
+        <NavigationBar title='Recommandation' />
       
-      {Platform.OS === 'ios' ? [
-        <SearchBar
-          key='search'
-          ref='searchBar'
-          placeholder='Sélectionne ton restaurant'
-          hideBackground={true}
-          textFieldBackgroundColor='#DDDDDD'
-          onChangeText={this.onRestaurantQuery} />
-      ] : [
-        <TextInput
-          key='search'
-          ref='searchBar'
-          placeholderTextColor='#333333'
-          placeholder='Sélectionne ton restaurant'
-          style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#333333'}}
-          onChangeText={this.onRestaurantQuery} />
-      ]}
-
-      {!MeStore.getState().me.HAS_SHARED && !this.state.query ?
-        <TouchableHighlight onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)' style={styles.firstMessage}>
-          <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 40}}>
-            <Animatable.Image
-              animation='slideInDown'
-              iterationCount='infinite'
-              direction='alternate'
-              duration={1000}
-              style={styles.arrowUp}
-              source={require('../../../assets/img/other/icons/arrow_up.png')} />
-            <Text style={[styles.firstMessageText, {marginTop: 20}]}>Recommande ton premier restaurant à tes amis !</Text>
-            <Text style={[styles.firstMessageText, {marginTop: 25}]}>Chaque interaction nous permet de personnaliser plus finement la pertinence des restaurants qui te sont conseillés.</Text>
-          </View>
-        </TouchableHighlight>
-      : null}
+        {Platform.OS === 'ios' ? [
+          <SearchBar
+            key='search'
+            ref='searchBar'
+            placeholder='Sélectionne ton restaurant'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.onRestaurantQuery} />
+        ] : [
+          <TextInput
+            key='search'
+            ref='searchBar'
+            placeholderTextColor='#333333'
+            placeholder='Sélectionne ton restaurant'
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#333333'}}
+            onChangeText={this.onRestaurantQuery} />
+        ]}
 
         {content}
 
-     </View>
+      </ScrollView>
     );
   };
 
@@ -198,7 +189,8 @@ var styles = StyleSheet.create({
   },
   noResultText: {
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
+    textAlign: 'center'
   },
   firstMessage: {
     flex: 1,
@@ -207,8 +199,9 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
   },
   firstMessageText: {
-    color: '#000000',
-    fontSize: 16,
+    color: '#EF582D',
+    fontSize: 17,
+    fontWeight: '400',
     textAlign: 'center',
     paddingLeft: 15,
     paddingRight: 15

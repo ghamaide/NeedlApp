@@ -104,7 +104,6 @@ class Profil extends Page {
 
   renderPage() {
     var profil = this.state.profile;
-
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
@@ -134,7 +133,7 @@ class Profil extends Page {
               <Text style={styles.profilBadge}>{profil.name}</Text>
               <Text style={styles.profilRemerciements}>{profil.recommendations.length} recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
             </View>
-            {/* <Image source={{uri: profil.picture}} style={styles.badgeImage} /> */}
+            {/* remove on gamification update <Image source={{uri: profil.picture}} style={styles.badgeImage} /> */}
           </View>
 
           <View style={styles.actionContainer}>
@@ -211,7 +210,7 @@ class Profil extends Page {
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={styles.dropdownButton}
                   key={'logout_' + profil.id}
-                  onPress={() => LoginActions.logout}>
+                  onPress={() => LoginActions.logout()}>
                   <View style={{flexDirection: 'row'}}>
                     <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
                     <Text style={[styles.buttonText, {marginTop: 3}]}>Me Déconnecter</Text>
@@ -256,45 +255,53 @@ class Profil extends Page {
           </View>
 
           <View style={styles.restaurantsContainer}>
-            {profil.recommendations.length && this.state.recommendationActive ?
-              _.map(profil.recommendations, (id) => {
-                var restaurant = RestaurantsStore.getRestaurant(id);
-                return (
-                  <RestaurantElement
-                    height={200}
-                    style={{marginBottom: 5, backgroundColor: 'transparent'}}
-                    key={restaurant.id}
-                    name={restaurant.name}
-                    picture={restaurant.pictures[0]}
-                    type={restaurant.food[1]}
-                    budget={restaurant.price_range}
-                    underlayColor='#EEEEEE'
-                    onPress={() => {
-                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                    }}/>
+            {this.state.recommendationActive ? [
+              profil.recommendations.length ? [
+                _.map(profil.recommendations, (id) => {
+                  var restaurant = RestaurantsStore.getRestaurant(id);
+                  return (
+                    <RestaurantElement
+                      height={200}
+                      style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                      key={restaurant.id}
+                      name={restaurant.name}
+                      picture={restaurant.pictures[0]}
+                      type={restaurant.food[1]}
+                      budget={restaurant.price_range}
+                      underlayColor='#EEEEEE'
+                      onPress={() => {
+                        this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                      }}/>
                   );
-              })
-            : null}
+                })
+              ] : [
+                <Text style={styles.emptyText}>Recommande les restaurants que tu as aimés et bénéficie d'une suggestion de restaurants personnalisée !</Text>
+              ]
+            ] : null}
 
-            {profil.wishes.length && this.state.wishlistActive ?
-              _.map(profil.wishes, (id) => {
-                var restaurant = RestaurantsStore.getRestaurant(id);
-                return (
-                  <RestaurantElement
-                    height={200}
-                    style={{marginBottom: 5, backgroundColor: 'transparent'}}
-                    key={restaurant.id}
-                    name={restaurant.name}
-                    picture={restaurant.pictures[0]}
-                    type={restaurant.food[1]}
-                    budget={restaurant.price_range}
-                    underlayColor='#EEEEEE'
-                    onPress={() => {
-                      this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                    }}/>
-                  );
-              })
-            : null}
+            {this.state.wishlistActive ? [
+              profil.wishes.length ? [
+                _.map(profil.wishes, (id) => {
+                  var restaurant = RestaurantsStore.getRestaurant(id);
+                  return (
+                    <RestaurantElement
+                      height={200}
+                      style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                      key={restaurant.id}
+                      name={restaurant.name}
+                      picture={restaurant.pictures[0]}
+                      type={restaurant.food[1]}
+                      budget={restaurant.price_range}
+                      underlayColor='#EEEEEE'
+                      onPress={() => {
+                        this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                      }}/>
+                    );
+                })
+              ] : [
+                <Text style={styles.emptyText}>Construis ta propre liste de restaurants en les ajoutant à ta wishlist !</Text>
+              ]
+            ] : null}
           </View>
         </ScrollView>
       </View>
@@ -401,6 +408,12 @@ var styles = StyleSheet.create({
     padding: 5,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  emptyText: {
+    color: '#EF582D',
+    textAlign: 'center',
+    padding: 20,
+    fontSize: 14
   }
 });
 

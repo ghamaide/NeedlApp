@@ -146,12 +146,12 @@ class App extends Component {
   };
 
   getParameterByName = (name, url) => {
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
         results = regex.exec(url);
     if (!results) return null;
     if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
   };
 
   handleOpenURL = (event, from) => {
@@ -213,7 +213,8 @@ class App extends Component {
 
     MeActions.startActions.defer(DeviceInfo.getVersion());
     RestaurantsActions.fetchRestaurants.defer();
-    ProfilActions.fetchProfils.defer();
+    ProfilActions.fetchFriends.defer();
+    ProfilActions.fetchFollowings.defer();
     NotifsActions.fetchNotifs.defer();
   };
 

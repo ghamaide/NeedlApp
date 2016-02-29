@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
 
 import CachedStore from './CachedStore';
@@ -32,6 +33,8 @@ export class NotifsStore extends CachedStore {
       handleFetchNotifs: NotifsActions.FETCH_NOTIFS,
       handleNotifsFetched: NotifsActions.NOTIFS_FETCHED,
       handleNotifsFetchFailed: NotifsActions.NOTIFS_FETCH_FAILED,
+
+      handleLogout: LoginActions.LOGOUT,
 
       setNotifsAsSeen: NotifsActions.NOTIFS_SEEN
 
@@ -88,6 +91,10 @@ export class NotifsStore extends CachedStore {
   handleNotifsFetchFailed(err) {
     this.status.loading = false;
     this.status.error = err;
+  }
+
+  handleLogout() {
+    this.notifs = [];
   }
 
   setNotifsAsSeen() {

@@ -1,10 +1,12 @@
 'use strict';
 
-import alt from '../alt';
 
 import _ from 'lodash';
-import request from '../utils/api';
 import qs from 'qs';
+
+import alt from '../alt';
+
+import request from '../utils/api';
 
 export class RecoActions {
 

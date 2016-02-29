@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
 import ProfilActions from '../actions/ProfilActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
@@ -18,20 +19,27 @@ export class ProfilStore extends CachedStore {
     super();
 
     this.profil = {};
-    this.profils = [];
+    this.me = {};
     this.friends = [];
+    this.followings = [];
 
     this.status.loading = false;
     this.status.error = {}
   
     this.bindListeners({
-      handleFetchProfils: ProfilActions.fetchProfils,
-      handleFetchProfilsSuccess: ProfilActions.fetchProfilsSuccess,
-      handleFetchProfilsFailed: ProfilActions.fetchProfilsFailed,
+      handleLogout: LoginActions.LOGOUT,
+
+      handleFetchFriends: ProfilActions.fetchFriends,
+      handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
+      handleFetchFriendsFailed: ProfilActions.fetchFriendsFailed,
 
       handleFetchProfil: ProfilActions.FETCH_PROFIL,
       handleProfilFetched: ProfilActions.PROFIL_FETCHED,
       handleProfilFetchFailed: ProfilActions.PROFIL_FETCH_FAILED,
+
+      handleFetchFollowings: ProfilActions.fetchFollowings,
+      handleFetchFollowingsSuccess: ProfilActions.fetchFollowingsSuccess,
+      handleFetchFollowingsFailed: ProfilActions.fetchFollowingsFailed,
 
       handleMaskProfil: ProfilActions.MASK_PROFIL,
       handleMaskProfilFailed: ProfilActions.MASK_PROFIL_FAILED,
@@ -54,23 +62,31 @@ export class ProfilStore extends CachedStore {
     });
   }
 
-  handleFetchProfils() {
+  handleLogout() {
+    this.profil = {};
+    this.me = {};
+    this.friends = [];
+    this.followings = [];
+  }
+
+  handleFetchFriends() {
     this.status.loading = true;
     delete this.status.error;
   }
 
-  handleFetchProfilsSuccess(profils) {
+  handleFetchFriendsSuccess(profils) {
     this.friends = profils.friends;
-    this.profils = _.concat(profils.friends, profils.me);
+    this.me = profils.me;
+    this.profils = _.concat(this.friends, this.me, this.followings);
     this.status.loading = false;
   }
 
-  handleFetchProfilsFailed(err) {
+  handleFetchFriendsFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
 
-  handleFetchProfil(id) {
+  handleFetchProfil() {
     this.status.loading = true;
     delete this.status.error;
   }
@@ -78,14 +94,14 @@ export class ProfilStore extends CachedStore {
   handleProfilFetched(profil) {
     var index = _.findIndex(this.profils, function(o) {return o.id === profil.id;});
     var newProfil = profil;
-    var recommendations = _.map(newProfil.recommendations ,(recommendation) => {
-      return recommendation.id;
-    });
-    var wishes = _.map(newProfil.wishes ,(wish) => {
-      return wish.id;
-    });
-    newProfil.recommendations = recommendations;
-    newProfil.wishes = wishes;
+    // var recommendations = _.map(newProfil.recommendations ,(recommendation) => {
+    //   return recommendation.id;
+    // });
+    // var wishes = _.map(newProfil.wishes ,(wish) => {
+    //   return wish.id;
+    // });
+    // newProfil.recommendations = recommendations;
+    // newProfil.wishes = wishes;
 
     if (index > -1) {
       this.profils[index] = profil;
@@ -98,6 +114,22 @@ export class ProfilStore extends CachedStore {
   handleProfilFetchFailed(err) {
     this.status.loading = false;
     this.status.error = err;
+  }
+
+  handleFetchFollowings() {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleFetchFollowingsFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleFetchFollowingsSuccess(result) {
+    this.followings = result.followings;
+    this.profils = _.concat(this.friends, this.me, this.followings);
+    this.status.loading = false;
   }
 
   handleMaskProfil() {
@@ -186,11 +218,15 @@ export class ProfilStore extends CachedStore {
   }
 
   static getProfils() {
-    return this.getState().profils;
+    return _.concat(this.getState().friends, this.getState.me, this.getState().followings);
   }
 
   static getFriends() {
     return this.getState().friends;
+  }
+
+  static getFollowings() {
+    return this.getState().followings;
   }
 }
 

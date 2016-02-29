@@ -97,8 +97,8 @@ class InviteFriend extends Page {
 
   authorizeShowContacts() {
     AlertIOS.alert(
-      'Vous n'avez pas autorisé Needl à avoir accès à vos contacts',
-      'Vous pouvez changer ca dans 'Settings -> Privacy'',
+      'Vous n\'avez pas autorisé Needl à avoir accès à vos contacts',
+      'Vous pouvez changer ca dans \'Settings -> Privacy\'',
       [
         {text: 'OK', onPress: () => this.props.navigator.pop()},
       ]

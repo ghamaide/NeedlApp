@@ -7,6 +7,7 @@ import _ from 'lodash';
 import alt from '../alt';
 
 import FriendsActions from '../actions/FriendsActions';
+import LoginActions from '../actions/LoginActions';
 
 import CachedStore from './CachedStore';
 import MeStore from './Me';
@@ -33,6 +34,8 @@ export class FriendsStore extends CachedStore {
     this.status.error = {};
 
     this.bindListeners({
+      handleLogout: LoginActions.LOGOUT,
+
       handleFetchFriends: FriendsActions.FETCH_FRIENDS,
       handleFriendsFetched: FriendsActions.FRIENDS_FETCHED,
       handleFriendsFetchFailed: FriendsActions.FRIENDS_FETCH_FAILED,
@@ -47,6 +50,10 @@ export class FriendsStore extends CachedStore {
 
 // ================================================================================================
     });
+  }
+
+  handleLogout() {
+    this.friends = [];
   }
 
   handleFetchFriends() {

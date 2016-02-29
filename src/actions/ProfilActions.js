@@ -15,6 +15,7 @@ export class ProfilActions {
             return this.profilFetchFailed(err, id);
           }
 
+          console.log(result);
           this.profilFetched(result);
         });
     }
@@ -28,27 +29,50 @@ export class ProfilActions {
     return {err: err, id: id};
   }
 
-  fetchProfils() {
+  fetchFriends() {
     return (dispatch) => {
       dispatch();
       
       request('GET', '/api/friendships')
         .end((err, result) => {
           if (err) {
-            return this.fetchProfilsFailed(err);
+            return this.fetchFriendsFailed(err);
           }
 
-          this.fetchProfilsSuccess(result);
+          this.fetchFriendsSuccess(result);
         });
     }
   }
 
-  fetchProfilsSuccess(friends) {
+  fetchFriendsSuccess(friends) {
     return friends;
   }
 
-  fetchProfilsFailed(err) {
+  fetchFriendsFailed(err) {
     return err;
+  }
+
+  fetchFollowings() {
+    return (dispatch) => {
+      dispatch();
+
+      request('GET', '/api/followerships')
+        .end((err, result) => {
+          if (err) {
+            return this.fetchFollowingsFailed(err, id);
+          }
+
+          this.fetchFollowingsSuccess(result);
+        });
+    }
+  }
+
+  fetchFollowingsFailed(err) {
+    return err;
+  }
+
+  fetchFollowingsSuccess(result) {
+    return result;
   }
 
   maskProfil(id) {

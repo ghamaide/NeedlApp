@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Image, ListView, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Dimensions, Image, ListView, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
@@ -67,26 +67,23 @@ class Notifs extends Page {
   };
 
   renderHeaderWrapper = (refreshingIndicator) => {
-    var nbPot = NotifsStore.getState().notifs.length;
+    var notificationNumber = NotifsStore.getState().notifs.length;
 
-    if (nbPot) {
+    if (notificationNumber > 0) {
       return (
         <View>
           {refreshingIndicator}
         </View>
       );
-    }
-
-    return (
-      <View style={styles.emptyContainer}>
-        {refreshingIndicator}
-        <View style={styles.textContainerWrapper}>
-          <TouchableHighlight style={styles.textContainer} underlayColor='#FFFFFF' onPress={() => this.props.navigator.push(InviteFriend.route())}>
-            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
-          </TouchableHighlight>
+    } else {
+      return (
+        <View style={styles.emptyContainer}>
+          {refreshingIndicator}
+          <Text style={styles.emptyText}>Tu n'as pas encore de notification.</Text>
+          <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
         </View>
-      </View>
-    );
+      );
+    }
   };
 
   renderNotif = (notif) => {
@@ -133,6 +130,7 @@ class Notifs extends Page {
           dataSource={ds.cloneWithRows(this.state.notifs)}
           renderRow={this.renderNotif}
           contentInset={{top: 0}}
+          renderHeaderWrapper={this.renderHeaderWrapper}
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
@@ -192,36 +190,15 @@ var styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF'
-  },
-  textContainerWrapper: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 10,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  textContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    height: Dimensions.get('window').height - 140
   },
   emptyText: {
-    width: 175,
+    padding: 20,
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 17,
+    fontWeight: '400',
     color: '#EF582D',
   }
 });

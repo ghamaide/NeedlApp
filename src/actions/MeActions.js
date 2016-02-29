@@ -56,7 +56,6 @@ export class MeActions {
         })
         .end((err) => {
           if (err) {
-            console.log(err);
           }
         });
     }

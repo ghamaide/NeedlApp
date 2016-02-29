@@ -34,9 +34,9 @@ class Friends extends Page {
   friendsState() {
     return {
       friends: ProfilStore.getFriends(),
-      experts: ProfilStore.getFriends(),
+      followings: ProfilStore.getFollowings(),
       filteredFriends: ProfilStore.getFriends(),
-      filteredExperts: ProfilStore.getFriends(),
+      filteredFollowings: ProfilStore.getFollowings(),
       loading: ProfilStore.loading(),
       error: ProfilStore.error(),
     };
@@ -47,7 +47,9 @@ class Friends extends Page {
 
     this.state = this.friendsState();
     this.state.friendsActive = true;
-    this.state.expertsActive = false;
+    this.state.followingsActive = false;
+    this.state.searchedText = '';
+    this.state.title = 'Amis';
   };
 
   componentWillMount() {
@@ -63,6 +65,7 @@ class Friends extends Page {
   };
 
   searchFriends = (searchedText) => {
+    this.setState({searchedText});
     var newFilteredFriends = _.filter(this.state.friends, function(friend) {
       return friend.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
     });
@@ -70,12 +73,13 @@ class Friends extends Page {
     this.setState({filteredFriends: newFilteredFriends});
   };
 
-  searchExperts = (searchedText) => {
-    var newFilteredExperts = _.filter(this.state.experts, function(expert) {
-      return expert.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
+  searchFollowings = (searchedText) => {
+    this.setState({searchedText});
+    var newFilteredFollowings = _.filter(this.state.followings, function(following) {
+      return following.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
     });
 
-    this.setState({filteredExperts: newFilteredExperts});
+    this.setState({filteredFollowings: newFilteredFollowings});
   };
 
   closeKeyboard = () => {
@@ -85,18 +89,20 @@ class Friends extends Page {
   };
 
   onRefresh = () => {
-    ProfilActions.fetchProfils();
+    ProfilActions.fetchFriends();
   };
 
   onPressFriend = (from) => {
     if (from === 'friends') {
       this.setState({friendsActive: true});
-      this.setState({expertsActive: false});
+      this.setState({followingsActive: false});
+      this.searchFriends(this.state.searchedText);
     }
 
-    if (from === 'experts') {
-      this.setState({expertsActive: true});
+    if (from === 'followings') {
+      this.setState({followingsActive: true});
       this.setState({friendsActive: false});
+      this.searchFollowings(this.state.searchedText);
     }
   };
 
@@ -118,50 +124,50 @@ class Friends extends Page {
 
   renderHeader = (refreshingIndicator) => {
     var friendNumber = ProfilStore.getFriends().length;
+    var followingNumber = ProfilStore.getFollowings().length;
 
-    if (friendNumber) {
-      return (
-        <View>
-          {refreshingIndicator}
-        </View>
-      );
-    } else {
-      return (
-        <View style={styles.emptyContainer}>
-          {refreshingIndicator}
-          <View style={styles.textContainerWrapper}>
-            <TouchableHighlight style={styles.textContainer} underlayColor='rgba(239, 88, 45, 0.1)' onPress={() => this.props.navigator.push(InviteFriendTemp.route())}>
-              <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
-            </TouchableHighlight>
+    if (this.state.friendsActive) {
+      if (friendNumber > 0) {
+        return (
+          <View>
+            {refreshingIndicator}
           </View>
-        </View>
-      );
+        );
+      } else {
+        return (
+          <View style={styles.emptyContainer}>
+            {refreshingIndicator}
+            <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leurs coups de coeur !</Text>
+          </View>
+        );
+      }
+    } else {
+      if (followingNumber > 0) {
+        return (
+          <View>
+            {refreshingIndicator}
+          </View>
+        );
+      } else {
+        return (
+          <View style={styles.emptyContainer}>
+            {refreshingIndicator}
+            <Text style={styles.emptyText}>Tu ne suis pas encore d'influenceurs. </Text>
+            <Text style={[styles.emptyText, {marginTop: 10}]}>Ajoutes-en pour connaitre leurs coups de coeur !</Text>
+          </View>
+        );
+      }
     }
   };
 
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
-        {Platform.OS === 'ios' ? [
-          <SearchBar
-            key='search'
-            ref='searchBar'
-            placeholder='Rechercher'
-            hideBackground={true}
-            textFieldBackgroundColor='#DDDDDD'
-            onChangeText={this.searchFriends} />
+        {this.state.friendsActive ? [
+          <NavigationBar key='navbar_friends' title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
         ] : [
-          <TextInput
-            key='search'
-            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
-            ref='searchBar'
-            placeholder='Rechercher'
-            placeholderTextColor='#333333'
-            hideBackground={true}
-            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchExperts} />
+          <NavigationBar key='navbar_followings' title='Influenceurs' rightButtonTitle='Rechercher' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
         ]}
-        { /* on update, remove
         <View style={styles.friendsButtonContainer}>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
@@ -171,17 +177,35 @@ class Friends extends Page {
           </TouchableHighlight>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
-            style={[styles.friendsButton, {backgroundColor: this.state.expertsActive ? '#EF582D' : 'transparent'}]}
-            onPress={() => this.onPressFriend('experts')}>
-            <Text style={{color: this.state.expertsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
+            style={[styles.friendsButton, {backgroundColor: this.state.followingsActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressFriend('followings')}>
+            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
           </TouchableHighlight>
         </View>
-        */}
+
+        {Platform.OS === 'ios' ? [
+          <SearchBar
+            key='search'
+            ref='searchBar'
+            placeholder='Rechercher'
+            hideBackground={true}
+            textFieldBackgroundColor='#DDDDDD'
+            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchFollowings} />
+        ] : [
+          <TextInput
+            key='search'
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+            ref='searchBar'
+            placeholder='Rechercher'
+            placeholderTextColor='#333333'
+            hideBackground={true}
+            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchFollowings} />
+        ]}
         <RefreshableListView
           style={styles.friendsList}
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
-          dataSource={this.state.friendsActive ? ds.cloneWithRows(this.state.filteredFriends) : ds.cloneWithRows(this.state.filteredExperts)}
+          dataSource={this.state.friendsActive ? ds.cloneWithRows(this.state.filteredFriends) : ds.cloneWithRows(this.state.filteredFollowings)}
           renderRow={this.renderFriend}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
@@ -231,36 +255,15 @@ var styles = StyleSheet.create({
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF'
-  },
-  textContainerWrapper: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 10,
+    justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  textContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 20,
+    paddingTop: 20
   },
   emptyText: {
-    width: 175,
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 17,
+    fontWeight: '400',
     color: '#EF582D',
   },
   friendsButtonContainer: {

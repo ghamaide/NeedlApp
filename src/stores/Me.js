@@ -49,11 +49,20 @@ export class MeStore extends CachedStore {
       handleStartActionsFailed: MeActions.START_ACTIONS_FAILED,
       handleStartActionsSuccess: MeActions.START_ACTIONS_SUCCESS,
 
-      handleLoginSuccess: LoginActions.LOGIN_SUCCESS,
-      handleLoginFailed: LoginActions.LOGIN_FAILED,
+      handleLoginFacebookSuccess: LoginActions.LOGIN_FACEBOOK_SUCCESS,
+      handleLoginFacebookFailed: LoginActions.LOGIN_FACEBOOK_FAILED,
+      handleLoginFacebook: LoginActions.LOGIN_FACEBOOK,
+      handleLoginFacebookCancelled: LoginActions.LOGIN_FACEBOOK_CANCELLED,
+
+      handleLoginEmailSuccess: LoginActions.LOGIN_EMAIL_SUCCESS,
+      handleLoginEmailFailed: LoginActions.LOGIN_EMAIL_FAILED,
+      handleLoginEmail: LoginActions.LOGIN_EMAIL,
+
+      handleCreateAccount: LoginActions.CREATE_ACCOUNT,
+      handleCreateAccountFailed: LoginActions.CREATE_ACCOUNT_FAILED,
+      handleCreateAccountSuccess: LoginActions.CREATE_ACCOUNT_SUCCESS,
+
       handleLogout: LoginActions.LOGOUT,
-      handleLogin: LoginActions.LOGIN,
-      handleLoginCancelled: LoginActions.LOGIN_CANCELLED,
 
       handleEditSuccess: MeActions.EDIT_SUCCESS,
       handleEditFailed: MeActions.EDIT_FAILED,
@@ -107,29 +116,63 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleLoginSuccess(me) {
+  handleLoginFacebookSuccess(me) {
     this.me = me.user;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
     this.status.loading = false;
   }
 
-  handleLoginFailed(err) {
+  handleLoginFacebookFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
 
-  handleLoginCancelled() {
+  handleLoginFacebookCancelled() {
     this.status.loading = false;
     delete this.status.error;
   }
 
   handleLogout() {
     this.me = {};
+    this.showedCurrentPosition = false;
+    delete this.status.error;
   }
 
-  handleLogin() {
+  handleLoginFacebook() {
     this.status.loading = true;
     delete this.status.error;
+  }
+
+  handleLoginEmail() {
+    this.status.loading = true;
+    delete this.status.error; 
+  }
+
+  handleLoginEmailSuccess(me) {
+    this.me = me.user;
+    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.status.loading = false;
+  }
+
+  handleLoginEmailFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleCreateAccount() {
+    this.status.loading = true;
+    delete this.status.error; 
+  }
+
+  handleCreateAccountFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleCreateAccountSuccess(me) {
+    this.me = me.user;
+    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.status.loading = false;
   }
 
   handleEdit() {
