@@ -8,7 +8,6 @@ class Login {
   facebook(callback) {
     FBLoginManager.loginWithPermissions(['email', 'user_friends'], function(err, data){
       if (err) {
-        console.log(err);
         return callback(err);
       }
 

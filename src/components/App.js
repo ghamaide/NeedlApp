@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Alert, AppState, Component, DeviceEventEmitter, Image, Linking, Platform, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Alert, AppState, Component, DeviceEventEmitter, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -60,18 +60,32 @@ class App extends Component {
     }
   };
 
-  onPastillesChange = () => {
-    this.setState({
-      notifsPastille: NotifsStore.nbUnseenNotifs()
-    });
-  };
-
   onMeChange = () => {
     this.setState({
+      meLoading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
       showTabBar: MeStore.getState().showTabBar
+    });
+  };
+
+  onNotificationsChange = () => {
+    this.setState({
+      notificationsLoading: NotifsStore.loading(),
+      notifsPastille: NotifsStore.nbUnseenNotifs()
+    });
+  };
+
+  onProfileChange = () => {
+    this.setState({
+      profileLoading: ProfilStore.loading()
+    });
+  };
+
+  onRestaurantsChange = () => {
+    this.setState({
+      restaurantsLoading: RestaurantsStore.loading()
     });
   };
 
@@ -220,7 +234,9 @@ class App extends Component {
 
   componentWillMount() {
     MeStore.listen(this.onMeChange);
-    NotifsStore.listen(this.onPastillesChange);
+    NotifsStore.listen(this.onNotificationsChange);
+    ProfilStore.listen(this.onProfileChange);
+    RestaurantsStore.listen(this.onRestaurantsChange);
 
     AppState.addEventListener('change', this.onAppStateChange);
 
@@ -263,8 +279,10 @@ class App extends Component {
   };
 
   componentWillUnmount() {
-    NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
+    NotifsStore.unlisten(this.onNotificationsChange);
+    ProfilStore.unlisten(this.onProfileChange);
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
 
     AppState.removeEventListener('change', this.onAppStateChange);
 
@@ -290,7 +308,7 @@ class App extends Component {
     if (Platform.OS === 'android') {
       GcmAndroid.addEventListener('register', this.onDeviceToken);
 
-      GcmAndroid.addEventListener('registerError', function(error){
+      GcmAndroid.addEventListener('registerError', (error) => {
         console.log('registerError', error.message);
       });
 
@@ -303,6 +321,8 @@ class App extends Component {
   };
 
   render() {
+    var loadingState = this.state.meLoading || this.state.notificationsLoading || this.state.profileLoading || this.state.restaurantsLoading;
+    var loading = (typeof loadingState === 'undefined' || loadingState);
     return (
       <View style={{flex: 1}}>
         <TabView 
@@ -394,6 +414,29 @@ class App extends Component {
               <Button label='Passer' onPress={() => {
                 MeActions.showedUpdateMessage();
               }} style={{margin: 5}}/>
+            </ScrollView>
+          </Overlay>
+        ] : null}
+
+        {loading && false ? [
+          <Overlay key='loading_overlay'>
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
+              contentInset={{top: 0}}
+              alignItems='center'
+              justifyContent='center'
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              {Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS
+                  key='loading_ios'
+                  animating={true}
+                  style={[{height: 80}]}
+                  size='large' />
+              ] : [
+                <ProgressBarAndroid key='loading_android' indeterminate />
+              ]}
             </ScrollView>
           </Overlay>
         ] : null}

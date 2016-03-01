@@ -14,12 +14,12 @@ export class NotifsActions {
           if (err) {
             return this.notifsFetchFailed(err);
           }
-          this.notifsFetched(result);
+          this.notifsFetchSuccess(result);
         });
     }
   }
 
-  notifsFetched(notifs) {
+  notifsFetchSuccess(notifs) {
     return notifs;
   }
 

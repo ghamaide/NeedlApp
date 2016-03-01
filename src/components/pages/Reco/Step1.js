@@ -106,7 +106,7 @@ class RecoStep1 extends Component {
 
     if (!this.state.query) {
       content = this.renderBlankScreen(
-        <View style={{height: Dimensions.get('window').height - 160, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{paddingTop: 40, height: Dimensions.get('window').height - 160, justifyContent: 'flex-start', alignItems: 'center'}}>
           <Text style={styles.firstMessageText}>Recommande tes restaurants préférés à tes amis !</Text>
           <Text style={[styles.firstMessageText, {marginTop: 20}]}>Tips : Chaque recommandation que tu fais te permet de bénéficier d'une suggestion de restaurants plus personnalisée</Text>
         </View>
@@ -123,7 +123,7 @@ class RecoStep1 extends Component {
 
     return (
       <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={true} style={styles.container}>
-        <NavigationBar title='Recommandation' />
+        <NavigationBar title='Recommendation' />
       
         {Platform.OS === 'ios' ? [
           <SearchBar

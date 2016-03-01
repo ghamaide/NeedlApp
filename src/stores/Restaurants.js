@@ -167,7 +167,7 @@ export class RestaurantsStore extends CachedStore {
 
   handleDisplayProfilSuccess(id) {
     _.map(this.restaurants, (restaurant) => {
-      if (restaurant.ON_MAP = false &&_.includes(restaurant.friends_wishing, id) || _.includes(restaurant.friends_recommending, id)) {
+      if (restaurant.ON_MAP = false && _.includes(restaurant.friends_wishing, id) || _.includes(restaurant.friends_recommending, id)) {
         restaurant.ON_MAP = true;
       }
     });

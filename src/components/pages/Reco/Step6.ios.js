@@ -86,7 +86,7 @@ class RecoStep6 extends Component {
 
   renderRecommender = (recommenderId) => {
     var recommender = ProfilStore.getProfil(recommenderId);
-    var active = _.includes(this.state.thanksIds, recommenderId);
+    var active = _.includes(this.state.friendsThanksIds, recommenderId) || _.includes(this.state.expertsThanksIds, recommenderId);
     return (
       <View key={'recommender_' + recommenderId} style={styles.recommenderContainer}>
         <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.thankRecommender(recommenderId)} style={styles.recommenderButton}>

@@ -21,11 +21,12 @@ import Friends from './Friends';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
-class InviteFriend extends Page {
-  static route() {
+class SearchFriend extends Page {
+  static route(props) {
     return {
-      component: InviteFriend,
-      title: 'Inviter des amis'
+      component: SearchFriend,
+      title: 'Inviter des amis',
+      passProps: props
     };
   };
 
@@ -35,6 +36,7 @@ class InviteFriend extends Page {
     this.state = {};
     this.state.query = '';
     this.state.errors = [];
+    this.state.followings = [];
     this.state.needlContacts = [];
     this.state.phoneContacts = [];
     this.state.filteredPhoneContacts = [];
@@ -129,6 +131,11 @@ class InviteFriend extends Page {
     }
   };
 
+  searchFollowings = (query) => {
+    this.setState({query: query});
+    FriendsActions.searchFollowings(query);
+  };
+
   searchContactsNeedl = (query) => {
     this.setState({query: query});
     FriendsActions.searchContacts(query);
@@ -220,7 +227,25 @@ class InviteFriend extends Page {
     );
   };
 
-  renderHeaderWrapperNeedl = () => {
+  renderHeaderWrapperFollowings = () => {
+    if (this.state.query) {
+      if (!this.state.needlContacts.length) {
+        return(
+          <View style={styles.emptyTextContainer}>
+            <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
+          </View>
+        );
+      }
+    } else {
+      return (
+        <View style={styles.emptyTextContainer}>
+          <Text style={styles.emptyText}>Recherchez vos influenceurs sur Needl</Text>
+        </View>
+      );
+    }
+  };
+
+  renderHeaderWrapperFriends = () => {
     if (this.state.query) {
       if (!this.state.needlContacts.length) {
         return(
@@ -267,22 +292,26 @@ class InviteFriend extends Page {
   };
 
   renderPage() {
+    var is_friends = (this.props.type === 'friends');
+
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Inviter' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar title={is_friends ? 'Inviter' : 'Rechercher'} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
 
-        <View style={styles.contactsButtonContainer}>
-          <TouchableHighlight 
-            style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
-            onPress={() => this.onPressContactButton('needl')}>
-            <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#EF582D'}}>Needl</Text>
-          </TouchableHighlight>
-          <TouchableHighlight 
-            style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#EF582D' : 'transparent'}]}
-            onPress={() => this.onPressContactButton('phone')}>
-            <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#EF582D'}}>Téléphone</Text>
-          </TouchableHighlight>
-        </View>
+        {is_friends ? [
+          <View style={styles.contactsButtonContainer}>
+            <TouchableHighlight 
+              style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
+              onPress={() => this.onPressContactButton('needl')}>
+              <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#EF582D'}}>Needl</Text>
+            </TouchableHighlight>
+            <TouchableHighlight 
+              style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#EF582D' : 'transparent'}]}
+              onPress={() => this.onPressContactButton('phone')}>
+              <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#EF582D'}}>Téléphone</Text>
+            </TouchableHighlight>
+          </View>
+        ] : null}
 
         {Platform.OS === 'ios' ? [
           <SearchBar
@@ -292,10 +321,14 @@ class InviteFriend extends Page {
             hideBackground={true}
             textFieldBackgroundColor='#DDDDDD'
             onChangeText={(text) => {
-              if (this.state.needlActive) {
-                this.searchContactsNeedl(text);
+              if (is_friends) {
+                if (this.state.needlActive) {
+                  this.searchContactsNeedl(text);
+                } else {
+                  this.searchContactsPhone(text);
+                }
               } else {
-                this.searchContactsPhone(text);
+                this.searchFollowings(text);
               }
             }}
             onSearchButtonPress={this.closeKeyboard} />
@@ -306,10 +339,14 @@ class InviteFriend extends Page {
             placeholder='Rechercher'
             style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             onChangeText={(text) => {
-              if (this.state.needlActive) {
-                this.searchContactsNeedl(text);
+              if (is_friends) {
+                if (this.state.needlActive) {
+                  this.searchContactsNeedl(text);
+                } else {
+                  this.searchContactsPhone(text);
+                }
               } else {
-                this.searchContactsPhone(text);
+                this.searchFollowings(text);
               }
             }}
             placeholderTextColor='#333333' />
@@ -317,11 +354,11 @@ class InviteFriend extends Page {
 
         <ListView
           style={styles.contactsList}
-          dataSource={ds.cloneWithRows(this.state.needlActive ? this.state.needlContacts : this.state.filteredPhoneContacts)}
-          renderRow={this.state.needlActive ? this.renderContactNeedl : this.renderContactPhone}
+          dataSource={ds.cloneWithRows(is_friends ? (this.state.needlActive ? this.state.needlContacts : this.state.filteredPhoneContacts) : this.state.followings)}
+          renderRow={is_friends ? (this.state.needlActive ? this.renderContactNeedl : this.renderContactPhone) : this.renderContactNeedl}
           contentInset={{top: 0}}
           onScroll={Platform.OS === 'ios' ? this.closeKeyboard : null}
-          renderHeader={this.state.needlActive ? this.renderHeaderWrapperNeedl : this.renderHeaderWrapperPhone}
+          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperFriends : this.renderHeaderWrapperPhone) : this.renderHeaderWrapperFollowings}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
       </View>
@@ -422,4 +459,4 @@ var styles = StyleSheet.create({
   }
 });
 
-export default InviteFriend;
+export default SearchFriend;

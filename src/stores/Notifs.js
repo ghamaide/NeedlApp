@@ -8,6 +8,7 @@ import alt from '../alt';
 
 import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
+import ProfilActions from '../actions/ProfilActions';
 
 import CachedStore from './CachedStore';
 
@@ -31,12 +32,16 @@ export class NotifsStore extends CachedStore {
 
     this.bindListeners({
       handleFetchNotifs: NotifsActions.FETCH_NOTIFS,
-      handleNotifsFetched: NotifsActions.NOTIFS_FETCHED,
+      handleNotifsFetchSuccess: NotifsActions.NOTIFS_FETCH_SUCCESS,
       handleNotifsFetchFailed: NotifsActions.NOTIFS_FETCH_FAILED,
 
-      handleLogout: LoginActions.LOGOUT,
+      handleSetNotifsAsSeen: NotifsActions.NOTIFS_SEEN,
 
-      setNotifsAsSeen: NotifsActions.NOTIFS_SEEN
+      handleMaskProfilSuccess: ProfilActions.MASK_PROFIL_SUCCESS,
+
+      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+
+      handleLogout: LoginActions.LOGOUT
 
 // ================================================================================================
 
@@ -48,42 +53,19 @@ export class NotifsStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleNotifsFetched(notifs) {
+  handleNotifsFetchSuccess(notifs) {
     this.notifs = _.map(notifs, (notif) => {
 
       var index = _.findIndex(this.notifs, {'restaurant_id': notif.restaurant_id, 'user_id': notif.user_id});
       var oldNotif = this.notifs[index];
-      
       notif.seen = oldNotif && oldNotif.seen;
+      
+      var newDate = this.newDate(notif.date);
+      notif.date = newDate;
 
-      if (notif.date.indexOf('January') > -1) {
-        notif.date = notif.date.replace('January', 'Janvier');
-      } else if (notif.date.indexOf('February') > -1) {
-        notif.date = notif.date.replace('February', 'Février');
-      } else if (notif.date.indexOf('March') > -1) {
-        notif.date = notif.date.replace('March', 'Mars');
-      } else if (notif.date.indexOf('April') > -1) {
-        notif.date = notif.date.replace('April', 'Avril');
-      } else if (notif.date.indexOf('May') > -1) {
-        notif.date = notif.date.replace('May', 'Mai');
-      } else if (notif.date.indexOf('June') > -1) {
-        notif.date = notif.date.replace('June', 'Juin');
-      } else if (notif.date.indexOf('July') > -1) {
-        notif.date = notif.date.replace('July', 'Juillet');
-      } else if (notif.date.indexOf('August') > -1) {
-        notif.date = notif.date.replace('August', 'Août');
-      } else if (notif.date.indexOf('September') > -1) {
-        notif.date = notif.date.replace('September', 'Septembre');
-      } else if (notif.date.indexOf('October') > -1) {
-        notif.date = notif.date.replace('October', 'Octobre');
-      } else if (notif.date.indexOf('November') > -1) {
-        notif.date = notif.date.replace('November', 'Novembre');
-      } else if (notif.date.indexOf('December') > -1) {
-        notif.date = notif.date.replace('December', 'Décembre');
-      }
       return notif;
     });
-    // on est à jour
+
     this.status.notifsPush = 0;
     this.status.loading = false;
   }
@@ -93,15 +75,57 @@ export class NotifsStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleLogout() {
-    this.notifs = [];
-  }
-
-  setNotifsAsSeen() {
+  handleSetNotifsAsSeen() {
     this.notifs = _.map(this.notifs, (notif) => {
       notif.seen = true;
       return notif;
     });
+  }
+
+  handleMaskProfilSuccess(id) {
+    _.remove(this.notifs, (notification) => {return notification.user_id === id});
+  }
+
+  handleDisplayProfilSuccess(result) {
+    _.forEach(result.notifs, (notif) => {
+      this.notifs.push(_.extend(notif, {date: this.newDate(notif.date), seen: true}));
+    })
+  }
+
+  handleLogout() {
+    this.notifs = [];
+  }
+
+  newDate(date) {
+    var newDate = '';
+
+    if (date.indexOf('January') > -1) {
+      newDate = date.replace('January', 'Janvier');
+    } else if (date.indexOf('February') > -1) {
+      newDate = date.replace('February', 'Février');
+    } else if (date.indexOf('March') > -1) {
+      newDate = date.replace('March', 'Mars');
+    } else if (date.indexOf('April') > -1) {
+      newDate = date.replace('April', 'Avril');
+    } else if (date.indexOf('May') > -1) {
+      newDate = date.replace('May', 'Mai');
+    } else if (date.indexOf('June') > -1) {
+      newDate = date.replace('June', 'Juin');
+    } else if (date.indexOf('July') > -1) {
+      newDate = date.replace('July', 'Juillet');
+    } else if (date.indexOf('August') > -1) {
+      newDate = date.replace('August', 'Août');
+    } else if (date.indexOf('September') > -1) {
+      newDate = date.replace('September', 'Septembre');
+    } else if (date.indexOf('October') > -1) {
+      newDate = date.replace('October', 'Octobre');
+    } else if (date.indexOf('November') > -1) {
+      newDate = date.replace('November', 'Novembre');
+    } else if (date.indexOf('December') > -1) {
+      newDate = date.replace('December', 'Décembre');
+    }
+
+    return newDate;
   }
 
   static isSeen(restaurantId, userId) {

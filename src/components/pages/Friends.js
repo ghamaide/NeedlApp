@@ -19,7 +19,7 @@ import ProfilStore from '../../stores/Profil';
 
 import Profil from './Profil';
 import InviteFriend from './InviteFriend';
-import InviteFriendTemp from './InviteFriendTemp';
+import SearchFriend from './SearchFriend';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -164,9 +164,9 @@ class Friends extends Page {
     return (
       <View style={{flex: 1}}>
         {this.state.friendsActive ? [
-          <NavigationBar key='navbar_friends' title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
+          <NavigationBar key='navbar_friends' title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(SearchFriend.route({type: 'friends'}))} />
         ] : [
-          <NavigationBar key='navbar_followings' title='Influenceurs' rightButtonTitle='Rechercher' onRightButtonPress={() => this.props.navigator.push(InviteFriendTemp.route())} />
+          <NavigationBar key='navbar_followings' title='Influenceurs' rightButtonTitle='Rechercher' onRightButtonPress={() => this.props.navigator.push(SearchFriend.route({type: 'followings'}))} />
         ]}
         <View style={styles.friendsButtonContainer}>
           <TouchableHighlight

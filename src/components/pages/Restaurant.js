@@ -1,8 +1,9 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Dimensions, Image, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Dimensions, Image, Linking, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
+import DeviceInfo from 'react-native-device-info';
 import MapView from 'react-native-maps';
 import Mixpanel from 'react-native-mixpanel';
 import RNComm from 'react-native-communications';
@@ -118,6 +119,27 @@ class Restaurant extends Page {
 
   onPressText = () => {
     this.props.navigator.push(Help.route({from: 'restaurant'}));
+  };
+
+  goWithCityMapper = () => {
+    var restaurant = this.state.data;
+    if (DeviceInfo.getSystemVersion() < 9.0) {
+      var url = encodeURI('citymapper://x-callback-url/directions?endcoord=') + restaurant.latitude + '%2C' + restaurant.longitude + '&endname=' + encodeURI(restaurant.name) + '&endaddress=' + encodeURI(restaurant.address) + '&x-source=Needl&x-success=needl%3A%2F%2F';
+    } else {
+      var url = encodeURI('citymapper://directions?endcoord=') + restaurant.latitude + '%2C' + restaurant.longitude + '&endname=' + encodeURI(restaurant.name) + '&endaddress=' + encodeURI(restaurant.address);
+    }
+    Linking.canOpenURL(url).then((supported) => {
+      if (!supported) {
+        if (Platform.OS === 'ios') {
+          url = 'http://maps.apple.com/?q=' + encodeURI(restaurant.name) + '&ll=' + restaurant.latitude + ',' + restaurant.longitude;
+        } else {
+          url = 'geo:' + restaurant.latitude + ',' + restaurant.longitude;
+        }
+        Linking.openURL(url);
+      } else {
+        Linking.openURL(url);
+      }
+    });
   };
 
   renderPage() {
@@ -354,6 +376,9 @@ class Restaurant extends Page {
               <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
               <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
             </View>
+            <TouchableHighlight style={{borderRadius: 5, marginTop: 20, backgroundColor: '#555555', paddingTop: 10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, justifyContent: 'center', alignItems: 'center'}} onPress={this.goWithCityMapper} underlayColor='rgba(0, 0, 0, 0)'>
+              <Text style={{textAlign:'center', color: '#FFFFFF'}}>J'y vais !</Text>
+            </TouchableHighlight>
           </View>
 
           <MapView

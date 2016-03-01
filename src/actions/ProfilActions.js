@@ -15,7 +15,6 @@ export class ProfilActions {
             return this.profilFetchFailed(err, id);
           }
 
-          console.log(result);
           this.profilFetched(result);
         });
     }
@@ -111,18 +110,19 @@ export class ProfilActions {
           'friend_id': id,
           invisible: false
         })
-        .end((err) => {
+        .end((err, result) => {
           if (err) {
             return this.displayProfilFailed(err);
           }
 
           this.displayProfilSuccess(id);
+          // this.displayProfilSuccess(result);
         });
     }
   }
 
-  displayProfilSuccess(id) {
-    return id;
+  displayProfilSuccess(result) {
+    return result;
   }
 
   displayProfilFailed(err) {

@@ -104,6 +104,13 @@ class Profil extends Page {
 
   renderPage() {
     var profil = this.state.profile;
+
+    var friendsIds = _.map(ProfilStore.getFriends(), (friend) => {
+      return friend.id
+    });
+
+    var is_following = !_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id;
+
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
@@ -174,85 +181,95 @@ class Profil extends Page {
                 </TouchableHighlight>
               ]
             ]}
-            {Platform.OS === 'ios' ? [
-              <TouchableHighlight
-                underlayColor='rgba(0, 0, 0, 0)'
-                style={styles.rightButtonContainer}
-                key={'dropdown_' + profil.id}
-                onPress={this.showButtons}>
-                  <View style={styles.triangle} />
-              </TouchableHighlight>
-            ] : [
-              <TouchableHighlight
-                underlayColor='rgba(0, 0, 0, 0)'
-                style={styles.rightButtonContainer}
-                key={'dropdown_' + profil.id}
-                onPress={this.showButtons}>
-                <Image source={require('../../assets/img/other/icons/triangle_down.png')} style={{transform: [{rotate: '180deg'}], height: 10, width: 10, tintColor: '#AAAAAA'}} />              
-              </TouchableHighlight>
-            ]}
+            {!is_following ? [
+              Platform.OS === 'ios' ? [
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.rightButtonContainer, {backgroundColor: MeStore.getState().me.id === profil.id ? 'transparent' : (profil.invisible ? 'red' : '#38E1B2')}]}
+                  key={'dropdown_' + profil.id}
+                  onPress={this.showButtons}>
+                    <View style={styles.triangle} />
+                </TouchableHighlight>
+              ] : [
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.rightButtonContainer, {backgroundColor: MeStore.getState().me.id === profil.id ? 'transparent' : (profil.invisible ? 'red' : '#38E1B2')}]}
+                  key={'dropdown_' + profil.id}
+                  onPress={this.showButtons}>
+                  <Image source={require('../../assets/img/other/icons/triangle_down.png')} style={{transform: [{rotate: '180deg'}], height: 10, width: 10, tintColor: '#AAAAAA'}} />              
+                </TouchableHighlight>
+              ]
+            ] : null}
           </View>
 
-          <Collapsible duration={500} align='center' collapsed={!this.state.isOpened}>
-            {MeStore.getState().me.id === profil.id ? [
-              <View key={'buttons_' + profil.id}>
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={styles.dropdownButton}
-                  key={'contact' + profil.id}
-                  onPress={this.contactUs}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Image source={require('../../assets/img/actions/icons/chat.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                    <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
-                  </View>
-                </TouchableHighlight>
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={styles.dropdownButton}
-                  key={'logout_' + profil.id}
-                  onPress={() => LoginActions.logout()}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                    <Text style={[styles.buttonText, {marginTop: 3}]}>Me Déconnecter</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            ] : [
-              <View key={'buttons_' + profil.id}>
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={styles.dropdownButton}
-                  key={'delete_friend_' + profil.id}
-                  onPress={() => {
-                    if (FriendsStore.loading()) {
-                      return;
-                    }
-                    FriendsActions.removeFriendship(profil.id, () => {
-                      this.props.navigator.resetTo(Friends.route());
-                    });
-                    this.forceUpdate();
-                  }}>
-                  <View style={{flexDirection: 'row'}}>
-                    <Image source={require('../../assets/img/actions/icons/retirer.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                    <Text style={[styles.buttonText, {marginTop: 3}]}>{FriendsStore.loading() ? 'Suppression...' : 'Retirer de mes amis'}</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            ]}
-          </Collapsible>
+          {!is_following ? [
+            <Collapsible key='dropdown_menu' duration={500} align='center' collapsed={!this.state.isOpened}>
+              {MeStore.getState().me.id === profil.id ? [
+                <View key={'buttons_' + profil.id}>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.dropdownButton}
+                    key={'contact' + profil.id}
+                    onPress={this.contactUs}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={require('../../assets/img/actions/icons/chat.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
+                      <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
+                    </View>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.dropdownButton}
+                    key={'logout_' + profil.id}
+                    onPress={() => LoginActions.logout()}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
+                      <Text style={[styles.buttonText, {marginTop: 3}]}>Me Déconnecter</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              ] : [
+                <View key={'buttons_' + profil.id}>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.dropdownButton}
+                    key={'delete_friend_' + profil.id}
+                    onPress={() => {
+                      if (FriendsStore.loading()) {
+                        return;
+                      }
+                      FriendsActions.removeFriendship(profil.id, () => {
+                        this.props.navigator.resetTo(Friends.route());
+                      });
+                      this.forceUpdate();
+                    }}>
+                    <View style={{flexDirection: 'row'}}>
+                      <Image source={require('../../assets/img/actions/icons/retirer.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
+                      <Text style={[styles.buttonText, {marginTop: 3}]}>{FriendsStore.loading() ? 'Suppression...' : 'Retirer de mes amis'}</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              ]}
+            </Collapsible>
+          ] : null}
          
-          <View style={styles.restaurantButtonsContainer}>
-            <TouchableHighlight 
-              style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#EF582D' : 'transparent'}]}
-              onPress={() => this.onPressRestaurant('recommendation')}>
-              <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#EF582D'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
-            </TouchableHighlight>
-            <TouchableHighlight 
-              style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#EF582D' : 'transparent'}]}
-              onPress={() => this.onPressRestaurant('wishlist')}>
-              <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#EF582D'}}>Wishlist</Text>
-            </TouchableHighlight>
-          </View>
+          {!is_following ? [ 
+            <View key='switch_buttons' style={styles.restaurantButtonsContainer}>
+              <TouchableHighlight 
+                style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#EF582D' : 'transparent'}]}
+                onPress={() => this.onPressRestaurant('recommendation')}>
+                <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#EF582D'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight 
+                style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#EF582D' : 'transparent'}]}
+                onPress={() => this.onPressRestaurant('wishlist')}>
+                <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#EF582D'}}>Wishlist</Text>
+              </TouchableHighlight>
+            </View>
+          ] : [
+            <View key='recommendation_title_container' style={{margin: 15, alignItems: 'center', justifyContent: 'center', flex: 1}}>
+              <Text style={{textAlign: 'center', fontSize: 15, color: '#EF582D', fontWeight: '500'}}>Ses recommendations</Text>
+            </View>
+          ]}
 
           <View style={styles.restaurantsContainer}>
             {this.state.recommendationActive ? [
@@ -341,15 +358,14 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   actionContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingLeft: 5,
+    paddingRight: 5
   },
   leftButtonContainer: {
     flex: 1,
     height: 25,
-    marginTop: 5,
-    marginBottom: 5,
-    marginLeft: 10,
-    marginRight: 5,
+    margin: 5,
     borderRadius: 5,
     borderWidth: 1,
     justifyContent: 'center',
@@ -358,10 +374,7 @@ var styles = StyleSheet.create({
   rightButtonContainer: {
     width: 25,
     height: 25,
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 5,
+    margin: 5,
     borderRadius: 5,
     borderColor: '#AAAAAA',
     borderWidth: 1,

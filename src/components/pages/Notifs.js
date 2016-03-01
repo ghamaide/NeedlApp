@@ -18,7 +18,6 @@ import MeStore from '../../stores/Me';
 
 import Restaurant from './Restaurant';
 import Profil from './Profil';
-import InviteFriend from './InviteFriend';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
