@@ -46,12 +46,12 @@ export class RestaurantsStore extends CachedStore {
       handleLogout: LoginActions.LOGOUT,
 
       handleFetchRestaurants: RestaurantsActions.FETCH_RESTAURANTS,
-      handleRestaurantsFetched: RestaurantsActions.RESTAURANTS_FETCHED,
-      handleRestaurantsFetchFailed: RestaurantsActions.RESTAURANTS_FETCH_FAILED,
+      handleFetchRestaurantsSuccess: RestaurantsActions.FETCH_RESTAURANTS_SUCCESS,
+      handleFetchRestaurantsFailed: RestaurantsActions.FETCH_RESTAURANTS_FAILED,
 
       handleFetchRestaurant: RestaurantsActions.FETCH_RESTAURANT,
-      handleRestaurantFetched: RestaurantsActions.RESTAURANT_FETCHED,
-      handleRestaurantFetchFailed: RestaurantsActions.RESTAURANT_FETCH_FAILED,
+      handleFetchRestaurantSuccess: RestaurantsActions.FETCH_RESTAURANT_SUCCESS,
+      handleFetchRestaurantFailed: RestaurantsActions.FETCH_RESTAURANT_FAILED,
 
       handleSetFilter: RestaurantsActions.SET_FILTER,
 
@@ -64,20 +64,25 @@ export class RestaurantsStore extends CachedStore {
       handleSetRegion: RestaurantsActions.SET_REGION,
       handleSetRegionSuccess: RestaurantsActions.SET_REGION_SUCCESS,
 
-      handleAddWish: RestaurantsActions.ADD_WISH,
-      handleAddWishFailed: RestaurantsActions.ADD_WISH_FAILED,
-      handleAddWishSuccess: RestaurantsActions.ADD_WISH_SUCCESS,
+      handleAddWish: RecoActions.ADD_WISH,
+      handleAddWishFailed: RecoActions.ADD_WISH_FAILED,
+      handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
 
-      handleRemoveWish: RestaurantsActions.REMOVE_WISH,
-      handleRemoveWishFailed: RestaurantsActions.REMOVE_WISH_FAILED,
-      handleRemoveWishSuccess: RestaurantsActions.REMOVE_WISH_SUCCESS,
+      handleRemoveWish: RecoActions.REMOVE_WISH,
+      handleRemoveWishFailed: RecoActions.REMOVE_WISH_FAILED,
+      handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
-      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
-      handleSaveReco: RecoActions.SAVE_RECO,
+      handleAddReco: RecoActions.ADD_RECO,
+      handleAddRecoFailed: RecoActions.ADD_RECO_FAILED,
+      handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
 
-      handleRemoveReco: RestaurantsActions.REMOVE_RECO,
-      handleRemoveRecoFailed: RestaurantsActions.REMOVE_RECO_FAILED,
-      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS
+      // handleUpdateRecommendation: RecoActions.UPDATE_RECOMMENDATION,
+      // handleUpdateRecommendationSuccess: RecoActions.UPDATE_RECOMMENDATION_SUCCESS,
+      // handleUpdateRecommendationFailed: RecoActions.UPDATE_RECOMMENDATION_FAILED,
+
+      handleRemoveReco: RecoActions.REMOVE_RECO,
+      handleRemoveRecoFailed: RecoActions.REMOVE_RECO_FAILED,
+      handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS
 
 // ================================================================================================
 
@@ -108,7 +113,7 @@ export class RestaurantsStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleRestaurantsFetched(restaurants) {
+  handleFetchRestaurantsSuccess(restaurants) {
     var newRestaurants = restaurants;
 
     _.each(newRestaurants, (restaurant) => {
@@ -119,7 +124,7 @@ export class RestaurantsStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleRestaurantsFetchFailed(err) {
+  handleFetchRestaurantsFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
@@ -129,7 +134,7 @@ export class RestaurantsStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleRestaurantFetched(restaurant) {
+  handleFetchRestaurantSuccess(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
       this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
@@ -139,7 +144,7 @@ export class RestaurantsStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleRestaurantFetchFailed(data) {
+  handleFetchRestaurantFailed(data) {
     this.status.loading = false;
     this.status.error = data.err;
   }
@@ -193,16 +198,80 @@ export class RestaurantsStore extends CachedStore {
     this.region = data.region;
   }
 
+  handleAddRecoFailed(err) {
+    this.status.error = err;
+    this.status.loading = false;
+  }
+
+  handleAddReco() {
+    this.status.loading = true;
+  }
+
+  handleAddRecoSuccess(result) {
+    var restaurant = result.restaurant;
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
+    if (index > -1) {
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+    } else {
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+    }
+    this.saved = true;
+    this.status.loading = false;
+  }
+
+  handleUpdateRecommendation() {
+    delete this.status.error;
+    this.status.loading = true;
+  }
+
+  handleUpdateRecommendationFailed(err) {
+    this.status.error = err;
+    this.status.loading = false;
+  }
+
+  handleUpdateRecommendationSuccess(result) {
+    var restaurant = result.restaurant;
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
+    if (index > -1) {
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+    } else {
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+    }
+    this.saved = true;
+    this.status.loading = false;
+  }
+
+  handleRemoveReco() {
+    this.status.loading = true;
+  }
+
+  handleRemoveRecoFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleRemoveRecoSuccess(restaurant) {
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
+
+    if (index > -1) {
+      this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
+    } else {
+      this.restaurants.push(_.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)}));
+    }
+    this.status.loading = false;
+  }
+
   handleAddWish(restaurant) {
     this.status.loading = true;
   }
 
-  handleAddWishFailed(data) {
+  handleAddWishFailed(err) {
     this.status.loading = false;
-    this.status.error = data.err;
+    this.status.error = err;
   }
 
-  handleAddWishSuccess(restaurant) {
+  handleAddWishSuccess(result) {
+    var restaurant = result.restaurant;
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     if (index > -1) {
       this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
@@ -216,55 +285,14 @@ export class RestaurantsStore extends CachedStore {
     this.status.loading = true;
   }
 
-  handleRemoveWishFailed(data) {
-    this.status.loading = false;
-    this.status.error = data.err;
-  }
-
-  handleRemoveWishSuccess(restaurant) {
-    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
-    this.restaurants[index] = _.extend(restaurant, {subways: this.parseSubways(restaurant.subways), ON_MAP: restaurant.reviews.length + restaurant.friends_wishing.length > 0});
-    this.status.loading = false;
-  }
-
-  handleSaveRecoSuccess(reco) {
-    var restaurant = reco.restaurant;
-    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
-    if (index > -1) {
-      this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
-    } else {
-      this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
-    }
-    this.saved = true;
-    this.status.loading = false;
-  }
-
-  handleSaveReco() {
-    this.status.loading = true;
-  }
-
-  handleRemoveReco() {
-    this.status.loading = true;
-  }
-
-  handleRemoveRecoFailed(err) {
+  handleRemoveWishFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
 
-  handleRemoveRecoSuccess(data) {
-    var indexData = _.findIndex(data.restaurants, function(restaurant) {return restaurant.id === data.oldRestaurant.id});
-    var index = _.findIndex(this.restaurants, function(o) {return o.id === data.oldRestaurant.id;});
-
-    if (indexData > -1) {
-      var restaurant = data.restaurants[indexData];
-      this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
-    } else {
-      this.restaurants[index].ON_MAP = false;
-      _.remove(this.restaurants[index].my_friends_recommending, (friend) => {
-        return friend.id === MeStore.getState().me.id;
-      });
-    }
+  handleRemoveWishSuccess(restaurant) {
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
+    this.restaurants[index] = _.extend(restaurant, {subways: this.parseSubways(restaurant.subways), ON_MAP: this.isOnMap(restaurant)});
     this.status.loading = false;
   }
 
@@ -284,11 +312,9 @@ export class RestaurantsStore extends CachedStore {
 
   isOnMap(restaurant) {
     var index = 0;
-    var friends_recommending_and_friends_wishing = _.concat(restaurant.friends_wishing, restaurant.friends_recommending);
+    var friends_recommending_and_friends_wishing = _.concat(restaurant.my_friends_wishing, restaurant.my_friends_recommending);
     _.forEach(friends_recommending_and_friends_wishing, (friendId) => {
-      if (friendId === 553) {
-        index += 1;
-      } else if (!ProfilStore.getProfil(friendId).invisible) {
+      if (!ProfilStore.getProfil(friendId).invisible) {
         index += 1;
       }
     });
@@ -360,9 +386,7 @@ export class RestaurantsStore extends CachedStore {
       return !friend.invisible;
     });
 
-    return _.map(visible_friends_wishing, function(friend) {
-      return friend.id;
-    });
+    return visible_friends_wishing;
   }
 
   static getRecommenders(id) {
@@ -375,24 +399,7 @@ export class RestaurantsStore extends CachedStore {
       return !friend.invisible;
     });
 
-    var ids = _.map(visible_friends_recommending, function(friend) {
-      return friend.id;
-    });
-
-    if (_.includes(ids, 553) && ids.length === 1) {
-      return ids;
-    } else {
-      return _.remove(ids, function(id) {return id !== 553});
-    }
-  }
-
-  static getRecommendation(restaurantId, userId) {
-    var restaurant = this.getRestaurant(restaurantId);
-    if (!restaurant) {
-      return false;
-    }
-
-    return _.find(restaurant.my_friends_recommending, function(friend) {return friend.id === userId});
+    return visible_friends_recommending;
   }
 
   static searchable() {

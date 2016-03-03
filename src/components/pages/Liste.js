@@ -49,9 +49,9 @@ class Liste extends Page {
   };
 
   componentWillMount() {
-  	if (!MeStore.getState().showTabBar) {
-  		MeActions.displayTabBar(true);
-  	}
+    if (!MeStore.getState().showTabBar) {
+      MeActions.displayTabBar(true);
+    }
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
@@ -64,7 +64,7 @@ class Liste extends Page {
   };
 
   onRefresh = () => {
-  	RestaurantsActions.fetchRestaurants();
+    RestaurantsActions.fetchRestaurants();
   };
 
   onPressText = () => {
@@ -75,7 +75,6 @@ class Liste extends Page {
     return (
       <RestaurantElement
       	rank={_.findIndex(this.state.restaurants, restaurant) + 1}
-      	isNeedl={restaurant.score <= 5}
         name={restaurant.name}
         picture={restaurant.pictures[0]}
         subway={RestaurantsStore.closestSubwayName(restaurant.id)}

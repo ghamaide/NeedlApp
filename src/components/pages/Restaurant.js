@@ -21,9 +21,9 @@ import Text from '../ui/Text';
 
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
-import RestaurantsActions from '../../actions/RestaurantsActions';
 
 import MeStore from '../../stores/Me';
+import NotifsStore from '../../stores/Notifs';
 import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
@@ -57,6 +57,8 @@ class Restaurant extends Page {
     super(props);
 
     this.state = this.restaurantsState();
+    this.state.already_wishlisted = false;
+    this.state.already_recommended = false;
   };
 
   onRestaurantsChange = () => {
@@ -70,7 +72,24 @@ class Restaurant extends Page {
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
+    if (this.props.note == 'already_wishlisted' || this.props.note == 'already_recommended') {
+      clearTimeout(this.timer);
+    }
   };
+
+  componentDidMount() {
+    if (this.props.note == 'already_wishlisted') {
+      this.setState({already_wishlisted: true});
+      this.timer = setTimeout(() => {
+        this.setState({already_wishlisted: false});
+      }, 3000);
+    } else if (this.props.note == 'already_recommended') {
+      this.setState({already_recommended: true});
+      this.timer = setTimeout(() => {
+        this.setState({already_recommended: false});
+      }, 3000);
+    }
+  }
 
   getToggle (map, v, color) {
     if (v <= map.length && v != 0) {
@@ -87,7 +106,7 @@ class Restaurant extends Page {
     }
   };
 
-  approuve = (editing) => {
+  recommend = (editing) => {
     var restaurant = this.state.data;
 
     var props;
@@ -98,6 +117,21 @@ class Restaurant extends Page {
         'restaurant_id': restaurant.id,
         editing: true
       };
+      var stored_recommendation = NotifsStore.getRecommendation(restaurant.id, MeStore.getState().me.id);
+      var recommendation = {
+        restaurant: {
+          id: stored_recommendation.restaurant_id,
+          origin: 'db'
+        },
+        approved: true,
+        // friends_thanking: stored_recommendation.friends_thanking,
+        // experts_thanking: stored_recommendation.experts_thanking,
+        strengths: _.map(stored_recommendation.strengths, (strength) => {return parseInt(strength)}),
+        ambiences: _.map(stored_recommendation.ambiences, (ambience) => {return parseInt(ambience)}),
+        occasions: _.map(stored_recommendation.occasions, (occasion) => {return parseInt(occasion)}),
+        review: stored_recommendation.review
+      }
+      RecoActions.setReco(recommendation)
     } else {
       RecoActions.setReco({
         restaurant: {
@@ -235,7 +269,7 @@ class Restaurant extends Page {
                               <View style={styles.triangleContainer}>
                                 <View style={styles.triangle} />
                               </View>
-                              <Text style={styles.reviewText}>{RestaurantsStore.getRecommendation(restaurant.id, profil.id).review || 'Je recommande !'}</Text>
+                              <Text style={styles.reviewText}>{NotifsStore.getRecommendation(restaurant.id, profil.id).review || 'Je recommande !'}</Text>
                               <Text style={styles.reviewAuthor}>{profil.fullname || profil.name}</Text>
                             </View>
                           </View>
@@ -254,7 +288,7 @@ class Restaurant extends Page {
                 style={styles.recoButton}
                 label={'Je recommande'}
                 icon={require('../../assets/img/actions/icons/japprouve.png')}
-                onPress={() => {this.approuve(false);}} />
+                onPress={() => {this.recommend(false);}} />
             ] : null}
           </View>
 
@@ -317,7 +351,7 @@ class Restaurant extends Page {
                     if (RestaurantsStore.loading()) {
                       return;
                     }
-                    RestaurantsActions.addWish(restaurant);
+                    RecoActions.addWish(restaurant.id, 'db');
                   }} />
               </View>
             : null}
@@ -421,7 +455,7 @@ class Restaurant extends Page {
                     if (RestaurantsStore.loading()) {
                       return;
                     }
-                    RestaurantsActions.removeWish(restaurant, () => {
+                    RecoActions.removeWish(restaurant, () => {
                       if (!RestaurantsStore.isSearchable(restaurant.id)) {
                         this.props.navigator.pop();
                       }
@@ -429,7 +463,7 @@ class Restaurant extends Page {
                   }} />
               ] : [
                 <Option key='reco_modification' label='Modifier ma reco' icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
-                  this.approuve(true);
+                  this.recommend(true);
                 }} />,
                 <Option
                   key='reco_remove'
@@ -439,7 +473,7 @@ class Restaurant extends Page {
                     if (RestaurantsStore.loading()) {
                       return;
                     }
-                    RestaurantsActions.removeReco(restaurant, () => {
+                    RecoActions.removeReco(restaurant, () => {
                       if (!RestaurantsStore.isSearchable(restaurant.id)) {
                         this.props.navigator.pop();
                       }
@@ -447,7 +481,19 @@ class Restaurant extends Page {
                   }} />
               ]}
             </Options>
-            : null }
+          : null }
+
+          {this.state.already_recommended ? [
+            <View key='already_recommended' style={styles.banner}>
+              <Text style={styles.bannerText}>Tu as déja recommandé ce restaurant</Text>
+            </View>
+          ] : null}
+
+          {this.state.already_wishlisted ? [
+            <View key='already_wishlisted' style={styles.banner}>
+              <Text style={styles.bannerText}>Tu as déja wishlisté ce restaurant</Text>
+            </View>
+          ] : null}
         </ScrollView>
       </View>
     );
@@ -595,6 +641,24 @@ var styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  banner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#EF582D',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10
+  },
+  bannerText: {
+    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '400',
+    marginTop: 10,
+    marginBottom: 10,
+    color: '#FFFFFF'
   }
 });
 

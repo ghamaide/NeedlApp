@@ -193,7 +193,7 @@ class SearchFriend extends Page {
                 source={require('../../assets/img/actions/icons/check.png')} />
             ] : [
               !this.state.loading ? [
-                <TouchableHighlight style={styles.imageWrapper} onPress={() => {
+                <TouchableHighlight key={'send_invitation_' + contact.recordID} style={styles.imageWrapper} onPress={() => {
                   var updatedContacts = _.map(this.state.phoneContacts, (row) => {
                     if (contact.recordID === row.recordID) {
                       row.invitationSent = true;
@@ -210,7 +210,7 @@ class SearchFriend extends Page {
                     style={styles.imageMail} />
                 </TouchableHighlight>
               ] : [
-                <View style={styles.loadingWrapper}>
+                <View key='loading' style={styles.loadingWrapper}>
                   {Platform.OS === 'ios' ? [
                     <ActivityIndicatorIOS
                       animating={true}
@@ -299,7 +299,7 @@ class SearchFriend extends Page {
         <NavigationBar title={is_friends ? 'Inviter' : 'Rechercher'} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
 
         {is_friends ? [
-          <View style={styles.contactsButtonContainer}>
+          <View key='switch_buttons' style={styles.contactsButtonContainer}>
             <TouchableHighlight 
               style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
               onPress={() => this.onPressContactButton('needl')}>

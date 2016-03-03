@@ -138,9 +138,9 @@ class App extends Component {
   };
 
   onAppStateChange = (state) => {
-    if (state === 'active') {
-      this.startActions();
-    }
+    // if (state === 'active') {
+    //   this.startActions();
+    // }
   };
 
   onQuickActionShortcut = (data) => {
@@ -226,10 +226,11 @@ class App extends Component {
     }
 
     MeActions.startActions.defer(DeviceInfo.getVersion());
-    RestaurantsActions.fetchRestaurants.defer();
+    ProfilActions.fetchProfil.defer(MeStore.getState().me.id);
     ProfilActions.fetchFriends.defer();
     ProfilActions.fetchFollowings.defer();
-    NotifsActions.fetchNotifs.defer();
+    RestaurantsActions.fetchRestaurants.defer();
+    NotifsActions.fetchNotifications.defer();
   };
 
   componentWillMount() {
@@ -323,6 +324,7 @@ class App extends Component {
   render() {
     var loadingState = this.state.meLoading || this.state.notificationsLoading || this.state.profileLoading || this.state.restaurantsLoading;
     var loading = (typeof loadingState === 'undefined' || loadingState);
+
     return (
       <View style={{flex: 1}}>
         <TabView 

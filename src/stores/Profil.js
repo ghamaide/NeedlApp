@@ -34,8 +34,8 @@ export class ProfilStore extends CachedStore {
       handleFetchFriendsFailed: ProfilActions.fetchFriendsFailed,
 
       handleFetchProfil: ProfilActions.FETCH_PROFIL,
-      handleProfilFetched: ProfilActions.PROFIL_FETCHED,
-      handleProfilFetchFailed: ProfilActions.PROFIL_FETCH_FAILED,
+      handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
+      handleFetchProfilFailed: ProfilActions.FETCH_PROFIL_FAILED,
 
       handleFetchFollowings: ProfilActions.fetchFollowings,
       handleFetchFollowingsSuccess: ProfilActions.fetchFollowingsSuccess,
@@ -49,24 +49,14 @@ export class ProfilStore extends CachedStore {
       handleDisplayProfilFailed: ProfilActions.DISPLAY_PROFIL_FAILED,
       handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
 
-      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
-      handleRemoveRecoSuccess: RestaurantsActions.REMOVE_RECO_SUCCESS,
+      handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
+      handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS,
 
-      handleAddWishSuccess: RestaurantsActions.ADD_WISH_SUCCESS,
-      handleRemoveWishSuccess: RestaurantsActions.REMOVE_WISH_SUCCESS,
+      handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
+      handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
       handleEditSuccess: MeActions.EDIT_SUCCESS
-
-// ================================================================================================
-
     });
-  }
-
-  handleLogout() {
-    this.profil = {};
-    this.me = {};
-    this.friends = [];
-    this.followings = [];
   }
 
   handleFetchFriends() {
@@ -76,7 +66,6 @@ export class ProfilStore extends CachedStore {
 
   handleFetchFriendsSuccess(profils) {
     this.friends = profils.friends;
-    this.me = profils.me;
     this.profils = _.concat(this.friends, this.me, this.followings);
     this.status.loading = false;
   }
@@ -91,27 +80,26 @@ export class ProfilStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleProfilFetched(profil) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === profil.id;});
-    var newProfil = profil;
-    // var recommendations = _.map(newProfil.recommendations ,(recommendation) => {
-    //   return recommendation.id;
-    // });
-    // var wishes = _.map(newProfil.wishes ,(wish) => {
-    //   return wish.id;
-    // });
-    // newProfil.recommendations = recommendations;
-    // newProfil.wishes = wishes;
-
-    if (index > -1) {
-      this.profils[index] = profil;
+  handleFetchProfilSuccess(profil) {
+    if (profil.id == MeStore.getState().me.id) {
+      this.me = profil;
     } else {
-      this.profils.push(profil);
+      var newProfil = profil;
+      var indexFriends = _.findIndex(this.friends, function(o) {return o.id === profil.id;});
+      var indexFollowings = _.findIndex(this.followings, function(o) {return o.id === profil.id;});
+      if (indexFriends > -1) {
+        this.friends[index] = profil;
+      } else if (indexFollowings > -1) {
+        this.followings[index] = profil
+      } else {
+        this.profil = profil;
+      }
     }
+    this.profils = _.concat(this.friends, this.me, this.followings);
     this.status.loading = false;
   }
 
-  handleProfilFetchFailed(err) {
+  handleFetchProfilFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
@@ -143,8 +131,14 @@ export class ProfilStore extends CachedStore {
   }
 
   handleMaskProfilSuccess(idProfil) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === idProfil;});
-    this.profils[index].invisible = true;
+    var index = _.findIndex(this.friends, function(o) {return o.id === idProfil;});
+    if (index > -1) {
+      this.friends[index].invisible = true;
+    } else {
+      index = _.findIndex(this.followings, function(o) {return o.id === idProfil;});
+      this.followings[index].invisible = true;
+    }
+    this.profils = _.concat(this.me, this.friends, this.followings);
     this.status.loading = false;
   }
 
@@ -159,50 +153,64 @@ export class ProfilStore extends CachedStore {
   }
 
   handleDisplayProfilSuccess(idProfil) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === idProfil;});
-    this.profils[index].invisible = false;
+    var index = _.findIndex(this.friends, function(o) {return o.id === idProfil;});
+    if (index > -1) {
+      this.friends[index].invisible = false;
+    } else {
+      index = _.findIndex(this.followings, function(o) {return o.id === idProfil;});
+      this.followings[index].invisible = false;
+    }
+    this.profils = _.concat(this.me, this.friends, this.followings);
     this.status.loading = false;
   }
 
-  handleRemoveRecoSuccess(data) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    var newProfil = this.profils[index];
+  handleAddRecoSuccess(result) {
+    var newProfil = this.me;
+    newProfil.recommendations.push(result.restaurant.id);
+    if (_.includes(newProfil.wishes, result.restaurant.id)) {
+      _.remove(newProfil.wishes, (restaurant_id) => {
+        return restaurant_id == result.restaurant.id;
+      })
+    }
+    this.me = newProfil;
+    this.profils = _.concat(this.friends, this.me, this.followings);
+  }
+
+  handleRemoveRecoSuccess(restaurant) {
+    var newProfil = this.me;
     _.remove(newProfil.recommendations, (restaurantID) => {
-     return restaurantID === data.oldRestaurant.id;
+     return restaurantID === restaurant.id;
     });
-    this.profils[index] = newProfil;
+    this.me = newProfil;
+    this.profils = _.concat(this.friends, this.me, this.followings);
+  }
+
+  handleAddWishSuccess(result) {
+    var newProfil = this.me;
+    newProfil.wishes.push(result.restaurant.id);
+    this.me = newProfil;
+    this.profils = _.concat(this.friends, this.me, this.followings);
   }
 
   handleRemoveWishSuccess(restaurant) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    var newProfil = this.profils[index];
+    var newProfil = this.me;
     _.remove(newProfil.wishes, (restaurantID) => {
      return restaurantID === restaurant.id;
     });
-    this.profils[index] = newProfil;
-  }
-
-  handleSaveRecoSuccess(reco) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    var newProfil = this.profils[index];
-    if (reco.approved) {
-      newProfil.recommendations.push(reco.restaurant.id);
-    } else {
-      newProfil.wishes.push(reco.restaurant.id);
-    }
-    this.profils[index] = newProfil;
-  }
-
-  handleAddWishSuccess(restaurant) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    var newProfil = this.profils[index];
-    newProfil.wishes.push(restaurant.id);
-    this.profils[index] = newProfil;
+    this.me = newProfil;
+    this.profils = _.concat(this.me, this.friends, this.followings);
   }
   
   handleEditSuccess(data) {
-    var index = _.findIndex(this.profils, function(o) {return o.id === MeStore.getState().me.id;});
-    this.profils[index] = _.extend(this.profils[index], {fullname : data.name});
+    this.me = _.extend(this.me, {fullname : data.name});
+    this.profils = _.concat(this.me, this.friends, this.followings);
+  }
+
+  handleLogout() {
+    this.profil = {};
+    this.me = {};
+    this.friends = [];
+    this.followings = [];
   }
 
   static error() {
@@ -218,7 +226,7 @@ export class ProfilStore extends CachedStore {
   }
 
   static getProfils() {
-    return _.concat(this.getState().friends, this.getState.me, this.getState().followings);
+    return _.concat(this.getState().friends, this.getState().me, this.getState().followings);
   }
 
   static getFriends() {

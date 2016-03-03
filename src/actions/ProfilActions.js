@@ -9,35 +9,34 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch(id);
 
-      request('GET', '/api/users/' + id)
+      request('GET', '/api/v2/users/' + id)
         .end((err, result) => {
           if (err) {
-            return this.profilFetchFailed(err, id);
+            return this.fetchProfilFailed(err, id);
           }
 
-          this.profilFetched(result);
+          this.fetchProfilSuccess(result);
         });
     }
   }
 
-  profilFetched(profil) {
+  fetchProfilSuccess(profil) {
     return profil;
   }
 
-  profilFetchFailed(err, id) {
-    return {err: err, id: id};
+  fetchProfilFailed(err, id) {
+    return err;
   }
 
   fetchFriends() {
     return (dispatch) => {
       dispatch();
       
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .end((err, result) => {
           if (err) {
             return this.fetchFriendsFailed(err);
           }
-
           this.fetchFriendsSuccess(result);
         });
     }
@@ -55,10 +54,10 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/followerships')
+      request('GET', '/api/v2/followerships')
         .end((err, result) => {
           if (err) {
-            return this.fetchFollowingsFailed(err, id);
+            return this.fetchFollowingsFailed(err);
           }
 
           this.fetchFollowingsSuccess(result);
@@ -78,7 +77,7 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .query({
           'friend_id': id,
           invisible: true
@@ -105,7 +104,7 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .query({
           'friend_id': id,
           invisible: false

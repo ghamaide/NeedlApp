@@ -13,7 +13,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/registrations/' + MeStore.getState().me.id + '/edit')
+      request('GET', '/api/v2/registrations/' + MeStore.getState().me.id + '/edit')
         .query({
           name: name,
           email: email
@@ -49,7 +49,7 @@ export class MeActions {
 
   saveDeviceToken(token) {
     return (dispatch) => {
-      request('POST', '/api/users/new_parse_installation.json')
+      request('POST', '/api/v2/users/new_parse_installation.json')
         .send({
           'device_type': Platform.OS,
           'device_token': token
@@ -65,7 +65,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/users/contacts_access')
+      request('POST', '/api/v2/users/contacts_access')
         .send({
           'contact_list': data
         })
@@ -94,7 +94,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/users/invite_contact')
+      request('POST', '/api/v2/users/invite_contact')
         .send({
           'contact' : data
         })
@@ -124,7 +124,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/users/update_version')
+      request('GET', '/api/v2/users/update_version')
         .query({
           'platform': Platform.OS,
           'version' : version
@@ -134,7 +134,7 @@ export class MeActions {
             return this.startActionsFailed(err);
           }
 
-          request('GET', '/api/users/reset_badge_to_zero')
+          request('GET', '/api/v2/users/reset_badge_to_zero')
             .end((err2) => {
               if (err2) {
                 return this.startActionsFailed(err2);

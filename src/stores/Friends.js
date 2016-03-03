@@ -37,8 +37,8 @@ export class FriendsStore extends CachedStore {
       handleLogout: LoginActions.LOGOUT,
 
       handleFetchFriends: FriendsActions.FETCH_FRIENDS,
-      handleFriendsFetched: FriendsActions.FRIENDS_FETCHED,
-      handleFriendsFetchFailed: FriendsActions.FRIENDS_FETCH_FAILED,
+      handleFetchFriendsSuccess: FriendsActions.FETCH_FRIENDS_SUCCESS,
+      handleFetchFriendsFailed: FriendsActions.FETCH_FRIENDS_FAILED,
 
       handleRemoveFriendship: FriendsActions.REMOVE_FRIENDSHIP,
       handleRemoveFriendshipFailed: FriendsActions.REMOVE_FRIENDSHIP_FAILED,
@@ -61,13 +61,13 @@ export class FriendsStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleFriendsFetched(data) {
+  handleFetchFriendsSuccess(data) {
     this.friends = data.friends;
     this.status.notifsPush = 0;
     this.status.loading = false;
   }
 
-  handleFriendsFetchFailed(err) {
+  handleFetchFriendsFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }

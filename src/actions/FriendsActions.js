@@ -9,22 +9,22 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
       
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .end((err, result) => {
           if (err) {
-            return this.friendsFetchFailed(err);
+            return this.fetchFriendsFailed(err);
           }
 
-          this.friendsFetched(result);
+          this.fetchFriendsSuccess(result);
         });
     }
   }
 
-  friendsFetched(friends) {
+  fetchFriendsSuccess(friends) {
     return friends;
   }
 
-  friendsFetchFailed(err) {
+  fetchFriendsFailed(err) {
     return err;
   }
 
@@ -32,7 +32,7 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
     
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .query({
           'friend_id': id,
           destroy: true
@@ -63,7 +63,7 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/users')
+      request('GET', '/api/v2/users')
         .query({
           query: query
         })

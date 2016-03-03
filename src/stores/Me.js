@@ -19,6 +19,8 @@ export class MeStore extends CachedStore {
 
     this.me = {};
 
+    this.first_loading = true;
+
     this.hasBeenUploadWelcomed = false;
 
     this.showOverlayMapTutorial = true;
@@ -43,7 +45,7 @@ export class MeStore extends CachedStore {
 
     this.bindListeners({
 
-      handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
+      handleAddActivitySuccess: [RecoActions.ADD_RECO_SUCCESS, RecoActions.ADD_WISH],
 
       handleStartActions: MeActions.START_ACTIONS,
       handleStartActionsFailed: MeActions.START_ACTIONS_FAILED,
@@ -94,7 +96,7 @@ export class MeStore extends CachedStore {
     });
   }
 
-  handleSaveRecoSuccess() {
+  handleAddActivitySuccess() {
     this.me.HAS_SHARED = true;
   }
 
@@ -278,7 +280,6 @@ export class MeStore extends CachedStore {
   static isConnected() {
     return this.getState().isConnected;
   }
-
 
   handleShowedUpdateMessage() {
     this.showedUpdateMessage = true;

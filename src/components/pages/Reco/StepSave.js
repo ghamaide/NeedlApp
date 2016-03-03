@@ -31,6 +31,12 @@ class RecoStepSave extends Component {
     };
   };
 
+  restaurantsState() {
+    return {
+      error: RestaurantsStore.error()
+    }
+  };
+
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
@@ -38,8 +44,32 @@ class RecoStepSave extends Component {
   };
 
   componentDidMount() {
+    this.addActivity();
+  };
+
+  componentWillMount() {
+    RestaurantsStore.listen(this.onRestaurantsChange);
+  }
+
+  componentWillUnount() {
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
+  }
+
+  onRestaurantsChange = () => {
+    this.setState(this.restaurantsState());
+  };
+
+  addActivity = () => {
     var reco = RecoStore.getReco();
-    RecoActions.saveReco(reco, this.goToRestaurant);
+    if (reco.approved) {
+      if (!reco.editing) {
+        RecoActions.addReco(reco, this.goToRestaurant);
+      } else {
+        RecoActions.updateRecommendation(reco, this.goToRestaurant);
+      }
+    } else {
+      RecoActions.addWish(reco.restaurant.id, reco.restaurant.origin, this.goToRestaurant);
+    }
   };
 
   render() {
@@ -51,29 +81,20 @@ class RecoStepSave extends Component {
       content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
     }
 
-    if (this.state.error && this.state.error.notice) {
+    if (this.state.error) {
+      if (__DEV__) {
+        console.log(this.state.error);
+      }
       content = <View style={styles.errorBlock}>
-        <Text style={{color: 'white'}}>{this.state.err.notice}</Text>
-        <Button style={styles.errorButton}
-          label='Ok !'
-          onPress={this.goToRestaurant} />
-      </View>;
-    }
-
-    if (this.state.error && !this.state.error.notice) {
-      content = <View style={styles.errorBlock}>
-        <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
+        <Text style={{color: '#555555', marginBottom: 15}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
           label='Réessayer'
-          onPress={() => {
-            RecoActions.saveReco(reco);
-          }} />
+          onPress={this.addActivity} />
       </View>;
     }
 
     return (
       <View style={styles.container}>
-        <Text style={{color: '#000000'}}>Merci d'avoir partagé!</Text>
         {content}
       </View>
     );

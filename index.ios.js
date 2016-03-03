@@ -67,9 +67,9 @@ class NeedlIOS extends Component {
       return null;
     }
 
-    if (!this.state.isConnected) {
-      return <Connection />
-    }
+    // if (!this.state.isConnected) {
+    //   return <Connection />
+    // }
 
     if (!this.state.loggedIn) {
       return <Login />;

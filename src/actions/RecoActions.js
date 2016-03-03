@@ -18,25 +18,25 @@ export class RecoActions {
         this.fetchRestaurantRequest.abort();
       }
 
-      this.fetchRestaurantRequest = request('GET', '/api/restaurants/autocomplete')
+      this.fetchRestaurantRequest = request('GET', '/api/v2/restaurants/autocomplete')
         .query({query: query})
         .end((err, result) => {
           delete this.fetchRestaurantRequest;
 
           if (err) {
-            return this.restaurantsFetchFailed(err);
+            return this.fetchRestaurantsFailed(err);
           }
 
-          this.restaurantsFetched(result);
+          this.fetchRestaurantsSuccess(result);
         });
     }
   }
 
-  restaurantsFetched(restaurants) {
+  fetchRestaurantsSuccess(restaurants) {
     return restaurants;
   }
 
-  restaurantsFetchFailed(err) {
+  fetchRestaurantsFailed(err) {
     return err;
   }
 
@@ -44,85 +44,155 @@ export class RecoActions {
     return reco;
   }
 
-  saveReco(reco, callback) {
+  addReco(reco, callback) {
     return (dispatch) => {
-      dispatch(reco);
+      dispatch();
 
-      request('GET', '/api/recommendations')
+      request('POST', '/api/v2/recommendations')
         .query(qs.stringify({
           friends_thanking: reco.friends_thanking,
+          experts_thanking: reco.experts_thanking,
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
-            wish: !reco.approved,
             strengths: reco.strengths,
-            ambiences: reco.ambiances,
+            ambiences: reco.ambiences,
             occasions: reco.occasions,
             review: reco.review
           }
         }, { arrayFormat: 'brackets' }))
-        .end((err, restaurant) => {
+        .end((err, result) => {
+          console.log(err);
+          console.log(result);
           if (err) {
-            return this.saveRecoFailed(err);
+            return this.addRecoFailed(err);
           }
-
-          this.saveRecoSuccess(reco, restaurant);
+          this.addRecoSuccess(result);
           callback();
         });
     }
   }
 
-  saveRecoSuccess(reco, restaurant) {
-    reco.restaurant = restaurant;
-    return reco;
+  addRecoSuccess(result) {
+    return result;
   }
 
-  saveRecoFailed(err) {
+  addRecoFailed(err) {
     return err;
   }
 
-  getReco(restaurantId, restaurantName) {
+  updateRecommendation(reco, callback) {
     return (dispatch) => {
-      dispatch(restaurantId);
+      dispatch();
 
-      request('GET', '/api/recommendations/modify')
-        .query({'restaurant_id': restaurantId})
-        .end((err, res) => {
-          if (err) {
-            return this.getRecoFailed(err, restaurantId);
+      request('PUT', '/api/v2/recommendations/' + reco.restaurant.id)
+        .query(qs.stringify({
+          friends_thanking: reco.friends_thanking,
+          experts_thanking: reco.experts_thanking,
+          restaurant_origin: reco.restaurant.origin,
+          recommendation: {
+            strengths: reco.strengths,
+            ambiences: reco.ambiences,
+            occasions: reco.occasions,
+            review: reco.review
           }
-
-          var reco = {
-            restaurant: {
-              id: restaurantId,
-              origin: 'db',
-              name: restaurantName
-            },
-            ambiances: _.map(res.ambiences, (id) => {
-              return parseInt(id);
-            }),
-            occasions: _.map(res.occasions, (id) => {
-              return parseInt(id);
-            }),
-            strengths: _.map(res.strengths, (id) => {
-              return parseInt(id);
-            }),
-            //'price_range': parseInt(res.price_range[0]),
-            review: res.review,
-            approved: true
-          };
-
-          this.getRecoSuccess(reco);
+        }, { arrayFormat: 'brackets' }))
+        .end((err, result) => {
+          if (err) {
+            return this.updateRecommendationFailed(err);
+          }
+          this.updateRecommendationSuccess(result);
+          callback();
         });
     }
   }
 
-  getRecoFailed(err, restaurantId) {
-    return {err: err, restaurantId: restaurantId};
+  updateRecommendationFailed(err) {
+    return err;
   }
 
-  getRecoSuccess(reco) {
-    return reco;
+  updateRecommendationSuccess(result) {
+    return result;
+  }
+
+  removeReco(restaurant, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('DELETE', '/api/v2/recommendations/' + restaurant.id)
+        .end((err, result) => {
+          if (err) {
+            return this.removeRecoFailed(err);
+          }
+
+          this.removeRecoSuccess(result);
+
+          callback();
+        });
+    }
+  }
+
+  removeRecoFailed(err) {
+    return err;
+  }
+
+  removeRecoSuccess(data) {
+    return data;
+  }
+
+  addWish(restaurant_id, origin, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/wishes')
+        .query(qs.stringify({
+          restaurant_id: restaurant_id,
+          restaurant_origin: origin
+        }, { arrayFormat: 'brackets' }))
+        .end((err, result) => {
+          if (err) {
+            return this.addWishFailed(err);
+          }
+
+          if (callback) {
+            callback()
+          }
+
+          this.addWishSuccess(result);
+        });
+    }
+  }
+
+  addWishFailed(err) {
+    return err;
+  }
+
+  addWishSuccess(result) {
+    return result;
+  }
+
+  removeWish(restaurant, callback) {
+    return (dispatch) => {
+      dispatch(restaurant);
+
+      request('DELETE', '/api/v2/wishes/' + restaurant.id)
+        .end((err, restaurantUpdated) => {
+          if (err) {
+            return this.removeWishFailed(err, restaurant);
+          }
+
+          callback();
+          this.removeWishSuccess(restaurantUpdated);
+        });
+    }
+  }
+
+  removeWishFailed(err, restaurant) {
+    return err;
+  }
+
+  removeWishSuccess(restaurant) {
+    return restaurant;
   }
 }
 

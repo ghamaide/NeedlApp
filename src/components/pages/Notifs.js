@@ -13,8 +13,10 @@ import RestaurantElement from '../elements/Restaurant';
 
 import NotifsActions from '../../actions/NotifsActions';
 
-import NotifsStore from '../../stores/Notifs';
 import MeStore from '../../stores/Me';
+import NotifsStore from '../../stores/Notifs';
+import ProfilStore from '../../stores/Profil';
+import RestaurantsStore from '../../stores/Restaurants';
 
 import Restaurant from './Restaurant';
 import Profil from './Profil';
@@ -29,44 +31,63 @@ class Notifs extends Page {
     };
   };
 
-  notifsState() {
+  constructor(props) {
+    super(props);
+    
+    this.state = this.notificationsState();
+    this.state.friendsActive = true;
+    this.state.followingsActive = false;
+  }
+
+  notificationsState() {
     return {
-      notifs: NotifsStore.getState().notifs,
+      friendsNotifications: NotifsStore.getFriendsNotifications(),
+      followingsNotifications: NotifsStore.getFollowingsNotifications(),
       loading: NotifsStore.loading(),
       error: NotifsStore.error()
     };
   };
 
-  constructor(props) {
-    super(props);
-    
-    this.state = this.notifsState();
-  }
-
   componentWillMount() {
-    NotifsStore.listen(this.onNotifsChange);
+    NotifsStore.listen(this.onNotificationsChange);
   }
 
   componentWillUnmount() {
-    NotifsStore.unlisten(this.onNotifsChange);
-    NotifsActions.notifsSeen();
+    NotifsStore.unlisten(this.onNotificationsChange);
+    NotifsActions.notificationsSeen();
   };
 
   componentDidMount() {
-    NotifsActions.notifsSeen();
+    NotifsActions.notificationsSeen();
   }
 
-  onNotifsChange = () => {
-    this.setState(this.notifsState());
+  onNotificationsChange = () => {
+    this.setState(this.notificationsState());
   };
 
   onRefresh() {
-    NotifsActions.notifsSeen();
-    NotifsActions.fetchNotifs();
+    NotifsActions.notificationsSeen();
+    NotifsActions.fetchNotifications();
+  };
+
+  onPressNotification = (from) => {
+    if (from === 'friends') {
+      this.setState({friendsActive: true});
+      this.setState({followingsActive: false});
+    }
+
+    if (from === 'followings') {
+      this.setState({followingsActive: true});
+      this.setState({friendsActive: false});
+    }
   };
 
   renderHeaderWrapper = (refreshingIndicator) => {
-    var notificationNumber = NotifsStore.getState().notifs.length;
+    if (this.state.friendsActive) {
+      var notificationNumber = this.state.friendsNotifications.length;
+    } else if (this.state.followingsActive) {
+      var notificationNumber = this.state.followingsNotifications.length;
+    }
 
     if (notificationNumber > 0) {
       return (
@@ -79,37 +100,50 @@ class Notifs extends Page {
         <View style={styles.emptyContainer}>
           {refreshingIndicator}
           <Text style={styles.emptyText}>Tu n'as pas encore de notification.</Text>
-          <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+          {this.state.friendsActive ? [
+            <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+          ] : [
+            <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+          ]}
         </View>
       );
     }
   };
 
-  renderNotif = (notif) => {
-    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {color: '#333333'};
-    var blockColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {backgroundColor: '#EF582D'} : {};
+  renderNotification = (notification) => {
+    var is_recommendation = false;
+    var textColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {color: 'white'} : {color: '#333333'};
+    var blockColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {backgroundColor: '#EF582D'} : {};
+
+    var user = ProfilStore.getProfil(notification.user_id);
+    var restaurant = RestaurantsStore.getRestaurant(notification.restaurant_id);
+
+    if (notification.notification_type === 'recommendation') {
+      is_recommendation = true;
+      var recommendation = NotifsStore.getRecommendation(notification.restaurant_id, notification.user_id);
+    }
 
     return (
       <View style={styles.notifRow}>
         <RestaurantElement
-          name={notif.restaurant_name}
-          picture={notif.restaurant_picture}
-          type={notif.restaurant_food}
-          budget={notif.restaurant_price_range}
+          name={restaurant.name}
+          picture={restaurant.pictures[0]}
+          type={restaurant.food[1]}
+          budget={restaurant.price_range}
           height={180}
           onPress={() => {
-            this.props.navigator.push(Restaurant.route({id: notif.restaurant_id}, notif.restaurant_name));
+            this.props.navigator.push(Restaurant.route({id: notification.restaurant_id}, restaurant.name));
           }}/>
 
         <View style={[styles.notifInfos]}>
           <TouchableHighlight style={styles.friendImage} onPress={() => {
-            this.props.navigator.push(Profil.route({id: notif.user_id}, notif.user));
+            this.props.navigator.push(Profil.route({id: notification.user_id}, user.name));
           }}>
-            <Image source={{uri: notif.user_picture}} style={styles.friendImage} />
+            <Image source={{uri: user.picture}} style={styles.friendImage} />
           </TouchableHighlight>
           <View style={[styles.friendQuote, blockColor]}>
-            <Text style={[styles.friendQuoteText, textColor]}>{notif.review || 'Sur ma Wishlist !'}</Text>
-            <Text style={[styles.friendQuoteDate, textColor]}>{notif.user}, le {notif.date}</Text>
+            <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
+            <Text style={[styles.friendQuoteDate, textColor]}>{user.name}, le {notification.formatted_date}</Text>
             <View style={[styles.triangle,  blockColor]} />
           </View>
         </View>
@@ -120,14 +154,28 @@ class Notifs extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Notifs' />
+        <NavigationBar title='Feed' />
+
+        <View key='switch_buttons' style={styles.notificationsButtonContainer}>
+          <TouchableHighlight 
+            style={[styles.notificationsButton, {backgroundColor: this.state.friendsActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressNotification('friends')}>
+            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#EF582D'}}>Amis</Text>
+          </TouchableHighlight>
+          <TouchableHighlight 
+            style={[styles.notificationsButton, {backgroundColor: this.state.followingsActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressNotification('followings')}>
+            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
+          </TouchableHighlight>
+        </View>
+
         <RefreshableListView
-          key='notifs'
+          key='notifications'
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
           style={styles.notifsList}
-          dataSource={ds.cloneWithRows(this.state.notifs)}
-          renderRow={this.renderNotif}
+          dataSource={ds.cloneWithRows(this.state.friendsActive ? this.state.friendsNotifications : this.state.followingsNotifications)}
+          renderRow={this.renderNotification}
           contentInset={{top: 0}}
           renderHeaderWrapper={this.renderHeaderWrapper}
           scrollRenderAheadDistance={150}
@@ -185,6 +233,19 @@ var styles = StyleSheet.create({
     transform: [
       {rotate: '45deg'}
     ]
+  },
+  notificationsButtonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#EF582D',
+    borderRadius: 5
+  },
+  notificationsButton: {
+    flex: 1,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   emptyContainer: {
     flex: 1,

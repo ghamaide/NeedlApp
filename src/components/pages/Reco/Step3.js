@@ -13,6 +13,8 @@ import Text from '../../ui/Text';
 
 import ToggleGroup from './ToggleGroup';
 
+import MeStore from '../../../stores/Me';
+import NotifsStore from '../../../stores/Notifs';
 import RecoStore from '../../../stores/Reco';
 
 import RecoActions from '../../../actions/RecoActions';
@@ -46,7 +48,7 @@ class RecoStep3 extends Component {
   componentDidMount() {
     if (this.props.editing) {
       RecoStore.listen(this.onRecoUpdate);
-      RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);
+      RecoStore.getReco();
     }
   };
 
@@ -57,7 +59,7 @@ class RecoStep3 extends Component {
   onRightButtonPress= () => {
     var reco = RecoStore.getReco();
 
-    if (!reco.ambiances || !reco.ambiances.length) {
+    if (!reco.ambiences || !reco.ambiences.length) {
       return;
     }
 
@@ -65,16 +67,19 @@ class RecoStep3 extends Component {
   };
 
   render() {
-    if (this.state.error || this.state.loading) {
+    if (!_.isEmpty(this.state.error) || this.state.loading) {
       var content;
 
       if (this.state.loading) {
         content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />);
       }
 
-      if (this.state.error) {
+      if (!_.isEmpty(this.state.error)) {
+        if (__DEV__) {
+          console.log(this.state.error);
+        }
         content = <View style={styles.errorBlock}>
-          <Text style={{color: 'white'}}>Une erreur est survenue</Text>
+          <Text style={{color: '#555555', marginBottom: 20}}>Une erreur est survenue</Text>
           <Button style={styles.errorButton}
             label='Réessayer'
             onPress={() => {
@@ -98,14 +103,14 @@ class RecoStep3 extends Component {
           <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
           <ToggleGroup
             ref='togglegroup'
-            maxSelection={5}
+            maxSelection={8}
             fifo={true}
-            selectedInitial={reco.ambiances}
+            selectedInitial={reco.ambiences}
             onSelect={(v, selected) => {
-              reco.ambiances = selected;
+              reco.ambiences = selected;
             }}
             onUnselect={(v, selected) => {
-              reco.ambiances = selected;
+              reco.ambiences = selected;
             }}>
             {(Toggle) => {
               return <View style={{alignItems: 'center'}}>

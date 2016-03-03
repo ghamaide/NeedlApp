@@ -90,6 +90,7 @@ class Friends extends Page {
 
   onRefresh = () => {
     ProfilActions.fetchFriends();
+    ProfilActions.fetchFollowings();
   };
 
   onPressFriend = (from) => {
@@ -115,7 +116,7 @@ class Friends extends Page {
           <Image source={{uri: friend.picture}} style={styles.friendImage} />
           <View style={styles.friendInfos}>
             <Text style={styles.friendName}>{friend.name}</Text>
-            <Text style={styles.friendRecos}>{friend.number_of_recos} reco{friend.number_of_recos > 1 ? 's' : ''}</Text>
+            <Text style={styles.friendRecos}>{friend.recommendations.length} reco{friend.recommendations.length > 1 ? 's' : ''}</Text>
           </View>
         </View>
       </TouchableHighlight>

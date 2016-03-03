@@ -48,12 +48,7 @@ class Restaurant extends Component {
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>
               : null}
-            {this.props.isNeedl ?
-              <View style={styles.imageNeedlContainer}>
-                <Image style={styles.imageNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
-              </View>
-             : null}
-            {!this.props.isNeedl && this.props.rank ?
+            {this.props.rank ?
               <View style={styles.imageRank}>
                 <Text style={styles.imageRankText}>#{this.props.rank}</Text>
               </View>

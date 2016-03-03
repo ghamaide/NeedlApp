@@ -10,8 +10,10 @@ import Text from '../../ui/Text';
 import RecoActions from '../../../actions/RecoActions';
 
 import MeStore from '../../../stores/Me';
+import NotifsStore from '../../../stores/Notifs';
 import RecoStore from '../../../stores/Reco';
 
+import Restaurant from '../Restaurant';
 import Step3 from './Step3';
 import StepSave from './StepSave';
 
@@ -28,6 +30,7 @@ class RecoStep2 extends Component {
 
   render() {
     var reco = RecoStore.getReco();
+    var activity = NotifsStore.getRecommendation(reco.restaurant.id, MeStore.getState().me.id);
 
     return (
       <View style={{flex: 1}}>
@@ -40,12 +43,26 @@ class RecoStep2 extends Component {
             onSelect={(value) => {
               reco.approved = (value === 'approved');
               reco.step2 = true;
+              
+              if (typeof activity == 'undefined') {
+                if (reco.approved) {
+                  return this.props.navigator.push(Step3.route());
+                }
 
-              if (reco.approved) {
-                return this.props.navigator.push(Step3.route());
+                this.props.navigator.resetTo(StepSave.route());
+              } else {
+                if (reco.approved) {
+                  if (activity.notification_type == 'recommendation') {
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                  }
+                } else {
+                  if (activity.notification_type == 'wish') {
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
+                  } else if (activity.notification_type == 'recommendation') {
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                  }
+                }
               }
-
-              this.props.navigator.resetTo(StepSave.route());
             }}
             onUnselect={() => {
               delete reco.approved;

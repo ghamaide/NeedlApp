@@ -27,7 +27,6 @@ class RecoStep6 extends Component {
   };
 
   state = {
-    keyboardSpace: 0,
     characterNbRemaining: 140,
     friendsThanksIds: [],
     expertsThanksIds: []
@@ -129,7 +128,7 @@ class RecoStep6 extends Component {
 
   render() {
     var reco = RecoStore.getReco();
-    var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== 553});
+    var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== MeStore.getState().me.id});
     return (
       <View>
         <NavigationBar title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />

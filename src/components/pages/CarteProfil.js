@@ -111,14 +111,14 @@ class CarteProfil extends Page {
     var restaurants = [];
     _.forEach(recommendations_and_wishes, (restaurantId) => {
       var restaurant = RestaurantsStore.getRestaurant(restaurantId);
-      restaurants.push(_.extend(restaurant, {from: _.includes(restaurant.friends_wishing, this.currentProfil()) ? 'wish' : 'recommendation'}));
+      restaurants.push(_.extend(restaurant, {from: _.includes(restaurant.my_friends_wishing, this.currentProfil()) ? 'wish' : 'recommendation'}));
     });
     
     var sortedRestaurants = _.reverse(_.sortBy(restaurants, ['score']));
 
     return (
-  		<View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key='navbar' image={require('../../assets/img/tabs/icons/account.png')} title='Carte' rightButtonTitle='Profil' onRightButtonPress={() => this.props.navigator.replace(Profil.route())} />
+      <View style={{flex: 1, position: 'relative'}}>
+        <NavigationBar key='navbar' image={require('../../assets/img/tabs/icons/account.png')} title='Carte' rightButtonTitle='Profil' onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: profile.id}))} />
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
             key='map'

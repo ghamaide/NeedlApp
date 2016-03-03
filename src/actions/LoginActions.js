@@ -41,7 +41,7 @@ export class LoginActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/sessions.json')
+      request('POST', '/api/v2/sessions.json')
         .query(qs.stringify(user, { arrayFormat: 'brackets' }))
         .end((err, result) => {
           if (err) {
@@ -65,7 +65,7 @@ export class LoginActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/registrations.json')
+      request('POST', '/api/v2/registrations.json')
         .query(qs.stringify(user, { arrayFormat: 'brackets' }))
         .end((err, result) => {
           if (err) {
