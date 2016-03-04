@@ -5,29 +5,6 @@ import request from '../utils/api';
 
 export class FriendsActions {
 
-  fetchFriends() {
-    return (dispatch) => {
-      dispatch();
-      
-      request('GET', '/api/v2/friendships')
-        .end((err, result) => {
-          if (err) {
-            return this.fetchFriendsFailed(err);
-          }
-
-          this.fetchFriendsSuccess(result);
-        });
-    }
-  }
-
-  fetchFriendsSuccess(friends) {
-    return friends;
-  }
-
-  fetchFriendsFailed(err) {
-    return err;
-  }
-
   removeFriendship(id, callback) {
     return (dispatch) => {
       dispatch();
@@ -59,7 +36,7 @@ export class FriendsActions {
     return err;
   }
 
-  searchContacts(query) {
+  searchUsers(query) {
     return (dispatch) => {
       dispatch();
 
@@ -68,22 +45,46 @@ export class FriendsActions {
           query: query
         })
         .end((err, result) => {
-          // console.log('----');
-          // console.log(err);
           if (err) {
-            this.searchContactsFailed(err);
+            this.searchUsersFailed(err);
           }
 
-          this.searchContactsSuccess(result);
+          this.searchUsersSuccess(result);
         });
     }
   }
 
-  searchContactsFailed(err) {
+  searchUsersFailed(err) {
     return err;
   }
 
-  searchContactsSuccess(result) {
+  searchUsersSuccess(result) {
+    return result;
+  }
+
+  searchFollowings(query) {
+    return (dispatch) => {
+      dispatch();
+
+      request('GET', '/api/v2/followings')
+        .query({
+          query: query
+        })
+        .end((err, result) => {
+          if (err) {
+            this.searchFollowingsFailed(err);
+          }
+
+          this.searchFollowingsSuccess(result);
+        });
+    }
+  }
+
+  searchFollowingsFailed(err) {
+    return err;
+  }
+
+  searchFollowingsSuccess(result) {
     return result;
   }
 }

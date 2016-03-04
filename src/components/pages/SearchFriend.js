@@ -33,31 +33,35 @@ class SearchFriend extends Page {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = this.searchFriendState();
     this.state.query = '';
     this.state.errors = [];
     this.state.followings = [];
-    this.state.needlContacts = [];
-    this.state.phoneContacts = [];
-    this.state.filteredPhoneContacts = [];
+    this.state.users = [];
+    this.state.contacts = [];
+    this.state.filteredContacts = [];
     this.state.needlActive = true;
     this.state.phoneActive = false;
     this.state.retrievedContacts = false;
     this.state.hasUploadedContacts = MeStore.getState().hasUploadedContacts;
   };
 
+  searchFriendState() {
+    return {
+      loading: FriendsStore.loading(),
+      error: FriendsStore.error(),
+      hasUploadedContacts: MeStore.getState.hasUploadedContacts,
+      users: FriendsStore.getSearchedUsers(),
+      followings: FriendsStore.getSearchedFollowings()
+    };
+  };
+
   onMeChange = () => {
-    this.setState({
-      loading: MeStore.loading(),
-      error: MeStore.error(),
-      hasUploadedContacts: MeStore.getState().hasUploadedContacts
-    });
+    this.setState(this.searchFriendState());
   };
 
   onFriendsChange = () => {
-    this.setState({
-      needlContacts: FriendsStore.getSearchedContacts()
-    });
+    this.setState(this.searchFriendState());
   };
 
   componentWillMount() {
@@ -103,8 +107,8 @@ class SearchFriend extends Page {
           }
           return contact;
         });
-        this.setState({phoneContacts : retrievedContacts});
-        this.searchContactsPhone(this.state.query);
+        this.setState({contacts : retrievedContacts});
+        this.searchContacts(this.state.query);
         this.setState({retrievedContacts: true});
         if (!this.state.hasUploadedContacts) {
           MeActions.uploadContacts(retrievedContacts);
@@ -123,7 +127,7 @@ class SearchFriend extends Page {
     );
   };
 
-  getContactsPhone = () => {
+  getContacts = () => {
     if (Platform.OS === 'ios') {
       this.checkPermission();
     } else if (Platform.OS === 'android') {
@@ -136,14 +140,14 @@ class SearchFriend extends Page {
     FriendsActions.searchFollowings(query);
   };
 
-  searchContactsNeedl = (query) => {
+  searchUsers = (query) => {
     this.setState({query: query});
-    FriendsActions.searchContacts(query);
+    FriendsActions.searchUsers(query);
   };
 
-  searchContactsPhone = (query) => {
+  searchContacts = (query) => {
     this.setState({query: query});
-    var tempFilteredContacts = _.filter(this.state.phoneContacts, function(contact) {
+    var tempFilteredContacts = _.filter(this.state.contacts, function(contact) {
       if (typeof contact.familyName !== 'undefined' && typeof contact.givenName !== 'undefined') {
         return ((contact.givenName.toLowerCase().indexOf(query.toLowerCase()) > -1) || (contact.familyName.toLowerCase().indexOf(query.toLowerCase()) > -1));
       } else if (typeof contact.familyName !== 'undefined') {
@@ -155,7 +159,7 @@ class SearchFriend extends Page {
       }
     });
 
-    this.setState({filteredPhoneContacts: tempFilteredContacts});
+    this.setState({filteredContacts: tempFilteredContacts});
   };
 
   isEqual (a, b) {
@@ -174,19 +178,19 @@ class SearchFriend extends Page {
     }
   };
 
-  renderContactNeedl = (contact) => {
+  renderUser = (contact) => {
     return (
       <View>
       </View>
     );
   };
 
-  renderContactPhone = (contact) => {
+  renderContact = (contact) => {
     return (
       <View style={styles.contactWrapper}>
           <View style={styles.contactInfoWrapper}>
             <Text style={styles.contactName}>{contact.givenName} {contact.familyName}</Text>
-            {this.state.phoneContacts[_.findIndex(this.state.phoneContacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
+            {this.state.contacts[_.findIndex(this.state.contacts, (row) => this.isEqual(row.recordID, contact.recordID))].invitationSent ? [
               <Image
                 key={'check_' + contact.recordID}
                 style={styles.imageCheck}
@@ -194,7 +198,7 @@ class SearchFriend extends Page {
             ] : [
               !this.state.loading ? [
                 <TouchableHighlight key={'send_invitation_' + contact.recordID} style={styles.imageWrapper} onPress={() => {
-                  var updatedContacts = _.map(this.state.phoneContacts, (row) => {
+                  var updatedContacts = _.map(this.state.contacts, (row) => {
                     if (contact.recordID === row.recordID) {
                       row.invitationSent = true;
                       return row;
@@ -229,7 +233,7 @@ class SearchFriend extends Page {
 
   renderHeaderWrapperFollowings = () => {
     if (this.state.query) {
-      if (!this.state.needlContacts.length) {
+      if (!this.state.followings.length) {
         return(
           <View style={styles.emptyTextContainer}>
             <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
@@ -247,7 +251,7 @@ class SearchFriend extends Page {
 
   renderHeaderWrapperFriends = () => {
     if (this.state.query) {
-      if (!this.state.needlContacts.length) {
+      if (!this.state.followings.length) {
         return(
           <View style={styles.emptyTextContainer}>
             <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
@@ -263,9 +267,9 @@ class SearchFriend extends Page {
     }
   };
 
-  renderHeaderWrapperPhone = () => {
+  renderHeaderWrapperContacts = () => {
     if (this.state.retrievedContacts) {
-      if (!this.state.filteredPhoneContacts.length) {
+      if (!this.state.filteredContacts.length) {
         if (!this.state.query.length) {
           return (
             <View style={styles.emptyTextContainer}>
@@ -283,7 +287,7 @@ class SearchFriend extends Page {
     } else {
       return (
         <View>
-          <TouchableHighlight style={styles.searchContactsButton} onPress={this.getContactsPhone} underlayColor='rgba(0, 0, 0, 0)'>
+          <TouchableHighlight style={styles.searchContactsButton} onPress={this.getContacts} underlayColor='rgba(0, 0, 0, 0)'>
             <Text style={styles.searchContactsText}>Afficher les résultats de mes contacts {Platform.OS === 'ios' ? 'iPhone' : ''}</Text>
           </TouchableHighlight>
         </View>
@@ -323,9 +327,9 @@ class SearchFriend extends Page {
             onChangeText={(text) => {
               if (is_friends) {
                 if (this.state.needlActive) {
-                  this.searchContactsNeedl(text);
+                  this.searchUsers(text);
                 } else {
-                  this.searchContactsPhone(text);
+                  this.searchContacts(text);
                 }
               } else {
                 this.searchFollowings(text);
@@ -341,9 +345,9 @@ class SearchFriend extends Page {
             onChangeText={(text) => {
               if (is_friends) {
                 if (this.state.needlActive) {
-                  this.searchContactsNeedl(text);
+                  this.searchUsers(text);
                 } else {
-                  this.searchContactsPhone(text);
+                  this.searchContacts(text);
                 }
               } else {
                 this.searchFollowings(text);
@@ -354,11 +358,11 @@ class SearchFriend extends Page {
 
         <ListView
           style={styles.contactsList}
-          dataSource={ds.cloneWithRows(is_friends ? (this.state.needlActive ? this.state.needlContacts : this.state.filteredPhoneContacts) : this.state.followings)}
-          renderRow={is_friends ? (this.state.needlActive ? this.renderContactNeedl : this.renderContactPhone) : this.renderContactNeedl}
+          dataSource={ds.cloneWithRows(is_friends ? (this.state.needlActive ? this.state.users : this.state.filteredContacts) : this.state.followings)}
+          renderRow={is_friends ? (this.state.needlActive ? this.renderUser : this.renderContact) : this.renderUser}
           contentInset={{top: 0}}
           onScroll={Platform.OS === 'ios' ? this.closeKeyboard : null}
-          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperFriends : this.renderHeaderWrapperPhone) : this.renderHeaderWrapperFollowings}
+          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperFriends : this.renderHeaderWrapperContacts) : this.renderHeaderWrapperFollowings}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
       </View>

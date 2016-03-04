@@ -54,6 +54,21 @@ export class RecoStore {
     this.error = err;
   }
 
+  handleGetReco(restaurantId) {
+    this.loading = true;
+    delete this.error;
+  }
+
+  handleGetRecoFailed(data) {
+    this.loading = false;
+    this.error = data.err;
+  }
+
+  handleGetRecoSuccess(reco) {
+    this.reco = reco;
+    this.loading = false;
+  }
+
   static error() {
     return this.getState().error;
   }
@@ -68,21 +83,6 @@ export class RecoStore {
 
   static getQueryRestaurants() {
     return this.getState().restaurants;
-  }
-
-  handleGetReco(restaurantId) {
-    this.loading = true;
-    delete this.error;
-  }
-
-  handleGetRecoFailed(data) {
-    this.loading = false;
-    this.error = data.err;
-  }
-
-  handleGetRecoSuccess(reco) {
-    this.reco = reco;
-    this.loading = false;
   }
 }
 

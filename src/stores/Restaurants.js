@@ -76,9 +76,9 @@ export class RestaurantsStore extends CachedStore {
       handleAddRecoFailed: RecoActions.ADD_RECO_FAILED,
       handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
 
-      // handleUpdateRecommendation: RecoActions.UPDATE_RECOMMENDATION,
-      // handleUpdateRecommendationSuccess: RecoActions.UPDATE_RECOMMENDATION_SUCCESS,
-      // handleUpdateRecommendationFailed: RecoActions.UPDATE_RECOMMENDATION_FAILED,
+      handleUpdateRecommendation: RecoActions.UPDATE_RECOMMENDATION,
+      handleUpdateRecommendationSuccess: RecoActions.UPDATE_RECOMMENDATION_SUCCESS,
+      handleUpdateRecommendationFailed: RecoActions.UPDATE_RECOMMENDATION_FAILED,
 
       handleRemoveReco: RecoActions.REMOVE_RECO,
       handleRemoveRecoFailed: RecoActions.REMOVE_RECO_FAILED,

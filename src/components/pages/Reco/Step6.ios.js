@@ -9,6 +9,8 @@ import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
 
+import RecoActions from '../../../actions/RecoActions';
+
 import MeStore from '../../../stores/Me';
 import ProfilStore from '../../../stores/Profil';
 import RecoStore from '../../../stores/Reco';
@@ -26,10 +28,21 @@ class RecoStep6 extends Component {
     };
   };
 
-  state = {
-    characterNbRemaining: 140,
-    friendsThanksIds: [],
-    expertsThanksIds: []
+  constructor(props) {
+    super(props);
+
+    this.state = this.stepState();
+    this.state.characterNbRemaining = 140;
+  }
+
+  stepState() {
+    var recommendation = RecoStore.getReco();
+    return {
+      recommendation: recommendation,
+      review: recommendation.review,
+      friendsThanksIds: recommendation.friends_thanking ? recommendation.friends_thanking : [],
+      expertsThanksIds: recommendation.experts_thanking ? recommendation.experts_thanking : []
+    }
   };
 
   componentDidMount() {
@@ -46,9 +59,11 @@ class RecoStep6 extends Component {
   };
 
   onRightButtonPress = () => {
-    var reco = RecoStore.getReco();
-    reco.friends_thanking = this.state.friendsThanksIds;
-    reco.experts_thanking = this.state.expertsThanksIds;
+    var recommendation = this.state.recommendation;
+    recommendation.friends_thanking = this.state.friendsThanksIds;
+    recommendation.experts_thanking = this.state.expertsThanksIds;
+    recommendation.review = this.state.review;
+    RecoActions.setReco(recommendation);
     this.props.navigator.resetTo(StepSave.route());
   };
 
@@ -102,9 +117,8 @@ class RecoStep6 extends Component {
   };
 
   inviteFriend = () => {
-    var reco = RecoStore.getReco();
     NativeModules.RNMessageComposer.composeMessageWithArgs({
-      'messageText': 'Merci de m\'avoir fait découvrir ' + reco.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
+      'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
     }, (result) => {
       switch(result) {
         case NativeModules.RNMessageComposer.Sent:
@@ -127,12 +141,11 @@ class RecoStep6 extends Component {
   };
 
   render() {
-    var reco = RecoStore.getReco();
-    var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== MeStore.getState().me.id});
+    var recommenders = _.remove(RestaurantsStore.getRecommenders(this.state.recommendation.restaurant.id), (id) => {return id !== MeStore.getState().me.id});
     return (
       <View>
         <NavigationBar title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
-        <ScrollView onScroll={this.closeKeyboard} style={styles.container} scrollEnabled={true}>
+        <ScrollView onScroll={this.closeKeyboard} style={styles.container} scrollEnabled={true} keyboardShouldPersistTaps={true}>
           <View style={styles.recoContainer}>
             <TextInput 
               ref='review'
@@ -141,11 +154,10 @@ class RecoStep6 extends Component {
               style={styles.reviewInput}
               maxLength={140}
               multiline={true}
-              value={reco.review}
+              value={this.state.review}
               onChangeText={(review) => {
-                reco.review = review;
-                this.forceUpdate();
-                this.handleChange(reco.review.length);
+                this.setState({review: review});
+                this.handleChange(review.length);
               }} />
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>

@@ -33,7 +33,8 @@ class RecoStepSave extends Component {
 
   restaurantsState() {
     return {
-      error: RestaurantsStore.error()
+      error: RestaurantsStore.error(),
+      loading: RestaurantsStore.loading()
     }
   };
 
@@ -44,14 +45,11 @@ class RecoStepSave extends Component {
   };
 
   componentDidMount() {
-    this.addActivity();
-  };
-
-  componentWillMount() {
     RestaurantsStore.listen(this.onRestaurantsChange);
+    this.addActivity();
   }
 
-  componentWillUnount() {
+  componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
   }
 
@@ -74,9 +72,6 @@ class RecoStepSave extends Component {
 
   render() {
     var content;
-
-    var reco = RecoStore.getReco();
-
     if (!this.state.error) {
       content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
     }

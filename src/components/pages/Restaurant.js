@@ -47,7 +47,7 @@ class Restaurant extends Page {
   restaurantsState() {
     return {
       id: this.props.id,
-      data: RestaurantsStore.getRestaurant(this.props.id),
+      restaurant: RestaurantsStore.getRestaurant(this.props.id),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),
     };
@@ -107,7 +107,7 @@ class Restaurant extends Page {
   };
 
   recommend = (editing) => {
-    var restaurant = this.state.data;
+    var restaurant = this.state.restaurant;
 
     var props;
 
@@ -124,8 +124,9 @@ class Restaurant extends Page {
           origin: 'db'
         },
         approved: true,
-        // friends_thanking: stored_recommendation.friends_thanking,
-        // experts_thanking: stored_recommendation.experts_thanking,
+        editing: true,
+        friends_thanking: stored_recommendation.friends_thanking,
+        experts_thanking: stored_recommendation.experts_thanking,
         strengths: _.map(stored_recommendation.strengths, (strength) => {return parseInt(strength)}),
         ambiences: _.map(stored_recommendation.ambiences, (ambience) => {return parseInt(ambience)}),
         occasions: _.map(stored_recommendation.occasions, (occasion) => {return parseInt(occasion)}),
@@ -147,8 +148,8 @@ class Restaurant extends Page {
   };
 
   call = () => {
-    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.data.id, restaurantName: this.state.data.name});
-    RNComm.phonecall(this.state.data.phone_number, false);
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.restaurant.id, restaurantName: this.state.restaurant.name});
+    RNComm.phonecall(this.state.restaurant.phone_number, false);
   };
 
   onPressText = () => {
@@ -156,7 +157,7 @@ class Restaurant extends Page {
   };
 
   goWithCityMapper = () => {
-    var restaurant = this.state.data;
+    var restaurant = this.state.restaurant;
     if (DeviceInfo.getSystemVersion() < 9.0) {
       var url = encodeURI('citymapper://x-callback-url/directions?endcoord=') + restaurant.latitude + '%2C' + restaurant.longitude + '&endname=' + encodeURI(restaurant.name) + '&endaddress=' + encodeURI(restaurant.address) + '&x-source=Needl&x-success=needl%3A%2F%2F';
     } else {
@@ -177,7 +178,7 @@ class Restaurant extends Page {
   };
 
   renderPage() {
-    var restaurant = this.state.data;
+    var restaurant = this.state.restaurant;
     return (
       <View>
         {this.props.fromReco ? [
@@ -235,7 +236,7 @@ class Restaurant extends Page {
                   height={200}
                   width={windowWidth - 40}
                   autoplay={Platform.OS === 'ios' ? true : false}
-                  autoplayTimeout={3}
+                  autoplayTimeout={5}
                   paginationStyle={{bottom: Platform.OS === 'ios' ? -7 : -1}}
                   dot={<View style={{backgroundColor:'rgba(0,0,0,.2)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
                   activeDot={<View style={{backgroundColor: '#EF582D', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>

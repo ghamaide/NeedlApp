@@ -50,11 +50,11 @@ export class RecoActions {
 
       request('POST', '/api/v2/recommendations')
         .query(qs.stringify({
-          friends_thanking: reco.friends_thanking,
-          experts_thanking: reco.experts_thanking,
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
+            friends_thanking: reco.friends_thanking,
+            experts_thanking: reco.experts_thanking,
             strengths: reco.strengths,
             ambiences: reco.ambiences,
             occasions: reco.occasions,
@@ -62,8 +62,6 @@ export class RecoActions {
           }
         }, { arrayFormat: 'brackets' }))
         .end((err, result) => {
-          console.log(err);
-          console.log(result);
           if (err) {
             return this.addRecoFailed(err);
           }
@@ -87,10 +85,10 @@ export class RecoActions {
 
       request('PUT', '/api/v2/recommendations/' + reco.restaurant.id)
         .query(qs.stringify({
-          friends_thanking: reco.friends_thanking,
-          experts_thanking: reco.experts_thanking,
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
+            friends_thanking: reco.friends_thanking,
+            experts_thanking: reco.experts_thanking,
             strengths: reco.strengths,
             ambiences: reco.ambiences,
             occasions: reco.occasions,
@@ -176,18 +174,18 @@ export class RecoActions {
       dispatch(restaurant);
 
       request('DELETE', '/api/v2/wishes/' + restaurant.id)
-        .end((err, restaurantUpdated) => {
+        .end((err, result) => {
           if (err) {
-            return this.removeWishFailed(err, restaurant);
+            return this.removeWishFailed(err);
           }
 
           callback();
-          this.removeWishSuccess(restaurantUpdated);
+          this.removeWishSuccess(result);
         });
     }
   }
 
-  removeWishFailed(err, restaurant) {
+  removeWishFailed(err) {
     return err;
   }
 

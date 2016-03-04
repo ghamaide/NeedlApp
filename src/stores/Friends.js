@@ -28,7 +28,8 @@ export class FriendsStore extends CachedStore {
 
     this.friends = [];
 
-    this.searchedContacts = [];
+    this.searched_users = [];
+    this.searched_followings = [];
     
     this.status.loading = false;
     this.status.error = {};
@@ -36,17 +37,17 @@ export class FriendsStore extends CachedStore {
     this.bindListeners({
       handleLogout: LoginActions.LOGOUT,
 
-      handleFetchFriends: FriendsActions.FETCH_FRIENDS,
-      handleFetchFriendsSuccess: FriendsActions.FETCH_FRIENDS_SUCCESS,
-      handleFetchFriendsFailed: FriendsActions.FETCH_FRIENDS_FAILED,
-
       handleRemoveFriendship: FriendsActions.REMOVE_FRIENDSHIP,
       handleRemoveFriendshipFailed: FriendsActions.REMOVE_FRIENDSHIP_FAILED,
       handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
 
-      handleSearchContacts: FriendsActions.SEARCH_CONTACTS,
-      handleSearchContactsFailed: FriendsActions.SEARCH_CONTACTS_FAILED,
-      handleSearchContactsSuccess: FriendsActions.SEARCH_CONTACTS_SUCCESS
+      handleSearchUsers: FriendsActions.SEARCH_USERS,
+      handleSearchUsersFailed: FriendsActions.SEARCH_USERS_FAILED,
+      handleSearchUsersSuccess: FriendsActions.SEARCH_USERS_SUCCESS,
+
+      handleSearchFollowings: FriendsActions.SEARCH_FOLLOWINGS,
+      handleSearchFollowingsFailed: FriendsActions.SEARCH_FOLLOWINGS_FAILED,
+      handleSearchFollowingsSuccess: FriendsActions.SEARCH_FOLLOWINGS_SUCCESS
 
 // ================================================================================================
     });
@@ -54,22 +55,6 @@ export class FriendsStore extends CachedStore {
 
   handleLogout() {
     this.friends = [];
-  }
-
-  handleFetchFriends() {
-    this.status.loading = true;
-    delete this.status.error;
-  }
-
-  handleFetchFriendsSuccess(data) {
-    this.friends = data.friends;
-    this.status.notifsPush = 0;
-    this.status.loading = false;
-  }
-
-  handleFetchFriendsFailed(err) {
-    this.status.loading = false;
-    this.status.error = err;
   }
 
   handleRemoveFriendship() {
@@ -89,27 +74,42 @@ export class FriendsStore extends CachedStore {
     });
   }
 
-  handleSearchContacts() {
+  handleSearchUsers() {
     this.status.loading = true;
     delete this.status.error;
   }
 
-  handleSearchContactsFailed(err) {
+  handleSearchUsersFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
 
-  handleSearchContactsSuccess(contacts) {
+  handleSearchUsersSuccess(contacts) {
     this.status.loading = false;
-    this.searchedContacts = contacts;
+    this.searched_contacts = contacts;
   }
 
-  static getFriends() {
-    return this.getState().friends;
+  handleSearchFollowings() {
+    this.status.loading = true;
+    delete this.status.error;
   }
 
-  static getSearchedContacts() {
-    return this.getState().searchedContacts;
+  handleSearchFollowingsFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleSearchFollowingsSuccess(followings) {
+    this.status.loading = false;
+    this.searched_followings = followings;
+  }
+
+  static getSearchedUsers() {
+    return this.getState().searched_users;
+  }
+
+  static getSearchedFollowings() {
+    return this.getState().searched_followings;
   }
 
   static error() {

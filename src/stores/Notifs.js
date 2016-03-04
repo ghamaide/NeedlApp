@@ -54,11 +54,7 @@ export class NotifsStore extends CachedStore {
       handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
       handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
-
       handleLogout: LoginActions.LOGOUT
-
-// ================================================================================================
-
     });
   }
 
@@ -128,36 +124,21 @@ export class NotifsStore extends CachedStore {
     })
   }
 
-  handleAddWishSuccess(result) {
-    var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
-    if (index > -1) {
-      this.myNotifications[index] = result.reco;
-    } else {
-      this.myNotifications.push(result.reco);
-    }
-  }
-
-  handleRemoveWishSuccess(restaurant) {
-    _.remove(this.myNotifications, (notification) => {
-      return notification.user_id == MeStore.getState().me.id && notification.restaurant_id == restaurant.id;
-    })
-  }
-
   handleAddRecoSuccess(result) {
     var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
     if (index > -1) {
-      this.myNotifications[index] = result.reco;
+      this.myNotifications[index] = result.activity;
     } else {
-      this.myNotifications.push(result.reco);
+      this.myNotifications.push(result.activity);
     }
   }
 
   handleUpdateRecommendationSuccess(result) {
     var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
     if (index > -1) {
-      this.myNotifications[index] = result.reco;
+      this.myNotifications[index] = result.activity;
     } else {
-      this.myNotifications.push(result.reco);
+      this.myNotifications.push(result.activity);
     }
   }
 
@@ -165,6 +146,21 @@ export class NotifsStore extends CachedStore {
     _.remove(this.myNotifications, (notification) => {
       return notification.user_id == MeStore.getState().me.id && notification.restaurant_id == restaurant.id;
     });
+  }
+
+  handleAddWishSuccess(result) {
+    var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
+    if (index > -1) {
+      this.myNotifications[index] = result.activity;
+    } else {
+      this.myNotifications.push(result.activity);
+    }
+  }
+
+  handleRemoveWishSuccess(restaurant) {
+    _.remove(this.myNotifications, (notification) => {
+      return notification.user_id == MeStore.getState().me.id && notification.restaurant_id == restaurant.id;
+    })
   }
 
   handleLogout() {
