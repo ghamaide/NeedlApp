@@ -131,140 +131,143 @@ class Login extends Component {
     }
 
     return (
-      <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false} style={styles.loginContainer}>
-        <View style={styles.logoImageWrapper}>
-          <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
-          <Text style={styles.sublineText}>Les restos préférés de vos amis</Text>
-        </View>
+      <View>
+        <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false} style={styles.loginContainer}>
+          <View style={styles.logoImageWrapper}>
+            <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
+            <Text style={styles.sublineText}>Les restos préférés de vos amis</Text>
+          </View>
 
-        {this.state.viewSignIn ? [
-          this.state.loading ? [
-            <View key='loading' style={styles.loginWrapper}>
-              {Platform.OS === 'ios' ? [<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />] : [<ProgressBarAndroid indeterminate />]}
-            </View>
+          {this.state.viewSignIn ? [
+            this.state.loading ? [
+              <View key='loading' style={styles.loginWrapper}>
+                {Platform.OS === 'ios' ? [<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />] : [<ProgressBarAndroid indeterminate />]}
+              </View>
+            ] : [
+              <View key='sign_in' style={styles.loginWrapper}>
+                {showSignInError ? [
+                  <View key='sign_in_error' style={styles.error}>
+                    <Text style={{color: '#FFFFFF'}}>{message}</Text>
+                  </View>
+                ] : null}
+                <TextInput
+                  ref='sign_in_email'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Adresse email'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={40}
+                  multiline={false}
+                  onChangeText={(email) => {
+                    this.setState({email: email});
+                  }} />
+                <TextInput
+                  ref='sign_in_password'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Mot de passe'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={20}
+                  multiline={false}
+                  secureTextEntry={true}
+                  onChangeText={(password) => {
+                    this.setState({password: password});
+                  }} />
+
+                <TouchableHighlight style={styles.submitButton} onPress={this.onMailLogin} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.submitText}>Connexion</Text>
+                </TouchableHighlight>
+
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: false})} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
+                </TouchableHighlight>
+              </View>
+            ]
           ] : [
-            <View key='sign_in' style={styles.loginWrapper}>
-              {showSignInError ? [
-                <View key='sign_in_error' style={styles.error}>
-                  <Text style={{color: '#FFFFFF'}}>{message}</Text>
-                </View>
-              ] : null}
-              <TextInput
-                ref='sign_in_email'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Adresse email'
-                placeholderTextColor='#FFFFFF'
-                style={styles.input}
-                maxLength={40}
-                multiline={false}
-                onChangeText={(email) => {
-                  this.setState({email: email});
-                }} />
-              <TextInput
-                ref='sign_in_password'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Mot de passe'
-                placeholderTextColor='#FFFFFF'
-                style={styles.input}
-                maxLength={20}
-                multiline={false}
-                secureTextEntry={true}
-                onChangeText={(password) => {
-                  this.setState({password: password});
-                }} />
+            this.state.loading ? [
+              <View key='loading' style={styles.loginWrapper}>
+                Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />
+              </View>
+            ] : [
+              <View key='sign_up'style={styles.loginWrapper}>
+                {showSignUpError ? [
+                  <View key='sign_in_error' style={styles.error}>
+                    <Text style={{color: '#FFFFFF'}}>{message}</Text>
+                  </View>
+                ] : null}
+                <TextInput
+                  ref='sign_up_name'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder="Nom d'utilisateur"
+                  placeholderTextColor='#FFFFFF'
+                  selectionColor='#00000'
+                  style={styles.input}
+                  maxLength={40}
+                  multiline={false}
+                  onChangeText={(name) => {
+                    this.setState({name: name});
+                  }} />
+                <TextInput
+                  ref='sign_up_email'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Adresse mail'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={40}
+                  multiline={false}
+                  onChangeText={(email) => {
+                    this.setState({email: email});
+                  }} />
+                <TextInput
+                  ref='sign_up_password'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Mot de passe'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={20}
+                  multiline={false}
+                  secureTextEntry={true}
+                  onChangeText={(password) => {
+                    this.setState({password: password});
+                  }} />
+                <TextInput
+                  ref='sign_up_password_confirmation'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Confirmation du mot de passe'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={20}
+                  multiline={false}
+                  secureTextEntry={true}
+                  onChangeText={(password_confirmation) => {
+                    this.setState({password_confirmation: password_confirmation});
+                  }} />
 
-              <TouchableHighlight style={styles.submitButton} onPress={this.onMailLogin} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.submitText}>Connexion</Text>
-              </TouchableHighlight>
+                <TouchableHighlight style={styles.submitButton} onPress={this.onMailCreation} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.submitText}>Créer mon compte</Text>
+                </TouchableHighlight>
 
-              <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: false})} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
-              </TouchableHighlight>
-            </View>
-          ]
-        ] : [
-          this.state.loading ? [
-            <View key='loading' style={styles.loginWrapper}>
-              Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />
-            </View>
-          ] : [
-            <View key='sign_up'style={styles.loginWrapper}>
-              {showSignUpError ? [
-                <View key='sign_in_error' style={styles.error}>
-                  <Text style={{color: '#FFFFFF'}}>{message}</Text>
-                </View>
-              ] : null}
-              <TextInput
-                ref='sign_up_name'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder="Nom d'utilisateur"
-                placeholderTextColor='#FFFFFF'
-                selectionColor='#00000'
-                style={styles.input}
-                maxLength={40}
-                multiline={false}
-                onChangeText={(name) => {
-                  this.setState({name: name});
-                }} />
-              <TextInput
-                ref='sign_up_email'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Adresse mail'
-                placeholderTextColor='#FFFFFF'
-                style={styles.input}
-                maxLength={40}
-                multiline={false}
-                onChangeText={(email) => {
-                  this.setState({email: email});
-                }} />
-              <TextInput
-                ref='sign_up_password'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Mot de passe'
-                placeholderTextColor='#FFFFFF'
-                style={styles.input}
-                maxLength={20}
-                multiline={false}
-                secureTextEntry={true}
-                onChangeText={(password) => {
-                  this.setState({password: password});
-                }} />
-              <TextInput
-                ref='sign_up_password_confirmation'
-                autoCorrect={false}
-                autoCapitalize='none'
-                placeholder='Confirmation du mot de passe'
-                placeholderTextColor='#FFFFFF'
-                style={styles.input}
-                maxLength={20}
-                multiline={false}
-                secureTextEntry={true}
-                onChangeText={(password_confirmation) => {
-                  this.setState({password_confirmation: password_confirmation});
-                }} />
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: true})} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
+                </TouchableHighlight>
+              </View>
+            ]
+          ]}
 
-              <TouchableHighlight style={styles.submitButton} onPress={this.onMailCreation} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.submitText}>Créer mon compte</Text>
-              </TouchableHighlight>
-
-              <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: true})} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
-              </TouchableHighlight>
-            </View>
-          ]
-        ]}
+        </ScrollView>
 
         <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='#308edc'>
           <Text style={styles.loginBtnText}>
             {this.state.status.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>
         </TouchableHighlight>
-      </ScrollView>
+      </View>
     );
   };
 }
@@ -338,12 +341,6 @@ var styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center'
   },
-  switchMethodText: {
-    textAlign: 'center',
-    color: '#FFFFFF',
-    textDecorationLine: 'underline',
-    fontSize: 15 
-  },
   loginBtn: {
     height: 60,
     backgroundColor: '#469AE0',
@@ -353,7 +350,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     position: 'absolute',
-    top: Dimensions.get('window').height - 60,
+    top: Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 80,
     left: 0,
     right: 0
   },

@@ -102,7 +102,7 @@ class TabView extends Component {
   render() {
     return (
      <View style={styles.tabbarContainer}>
-      	<Navigator
+        <Navigator
           style={{backgroundColor: '#FFFFFF'}}
           initialRoute={this.props.tabs[this.props.initialSelected || 0]}
           ref='tabs'
@@ -117,13 +117,13 @@ class TabView extends Component {
           }} />
 
         {this.state.showTabBar ? [
-					<View key='tabBar' style={styles.tabbarTabs}>
-          	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
-          	})}
-        	</View>
+          <View key='tabBar' style={styles.tabbarTabs}>
+            {_.map(this.props.tabs, (tab, index) => {
+              return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
+            })}
+          </View>
         ] : []}
-    	</View>
+      </View>
     );
   };
 }

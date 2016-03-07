@@ -26,10 +26,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
 
     <application
+      android:name="io.branch.referral.BranchApp"
       android:allowBackup="true"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+
+      <meta-data 
+        android:name="io.branch.sdk.BranchKey" 
+        android:value="key_test_eln0dceslLCEV8U9nUfrvehpFxdpWl26" />
 
       <meta-data
         android:name="com.google.android.geo.API_KEY"
@@ -63,6 +68,13 @@
           
           <!-- If you set up a white label for your links in your Branch link settings then  only need to add the white label domain -->
           <data android:scheme="https" android:host="download.needl-app.com"/>
+        </intent-filter>
+
+        <intent-filter>
+          <data android:scheme="needl" android:host="open" />
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
         </intent-filter>
       </activity>
 
@@ -114,6 +126,12 @@
       <receiver android:name="io.neson.react.notification.SystemBootEventReceiver">
         <intent-filter>
           <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+        </intent-filter>
+      </receiver>
+
+      <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+        <intent-filter>
+          <action android:name="com.android.vending.INSTALL_REFERRER" />
         </intent-filter>
       </receiver>
     </application>

@@ -14,7 +14,6 @@
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* NeedlIOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* NeedlIOSTests.m */; };
 		010E21EC65D34E6DB4DBA50D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 478EF6EFA1C84A97963FC4D1 /* Entypo.ttf */; };
-		02F07A043B84427CA3DEA727 /* libRNBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EB9688C65124B73BDC56515 /* libRNBranch.a */; };
 		131605A51C71DCAD002BCCB7 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 131605A41C71DC9A002BCCB7 /* libRNDeviceInfo.a */; };
 		131605E71C71E85B002BCCB7 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 131605E41C71E81A002BCCB7 /* libBranch.a */; };
 		133A16481C60E4E000D4369D /* Bolts.framework in Resources */ = {isa = PBXBuildFile; fileRef = 133A16471C60E4E000D4369D /* Bolts.framework */; };
@@ -33,6 +32,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		13E1D7141C89CE2E0080C352 /* libRNBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 131605D51C71E7E4002BCCB7 /* libRNBranch.a */; };
 		13E2B8AD1C68E12900A8CFEC /* FBSDKCoreKit.framework in Resources */ = {isa = PBXBuildFile; fileRef = 13E2B8AA1C68E12900A8CFEC /* FBSDKCoreKit.framework */; };
 		13E2B8AE1C68E12900A8CFEC /* FBSDKLoginKit.framework in Resources */ = {isa = PBXBuildFile; fileRef = 13E2B8AB1C68E12900A8CFEC /* FBSDKLoginKit.framework */; };
 		13E2B8AF1C68E12900A8CFEC /* FBSDKShareKit.framework in Resources */ = {isa = PBXBuildFile; fileRef = 13E2B8AC1C68E12900A8CFEC /* FBSDKShareKit.framework */; };
@@ -321,7 +321,6 @@
 		73710ED4DD5D44E8AD0A94D8 /* RNBranch.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNBranch.xcodeproj; path = "../node_modules/react-native-branch/RNBranch/RNBranch.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		9EB9688C65124B73BDC56515 /* libRNBranch.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNBranch.a; sourceTree = "<group>"; };
 		A32E07661C0749CF0075E6E8 /* Quicksand_Dash.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Quicksand_Dash.otf; sourceTree = "<group>"; };
 		A32E07671C0749CF0075E6E8 /* Quicksand-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Quicksand-Bold.otf"; sourceTree = "<group>"; };
 		A32E07681C0749CF0075E6E8 /* Quicksand-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Quicksand-BoldItalic.otf"; sourceTree = "<group>"; };
@@ -363,6 +362,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13E1D7141C89CE2E0080C352 /* libRNBranch.a in Frameworks */,
 				131605A51C71DCAD002BCCB7 /* libRNDeviceInfo.a in Frameworks */,
 				139F27E31C6B519C0016E73E /* libRCTFBLogin.a in Frameworks */,
 				138F19131C5A63C000294FA5 /* libBranch.a in Frameworks */,
@@ -394,7 +394,6 @@
 				131605E71C71E85B002BCCB7 /* libBranch.a in Frameworks */,
 				97CFAC2D4DAF4C1CB1D75755 /* libRNQuickAction.a in Frameworks */,
 				68389F880E294A6893DCB82B /* libRNVectorIcons.a in Frameworks */,
-				02F07A043B84427CA3DEA727 /* libRNBranch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

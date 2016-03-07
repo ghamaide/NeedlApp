@@ -15,7 +15,7 @@
     "qs": "^4.0.0",
     "react-native": "^0.20.0",
     "react-native-animatable": "^0.4.0",
-    "react-native-branch": "0.0.2",
+    "react-native-branch": "0.0.4",
     "react-native-collapsible": "^0.5.5",
     "react-native-communications": "^0.2.3",
     "react-native-contacts": "^0.2.1",

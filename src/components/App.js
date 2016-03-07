@@ -249,32 +249,32 @@ class App extends Component {
       DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
 
       Linking.addEventListener('url', this.handleOpenURL);
-    
-      Branch.getInitSessionResultPatiently(({params, error}) => {
-        // console.log('1');
-        // console.log(params);
-      });
-      
-      Branch.setIdentity(MeStore.getState().me.id.toString());
-
-      Branch.getFirstReferringParams((params) => {
-        // console.log('2');
-        // console.log(params);
-        if (params.from === 'friend_invitation') {
-          // do something because he arrived from friend invitation 
-        }
-      });
-
-      Branch.getLatestReferringParams((params) => {
-        // console.log('3');
-        // console.log(params);
-      });
 
       var coldNotif = PushNotificationIOS.popInitialNotification();
       if (coldNotif) {
         this.notifLaunchTab = this.getNotifTab(coldNotif);
       }
     }
+
+    Branch.getInitSessionResultPatiently(({params, error}) => {
+      console.log('1');
+      console.log(params);
+    });
+    
+    Branch.setIdentity(MeStore.getState().me.id.toString());
+
+    Branch.getFirstReferringParams((params) => {
+      console.log('2');
+      console.log(params);
+      if (params.from === 'friend_invitation') {
+        // do something because he arrived from friend invitation 
+      }
+    });
+
+    Branch.getLatestReferringParams((params) => {
+      console.log('3');
+      console.log(params);
+    });
 
     this.startActions();
   };

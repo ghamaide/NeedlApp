@@ -47,7 +47,9 @@ export class FriendsStore extends CachedStore {
 
       handleSearchFollowings: FriendsActions.SEARCH_FOLLOWINGS,
       handleSearchFollowingsFailed: FriendsActions.SEARCH_FOLLOWINGS_FAILED,
-      handleSearchFollowingsSuccess: FriendsActions.SEARCH_FOLLOWINGS_SUCCESS
+      handleSearchFollowingsSuccess: FriendsActions.SEARCH_FOLLOWINGS_SUCCESS,
+
+      handleResetSearch: FriendsActions.RESET_SEARCH
 
 // ================================================================================================
     });
@@ -67,11 +69,11 @@ export class FriendsStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleRemoveFriendshipSuccess(idProfil) {
+  handleRemoveFriendshipSuccess(id) {
     this.status.loading = false;
-    this.friends = _.filter(this.data.friends, function(friend) {
-      return friend.id !== idProfil;
-    });
+    // this.friends = _.filter(this.data.friends, function(friend) {
+    //   return friend.id !== id;
+    // });
   }
 
   handleSearchUsers() {
@@ -84,9 +86,9 @@ export class FriendsStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleSearchUsersSuccess(contacts) {
+  handleSearchUsersSuccess(users) {
     this.status.loading = false;
-    this.searched_contacts = contacts;
+    this.searched_users = users;
   }
 
   handleSearchFollowings() {
@@ -102,6 +104,11 @@ export class FriendsStore extends CachedStore {
   handleSearchFollowingsSuccess(followings) {
     this.status.loading = false;
     this.searched_followings = followings;
+  }
+
+  handleResetSearch() {
+    this.searched_followings = [];
+    this.searched_users = [];
   }
 
   static getSearchedUsers() {

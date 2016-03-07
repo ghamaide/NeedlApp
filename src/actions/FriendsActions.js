@@ -9,21 +9,17 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
     
-      request('GET', '/api/v2/friendships')
-        .query({
-          'friend_id': id,
-          destroy: true
-        })
+      request('DELETE', '/api/v2/friendships/' + id)
         .end((err) => {
           if (err) {
-            return this.removeFriendshipFailed(id, err);
+            return this.removeFriendshipFailed(err);
           }
-
-          this.removeFriendshipSuccess(id);
 
           if (callback) {
             callback();
           }
+
+          this.removeFriendshipSuccess(id);
         });
     }
   }
@@ -32,7 +28,7 @@ export class FriendsActions {
     return id;
   }
 
-  removeFriendshipFailed(id, err) {
+  removeFriendshipFailed(err) {
     return err;
   }
 
@@ -86,6 +82,12 @@ export class FriendsActions {
 
   searchFollowingsSuccess(result) {
     return result;
+  }
+
+  resetSearch() {
+    return function (dispatch) {
+      dispatch();
+    }
   }
 }
 

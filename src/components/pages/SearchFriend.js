@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, AlertIOS, Image, ListView, NativeModules, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, AlertIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
@@ -37,8 +37,6 @@ class SearchFriend extends Page {
     this.state.query = '';
     this.state.errors = [];
     this.state.followings = [];
-    this.state.users = [];
-    this.state.contacts = [];
     this.state.filteredContacts = [];
     this.state.needlActive = true;
     this.state.phoneActive = false;
@@ -50,7 +48,7 @@ class SearchFriend extends Page {
     return {
       loading: FriendsStore.loading(),
       error: FriendsStore.error(),
-      hasUploadedContacts: MeStore.getState.hasUploadedContacts,
+      hasUploadedContacts: MeStore.getState().hasUploadedContacts,
       users: FriendsStore.getSearchedUsers(),
       followings: FriendsStore.getSearchedFollowings()
     };
@@ -65,11 +63,13 @@ class SearchFriend extends Page {
   };
 
   componentWillMount() {
+    FriendsActions.resetSearch();
     MeStore.listen(this.onMeChange);
     FriendsStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
+    FriendsActions.resetSearch();
     MeStore.unlisten(this.onMeChange);
     FriendsStore.unlisten(this.onFriendsChange);
   };
@@ -137,12 +137,20 @@ class SearchFriend extends Page {
 
   searchFollowings = (query) => {
     this.setState({query: query});
-    FriendsActions.searchFollowings(query);
+    if (query.length > 0) {
+      FriendsActions.searchFollowings(query);
+    } else {
+      FriendsActions.resetSearch();
+    }
   };
 
   searchUsers = (query) => {
     this.setState({query: query});
-    FriendsActions.searchUsers(query);
+    if (query.length > 0) {
+      FriendsActions.searchUsers(query);
+    } else {
+      FriendsActions.resetSearch();
+    }
   };
 
   searchContacts = (query) => {
@@ -178,9 +186,14 @@ class SearchFriend extends Page {
     }
   };
 
-  renderUser = (contact) => {
+  renderUser = (user) => {
     return (
-      <View>
+      <View style={styles.contactContainer}>
+        <Image style={styles.profileImage} source={{uri: user.picture}} />
+        <Text style={styles.profileName}>{user.fullname}</Text>
+        <TouchableHighlight style={styles.imageWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
+          <Image style={styles.imageMail} source={require('../../assets/img/actions/icons/send_mail.png')} />
+        </TouchableHighlight>
       </View>
     );
   };
@@ -249,9 +262,9 @@ class SearchFriend extends Page {
     }
   };
 
-  renderHeaderWrapperFriends = () => {
+  renderHeaderWrapperUsers = () => {
     if (this.state.query) {
-      if (!this.state.followings.length) {
+      if (!this.state.users.length) {
         return(
           <View style={styles.emptyTextContainer}>
             <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
@@ -362,7 +375,7 @@ class SearchFriend extends Page {
           renderRow={is_friends ? (this.state.needlActive ? this.renderUser : this.renderContact) : this.renderUser}
           contentInset={{top: 0}}
           onScroll={Platform.OS === 'ios' ? this.closeKeyboard : null}
-          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperFriends : this.renderHeaderWrapperContacts) : this.renderHeaderWrapperFollowings}
+          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperUsers : this.renderHeaderWrapperContacts) : this.renderHeaderWrapperFollowings}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
       </View>
@@ -406,7 +419,7 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     color: '#EF582D'
   },
-    contactInfoWrapper: {
+  contactInfoWrapper: {
     marginLeft: 10,
     marginRight: 5,
     marginTop: 10,
@@ -460,6 +473,25 @@ var styles = StyleSheet.create({
     padding: 5,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  contactContainer: {
+    flexDirection: 'row',
+    padding: 10,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start'
+  },
+  profileImage: {
+    height: 40,
+    width: 40,
+    borderRadius: 20
+  },
+  profileName: {
+    fontSize: 14,
+    color: '#555555',
+    marginLeft: 10,
+    marginRight: 10,
+    flex: 1
   }
 });
 

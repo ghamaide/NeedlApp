@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
 import ProfilActions from '../actions/ProfilActions';
@@ -32,6 +33,8 @@ export class ProfilStore extends CachedStore {
       handleFetchFriends: ProfilActions.fetchFriends,
       handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
       handleFetchFriendsFailed: ProfilActions.fetchFriendsFailed,
+
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
 
       handleFetchProfil: ProfilActions.FETCH_PROFIL,
       handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
@@ -102,6 +105,13 @@ export class ProfilStore extends CachedStore {
   handleFetchProfilFailed(err) {
     this.status.loading = false;
     this.status.error = err;
+  }
+
+  handleRemoveFriendshipSuccess(id) {
+    _.remove(this.friends, (friend) => {
+      return friend.id == id;
+    });
+    this.profils = _.concat(this.me, this.friends, this.followings);
   }
 
   handleFetchFollowings() {

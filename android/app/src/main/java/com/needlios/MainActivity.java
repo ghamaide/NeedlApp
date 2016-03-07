@@ -1,6 +1,9 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
+import com.kevinejohn.RNMixpanel.RNMixpanel;
+import com.oney.gcm.GcmPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -23,6 +26,9 @@ import com.learnium.RNDeviceInfo.*;
 import com.kevinejohn.RNMixpanel.*;
 
 import com.burnweb.rnsendintent.RNSendIntentPackage;
+
+import android.content.Intent;
+import com.dispatcher.rnbranch.*;
 
 public class MainActivity extends ReactActivity {
 
@@ -54,6 +60,9 @@ public class MainActivity extends ReactActivity {
         
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+        new RNMixpanel(),
+        new GcmPackage(),
+        new RNDeviceInfo(),
             new AirPackage(),
             new RNDeviceInfo(),
             new VectorIconsPackage(),
@@ -62,7 +71,20 @@ public class MainActivity extends ReactActivity {
             new GcmPackage(),
             new NotificationPackage(this),
             new RNMixpanel(),
-            new RNSendIntentPackage()
+            new RNSendIntentPackage(),
+            new RNBranchPackage()
         );
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        RNBranchModule.initSession(this.getIntent().getData(), this);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        this.setIntent(intent);
     }
 }

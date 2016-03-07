@@ -128,6 +128,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-mixpanel')
+    compile project(':react-native-gcm-android')
+    compile project(':react-native-device-info')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:0.20.+"
@@ -141,4 +144,5 @@ dependencies {
     compile project(':react-native-system-notification')
     compile project(':RNMixpanel')
     compile project(':RNSendIntentModule')
+    compile project(':react-native-branch')
 }

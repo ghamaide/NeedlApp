@@ -22,17 +22,18 @@ export class NotifsStore extends CachedStore {
   constructor() {
     super();
 
-    this.status.notifsPush = 0;
+    this.status.notificationsPush = 0;
 
-    PushNotificationIOS.addEventListener('notification', (notif) => {
-      if (notif.getData().type === 'reco') {
-        this.status.notifsPush = this.status.notifsPush + 1;
+    PushNotificationIOS.addEventListener('notification', (notification) => {
+      if (notification.getData().type === 'reco') {
+        this.status.notificationsPush = this.status.notificationsPush + 1;
         this.emitChange();
       }
     });
 
     this.friendsNotifications = [];
     this.followingsNotifications = [];
+    this.myNotifications = [];
     this.status.loading = false;
     this.status.error = {};
 
@@ -91,7 +92,7 @@ export class NotifsStore extends CachedStore {
       return notification.user_type === 'me';
     });
 
-    this.status.notifsPush = 0;
+    this.status.notificationsPush = 0;
     this.status.loading = false;
   }
 
@@ -169,8 +170,6 @@ export class NotifsStore extends CachedStore {
   }
 
   formatDate(day, month, year) {
-    var formatted_date = '';
-
     var months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
     var formatted_date = day + ' ' + months[month] + ' ' + year;
@@ -199,7 +198,7 @@ export class NotifsStore extends CachedStore {
         return unseen + 1;
       }
       return unseen;
-    }, 0) + this.getState().status.notifsPush;
+    }, 0) + this.getState().status.notificationsPush;
   }
 
   static getRecommendation(restaurant_id, user_id) {
