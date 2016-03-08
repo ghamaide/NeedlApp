@@ -176,7 +176,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     margin: 0,
     flex: 1,
-    height: Dimensions.get('window').height
+    height: Dimensions.get('window').height - 40
   },
   recoContainer: {
     margin: 8
@@ -195,7 +195,7 @@ var styles = StyleSheet.create({
     color: '#555555',
     borderColor: '#CCCCCC',
     borderWidth: 0.5,
-    marginTop: Platform.OS === 'android' ? 20 : 0
+    marginTop: 20
   },
   thanksContainer: {
     margin: 8

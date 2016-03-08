@@ -2,6 +2,7 @@
 
 import React, {Component, Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
+import Collapsible  from 'react-native-collapsible';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Text from '../ui/Text';
@@ -65,17 +66,32 @@ class NavigationBar extends Component {
       tintColor: '#000000'
     };
 
-    return (
-      <NavBar
-        style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
-        title={titleConfig}
-        rightButton={rightButtonConfig.title ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : []}
-        leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
-    );
+    if (!this.props.profile) {
+      return (
+        <NavBar
+          style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+          title={titleConfig}
+          rightButton={rightButtonConfig.title ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : []}
+          leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
+      );
+    } else {
+      return (
+        <NavBar
+          style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+          profile={true} onPressMenuPublic={this.props.onPressMenuPublic} onPressMenuPrivate={this.props.onPressMenuPrivate}
+          title={this.props.title}
+          rightButton={rightButtonConfig.title ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : []}
+          leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
+      );
+    }
   };
 }
 
 class NavBar extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   getButtonElement(data = {}, style) {
     if (!!data.props) {
       return <View style={styles.navBarButton}>{data}</View>;
@@ -97,12 +113,32 @@ class NavBar extends Component {
 
     const colorStyle = data.tintColor ? { color: data.tintColor, } : null;
 
-    return (
-      <Text
-        style={[styles.navBarTitleText, colorStyle, ]}>
-        {data.title}
-      </Text>
-    );
+    if (!this.props.profile) {
+      return (
+        <Text
+          style={[styles.navBarTitleText, colorStyle, ]}>
+          {data.title}
+        </Text>
+      );
+    } else {
+      return (
+        <View style={[styles.navBarTitle, {flexDirection: 'row'}]}>
+          <TouchableOpacity onPress={this.props.onPressMenuPublic}>
+            <Text
+              style={[styles.navBarTitleProfile, colorStyle, {color: this.props.title == 'Public' ? '#EF582D' : '#333333'}]}>
+              Public
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.navBarTitleProfile, {marginLeft: 2, marginRight: 2}]}>|</Text>
+          <TouchableOpacity onPress={this.props.onPressMenuPrivate}>
+            <Text
+              style={[styles.navBarTitleProfile, colorStyle, {color: this.props.title == 'Public' ? '#333333' : '#EF582D'}]}>
+              Privé
+            </Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   }
 
   render() {
@@ -150,6 +186,16 @@ var styles = StyleSheet.create({
     marginTop: 12,
     color: '#333333'
   },
+  navBarTitle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
+  },
   navBarTitleText: {
     fontSize: 14,
     color: '#333333',
@@ -159,6 +205,14 @@ var styles = StyleSheet.create({
     right: 0,
     bottom: (Platform.OS === 'ios' ? 12 : 10),
     textAlign: 'center',
+    backgroundColor: 'transparent'
+  },
+  navBarTitleProfile: {
+    fontSize: 14,
+    color: '#333333',
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
+    textAlign: 'center',
+    backgroundColor: 'transparent'
   }
 });
 

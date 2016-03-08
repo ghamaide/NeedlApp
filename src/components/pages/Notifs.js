@@ -101,9 +101,9 @@ class Notifs extends Page {
           {refreshingIndicator}
           <Text style={styles.emptyText}>Tu n'as pas encore de notification.</Text>
           {this.state.friendsActive ? [
-            <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+            <Text key='invite_friends' style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
           ] : [
-            <Text style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+            <Text key='invite_experts' style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
           ]}
         </View>
       );
@@ -252,7 +252,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    height: Dimensions.get('window').height - 140
+    height: Dimensions.get('window').height - 150
   },
   emptyText: {
     padding: 20,

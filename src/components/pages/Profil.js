@@ -30,7 +30,12 @@ import Restaurant from './Restaurant';
 var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 
-let BUTTON_HEIGHT = 40;
+let IMAGE_HEIGHT = 90;
+let BADGE_IMAGE_HEIGHT = 50;
+let INNER_BANNER_HEIGHT = IMAGE_HEIGHT - 40;
+let MARGIN_LEFT = 15;
+let MARGIN_TOP = 20;
+let TEXT_INFO_WIDTH = Dimensions.get('window').width - IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2;
 
 class Profil extends Page {
   static route(props) {
@@ -60,6 +65,8 @@ class Profil extends Page {
     this.state.isOpened = false;
     this.state.recommendationActive = true;
     this.state.wishlistActive = false;
+    this.state.private = false;
+    this.state.menu_opened = false;
   };
 
   componentWillMount() {
@@ -102,8 +109,23 @@ class Profil extends Page {
     RNComm.email(['contact@needl-app.com'], '', '', 'J\'ai une question !', '');
   };
 
+  onPressMenuPublic = () => {
+    if (this.state.private) {
+      this.setState({private: false});
+    }
+  };
+
+  onPressMenuPrivate = () => {
+    if (!this.state.private) {
+      this.setState({private: true});
+    }
+  };
+
   renderPage() {
     var profil = this.state.profile;
+
+    var first_name = profil.fullname.split(" ")[0];
+    var last_name = profil.fullname.split(" ")[1] || '';
 
     var friendsIds = _.map(ProfilStore.getFriends(), (friend) => {
       return friend.id
@@ -114,9 +136,26 @@ class Profil extends Page {
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
-          <NavigationBar key='navbarfromtab' image={require('../../assets/img/other/icons/map.png')} title={profil.fullname || profil.name} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
+          <NavigationBar 
+            key='navbarfromtab'
+            profile={true}
+            title={this.state.private ? 'Privé' : 'Public'}
+            opened={this.state.menu_opened}
+            onPressMenuPublic={this.onPressMenuPublic}
+            onPressMenuPrivate={this.onPressMenuPrivate}
+            image={require('../../assets/img/other/icons/map.png')}
+            rightButtonTitle='Carte'
+            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
         ] : [
-          <NavigationBar key='navbarfrompush' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} image={require('../../assets/img/other/icons/map.png')} title={profil.fullname || profil.name} rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+          <NavigationBar 
+            key='navbarfrompush'
+            title={profil.fullname || profil.name}
+            title={this.state.title}
+            leftButtonTitle='Retour'
+            onLeftButtonPress={() => this.props.navigator.pop()}
+            image={require('../../assets/img/other/icons/map.png')}
+            rightButtonTitle='Carte'
+            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
         ]}
         <ScrollView
           contentInset={{top: 0}}
@@ -135,12 +174,48 @@ class Profil extends Page {
           }>
 
           <View style={styles.infoContainer}>
-            <Image source={{uri: profil.picture}} style={styles.image} />
-            <View style={styles.textInfoContainer}>
-              <Text style={styles.profilBadge}>{profil.name}</Text>
-              <Text style={styles.profilRemerciements}>{profil.recommendations.length} recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
+            <View style={styles.infoInnerContainer}>
+              <View style={styles.textInfoContainer}>
+                <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
+                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                    420
+                  </Text>
+                  <Text style={[styles.textInfoText, {top: 20}]}>
+                    amis
+                  </Text>
+                </View>
+                <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
+                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                    12
+                  </Text>
+                  <Text style={[styles.textInfoText, {top: 20}]}>
+                    experts
+                  </Text>
+                </View>
+                <View style={styles.textInfo}>
+                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                    40
+                  </Text>
+                  <Text style={[styles.textInfoText, {top: 20}]}>
+                    remercie
+                  </Text>
+                </View>
+              </View>
             </View>
-            {/* remove on gamification update <Image source={{uri: profil.picture}} style={styles.badgeImage} /> */}
+            <View style={styles.badgeInfoContainer}>
+              <Text style={styles.badgeName}>Créateur</Text>
+              <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
+            </View>
+            <Image source={{uri: profil.picture}} style={styles.image} />
+            <Image source={{uri: profil.picture}} style={styles.badgeImage} />
+            <View style={styles.profileNameContainer}>
+              <Text style={[styles.profileName, {top: 10}]}>
+                {first_name}
+              </Text>
+              <Text style={[styles.profileName, {top: 25, fontWeight: '500'}]}>
+                {last_name}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.actionContainer}>
@@ -329,33 +404,85 @@ class Profil extends Page {
 var styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center'
+    padding: 0,
+    alignItems: 'flex-end' 
+  },
+  infoInnerContainer: {
+    width: Dimensions.get('window').width,
+    height: INNER_BANNER_HEIGHT,
+    marginTop: MARGIN_TOP,
+    alignItems: 'flex-end',
+    backgroundColor: 'rgba(254, 48, 57, 0.1)',
   },
   textInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: TEXT_INFO_WIDTH,
+    marginTop: 5,
+    height: INNER_BANNER_HEIGHT - 10,
+  },
+  textInfo: {
+    width: TEXT_INFO_WIDTH / 3,
+    height: INNER_BANNER_HEIGHT - 10,
+    borderColor: '#FFFFFF',
+  },
+  textInfoText: {
     flex: 1,
-    marginLeft: 15
+    position: 'absolute',
+    left: 1,
+    right: 1,
+    color: '#000000',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  badgeInfoContainer: {
+    width: TEXT_INFO_WIDTH - BADGE_IMAGE_HEIGHT / 2 - 5,
+    height: 70,
+    marginTop: 5,
+    backgroundColor: 'transparent',
+    padding: 5
+  },
+  badgeName: {
+    fontWeight: '500',
+    fontSize: 13
+  },
+  badgeDescription: {
+    fontSize: 12,
+    marginTop: 3
   },
   image: {
-    height: 70,
-    width: 70,
+    position: 'absolute',
+    top: MARGIN_TOP / 2,
+    left: MARGIN_LEFT,
+    height: IMAGE_HEIGHT,
+    width: IMAGE_HEIGHT,
+    borderRadius: 12
   },
   badgeImage: {
-    height: 70,
-    width: 70,
-    borderRadius: 35
+    position: 'absolute',
+    top: IMAGE_HEIGHT + MARGIN_TOP / 2 - BADGE_IMAGE_HEIGHT / 2,
+    left: IMAGE_HEIGHT + MARGIN_LEFT - BADGE_IMAGE_HEIGHT / 2 + 10,
+    height: BADGE_IMAGE_HEIGHT,
+    width: BADGE_IMAGE_HEIGHT,
+    borderRadius: BADGE_IMAGE_HEIGHT / 2
   },
-  profilBadge: {
-    color: '#000000',
-    fontSize: 15,
-    backgroundColor: 'transparent',
-    marginBottom: 5
-  },
-  profilRemerciements: {
-    color: '#444444',
-    fontSize: 12,
+  profileNameContainer: {
+    position: 'absolute',
+    top: IMAGE_HEIGHT + MARGIN_TOP / 2,
+    left: MARGIN_LEFT,
+    width: IMAGE_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     backgroundColor: 'transparent'
+  },
+  profileName: {
+    position: 'absolute',
+    left: 0,
+    width: IMAGE_HEIGHT,
+    color: '#000000',
+    fontSize: 12,
+    textAlign: 'center',
+    flex: 1,
   },
   actionContainer: {
     flexDirection: 'row',

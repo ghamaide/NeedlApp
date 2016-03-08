@@ -145,7 +145,7 @@ class RecoStep6 extends Component {
     return (
       <View>
         <NavigationBar title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
-        <ScrollView onScroll={this.closeKeyboard} style={styles.container} scrollEnabled={true} keyboardShouldPersistTaps={true}>
+        <ScrollView onScroll={this.closeKeyboard} scrollEventThrottle={16} style={styles.container} scrollEnabled={true} keyboardShouldPersistTaps={true}>
           <View style={styles.recoContainer}>
             <TextInput 
               ref='review'
@@ -210,7 +210,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     margin: 0,
     flex: 1,
-    height: Dimensions.get('window').height
+    height: Dimensions.get('window').height - 60
   },
   recoContainer: {
     margin: 8

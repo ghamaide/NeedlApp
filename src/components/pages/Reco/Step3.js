@@ -149,7 +149,7 @@ var styles = StyleSheet.create({
   justifyContent: 'center'
  },
  title: {
-  marginBottom: 30,
+  marginBottom: 20,
   color: '#000000',
   fontSize: 13,
   textAlign: 'center'
