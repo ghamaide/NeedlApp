@@ -350,7 +350,7 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     position: 'absolute',
-    top: Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 80,
+    top: Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 85,
     left: 0,
     right: 0
   },

@@ -42,7 +42,7 @@ class Help extends Component {
     if (this.props.from === 'liste') {
       return (
         <View style={{flex: 1}}>
-          <NavigationBar title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar type='back' title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
           <View style={styles.container}>
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatar} source={require('../../assets/img/other/icons/algorithm.png')} />

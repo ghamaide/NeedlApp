@@ -6,6 +6,7 @@ import _ from 'lodash';
 import PushNotification from 'react-native-push-notification';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -26,10 +27,11 @@ import Restaurant from './Restaurant';
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class Liste extends Page {
-  static route() {
+  static route(props) {
     return {
       component: Liste,
-      title: 'Restaurants'
+      title: 'Restaurants',
+      passProps: props
     };
   };
 
@@ -68,10 +70,10 @@ class Liste extends Page {
   };
 
   onPressText = () => {
-  	this.props.navigator.push(Help.route({from: 'liste'}));
+    this.props.navigator.push(Help.route({from: 'liste'}));
   };
 
-	renderRestaurant = (restaurant) => {
+  renderRestaurant = (restaurant) => {
     return (
       <RestaurantElement
       	rank={_.findIndex(this.state.restaurants, restaurant) + 1}
@@ -117,13 +119,13 @@ class Liste extends Page {
   renderPage() {
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar image={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route())} />
+        <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route({has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications, toggle: this.props.toggle}))} />
 
         <TouchableHighlight key='filter_button' style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
         	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
         }}>
             <Text style={styles.filterMessageText}>
-              {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Aidez-moi à trouver !'}
+              {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Besoin d\'aide ?'}
             </Text>
         </TouchableHighlight>
         <RefreshableListView
@@ -136,6 +138,8 @@ class Liste extends Page {
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
+
+        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
       </View>
     );
   };

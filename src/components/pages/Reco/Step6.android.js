@@ -109,7 +109,7 @@ class RecoStep6 extends Component {
     var recommenders = _.remove(RestaurantsStore.getRecommenders(reco.restaurant.id), (id) => {return id !== MeStore.getState().me.id});
     return (
       <View>
-        <NavigationBar title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar type='back' title='Publier' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <ScrollView style={styles.container} scrollEnabled={true}>
           <View style={styles.recoContainer}>
             <TextInput 

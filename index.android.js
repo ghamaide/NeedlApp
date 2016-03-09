@@ -19,7 +19,6 @@ class NeedlIOS extends Component {
     return {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
-              FriendsStore.getState().status.ready &&
               RestaurantsStore.getState().status.ready,
       loggedIn: !!MeStore.getState().me.id
     };

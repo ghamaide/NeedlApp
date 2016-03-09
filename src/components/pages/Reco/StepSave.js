@@ -27,7 +27,7 @@ class RecoStepSave extends Component {
     super(props);
 
     this.state = {
-      hasShared: MeStore.getState().me.HAS_SHARED
+      has_shared: MeStore.getState().me.HAS_SHARED
     };
   };
 

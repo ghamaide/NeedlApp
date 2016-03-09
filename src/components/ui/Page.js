@@ -28,10 +28,10 @@ class Page extends Component {
       return this.renderLoading();
     }
 
-    // if (__DEV__ && !_.isEmpty(this.state.error)) {
-    //   console.log(this.state.error);
-    //   return this.renderError();
-    // }
+    if (__DEV__ && !_.isEmpty(this.state.error)) {
+      console.log(this.state.error);
+      return this.renderError();
+    }
 
     return this.renderPage();
   };

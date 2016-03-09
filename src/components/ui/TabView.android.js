@@ -3,56 +3,23 @@
 import React, {BackAndroid, Component, Image, Navigator, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 
 import _ from 'lodash';
+import SideMenu from 'react-native-side-menu';
 
 import Text from './Text';
 
 import MeStore from '../../stores/Me';
+
+import Menu from './Menu';
 
 class TabView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selected: this.props.initialSelected || 0,
-      lastPress: 0
+      selected: 
+      lastPress: 0,
+      menu_open: false
     };
-  };
-
-  renderTab(index, name, icon, pastille, hasShared) {
-    var opacityStyle = {opacity: index === this.state.selected ? 1 : 0.3};
-
-    return (
-      <TouchableWithoutFeedback key={index} style={styles.tabbarTab} onPress={() => {
-        if (this.props.tabsBlocked) {
-          return;
-        }
-        this.resetToTab(index);
-      }}>
-        <View style={styles.tabbarTab}>
-          <Image source={icon} style={opacityStyle} />
-
-          {name ?
-            <Text style={[styles.tabbarTabText, opacityStyle]}>{name}</Text>
-          : null}
-
-          {pastille && this.state.selected !== index ?
-            <View style={styles.pastilleContainer}>
-              <Text style={styles.pastilleText}>{pastille}</Text>
-            </View>
-            : null}
-
-          {!hasShared && typeof hasShared !== 'undefined' ?
-            <View style={styles.pastilleContainer}>
-              <Text style={styles.pastilleText}>!</Text>
-            </View>
-            : null}
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  };
-
-  onMeChange = () => {
-    // this.setState({showTabBar: MeStore.getState().showTabBar});
   };
 
   hardwareBackPress = () => {
@@ -75,54 +42,53 @@ class TabView extends Component {
   };
 
   componentDidMount() {
-    MeStore.listen(this.onMeChange);
     BackAndroid.addEventListener('hardwareBackPress', this.hardwareBackPress);
-    this.setState({showTabBar: MeStore.getState().showTabBar});
-    this.props.onTab(this.state.selected);
+    this.props.onTab(this.props.initialSelected || 0);
 
   };
 
   componentWillUnmount() {
-    MeStore.unlisten(this.onMeChange);
     BackAndroid.removeEventListener('hardwareBackPress', this.hardwareBackPress);
   };
 
   resetToTab(index, opts) {
-    this.setState({selected: index});
-
-    this.refs.tabs.resetTo(this.props.tabs[index]);
-
+    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {toggle: this.toggle}}));
+    this.setState({menu_open: false});
     this.props.onTab(index);
   };
 
   renderScene = (tab, navigator) => {
-    return React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps));
+    return React.createElement(tab.component, _.extend({navigator: navigator, toggle: this.toggle}, tab.passProps));
+  };
+
+  toggle = () => {
+    this.setState({menu_open: !this.state.menu_open});
   };
 
   render() {
     return (
-     <View style={styles.tabbarContainer}>
-        <Navigator
-          style={{backgroundColor: '#FFFFFF'}}
-          initialRoute={this.props.tabs[this.props.initialSelected || 0]}
-          ref='tabs'
-          key='navigator'
-          renderScene={this.renderScene}
-          configureScene={() => {
-            return {
-              ...Navigator.SceneConfigs.FadeAndroid,
-              defaultTransitionVelocity: 1000,
-              gestures: {}
-            };
-          }} />
-
-        {this.state.showTabBar ? [
-          <View key='tabBar' style={styles.tabbarTabs}>
-            {_.map(this.props.tabs, (tab, index) => {
-              return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
-            })}
-          </View>
-        ] : []}
+      <View style={styles.tabbarContainer}>
+        <SideMenu 
+          menu={
+            <Menu tabs={this.props.tabs}
+              tabsBlocked={this.props.tabsBlocked} 
+              resetToTab={(index) => this.resetToTab(index)} />} 
+          isOpen={this.state.menu_open}
+          onChange={(is_open) => this.setState({menu_open: is_open})}>
+          <Navigator
+            ref='tabs'
+            key='navigator'
+            style={{backgroundColor: '#FFFFFF'}}
+            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {toggle: () => this.toggle()}})}
+            renderScene={this.renderScene}
+            configureScene={() => {
+              return {
+                ...Navigator.SceneConfigs.FadeAndroid,
+                defaultTransitionVelocity: 1000,
+                gestures: {}
+              };
+            }} />
+        </SideMenu>
       </View>
     );
   };

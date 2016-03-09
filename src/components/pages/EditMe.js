@@ -63,7 +63,7 @@ class EditMe extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Modification' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar type='back' title='Modification' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.editContainer}>
           <Text style={styles.label}>Nom</Text>
           <TextInput

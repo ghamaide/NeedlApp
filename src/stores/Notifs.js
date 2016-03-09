@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import alt from '../alt';
 
+import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
 import ProfilActions from '../actions/ProfilActions';
@@ -14,6 +15,7 @@ import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 
 import MeStore from './Me';
+import ProfilStore from './Profil';
 
 import CachedStore from './CachedStore';
 
@@ -44,9 +46,11 @@ export class NotifsStore extends CachedStore {
 
       handleSetNotificationsAsSeen: NotifsActions.NOTIFICATIONS_SEEN,
 
-      handleMaskProfilSuccess: ProfilActions.MASK_PROFIL_SUCCESS,
+      handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
 
-      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+      handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
+      handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
 
       handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
       handleUpdateRecommendationSuccess: RecoActions.UPDATE_RECOMMENDATION_SUCCESS,
@@ -113,8 +117,24 @@ export class NotifsStore extends CachedStore {
     });
   }
 
-  handleMaskProfilSuccess(id) {
-    _.remove(this.friendsNotifications, (notification) => {return notification.user_id === id});
+  handleAcceptFriendshipSuccess(result) {
+    var friend_activities = _.map(result.activities, (activity) => {
+      var temp_date = moment(activity.date);
+      var formatted_date = this.formatDate(temp_date.day(), temp_date.month() + 1, temp_date.year());
+      activity.formatted_date = formatted_date;
+      activity.seen = true;
+    });
+    this.friendsNotifications.push(friend_activities);
+  }
+
+  handleRemoveFriendshipSuccess(friendship_id) {
+    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+    _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
+  }
+
+  handleMaskProfilSuccess(friendship_id) {
+    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+    _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 
   handleDisplayProfilSuccess(result) {

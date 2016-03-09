@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, AlertIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, AlertIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';
@@ -36,7 +36,6 @@ class SearchFriend extends Page {
     this.state = this.searchFriendState();
     this.state.query = '';
     this.state.errors = [];
-    this.state.followings = [];
     this.state.filteredContacts = [];
     this.state.needlActive = true;
     this.state.phoneActive = false;
@@ -50,7 +49,6 @@ class SearchFriend extends Page {
       error: FriendsStore.error(),
       hasUploadedContacts: MeStore.getState().hasUploadedContacts,
       users: FriendsStore.getSearchedUsers(),
-      followings: FriendsStore.getSearchedFollowings()
     };
   };
 
@@ -63,13 +61,11 @@ class SearchFriend extends Page {
   };
 
   componentWillMount() {
-    FriendsActions.resetSearch();
     MeStore.listen(this.onMeChange);
     FriendsStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
-    FriendsActions.resetSearch();
     MeStore.unlisten(this.onMeChange);
     FriendsStore.unlisten(this.onFriendsChange);
   };
@@ -135,21 +131,10 @@ class SearchFriend extends Page {
     }
   };
 
-  searchFollowings = (query) => {
-    this.setState({query: query});
-    if (query.length > 0) {
-      FriendsActions.searchFollowings(query);
-    } else {
-      FriendsActions.resetSearch();
-    }
-  };
-
   searchUsers = (query) => {
     this.setState({query: query});
     if (query.length > 0) {
       FriendsActions.searchUsers(query);
-    } else {
-      FriendsActions.resetSearch();
     }
   };
 
@@ -184,6 +169,10 @@ class SearchFriend extends Page {
       this.setState({needlActive: true});
       this.setState({phoneActive: false});
     }
+  };
+
+  inviteUser = (user_id) => {
+    FriendsActions.askFriendship(user_id);
   };
 
   renderUser = (user) => {
@@ -244,37 +233,12 @@ class SearchFriend extends Page {
     );
   };
 
-  renderHeaderWrapperFollowings = () => {
-    if (this.state.query) {
-      if (!this.state.followings.length) {
-        return(
-          <View style={styles.emptyTextContainer}>
-            <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
-          </View>
-        );
-      }
-    } else {
-      return (
-        <View style={styles.emptyTextContainer}>
-          <Text style={styles.emptyText}>Recherchez vos influenceurs sur Needl</Text>
-        </View>
-      );
-    }
-  };
 
   renderHeaderWrapperUsers = () => {
-    if (this.state.query) {
-      if (!this.state.users.length) {
-        return(
-          <View style={styles.emptyTextContainer}>
-            <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
-          </View>
-        );
-      }
-    } else {
-      return (
+    if (!this.state.users.length) {
+      return(
         <View style={styles.emptyTextContainer}>
-          <Text style={styles.emptyText}>Recherchez vos contacts sur Needl</Text>
+          <Text style={styles.emptyText}>Pas de résultats trouvés pour '{this.state.query}'</Text>
         </View>
       );
     }
@@ -308,27 +272,71 @@ class SearchFriend extends Page {
     }
   };
 
+  renderBlankScreen(content) {
+    return (
+      <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false}>
+        <TouchableHighlight style={{padding: 10, height: Dimensions.get('window').height - 160}} onPress={this.closeKeyboard} underlayColor='rgba(0, 0, 0, 0)'>
+          <View>
+            {content}
+          </View>
+        </TouchableHighlight>
+      </ScrollView>
+    );
+  };
+
+  renderList = () => {
+    return (
+      <ListView
+        style={styles.contactsList}
+        dataSource={ds.cloneWithRows(this.state.needlActive ? this.state.users : this.state.filteredContacts)}
+        renderRow={this.state.needlActive ? this.renderUser : this.renderContact}
+        contentInset={{top: 0}}
+        onScroll={Platform.OS === 'ios' ? this.closeKeyboard : null}
+        renderHeader={this.state.needlActive ? this.renderHeaderWrapperUsers : this.renderHeaderWrapperContacts}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false} />
+    );
+  };
+
   renderPage() {
-    var is_friends = (this.props.type === 'friends');
+    var content;
+
+    if (!this.state.query) {
+      if (this.state.needlActive) {
+        content = (
+          <View>
+            <TouchableHighlight style={styles.searchContactsButton} onPress={this.getContacts} underlayColor='rgba(0, 0, 0, 0)'>
+              <Text style={styles.searchContactsText}>Rechercher vos contacts sur Needl</Text>
+            </TouchableHighlight>
+          </View>
+        );
+      } else {
+        content = this.renderList();
+      }
+    } else if (this.state.loading) {
+      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
+    } else if (!_.isEmpty(this.state.error)) {
+      content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
+    } else {
+      content = this.renderList();
+    }
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title={is_friends ? 'Inviter' : 'Rechercher'} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar type='back' title='Inviter' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
 
-        {is_friends ? [
-          <View key='switch_buttons' style={styles.contactsButtonContainer}>
-            <TouchableHighlight 
-              style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
-              onPress={() => this.onPressContactButton('needl')}>
-              <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#EF582D'}}>Needl</Text>
-            </TouchableHighlight>
-            <TouchableHighlight 
-              style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#EF582D' : 'transparent'}]}
-              onPress={() => this.onPressContactButton('phone')}>
-              <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#EF582D'}}>Téléphone</Text>
-            </TouchableHighlight>
-          </View>
-        ] : null}
+        <View key='switch_buttons' style={styles.contactsButtonContainer}>
+          <TouchableHighlight 
+            style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressContactButton('needl')}>
+            <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#EF582D'}}>Needl</Text>
+          </TouchableHighlight>
+          <TouchableHighlight 
+            style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#EF582D' : 'transparent'}]}
+            onPress={() => this.onPressContactButton('phone')}>
+            <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#EF582D'}}>Téléphone</Text>
+          </TouchableHighlight>
+        </View>
 
         {Platform.OS === 'ios' ? [
           <SearchBar
@@ -338,14 +346,10 @@ class SearchFriend extends Page {
             hideBackground={true}
             textFieldBackgroundColor='#DDDDDD'
             onChangeText={(text) => {
-              if (is_friends) {
-                if (this.state.needlActive) {
-                  this.searchUsers(text);
-                } else {
-                  this.searchContacts(text);
-                }
+              if (this.state.needlActive) {
+                this.searchUsers(text);
               } else {
-                this.searchFollowings(text);
+                this.searchContacts(text);
               }
             }}
             onSearchButtonPress={this.closeKeyboard} />
@@ -356,28 +360,17 @@ class SearchFriend extends Page {
             placeholder='Rechercher'
             style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
             onChangeText={(text) => {
-              if (is_friends) {
-                if (this.state.needlActive) {
-                  this.searchUsers(text);
-                } else {
-                  this.searchContacts(text);
-                }
+              if (this.state.needlActive) {
+                this.searchUsers(text);
               } else {
-                this.searchFollowings(text);
+                this.searchContacts(text);
               }
             }}
             placeholderTextColor='#333333' />
         ]}
 
-        <ListView
-          style={styles.contactsList}
-          dataSource={ds.cloneWithRows(is_friends ? (this.state.needlActive ? this.state.users : this.state.filteredContacts) : this.state.followings)}
-          renderRow={is_friends ? (this.state.needlActive ? this.renderUser : this.renderContact) : this.renderUser}
-          contentInset={{top: 0}}
-          onScroll={Platform.OS === 'ios' ? this.closeKeyboard : null}
-          renderHeader={is_friends ? (this.state.needlActive ? this.renderHeaderWrapperUsers : this.renderHeaderWrapperContacts) : this.renderHeaderWrapperFollowings}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false} />
+        {content}
+
       </View>
     );
   };
@@ -492,7 +485,18 @@ var styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     flex: 1
-  }
+  },
+  firstMessageText: {
+    fontSize: 15,
+    textAlign: 'center',
+    fontWeight: '500',
+    color: '#EF582D'
+  },
+  noResultText: {
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center'
+  },
 });
 
 export default SearchFriend;

@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
 
+import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -118,7 +119,25 @@ class CarteProfil extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key='navbar' image={require('../../assets/img/tabs/icons/account.png')} title='Carte' rightButtonTitle='Profil' onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: profile.id}))} />
+        {!this.props.id ? [
+          <NavigationBar 
+            key='navbarfromtab'
+            type='default'
+            title='Carte'
+            rightImage={require('../../assets/img/tabs/icons/account.png')}
+            rightButtonTitle='Profil'
+            onRightButtonPress={() => this.props.navigator.replace(Profil.route({toggle: this.props.toggle, has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications}))} />
+        ] : [
+          <NavigationBar 
+            key='navbarfrompush'
+            title='Carte'
+            type='back'
+            leftButtonTitle='Retour'
+            onLeftButtonPress={() => this.props.navigator.pop()}
+            rightImage={require('../../assets/img/tabs/icons/account.png')}
+            rightButtonTitle='Profil'
+            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+        ]}
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
             key='map'
@@ -154,8 +173,11 @@ class CarteProfil extends Page {
             })}
           </MapView>
         </View>
-			</View>
-		);
+        {!this.props.id ? [
+        <MenuIcon key='menu_icon' pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        ] : null}
+      </View>
+    );
   };
 }
 

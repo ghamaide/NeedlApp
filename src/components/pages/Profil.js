@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
 import RNComm from 'react-native-communications';
 
+import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -65,7 +66,7 @@ class Profil extends Page {
     this.state.isOpened = false;
     this.state.recommendationActive = true;
     this.state.wishlistActive = false;
-    this.state.private = false;
+    this.state.private = true;
     this.state.menu_opened = false;
   };
 
@@ -138,22 +139,23 @@ class Profil extends Page {
         {!this.props.id ? [
           <NavigationBar 
             key='navbarfromtab'
-            profile={true}
-            title={this.state.private ? 'Privé' : 'Public'}
-            opened={this.state.menu_opened}
-            onPressMenuPublic={this.onPressMenuPublic}
-            onPressMenuPrivate={this.onPressMenuPrivate}
-            image={require('../../assets/img/other/icons/map.png')}
+            type='switch'
+            active={this.state.private}
+            title_left={'Privé'}
+            title_right={'Public'}
+            onPressLeft={this.onPressMenuPrivate}
+            onPressRight={this.onPressMenuPublic}
+            rightImage={require('../../assets/img/other/icons/map.png')}
             rightButtonTitle='Carte'
-            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: MeStore.getState().me.id}))} />
+            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({toggle: this.props.toggle, has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications}))} />
         ] : [
           <NavigationBar 
             key='navbarfrompush'
+            type='back'
             title={profil.fullname || profil.name}
-            title={this.state.title}
             leftButtonTitle='Retour'
             onLeftButtonPress={() => this.props.navigator.pop()}
-            image={require('../../assets/img/other/icons/map.png')}
+            rightImage={require('../../assets/img/other/icons/map.png')}
             rightButtonTitle='Carte'
             onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
         ]}
@@ -178,26 +180,26 @@ class Profil extends Page {
               <View style={styles.textInfoContainer}>
                 <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
                   <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    420
+                    {ProfilStore.getFriends().length}
                   </Text>
                   <Text style={[styles.textInfoText, {top: 20}]}>
-                    amis
+                    ami{ProfilStore.getFriends().length > 1 ? 's' : ''}
                   </Text>
                 </View>
                 <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
                   <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    12
+                    {profil.followings.length}
                   </Text>
                   <Text style={[styles.textInfoText, {top: 20}]}>
-                    experts
+                    expert{profil.followings.length > 1 ? 's' : ''}
                   </Text>
                 </View>
                 <View style={styles.textInfo}>
                   <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    40
+                    {profil.score}
                   </Text>
                   <Text style={[styles.textInfoText, {top: 20}]}>
-                    remercie
+                    merci{profil.score > 1 ? 's' : ''}
                   </Text>
                 </View>
               </View>
@@ -237,7 +239,7 @@ class Profil extends Page {
                     if (ProfilStore.loading()) {
                       return;
                     }
-                    ProfilActions.maskProfil(profil.id);
+                    FriendsActions.maskProfil(profil.friendship_id);
                   }}>
                   <Text style={styles.buttonText}>{ProfilStore.loading() ? 'Masque...' : 'Apparait dans mes recos'}</Text>
                 </TouchableHighlight>
@@ -250,7 +252,7 @@ class Profil extends Page {
                     if (ProfilStore.loading()) {
                       return;
                     }
-                    ProfilActions.displayProfil(profil.id);
+                    FriendsActions.displayProfil(profil.friendship_id);
                   }}>
                   <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>{ProfilStore.loading() ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
                 </TouchableHighlight>
@@ -312,7 +314,7 @@ class Profil extends Page {
                       if (FriendsStore.loading()) {
                         return;
                       }
-                      FriendsActions.removeFriendship(profil.id, () => {
+                      FriendsActions.removeFriendship(profil.friendship_id, () => {
                         this.props.navigator.resetTo(Friends.route());
                       });
                       this.forceUpdate();
@@ -395,7 +397,12 @@ class Profil extends Page {
               ]
             ] : null}
           </View>
+
         </ScrollView>
+
+        {!this.props.id ? [
+          <MenuIcon key='menu_icon' pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        ] : null}
       </View>
     );
   };
@@ -486,6 +493,7 @@ var styles = StyleSheet.create({
   },
   actionContainer: {
     flexDirection: 'row',
+    marginTop: 10,
     paddingLeft: 5,
     paddingRight: 5
   },

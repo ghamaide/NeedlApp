@@ -21,6 +21,7 @@ import Text from '../ui/Text';
 
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
+import RestaurantsActions from '../../actions/RestaurantsActions';
 
 import MeStore from '../../stores/Me';
 import NotifsStore from '../../stores/Notifs';
@@ -177,17 +178,21 @@ class Restaurant extends Page {
     });
   };
 
+  onRefresh = () => {
+    RestaurantsActions.fetchRestaurant(this.state.restaurant.id);
+  };
+
   renderPage() {
     var restaurant = this.state.restaurant;
     return (
       <View>
         {this.props.fromReco ? [
-          <NavigationBar key='navbar' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route())} />
+          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route())} />
         ] : [
-          <NavigationBar key='navbar' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         ]}
         <ScrollView
-          style={{flex: 1, height: windowHeight - 120}}
+          style={{flex: 1, height: windowHeight - 60}}
           contentInset={{top: 0}}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}

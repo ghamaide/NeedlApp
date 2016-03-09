@@ -5,6 +5,7 @@ import React, {Dimensions, Image, ListView, ScrollView, StyleSheet, TouchableHig
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import MenuIcon from '../ui/MenuIcon';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -103,7 +104,7 @@ class Notifs extends Page {
           {this.state.friendsActive ? [
             <Text key='invite_friends' style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
           ] : [
-            <Text key='invite_experts' style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+            <Text key='invite_experts' style={styles.emptyText}>Recherche tes influenceurs favoris sur Needl pour découvrir leur séléction de restaurants !</Text>
           ]}
         </View>
       );
@@ -154,7 +155,7 @@ class Notifs extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Feed' />
+        <NavigationBar type='default' title='Feed' />
 
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
           <TouchableHighlight 
@@ -181,6 +182,8 @@ class Notifs extends Page {
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
+
+        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
       </View>
     );
   };
@@ -252,14 +255,14 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent',
-    height: Dimensions.get('window').height - 150
+    height: Dimensions.get('window').height - 170
   },
   emptyText: {
     padding: 20,
+    fontSize: 15,
     textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '400',
-    color: '#EF582D',
+    fontWeight: '500',
+    color: '#EF582D'
   }
 });
 

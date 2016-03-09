@@ -35,9 +35,8 @@ export class RestaurantsActions {
       request('GET', '/api/v2/restaurants/' + id)
         .end((err, result) => {
           if (err) {
-            return this.fetchRestaurantFailed(err, id);
+            return this.fetchRestaurantFailed(err);
           }
-
           this.fetchRestaurantSuccess(result);
         });
     }

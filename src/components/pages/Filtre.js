@@ -116,7 +116,7 @@ class Filtre extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Filtrer' leftButtonTitle='Annuler' onLeftButtonPress={() => {
+        <NavigationBar type='back' title='Filtrer' leftButtonTitle='Annuler' onLeftButtonPress={() => {
           MeActions.displayTabBar(true);
           this.props.navigator.pop();
         }}/>

@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Animatable from 'react-native-animatable';
 import SearchBar from 'react-native-search-bar';
 
+import MenuIcon from '../../ui/MenuIcon';
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
@@ -123,7 +124,7 @@ class RecoStep1 extends Component {
 
     return (
       <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={true} style={styles.container}>
-        <NavigationBar title='Recommendation' />
+        <NavigationBar type='default' title='Recommandation' />
       
         {Platform.OS === 'ios' ? [
           <SearchBar
@@ -145,6 +146,7 @@ class RecoStep1 extends Component {
 
         {content}
 
+        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
       </ScrollView>
     );
   };
@@ -199,10 +201,10 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
   },
   firstMessageText: {
-    color: '#EF582D',
-    fontSize: 17,
-    fontWeight: '400',
+    fontSize: 15,
     textAlign: 'center',
+    fontWeight: '500',
+    color: '#EF582D',
     paddingLeft: 15,
     paddingRight: 15
   },

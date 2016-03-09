@@ -34,6 +34,9 @@ export class ProfilActions {
       
       request('GET', '/api/v2/friendships')
         .end((err, result) => {
+          console.log('fetch friends');
+          console.log(err);
+          console.log(result);
           if (err) {
             return this.fetchFriendsFailed(err);
           }
@@ -73,59 +76,26 @@ export class ProfilActions {
     return result;
   }
 
-  maskProfil(id) {
+  fetchAllExperts() {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/v2/friendships')
-        .query({
-          'friend_id': id,
-          invisible: true
-        })
-        .end((err) => {
-          if (err) {
-            return this.maskProfilFailed(err);
-          }
-
-          this.maskProfilSuccess(id);
-        });
-    }
-  }
-
-  maskProfilSuccess(id) {
-    return id;
-  }
-
-  maskProfilFailed(err) {
-    return err;
-  }
-
-  displayProfil(id) {
-    return (dispatch) => {
-      dispatch();
-
-      request('GET', '/api/v2/friendships')
-        .query({
-          'friend_id': id,
-          invisible: false
-        })
+      request('GET', '/api/v2/users/experts')
         .end((err, result) => {
           if (err) {
-            return this.displayProfilFailed(err);
+            return this.fetchAllExpertsFailed(err);
           }
-
-          this.displayProfilSuccess(id);
-          // this.displayProfilSuccess(result);
+          this.fetchAllExpertsSuccess(result);
         });
     }
   }
 
-  displayProfilSuccess(result) {
-    return result;
+  fetchAllExpertsFailed(err) {
+    return err;
   }
 
-  displayProfilFailed(err) {
-    return err;
+  fetchAllExpertsSuccess(result) {
+    return result;
   }
 }
 

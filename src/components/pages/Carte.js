@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
 
+import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -22,10 +23,11 @@ import Liste from './Liste';
 import Restaurant from './Restaurant';
 
 class Carte extends Page {
-  static route() {
+  static route(props) {
     return {
       component: Carte,
       title: 'Carte',
+      passProps: props
     };
   };
 
@@ -120,7 +122,7 @@ class Carte extends Page {
   renderPage() {
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key='navbar' image={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route())} />
+        <NavigationBar key='navbar' type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications, toggle: this.props.toggle}))} />
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
             key='map'
@@ -172,6 +174,8 @@ class Carte extends Page {
             </View>
           ] : null}
         </View>
+
+        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
       </View>
     );
   };

@@ -34,7 +34,7 @@ class RecoStep2 extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Statut' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar type='back' title='Statut' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.container}>
           <Text style={styles.title}>As-tu déjà testé le restaurant '{reco.restaurant.name}' ?</Text>
           <ToggleGroup

@@ -229,6 +229,7 @@ class App extends Component {
     ProfilActions.fetchProfil.defer(MeStore.getState().me.id);
     ProfilActions.fetchFriends.defer();
     ProfilActions.fetchFollowings.defer();
+    ProfilActions.fetchAllExperts.defer();
     RestaurantsActions.fetchRestaurants.defer();
     NotifsActions.fetchNotifications.defer();
   };
@@ -257,23 +258,23 @@ class App extends Component {
     }
 
     Branch.getInitSessionResultPatiently(({params, error}) => {
-      console.log('1');
-      console.log(params);
+      // console.log('1');
+      // console.log(params);
     });
     
     Branch.setIdentity(MeStore.getState().me.id.toString());
 
     Branch.getFirstReferringParams((params) => {
-      console.log('2');
-      console.log(params);
+      // console.log('2');
+      // console.log(params);
       if (params.from === 'friend_invitation') {
         // do something because he arrived from friend invitation 
       }
     });
 
     Branch.getLatestReferringParams((params) => {
-      console.log('3');
-      console.log(params);
+      // console.log('3');
+      // console.log(params);
     });
 
     this.startActions();
@@ -322,8 +323,15 @@ class App extends Component {
   };
 
   render() {
-    var loadingState = this.state.meLoading || this.state.notificationsLoading || this.state.profileLoading || this.state.restaurantsLoading;
-    var loading = (typeof loadingState === 'undefined' || loadingState);
+    var loading_array = [this.state.meLoading, this.state.notificationsLoading, this.state.profileLoading, this.state.restaurantsLoading];
+    var index_loading = 0;
+    _.forEach(loading_array, (loading) => {
+      if (typeof loading == 'undefined') {
+        index_loading += 2;
+      } else if (loading) {
+        index_loading += 1;
+      }
+    });
 
     return (
       <View style={{flex: 1}}>
@@ -346,7 +354,8 @@ class App extends Component {
             {
               component: RecoStep1,
               icon: require('../assets/img/tabs/icons/add.png'),
-              hasShared: MeStore.getState().me.HAS_SHARED
+              title: 'Recommandation',
+              has_shared: MeStore.getState().me.HAS_SHARED
             },
             {
               component: Notifs,
@@ -420,7 +429,7 @@ class App extends Component {
           </Overlay>
         ] : null}
 
-        {loading && false ? [
+        {index_loading > 1 ? [
           <Overlay key='loading_overlay'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}

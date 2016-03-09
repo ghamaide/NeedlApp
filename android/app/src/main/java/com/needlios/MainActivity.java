@@ -1,9 +1,6 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
-import com.kevinejohn.RNMixpanel.RNMixpanel;
-import com.oney.gcm.GcmPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -60,9 +57,6 @@ public class MainActivity extends ReactActivity {
         
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
-        new RNMixpanel(),
-        new GcmPackage(),
-        new RNDeviceInfo(),
             new AirPackage(),
             new RNDeviceInfo(),
             new VectorIconsPackage(),

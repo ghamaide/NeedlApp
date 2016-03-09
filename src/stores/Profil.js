@@ -23,6 +23,9 @@ export class ProfilStore extends CachedStore {
     this.me = {};
     this.friends = [];
     this.followings = [];
+    this.experts = [];
+    this.requests_sent = [];
+    this.requests_received = [];
 
     this.status.loading = false;
     this.status.error = {}
@@ -34,8 +37,6 @@ export class ProfilStore extends CachedStore {
       handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
       handleFetchFriendsFailed: ProfilActions.fetchFriendsFailed,
 
-      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
-
       handleFetchProfil: ProfilActions.FETCH_PROFIL,
       handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
       handleFetchProfilFailed: ProfilActions.FETCH_PROFIL_FAILED,
@@ -44,13 +45,22 @@ export class ProfilStore extends CachedStore {
       handleFetchFollowingsSuccess: ProfilActions.fetchFollowingsSuccess,
       handleFetchFollowingsFailed: ProfilActions.fetchFollowingsFailed,
 
-      handleMaskProfil: ProfilActions.MASK_PROFIL,
-      handleMaskProfilFailed: ProfilActions.MASK_PROFIL_FAILED,
-      handleMaskProfilSuccess: ProfilActions.MASK_PROFIL_SUCCESS,
+      handleFetchAllExperts: ProfilActions.fetchAllExperts,
+      handleFetchAllExpertsSuccess: ProfilActions.fetchAllExpertsSuccess,
+      handleFetchAllExpertsFailed: ProfilActions.fetchAllExpertsFailed,
 
-      handleDisplayProfil: ProfilActions.DISPLAY_PROFIL,
-      handleDisplayProfilFailed: ProfilActions.DISPLAY_PROFIL_FAILED,
-      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+      handleAskFriendshipSuccess: FriendsActions.ASK_FRIENDSHIP_SUCCESS,
+      handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
+      handleRefuseFriendshipSuccess: FriendsActions.REFUSE_FRIENDSHIP_SUCCESS,
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
+
+      handleMaskProfil: FriendsActions.MASK_PROFIL,
+      handleMaskProfilFailed: FriendsActions.MASK_PROFIL_FAILED,
+      handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
+
+      handleDisplayProfil: FriendsActions.DISPLAY_PROFIL,
+      handleDisplayProfilFailed: FriendsActions.DISPLAY_PROFIL_FAILED,
+      handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
 
       handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
       handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS,
@@ -67,8 +77,10 @@ export class ProfilStore extends CachedStore {
     delete this.status.error;
   }
 
-  handleFetchFriendsSuccess(profils) {
-    this.friends = profils.friends;
+  handleFetchFriendsSuccess(result) {
+    this.friends = result.friends;
+    this.requests_received = result.requests_received;
+    this.requests_sent = result.requests_sent;
     this.profils = _.concat(this.friends, this.me, this.followings);
     this.status.loading = false;
   }
@@ -107,6 +119,21 @@ export class ProfilStore extends CachedStore {
     this.status.error = err;
   }
 
+  handleAskFriendshipSuccess(result) {
+    this.requests_sent.push(result.request);
+  }
+
+  handleAcceptFriendshipSuccess(result) {
+    this.friends.push(result.friend);
+    this.profils = _.concat(this.me, this.friends, this.followings);
+  }
+
+  handleRefuseFriendshipSuccess(friendship_id) {
+    _.remove(this.requests_sent, (request) => {
+      return request.friendship_id === friendship_id;
+    });
+  }
+
   handleRemoveFriendshipSuccess(id) {
     _.remove(this.friends, (friend) => {
       return friend.id == id;
@@ -130,6 +157,21 @@ export class ProfilStore extends CachedStore {
     this.status.loading = false;
   }
 
+  handleFetchAllExperts() {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleFetchAllExpertsFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleFetchAllExpertsSuccess(result) {
+    this.experts = result.experts;
+    this.status.loading = false;
+  }
+
   handleMaskProfil() {
     this.status.loading = true;
     delete this.status.error;
@@ -140,12 +182,14 @@ export class ProfilStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleMaskProfilSuccess(idProfil) {
-    var index = _.findIndex(this.friends, function(o) {return o.id === idProfil;});
+  handleMaskProfilSuccess(result) {
+    var friend_id = _.find(this.profils, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = true;
     } else {
-      index = _.findIndex(this.followings, function(o) {return o.id === idProfil;});
+      // normalement, on ne rentre jamais ici car on ne peut pas masquer / afficher un expert
+      index = _.findIndex(this.followings, function(o) {return o.id === friend_id});
       this.followings[index].invisible = true;
     }
     this.profils = _.concat(this.me, this.friends, this.followings);
@@ -162,12 +206,14 @@ export class ProfilStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleDisplayProfilSuccess(idProfil) {
-    var index = _.findIndex(this.friends, function(o) {return o.id === idProfil;});
+  handleDisplayProfilSuccess(result) {
+    var friend_id = _.find(this.profils, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = false;
     } else {
-      index = _.findIndex(this.followings, function(o) {return o.id === idProfil;});
+      // normalement, on ne rentre jamais ici car on ne peut pas masquer / afficher un expert
+      index = _.findIndex(this.followings, function(o) {return o.id === friend_id});
       this.followings[index].invisible = false;
     }
     this.profils = _.concat(this.me, this.friends, this.followings);
@@ -231,8 +277,12 @@ export class ProfilStore extends CachedStore {
     return this.getState().status.loading;
   }
 
+  static getFriendFromFriendship(id) {
+    return _.find(this.getState().profils, (profil) => {return profil.friendship_id === id});
+  }
+
   static getProfil(id) {
-    return _.find(this.getState().profils, function(o) {return o.id === id;});
+    return _.find(this.getState().profils, (profil) => {return profil.id === id});
   }
 
   static getProfils() {
@@ -245,6 +295,18 @@ export class ProfilStore extends CachedStore {
 
   static getFollowings() {
     return this.getState().followings;
+  }
+
+  static getRequestsSent() {
+    return this.getState().requests_sent;
+  }
+
+  static getRequestsReceived() {
+    return this.getState().requests_received;
+  }
+
+  static getExperts() {
+    return this.getState().experts;
   }
 }
 

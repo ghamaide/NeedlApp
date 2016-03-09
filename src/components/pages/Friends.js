@@ -7,11 +7,13 @@ import SearchBar from 'react-native-search-bar';
 import Animatable from 'react-native-animatable';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import MenuIcon from '../ui/MenuIcon';
+import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
-import NavigationBar from '../ui/NavigationBar';
 
+import FriendsActions from '../../actions/FriendsActions';
 import ProfilActions from '../../actions/ProfilActions';
 
 import FriendsStore from '../../stores/Friends';
@@ -31,25 +33,24 @@ class Friends extends Page {
     };
   };
 
-  friendsState() {
-    return {
-      friends: ProfilStore.getFriends(),
-      followings: ProfilStore.getFollowings(),
-      filteredFriends: ProfilStore.getFriends(),
-      filteredFollowings: ProfilStore.getFollowings(),
-      loading: ProfilStore.loading(),
-      error: ProfilStore.error(),
-    };
-  };
-
   constructor(props) {
     super(props);
 
     this.state = this.friendsState();
-    this.state.friendsActive = true;
-    this.state.followingsActive = false;
-    this.state.searchedText = '';
-    this.state.title = 'Amis';
+    this.state.friends_active = true;
+    this.state.searched_text = '';
+  };
+
+  friendsState() {
+    return {
+      friends: ProfilStore.getFriends(),
+      followings: ProfilStore.getFollowings(),
+      filtered_friends: ProfilStore.getFriends(),
+      filtered_followings: ProfilStore.getFollowings(),
+      requests_received: ProfilStore.getRequestsReceived(),
+      loading: ProfilStore.loading(),
+      error: ProfilStore.error(),
+    };
   };
 
   componentWillMount() {
@@ -64,23 +65,25 @@ class Friends extends Page {
     this.setState(this.friendsState());
   };
 
-  searchFriends = (searchedText) => {
-    this.setState({searchedText});
-    var newFilteredFriends = _.filter(this.state.friends, function(friend) {
-      return friend.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
-    });
+  // Remove to activate search bar for friends
+  // searchFriends = (searched_text) => {
+  //   this.setState({searched_text});
+  //   var new_filtered_friends = _.filter(this.state.friends, function(friend) {
+  //     return friend.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
+  //   });
 
-    this.setState({filteredFriends: newFilteredFriends});
-  };
+  //   this.setState({filtered_friends: new_filtered_friends});
+  // };
 
-  searchFollowings = (searchedText) => {
-    this.setState({searchedText});
-    var newFilteredFollowings = _.filter(this.state.followings, function(following) {
-      return following.name.toLowerCase().indexOf(searchedText.toLowerCase()) > -1;
-    });
+  // Remove to activate search bar for followings
+  // searchFollowings = (searched_text) => {
+  //   this.setState({searched_text});
+  //   var new_filtered_followings = _.filter(this.state.followings, function(following) {
+  //     return following.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
+  //   });
 
-    this.setState({filteredFollowings: newFilteredFollowings});
-  };
+  //   this.setState({filtered_followings: new_filtered_followings});
+  // };
 
   closeKeyboard = () => {
     if (Platform.OS === 'ios') {
@@ -93,17 +96,15 @@ class Friends extends Page {
     ProfilActions.fetchFollowings();
   };
 
-  onPressFriend = (from) => {
-    if (from === 'friends') {
-      this.setState({friendsActive: true});
-      this.setState({followingsActive: false});
-      this.searchFriends(this.state.searchedText);
+  onPressMenuFriends = () => {
+    if (!this.state.friends_active) {
+      this.setState({friends_active: true});
     }
+  };
 
-    if (from === 'followings') {
-      this.setState({followingsActive: true});
-      this.setState({friendsActive: false});
-      this.searchFollowings(this.state.searchedText);
+  onPressMenuFollowings = () => {
+    if (this.state.friends_active) {
+      this.setState({friends_active: false});
     }
   };
 
@@ -124,11 +125,11 @@ class Friends extends Page {
   };
 
   renderHeader = (refreshingIndicator) => {
-    var friendNumber = ProfilStore.getFriends().length;
-    var followingNumber = ProfilStore.getFollowings().length;
+    var friend_number = ProfilStore.getFriends().length;
+    var following_number = ProfilStore.getFollowings().length;
 
-    if (this.state.friendsActive) {
-      if (friendNumber > 0) {
+    if (this.state.friends_active) {
+      if (friend_number > 0) {
         return (
           <View>
             {refreshingIndicator}
@@ -143,7 +144,7 @@ class Friends extends Page {
         );
       }
     } else {
-      if (followingNumber > 0) {
+      if (following_number > 0) {
         return (
           <View>
             {refreshingIndicator}
@@ -164,49 +165,71 @@ class Friends extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        {this.state.friendsActive ? [
-          <NavigationBar key='navbar_friends' title='Amis' rightButtonTitle='Inviter' onRightButtonPress={() => this.props.navigator.push(SearchFriend.route({type: 'friends'}))} />
-        ] : [
-          <NavigationBar key='navbar_followings' title='Influenceurs' rightButtonTitle='Rechercher' onRightButtonPress={() => this.props.navigator.push(SearchFriend.route({type: 'followings'}))} />
-        ]}
-        <View style={styles.friendsButtonContainer}>
-          <TouchableHighlight
-            underlayColor='rgba(0, 0, 0, 0)'
-            style={[styles.friendsButton, {backgroundColor: this.state.friendsActive ? '#EF582D' : 'transparent'}]}
-            onPress={() => this.onPressFriend('friends')}>
-            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#EF582D'}}>Amis</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            underlayColor='rgba(0, 0, 0, 0)'
-            style={[styles.friendsButton, {backgroundColor: this.state.followingsActive ? '#EF582D' : 'transparent'}]}
-            onPress={() => this.onPressFriend('followings')}>
-            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
-          </TouchableHighlight>
-        </View>
+        <NavigationBar 
+          type='switch'
+          active={this.state.friends_active}
+          title_left={'Amis'}
+          title_right={'Influenceurs'}
+          onPressLeft={this.onPressMenuFriends}
+          onPressRight={this.onPressMenuFollowings} />
 
-        {Platform.OS === 'ios' ? [
-          <SearchBar
-            key='search'
-            ref='searchBar'
-            placeholder='Rechercher'
-            hideBackground={true}
-            textFieldBackgroundColor='#DDDDDD'
-            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchFollowings} />
+        {/* Remove to activate search bar
+        this.state.friends_active ? [
+          Platform.OS === 'ios' ? [
+            <SearchBar
+              key='search'
+              ref='searchBar'
+              placeholder='Rechercher'
+              hideBackground={true}
+              textFieldBackgroundColor='#DDDDDD'
+              onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
+          ] : [
+            <TextInput
+              key='search'
+              style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+              ref='searchBar'
+              placeholder='Rechercher'
+              placeholderTextColor='#333333'
+              hideBackground={true}
+              onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
+          ]
+        ] : null*/}
+
+        {this.state.friends_active ? [
+          <TouchableHighlight key='invite_friend' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchFriend.route())} underlayColor='rgba(0, 0, 0, 0)'>
+            <Text style={styles.invitationText}>Ajouter un nouvel ami</Text>
+          </TouchableHighlight>
         ] : [
-          <TextInput
-            key='search'
-            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
-            ref='searchBar'
-            placeholder='Rechercher'
-            placeholderTextColor='#333333'
-            hideBackground={true}
-            onChangeText={this.state.friendsActive ? this.searchFriends : this.searchFollowings} />
+          <TouchableHighlight key='invite_following' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchFriend.route())} underlayColor='rgba(0, 0, 0, 0)'>
+            <Text style={styles.invitationText}>Ajouter un nouvel influenceur</Text>
+          </TouchableHighlight>
         ]}
+
+        {this.state.friends_active && this.state.requests_received.length > 0 ? [
+          _.map(this.state.requests_received, (request) => {
+            return (
+              <View key={'request_received_' + request.friendship_id} style={styles.requestsContainer}>
+                <Image source={{uri: request.picture}} style={{height: 60, width: 60, borderRadius: 30}} />
+                <Text style={styles.requestName}>{request.fullname}</Text>
+                <View style={styles.requestButtonsContainer}>
+                  <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.acceptFriendship(request.friendship_id)} style={styles.requestButtonAccept}>
+                    <Text style={styles.requestButtonAcceptText}>Accepter</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.refuseFriendship(request.friendship_id)} style={styles.requestButtonRefuse}>
+                    <Text style={styles.requestButtonRefuseText}>Refuser</Text>
+                  </TouchableHighlight>
+                </View>
+                <Text style={{position: 'absolute', top: 10, left: 10, color: '#555555', fontWeight: '500', fontSize: 12}}>On t'a invité !</Text>
+              </View>
+            );
+          })
+        ] : null}
+
         <RefreshableListView
           style={styles.friendsList}
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
-          dataSource={this.state.friendsActive ? ds.cloneWithRows(this.state.filteredFriends) : ds.cloneWithRows(this.state.filteredFollowings)}
+          dataSource={this.state.friends_active ? ds.cloneWithRows(this.state.filtered_friends) : ds.cloneWithRows(this.state.filtered_followings)}
           renderRow={this.renderFriend}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
@@ -214,6 +237,8 @@ class Friends extends Page {
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
           onScroll={this.closeKeyboard} />
+
+        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
       </View>
     );
   };
@@ -262,23 +287,76 @@ var styles = StyleSheet.create({
     paddingTop: 20
   },
   emptyText: {
+    fontSize: 15,
     textAlign: 'center',
-    fontSize: 17,
-    fontWeight: '400',
-    color: '#EF582D',
+    fontWeight: '500',
+    color: '#EF582D'
   },
-  friendsButtonContainer: {
-    flexDirection: 'row',
-    margin: 10,
-    borderWidth: 1,
-    borderColor: '#EF582D',
-    borderRadius: 5
-  },
-  friendsButton: {
-    flex: 1,
-    padding: 5,
+  requestsContainer: {
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 5,
+    marginBottom: 5
+  },
+  requestName: {
+    textAlign: 'center',
+    color: '#555555',
+    marginTop: 10,
+    marginBottom: 5
+  },
+  requestButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  requestButtonAccept: {
+    backgroundColor: '#EF582D',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 5,
+    margin: 5
+  },
+  requestButtonRefuse: {
+    backgroundColor: '#FFFFFF',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 5,
+    borderColor: '#888888',
+    borderWidth: 1,
+    margin: 5
+  },
+  requestButtonAcceptText: {
+    color: '#FFFFFF',
+    fontWeight: '500',
+    fontSize: 13,
+    textAlign: 'center'
+  },
+  requestButtonRefuseText: {
+    color: '#555555',
+    fontWeight: '400',
+    fontSize: 13,
+    textAlign: 'center'
+  },
+  invitationButton: {
+    margin: 5,
+    borderColor: '#EF582D',
+    borderRadius: 5,
+    borderWidth: .5,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  invitationText: {
+    textAlign: 'center',
+    color: '#EF582D',
+    fontSize: 13
   }
 });
 

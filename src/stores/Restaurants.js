@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
@@ -57,9 +58,11 @@ export class RestaurantsStore extends CachedStore {
 
       handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL,
 
-      handleMaskProfilSuccess: ProfilActions.MASK_PROFIL_SUCCESS,
+      handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
 
-      handleDisplayProfilSuccess: ProfilActions.DISPLAY_PROFIL_SUCCESS,
+      handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
+      handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
 
       handleSetRegion: RestaurantsActions.SET_REGION,
       handleSetRegionSuccess: RestaurantsActions.SET_REGION_SUCCESS,
@@ -135,7 +138,7 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleFetchRestaurantSuccess(restaurant) {
-    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
+    var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id});
     if (index > -1) {
       this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
     } else {
@@ -149,22 +152,56 @@ export class RestaurantsStore extends CachedStore {
     this.status.error = data.err;
   }
 
+  handleAcceptFriendshipSuccess(result) {
+    var ids = _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(ids, (id) => restaurant.id == id);
+      if (index > -1) {
+        this.restaurants[index] = restaurant;
+      } else {
+        this.restaurants.push(restaurant);
+      }
+    });
+  }
+
+  handleRemoveFriendshipSuccess(friendship_id) {
+    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+    _.remove(this.restaurants, (restaurant) => {
+      var nb = 0;
+
+      if (restaurant.my_friends_recommending) {
+        nb += restaurant.my_friends_recommending.length;
+      }
+      if (restaurant.my_friends_wishing) {
+        nb += restaurant.my_friends_wishing.length;
+      }
+
+      if (nb > 1) {
+        return false;
+      }
+
+      if (_.isEqual(restaurant.my_friends_recommending, [friend_id]) || _.isEqual(restaurant.my_friends_wishing, [friend_id])) {
+        return true;
+      }
+    });
+  }
+
   handleMaskProfilSuccess(id) {
     _.map(this.restaurants, (restaurant) => {
       var nb = 0;
 
-      if (restaurant.friends_recommending) {
-        nb += restaurant.friends_recommending.length;
+      if (restaurant.my_friends_recommending) {
+        nb += restaurant.my_friends_recommending.length;
       }
-      if (restaurant.friends_wishing) {
-        nb += restaurant.friends_wishing.length;
+      if (restaurant.my_friends_wishing) {
+        nb += restaurant.my_friends_wishing.length;
       }
 
       if (nb > 1) {
         return;
       }
 
-      if (_.isEqual(restaurant.friends_recommending, [id]) || _.isEqual(restaurant.friends_wishing, [id])) {
+      if (_.isEqual(restaurant.my_friends_recommending, [id]) || _.isEqual(restaurant.my_friends_wishing, [id])) {
         restaurant.ON_MAP = false;
       }
     });
@@ -172,7 +209,7 @@ export class RestaurantsStore extends CachedStore {
 
   handleDisplayProfilSuccess(id) {
     _.map(this.restaurants, (restaurant) => {
-      if (restaurant.ON_MAP = false && _.includes(restaurant.friends_wishing, id) || _.includes(restaurant.friends_recommending, id)) {
+      if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, id) || _.includes(restaurant.my_friends_recommending, id)) {
         restaurant.ON_MAP = true;
       }
     });
@@ -427,12 +464,6 @@ export class RestaurantsStore extends CachedStore {
     var currentRegion = this.getState().currentRegion;
     var showPersonalContent = this.getState().showPersonalContent;
 
-    var findOne = function (haystack, arr) {
-      return arr.some(function (v) {
-        return haystack.indexOf(v) >= 0;
-      });
-    };
-
     var filteredRestaurants =  _.filter(this.searchable(), (restaurant) => {
 
       var intAmbiences = _.map(restaurant.ambiences, (ambience) => {
@@ -447,15 +478,15 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      if (filters.ambiences.length > 0 && !findOne(filters.ambiences, intAmbiences)) {
+      if (filters.ambiences.length > 0 && _.isEmpty(_.intersection(filters.ambiences, intAmbiences))) {
         return false;
       }
 
-      if (filters.occasions.length > 0 && !findOne(filters.occasions, intOccasions)) {
+      if (filters.occasions.length > 0 && _.isEmpty(_.intersection(filters.occasions, intOccasions))) {
         return false;
       }
 
-      if (filters.types.length > 0 && !findOne(filters.types, restaurant.types)) {
+      if (filters.types.length > 0 && _.isEmpty(_.intersection(filters.types, restaurant.types))) {
         return false;
       }
 

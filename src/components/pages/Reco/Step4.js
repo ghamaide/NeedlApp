@@ -37,7 +37,7 @@ class RecoStep4 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title='Points forts' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle='Valider' onRightButtonPress={this.onRightButtonPress} />      
+        <NavigationBar type='back' title='Points forts' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle='Valider' onRightButtonPress={this.onRightButtonPress} />      
         <View style={styles.container}> 
           <Text style={styles.title}>Sélectionne un ou plusieurs points forts</Text>
            <ToggleGroup
