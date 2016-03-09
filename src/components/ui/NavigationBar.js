@@ -203,7 +203,7 @@ var styles = StyleSheet.create({
     marginTop: 3,
   },
   navBarButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     letterSpacing: 0.5,
     marginTop: 12,
     color: '#333333'
@@ -219,7 +219,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   navBarTitleText: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#333333',
     fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     position: 'absolute',
@@ -230,7 +230,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent'
   },
   navBarTitleSwitch: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#333333',
     fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     textAlign: 'center',

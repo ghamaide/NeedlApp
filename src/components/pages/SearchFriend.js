@@ -13,6 +13,7 @@ import TextInput from '../ui/TextInput';
 
 import FriendsStore from '../../stores/Friends'
 import MeStore from '../../stores/Me'
+import ProfilStore from '../../stores/Profil'
 
 import FriendsActions from '../../actions/FriendsActions'
 import MeActions from '../../actions/MeActions'
@@ -44,11 +45,20 @@ class SearchFriend extends Page {
   };
 
   searchFriendState() {
+    var requests_sent = ProfilStore.getRequestsSent();
+    var friends = ProfilStore.getFriends();
+    var requests_sent_ids = _.map(requests_sent, (request) => {
+      return request.id;
+    });
+    var friends_ids = _.map(friends, (friend) => {
+      return friend.id;
+    });
     return {
       loading: FriendsStore.loading(),
       error: FriendsStore.error(),
       hasUploadedContacts: MeStore.getState().hasUploadedContacts,
       users: FriendsStore.getSearchedUsers(),
+      friends_and_requests_sent_ids: _.concat(requests_sent_ids, friends_ids)
     };
   };
 
@@ -180,9 +190,13 @@ class SearchFriend extends Page {
       <View style={styles.contactContainer}>
         <Image style={styles.profileImage} source={{uri: user.picture}} />
         <Text style={styles.profileName}>{user.fullname}</Text>
-        <TouchableHighlight style={styles.imageWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
-          <Image style={styles.imageMail} source={require('../../assets/img/actions/icons/send_mail.png')} />
-        </TouchableHighlight>
+        {_.includes(this.state.friends_and_requests_sent_ids, user.id) ? [
+          <Image key={'check_' + user.id} style={styles.imageCheck} source={require('../../assets/img/actions/icons/check.png')} />
+        ] : [
+          <TouchableHighlight key={'invite_friend_' + user.id} style={styles.imageWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
+            <Image style={styles.imageMail} source={require('../../assets/img/actions/icons/send_mail.png')} />
+          </TouchableHighlight>
+        ]}
       </View>
     );
   };

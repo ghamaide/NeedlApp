@@ -85,11 +85,13 @@ class Friends extends Page {
   //   this.setState({filtered_followings: new_filtered_followings});
   // };
 
-  closeKeyboard = () => {
-    if (Platform.OS === 'ios') {
-      NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-    }
-  };
+
+  // Remove to activate search bar closing
+  // closeKeyboard = () => {
+  //   if (Platform.OS === 'ios') {
+  //     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+  //   }
+  // };
 
   onRefresh = () => {
     ProfilActions.fetchFriends();
@@ -347,16 +349,17 @@ var styles = StyleSheet.create({
     margin: 5,
     borderColor: '#EF582D',
     borderRadius: 5,
-    borderWidth: .5,
-    paddingTop: 5,
-    paddingBottom: 5,
+    borderWidth: 1,
+    paddingTop: 10,
+    paddingBottom: 10,
     paddingLeft: 15,
     paddingRight: 15,
   },
   invitationText: {
     textAlign: 'center',
     color: '#EF582D',
-    fontSize: 13
+    fontSize: 15,
+    fontWeight: '400'
   }
 });
 

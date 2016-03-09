@@ -10,7 +10,7 @@ class Page extends Component {
 
   renderLoading() {
     return (
-      <View style={styles.loadingWrapper}>
+      <View style={styles.wrapper}>
         <ActivityIndicatorIOS
         animating={true}
         style={[{height: 80}]}
@@ -20,7 +20,11 @@ class Page extends Component {
   };
 
   renderError() {
-    return <Text>Error</Text>;
+    return (
+      <View style={styles.wrapper}>
+        <Text>Error</Text>
+      </View>
+    );
   };
 
   render() {
@@ -30,7 +34,7 @@ class Page extends Component {
 
     if (__DEV__ && !_.isEmpty(this.state.error)) {
       console.log(this.state.error);
-      return this.renderError();
+      // return this.renderError();
     }
 
     return this.renderPage();
@@ -38,7 +42,7 @@ class Page extends Component {
 }
 
 var styles = StyleSheet.create({
-  loadingWrapper: {
+  wrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
