@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import alt from '../alt';
 
+import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
@@ -51,6 +52,9 @@ export class NotifsStore extends CachedStore {
 
       handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
       handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
+
+      handleFollowExpertSuccess: FollowingsActions.FOLLOW_EXPERT_SUCCESS,
+      handleUnfollowExpertSuccess: FollowingsActions.UNFOLLOW_EXPERT_SUCCESS,
 
       handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
       handleUpdateRecommendationSuccess: RecoActions.UPDATE_RECOMMENDATION_SUCCESS,
@@ -120,7 +124,7 @@ export class NotifsStore extends CachedStore {
   handleAcceptFriendshipSuccess(result) {
     var friend_activities = _.map(result.activities, (activity) => {
       var temp_date = moment(activity.date);
-      var formatted_date = this.formatDate(temp_date.day(), temp_date.month() + 1, temp_date.year());
+      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
       activity.formatted_date = formatted_date;
       activity.seen = true;
     });
@@ -140,8 +144,23 @@ export class NotifsStore extends CachedStore {
   handleDisplayProfilSuccess(result) {
     _.forEach(result.notifications, (notification) => {
       var temp_date = moment(notification.date);
-      var formatted_date = this.formatDate(temp_date.day(), temp_date.month() + 1, temp_date.year());
+      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
       this.friendsNotifications.push(_.extend(notification, {formatted_date: formatted_date, seen: true}));
+    })
+  }
+
+  handleFollowExpertSuccess(result) {
+    _.forEach(result.activities, (activity) => {
+      var temp_date = moment(activity.date);
+      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
+      this.followingsNotifications.push(_.extend(activity, {formatted_date: formatted_date, seen: true}));
+    })
+  }
+
+  handleUnfollowExpertSuccess(result) {
+    var expert_id = ProfilStore.getFollowingFromFollowership(result.followership_id).id;
+    _.remove(this.followingsNotifications, (notification) => {
+      return notification.user_id == expert_id;
     })
   }
 

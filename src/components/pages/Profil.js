@@ -13,11 +13,13 @@ import Text from '../ui/Text';
 
 import RestaurantElement from '../elements/Restaurant';
 
+import FollowingsActions from '../../actions/FollowingsActions';
 import FriendsActions from '../../actions/FriendsActions';
 import LoginActions from '../../actions/LoginActions';
 import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
 
+import FollowingsStore from '../../stores/Followings';
 import FriendsStore from '../../stores/Friends';
 import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
@@ -230,31 +232,52 @@ class Profil extends Page {
                 <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier mon profil</Text>
               </TouchableHighlight>
             ] : [
-              !profil.invisible ? [
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.leftButtonContainer, {backgroundColor: '#38E1B2', borderColor: '#38E1B2'}]}
-                  key={'hide_reco_' + profil.id}
-                  onPress={() => {
-                    if (ProfilStore.loading()) {
-                      return;
-                    }
-                    FriendsActions.maskProfil(profil.friendship_id);
-                  }}>
-                  <Text style={styles.buttonText}>{ProfilStore.loading() ? 'Masque...' : 'Apparait dans mes recos'}</Text>
-                </TouchableHighlight>
+              !is_following ? [
+                !profil.invisible ? [
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={[styles.leftButtonContainer, {backgroundColor: '#38E1B2', borderColor: '#38E1B2'}]}
+                    key={'hide_reco_' + profil.id}
+                    onPress={() => {
+                      if (ProfilStore.loading()) {
+                        return;
+                      }
+                      FriendsActions.maskProfil(profil.friendship_id);
+                    }}>
+                    <Text style={styles.buttonText}>{ProfilStore.loading() ? 'Masque...' : 'Apparait dans mes recos'}</Text>
+                  </TouchableHighlight>
+                ] : [
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={[styles.leftButtonContainer, {backgroundColor: 'red', borderColor: 'red'}]}
+                    key={'show_reco_' + profil.id}
+                    onPress={() => {
+                      if (ProfilStore.loading()) {
+                        return;
+                      }
+                      FriendsActions.displayProfil(profil.friendship_id);
+                    }}>
+                    <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>{ProfilStore.loading() ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
+                  </TouchableHighlight>
+                ]
               ] : [
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.leftButtonContainer, {backgroundColor: 'red', borderColor: 'red'}]}
-                  key={'show_reco_' + profil.id}
+                  style={[styles.leftButtonContainer, {backgroundColor: 'white', borderColor: '#38E1B2'}]}
+                  key={'unfollow_' + profil.id}
                   onPress={() => {
-                    if (ProfilStore.loading()) {
+                    if (FollowingsStore.loading()) {
                       return;
                     }
-                    FriendsActions.displayProfil(profil.friendship_id);
+                    FollowingsActions.unfollowExpert(profil.followership_id, () => {
+                      this.props.navigator.pop();
+                    });
+                    this.forceUpdate();
                   }}>
-                  <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>{ProfilStore.loading() ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
+                  <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={require('../../assets/img/actions/icons/check.png')} style={{tintColor: '#38E1B2', width: 20, height: 20, marginRight: 10}} />
+                    <Text style={[styles.buttonText, {fontWeight: '500', fontSize: 13, color: '#38E1B2'}]}>Suivi</Text>
+                  </View>
                 </TouchableHighlight>
               ]
             ]}
@@ -315,7 +338,7 @@ class Profil extends Page {
                         return;
                       }
                       FriendsActions.removeFriendship(profil.friendship_id, () => {
-                        this.props.navigator.resetTo(Friends.route());
+                        this.props.navigator.pop();
                       });
                       this.forceUpdate();
                     }}>

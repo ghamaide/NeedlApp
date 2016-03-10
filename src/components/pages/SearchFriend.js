@@ -70,13 +70,19 @@ class SearchFriend extends Page {
     this.setState(this.searchFriendState());
   };
 
+  onProfilsChange = () => {
+    this.setState(this.searchFriendState());
+  };
+
   componentWillMount() {
     MeStore.listen(this.onMeChange);
+    ProfilStore.listen(this.onProfilsChange);
     FriendsStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
     MeStore.unlisten(this.onMeChange);
+    ProfilStore.unlisten(this.onProfilsChange);
     FriendsStore.unlisten(this.onFriendsChange);
   };
 
@@ -191,10 +197,10 @@ class SearchFriend extends Page {
         <Image style={styles.profileImage} source={{uri: user.picture}} />
         <Text style={styles.profileName}>{user.fullname}</Text>
         {_.includes(this.state.friends_and_requests_sent_ids, user.id) ? [
-          <Image key={'check_' + user.id} style={styles.imageCheck} source={require('../../assets/img/actions/icons/check.png')} />
+          <Image key={'check_' + user.id} style={styles.imageCheckUser} source={require('../../assets/img/actions/icons/check.png')} />
         ] : [
-          <TouchableHighlight key={'invite_friend_' + user.id} style={styles.imageWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
-            <Image style={styles.imageMail} source={require('../../assets/img/actions/icons/send_mail.png')} />
+          <TouchableHighlight key={'invite_friend_' + user.id} style={styles.buttonWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
+            <Text style={styles.buttonText}>Inviter</Text>
           </TouchableHighlight>
         ]}
       </View>
@@ -337,7 +343,7 @@ class SearchFriend extends Page {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar type='back' title='Inviter' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar type='back' title='Inviter un ami' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
 
         <View key='switch_buttons' style={styles.contactsButtonContainer}>
           <TouchableHighlight 
@@ -372,7 +378,7 @@ class SearchFriend extends Page {
             ref='searchBar'
             key='search_android'
             placeholder='Rechercher'
-            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#333333'}}
             onChangeText={(text) => {
               if (this.state.needlActive) {
                 this.searchUsers(text);
@@ -462,6 +468,13 @@ var styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 7
   },
+  imageCheckUser: {
+    width: 20,
+    height: 20,
+    marginLeft: 5,
+    marginRight: 25,
+    marginTop: 7
+  },
   loadingWrapper: {
     width: 40,
     height: 40,
@@ -500,15 +513,23 @@ var styles = StyleSheet.create({
     marginRight: 10,
     flex: 1
   },
-  firstMessageText: {
-    fontSize: 15,
-    textAlign: 'center',
-    fontWeight: '500',
-    color: '#EF582D'
-  },
   noResultText: {
     fontWeight: 'bold',
     color: '#000000',
+    textAlign: 'center'
+  },
+  buttonWrapper: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+    backgroundColor: '#EF582D'
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: '500',
+    fontSize: 13,
     textAlign: 'center'
   },
 });

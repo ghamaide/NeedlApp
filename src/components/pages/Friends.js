@@ -20,8 +20,8 @@ import FriendsStore from '../../stores/Friends';
 import ProfilStore from '../../stores/Profil';
 
 import Profil from './Profil';
-import InviteFriend from './InviteFriend';
 import SearchFriend from './SearchFriend';
+import SearchExpert from './SearchExpert';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -54,11 +54,11 @@ class Friends extends Page {
   };
 
   componentWillMount() {
-    FriendsStore.listen(this.onFriendsChange);
+    ProfilStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
-    FriendsStore.unlisten(this.onFriendsChange);
+    ProfilStore.unlisten(this.onFriendsChange);
   };
 
   onFriendsChange = () => {
@@ -202,7 +202,7 @@ class Friends extends Page {
             <Text style={styles.invitationText}>Ajouter un nouvel ami</Text>
           </TouchableHighlight>
         ] : [
-          <TouchableHighlight key='invite_following' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchFriend.route())} underlayColor='rgba(0, 0, 0, 0)'>
+          <TouchableHighlight key='invite_following' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchExpert.route())} underlayColor='rgba(0, 0, 0, 0)'>
             <Text style={styles.invitationText}>Ajouter un nouvel influenceur</Text>
           </TouchableHighlight>
         ]}
@@ -346,20 +346,23 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   invitationButton: {
-    margin: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 20,
+    marginRight: 20,
     borderColor: '#EF582D',
     borderRadius: 5,
     borderWidth: 1,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
     paddingLeft: 15,
     paddingRight: 15,
   },
   invitationText: {
     textAlign: 'center',
     color: '#EF582D',
-    fontSize: 15,
-    fontWeight: '400'
+    fontSize: 13,
+    fontWeight: '500'
   }
 });
 

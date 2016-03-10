@@ -21,7 +21,7 @@ export class FriendsActions {
             return this.askFriendshipFailed(err);
           }
 
-          this.askFriendshipSuccess(id);
+          this.askFriendshipSuccess(result);
         });
     }
   }
@@ -38,7 +38,8 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
     
-      request('POST', '/api/v2/friendships/accept/' + friendship_id)
+      request('POST', '/api/v2/friendships/accept')
+        .query({id: friendship_id})
         .end((err) => {
           console.log('accept friendship');
           console.log(err);
@@ -65,7 +66,8 @@ export class FriendsActions {
     return (dispatch) => {
       dispatch();
     
-      request('POST', '/api/v2/friendships/refuse/' + friendship_id)
+      request('POST', '/api/v2/friendships/refuse')
+        .query({id: friendship_id})
         .end((err) => {
           console.log('refuse friendship');
           console.log(err);
@@ -103,13 +105,13 @@ export class FriendsActions {
             callback();
           }
 
-          this.removeFriendshipSuccess(friendship_id);
+          this.removeFriendshipSuccess({friendship_id: friendship_id, restaurants: result});
         });
     }
   }
 
-  removeFriendshipSuccess(id) {
-    return id;
+  removeFriendshipSuccess(result) {
+    return result;
   }
 
   removeFriendshipFailed(err) {

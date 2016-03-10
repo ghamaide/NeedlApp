@@ -158,12 +158,14 @@ class Notifs extends Page {
         <NavigationBar type='default' title='Feed' />
 
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
-          <TouchableHighlight 
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
             style={[styles.notificationsButton, {backgroundColor: this.state.friendsActive ? '#EF582D' : 'transparent'}]}
             onPress={() => this.onPressNotification('friends')}>
             <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#EF582D'}}>Amis</Text>
           </TouchableHighlight>
-          <TouchableHighlight 
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
             style={[styles.notificationsButton, {backgroundColor: this.state.followingsActive ? '#EF582D' : 'transparent'}]}
             onPress={() => this.onPressNotification('followings')}>
             <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {BackAndroid, Component, Image, Navigator, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import React, {BackAndroid, Component, Dimensions, Image, Navigator, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 
 import _ from 'lodash';
 import SideMenu from 'react-native-side-menu';
@@ -16,8 +16,11 @@ class TabView extends Component {
     super(props);
 
     this.state = {
-      selected: 
+      pressedOnce: false,
       lastPress: 0,
+      pastille_friends: parseInt(this.props.tabs[1].pastille),
+      pastille_notifications: parseInt(this.props.tabs[3].pastille),
+      has_shared: this.props.tabs[2].has_shared,
       menu_open: false
     };
   };
@@ -33,9 +36,12 @@ class TabView extends Component {
         lastPress: new Date().getTime()
       });
       return true;
+    } else if (pressedOnce) {
+      return false;
     } else {
       this.setState({
-        lastPress: new Date().getTime()
+        lastPress: new Date().getTime(),
+        pressedOnce: true
       });
       return true;
     }
@@ -51,14 +57,14 @@ class TabView extends Component {
     BackAndroid.removeEventListener('hardwareBackPress', this.hardwareBackPress);
   };
 
-  resetToTab(index, opts) {
-    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {toggle: this.toggle}}));
+  resetToTab(index) {
+    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {has_shared: this.state.has_shared, pastille_notifications: this.state.pastille_notifications + this.state.pastille_friends, toggle: this.toggle}}));
     this.setState({menu_open: false});
     this.props.onTab(index);
   };
 
   renderScene = (tab, navigator) => {
-    return React.createElement(tab.component, _.extend({navigator: navigator, toggle: this.toggle}, tab.passProps));
+    return React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps));
   };
 
   toggle = () => {
@@ -72,14 +78,16 @@ class TabView extends Component {
           menu={
             <Menu tabs={this.props.tabs}
               tabsBlocked={this.props.tabsBlocked} 
-              resetToTab={(index) => this.resetToTab(index)} />} 
+              resetToTab={(index) => this.resetToTab(index)} />}
+          openMenuOffset={.6 * Dimensions.get('window').width}
+          bounceBackOnOverdraw={true}
           isOpen={this.state.menu_open}
           onChange={(is_open) => this.setState({menu_open: is_open})}>
           <Navigator
             ref='tabs'
             key='navigator'
             style={{backgroundColor: '#FFFFFF'}}
-            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {toggle: () => this.toggle()}})}
+            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {has_shared: this.state.has_shared, pastille_notifications: this.state.pastille_notifications + this.state.pastille_friends, toggle: () => this.toggle()}})}
             renderScene={this.renderScene}
             configureScene={() => {
               return {
@@ -98,47 +106,6 @@ var styles = StyleSheet.create({
   tabbarContainer: {
     flex: 1,
     flexDirection: 'column',
-  },
-  tabbarContent: {
-    flex: 1
-  },
-  tabbarContentWrapper: {
-    marginTop: 0,
-    paddingBottom: 44,
-    backgroundColor: '#FFFFFF'
-  },
-  tabbarTabs: {
-    height: 60,
-    backgroundColor: '#EF582D',
-    flexDirection: 'row'
-  },
-  tabbarTab: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  },
-  tabbarTabText: {
-    marginTop: 5,
-    color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold'
-  },
-  pastilleContainer: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 2,
-    right: 2
-  },
-  pastilleText: {
-    color: '#EF582D',
-    fontWeight: 'bold',
-    fontSize: 11
   }
 });
 

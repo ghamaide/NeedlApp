@@ -13,18 +13,18 @@ class MenuIcon extends Component {
 
   render() {
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 27 : 5, left: 5, width: 30, height: 30, backgroundColor: '#EF582D', borderRadius: 5}}>
+      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 27 : 7, left: 5, width: 30, height: 30}}>
         <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
-          <Image style={{width: 22, height: 22}} source={require('../../assets/img/tabs/icons/home.png')} />
+          <Image style={{width: 22, height: 22, tintColor: '#EF582D'}} source={require('../../assets/img/other/icons/list.png')} />
         </TouchableHighlight>
         
-        {this.props.pastille && this.props.has_shared ?
+        {this.props.pastille ?
           <View style={styles.pastilleContainer}>
-            <Text style={styles.pastilleText}>{this.props.pastille}</Text>
+            <Text style={styles.pastilleText}>{this.props.pastille < 10 ? this.props.pastille : '9+'}</Text>
           </View>
         : null}
 
-        {!this.props.has_shared ?
+        {!this.props.has_shared && !this.props.pastille ?
           <View style={styles.pastilleContainer}>
             <Text style={styles.pastilleText}>!</Text>
           </View>
@@ -38,7 +38,7 @@ var styles = StyleSheet.create({
   pastilleContainer: {
     position: 'absolute',
     left: 20,
-    top: -10,
+    top: -5,
     height: 20,
     width: 20,
     borderRadius: 10,

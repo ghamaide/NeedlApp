@@ -54,7 +54,7 @@ class App extends Component {
 
   appState() {
     return {
-      notifsPastille: NotifsStore.nbUnseenNotifs(),
+      unseen_notifications: NotifsStore.nbUnseenNotifs(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
     }
@@ -73,13 +73,14 @@ class App extends Component {
   onNotificationsChange = () => {
     this.setState({
       notificationsLoading: NotifsStore.loading(),
-      notifsPastille: NotifsStore.nbUnseenNotifs()
+      unseen_notifications: NotifsStore.nbUnseenNotifs()
     });
   };
 
   onProfileChange = () => {
     this.setState({
-      profileLoading: ProfilStore.loading()
+      profileLoading: ProfilStore.loading(),
+      friends_requests: ProfilStore.getRequestsReceived().length
     });
   };
 
@@ -348,20 +349,21 @@ class App extends Component {
             },
             {
               component: Friends,
-              title: 'Amis',
+              title: 'Mes conseillers',
               icon: require('../assets/img/tabs/icons/friend.png'),
+              pastille: this.state.friends_requests
             },
             {
               component: RecoStep1,
               icon: require('../assets/img/tabs/icons/add.png'),
-              title: 'Recommandation',
+              title: 'Recommander',
               has_shared: MeStore.getState().me.HAS_SHARED
             },
             {
               component: Notifs,
               title: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
-              pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
+              pastille: this.state.unseen_notifications
             },
             {
               component: Profil,

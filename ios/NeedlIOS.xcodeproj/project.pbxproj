@@ -29,6 +29,7 @@
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139F27E31C6B519C0016E73E /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139F27E21C6B51850016E73E /* libRCTFBLogin.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
+		13A6489D1C916A210026109C /* Default-736h@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 13A6489C1C916A210026109C /* Default-736h@3x.png */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -300,6 +301,7 @@
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139F27DD1C6B51850016E73E /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
+		13A6489C1C916A210026109C /* Default-736h@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-736h@3x.png"; path = "NeedlIOS/Default-736h@3x.png"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* NeedlIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeedlIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = NeedlIOS/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = NeedlIOS/AppDelegate.m; sourceTree = "<group>"; };
@@ -654,6 +656,7 @@
 				A33A43B21C235750003F61B5 /* Podfile */,
 				A32E07B41C075DA20075E6E8 /* Default-568h@2x.png */,
 				A32E07B51C075DA20075E6E8 /* Default@2x.png */,
+				13A6489C1C916A210026109C /* Default-736h@3x.png */,
 				A3FFD7111C10AE4800AB1038 /* Default-667h@2x.png */,
 				A32E07661C0749CF0075E6E8 /* Quicksand_Dash.otf */,
 				A32E07671C0749CF0075E6E8 /* Quicksand-Bold.otf */,
@@ -1199,6 +1202,7 @@
 				9F09BB0B52D84139A1F0FD33 /* Ionicons.ttf in Resources */,
 				54F5BD2FB6694E4180B3730D /* MaterialIcons.ttf in Resources */,
 				8FAC61AC56004151A6991736 /* Octicons.ttf in Resources */,
+				13A6489D1C916A210026109C /* Default-736h@3x.png in Resources */,
 				2D57CEBD2E0A468EB139C11B /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

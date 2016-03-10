@@ -20,8 +20,7 @@ export class FollowingsActions {
           if (err) {
             return this.followExpertFailed(err);
           }
-
-          this.followExpertSuccess(result);
+          this.followExpertSuccess({expert_id: expert_id, activities: result.activities, restaurants: result.restaurants});
         });
     }
   }
@@ -34,20 +33,18 @@ export class FollowingsActions {
     return result;
   }
 
-  unfollowExpert(expert_id) {
+  unfollowExpert(followership_id, callback) {
     return (dispatch) => {
       dispatch();
     
-      request('DELETE', '/api/v2/followerships/' + expert_id)
+      request('DELETE', '/api/v2/followerships/' + followership_id)
         .end((err, result) => {
-          console.log('remove friendship');
-          console.log(err);
-          console.log(result);
+
           if (err) {
             return this.unfollowExpertFailed(err);
           }
-
-          this.unfollowExpertSuccess(friendship_id);
+          callback();
+          this.unfollowExpertSuccess({followership_id: followership_id, restaurants: result});
         });
     }
   }

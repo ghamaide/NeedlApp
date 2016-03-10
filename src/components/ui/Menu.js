@@ -22,24 +22,20 @@ class Menu extends Component {
         }}>
           <View style={styles.itemInnerContainer}>
             <Image source={icon} style={styles.icons} />
-
-            {name ?
-              <Text style={styles.itemText}>{name}</Text>
-            : null}
-
-            {pastille ?
-              <View style={styles.pastilleContainer}>
-                <Text style={styles.pastilleText}>{pastille}</Text>
-              </View>
-              : null}
-
-            {!has_shared && typeof has_shared !== 'undefined' ?
-              <View style={styles.pastilleContainer}>
-                <Text style={styles.pastilleText}>!</Text>
-              </View>
-              : null}
+            <Text style={styles.itemText}>{name}</Text>
           </View>
         </TouchableWithoutFeedback>
+        {pastille ?
+          <View style={styles.pastilleContainer}>
+            <Text style={styles.pastilleText}>{pastille < 10 ? pastille : '9+'}</Text>
+          </View>
+          : null}
+
+        {!has_shared && typeof has_shared !== 'undefined' ?
+          <View style={styles.pastilleContainer}>
+            <Text style={styles.pastilleText}>!</Text>
+          </View>
+          : null}
       </View>
     );
   };
@@ -61,10 +57,11 @@ var styles = StyleSheet.create({
     height: Dimensions.get('window').height,
     width: 2 * Dimensions.get('window').width / 3,
     paddingTop: 60,
-    backgroundColor: '#EF582D',
+    backgroundColor: '#EF582D'
   },
   itemContainer: {
-    margin: 10,
+    padding: 10,
+    backgroundColor: 'transparent'
   },
   itemInnerContainer: {
     flexDirection: 'row',
@@ -82,8 +79,8 @@ var styles = StyleSheet.create({
   },
   pastilleContainer: {
     position: 'absolute',
-    left: 18,
-    top: -10,
+    left: 28,
+    top: 0,
     height: 20,
     width: 20,
     borderRadius: 10,

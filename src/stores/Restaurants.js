@@ -4,6 +4,7 @@ import _ from 'lodash';
 
 import alt from '../alt';
 
+import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import ProfilActions from '../actions/ProfilActions';
@@ -54,12 +55,11 @@ export class RestaurantsStore extends CachedStore {
       handleFetchRestaurantSuccess: RestaurantsActions.FETCH_RESTAURANT_SUCCESS,
       handleFetchRestaurantFailed: RestaurantsActions.FETCH_RESTAURANT_FAILED,
 
-      handleSetFilter: RestaurantsActions.SET_FILTER,
-
-      handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL,
-
       handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
       handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
+
+      handleFollowExpertSuccess: FollowingsActions.FOLLOW_EXPERT_SUCCESS,
+      handleUnfollowExpertSuccess: FollowingsActions.UNFOLLOW_EXPERT_SUCCESS,
 
       handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
       handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
@@ -85,7 +85,11 @@ export class RestaurantsStore extends CachedStore {
 
       handleRemoveReco: RecoActions.REMOVE_RECO,
       handleRemoveRecoFailed: RecoActions.REMOVE_RECO_FAILED,
-      handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS
+      handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS,
+
+      handleSetFilter: RestaurantsActions.SET_FILTER,
+
+      handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL
 
 // ================================================================================================
 
@@ -153,13 +157,14 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleAcceptFriendshipSuccess(result) {
-    var ids = _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+    var ids = [];
+    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
     _.forEach(result.restaurants, (restaurant) => {
       var index = _.findIndex(ids, (id) => restaurant.id == id);
       if (index > -1) {
-        this.restaurants[index] = restaurant;
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
       } else {
-        this.restaurants.push(restaurant);
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)}));
       }
     });
   }
@@ -211,6 +216,33 @@ export class RestaurantsStore extends CachedStore {
     _.map(this.restaurants, (restaurant) => {
       if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, id) || _.includes(restaurant.my_friends_recommending, id)) {
         restaurant.ON_MAP = true;
+      }
+    });
+  }
+
+  handleFollowExpertSuccess(result) {
+    var ids = []
+    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(ids, (id) => {return id == restaurant.id});
+      if (index > -1) {
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+      } else {
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+      }
+    });
+  }
+
+  handleUnfollowExpertSuccess(result) {
+    var ids = [];
+    console.log(result);
+    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(ids, (id) => {return id == restaurant.id});
+      if (index > -1) {
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
+      } else {
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)}));
       }
     });
   }
