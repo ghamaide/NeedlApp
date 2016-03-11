@@ -582,6 +582,43 @@ export class RestaurantsStore extends CachedStore {
     return _.reverse(_.sortBy(filteredRestaurants, ['score']));
   }
 
+  static getPrices() {
+    var prices =  _.map(this.filteredRestaurants(), (restaurant) => {
+      return restaurant.price_range;
+    });
+    return _.sortBy(_.remove(_.uniq(prices), null));
+  }
+
+  static getOccasions() {
+    var occasions = [];
+    _.forEach(this.filteredRestaurants(), (restaurant) => {
+      _.forEach(restaurant.occasions, (occasion) => {
+        occasions.push(parseInt(occasion));
+      });
+    });
+    return _.sortBy(_.uniq(occasions));
+  }
+
+  static getTypes() {
+    var types = [];
+    _.forEach(this.filteredRestaurants(), (restaurant) => {
+      _.forEach(restaurant.types, (type) => {
+        types.push(type);
+      });
+    });
+    return _.sortBy(_.uniq(types));
+  }
+
+  static getFriends() {
+    var friends = [];
+    _.forEach(this.filteredRestaurants(), (restaurant) => {
+      _.forEach(restaurant.my_friends_recommending, (friend_id) => {
+        friends.push(friend_id);
+      });
+    });
+    return _.uniq(friends);
+  }
+
   static filterActive() {
     var filters = this.getState().filters;
     return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0);

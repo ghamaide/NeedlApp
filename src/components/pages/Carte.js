@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, View} from 'react-native';
+import React, {StyleSheet, Text, TouchableHighlight,   View} from 'react-native';
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
@@ -16,6 +16,7 @@ import MeStore from '../../stores/Me';
 import RestaurantsStore from '../../stores/Restaurants';
 
 import Liste from './Liste';
+import NewFiltre from './NewFiltre';
 
 var RATIO = 0.4;
 
@@ -148,7 +149,10 @@ class Carte extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({toggle: this.props.toggle}))} />
+        {/* Current navigation bar, uncomment to go back to old version
+          <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({toggle: this.props.toggle}))} />
+        */}
+        <NavigationBar type='default' title='Carte' rightButtonTitle="+ d'options" onRightButtonPress={() => this.props.navigator.push(NewFiltre.route())} />
         <View style={{flex: 1, position: 'relative'}}>
           <MapView
             ref='mapview'
@@ -163,6 +167,14 @@ class Carte extends Page {
               fillColor='rgba(0, 0, 0, 0.1)'
               strokeColor='#EF582D' />
           </MapView>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={styles.filterButton}
+            onPress={() => {
+              console.log('lol');
+            }}>
+            <Text>Valider ma recherche</Text>
+          </TouchableHighlight>
         </View>
 
         <MenuIcon onPress={this.props.toggle} />

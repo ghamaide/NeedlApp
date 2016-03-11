@@ -228,14 +228,20 @@ class Friends extends Page {
           ]
         ] : null */}
 
-        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? [
-          <TouchableHighlight
-            key='link_to_facebook'
-            underlayColor='rgba(0, 0, 0, 0)'
-            style={styles.linkFacebookButton}
-            onPress={() => MeActions.linkFacebookAccount()}>
-            <Text style={[styles.linkFacebookButtonText, {marginTop: 3}]}>Lier mon compte Facebook</Text>
-          </TouchableHighlight>
+        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked || true ? [
+          !this.state.facebook_loading || true ? [
+            <TouchableHighlight
+              key='link_to_facebook'
+              underlayColor='rgba(0, 0, 0, 0)'
+              style={styles.linkFacebookButton}
+              onPress={() => MeActions.linkFacebookAccount()}>
+              <Text style={[styles.linkFacebookButtonText, {marginTop: 3}]}>Lier mon compte Facebook</Text>
+            </TouchableHighlight>
+          ] : [
+            <View style={styles.linkFacebookButton}>
+              {Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />}
+            </View>
+          ]
         ] : null}
 
         {this.state.friends_active ? [
