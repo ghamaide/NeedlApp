@@ -6,25 +6,34 @@ import _ from 'lodash';
 
 import Text from './Text';
 
+import MeStore from '../../stores/Me'
+import NotifsStore from '../../stores/Notifs'
+import ProfilStore from '../../stores/Profil'
+
 class MenuIcon extends Component {
   constructor(props) {
     super(props);
   }
 
   render() {
+    var friends_requests = ProfilStore.getRequestsReceived().length;
+    var unseen_notifications = NotifsStore.nbUnseenNotifs();
+    var pastille = friends_requests + unseen_notifications;
+    var has_shared = MeStore.getState().me.HAS_SHARED;
+
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 27 : 7, left: 5, width: 30, height: 30}}>
+      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 22 : 2, left: 0, width: 40, height: 40}}>
         <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
           <Image style={{width: 22, height: 22, tintColor: '#EF582D'}} source={require('../../assets/img/other/icons/list.png')} />
         </TouchableHighlight>
         
-        {this.props.pastille ?
+        {pastille ?
           <View style={styles.pastilleContainer}>
-            <Text style={styles.pastilleText}>{this.props.pastille < 10 ? this.props.pastille : '9+'}</Text>
+            <Text style={styles.pastilleText}>{pastille < 10 ? pastille : '9+'}</Text>
           </View>
         : null}
 
-        {!this.props.has_shared && !this.props.pastille ?
+        {!has_shared && !pastille ?
           <View style={styles.pastilleContainer}>
             <Text style={styles.pastilleText}>!</Text>
           </View>

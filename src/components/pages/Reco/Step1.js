@@ -67,7 +67,7 @@ class RecoStep1 extends Component {
         // check if already reco or wish
         RecoActions.setReco({restaurant: restaurant});
         this.closeKeyboard();
-        this.props.navigator.push(Step2.route());
+        this.props.navigator.push(Step2.route({toggle: this.props.toggle}));
       }}>
         <View style={styles.restaurantRowInner}>
           <Text style={{color: '#000000'}}>{restaurant.name_and_address.split(': ')[0]}</Text>
@@ -146,7 +146,7 @@ class RecoStep1 extends Component {
 
         {content}
 
-        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon onPress={this.props.toggle} />
       </ScrollView>
     );
   };

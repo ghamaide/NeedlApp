@@ -17,9 +17,6 @@ class TabView extends Component {
 
     this.state = {
       menu_open: false,
-      pastille_friends: parseInt(this.props.tabs[1].pastille),
-      pastille_notifications: parseInt(this.props.tabs[3].pastille),
-      has_shared: this.props.tabs[2].has_shared
     };
   };
 
@@ -28,7 +25,7 @@ class TabView extends Component {
   };
 
   resetToTab(index) {
-    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {has_shared: this.state.has_shared, pastille_notifications: this.state.pastille_notifications + this.state.pastille_friends, toggle: this.toggle}}));
+    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {toggle: this.toggle}}));
     this.setState({menu_open: false});
     this.props.onTab(index);
   };
@@ -47,13 +44,14 @@ class TabView extends Component {
               resetToTab={(index) => this.resetToTab(index)} />}
           openMenuOffset={.6 * Dimensions.get('window').width}
           bounceBackOnOverdraw={true}
+          disableGestures={true}
           isOpen={this.state.menu_open}
           onChange={(is_open) => this.setState({menu_open: is_open})}>
           <NavigatorIOS
             key='navigator'
             ref='tabs'
             style={styles.tabbarContent}
-            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {has_shared: this.state.has_shared, pastille_notifications: this.state.pastille_notifications + this.state.pastille_friends, toggle: () => this.toggle()}})}
+            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {toggle: this.toggle}})}
             navigationBarHidden={true}
             initialSkipCache={this.props.initialSkipCache} />
         </SideMenu>

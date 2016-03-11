@@ -45,9 +45,13 @@ class SearchFriend extends Page {
   };
 
   searchFriendState() {
+    var requests_received = ProfilStore.getRequestsReceived();
     var requests_sent = ProfilStore.getRequestsSent();
     var friends = ProfilStore.getFriends();
     var requests_sent_ids = _.map(requests_sent, (request) => {
+      return request.id;
+    });
+    var requests_received_ids = _.map(requests_received, (request) => {
       return request.id;
     });
     var friends_ids = _.map(friends, (friend) => {
@@ -58,6 +62,7 @@ class SearchFriend extends Page {
       error: FriendsStore.error(),
       hasUploadedContacts: MeStore.getState().hasUploadedContacts,
       users: FriendsStore.getSearchedUsers(),
+      requests_received_ids: requests_received_ids,
       friends_and_requests_sent_ids: _.concat(requests_sent_ids, friends_ids)
     };
   };
@@ -199,9 +204,26 @@ class SearchFriend extends Page {
         {_.includes(this.state.friends_and_requests_sent_ids, user.id) ? [
           <Image key={'check_' + user.id} style={styles.imageCheckUser} source={require('../../assets/img/actions/icons/check.png')} />
         ] : [
-          <TouchableHighlight key={'invite_friend_' + user.id} style={styles.buttonWrapper} onPress={() => this.inviteUser(user.id)} underlayColor='rgba(0, 0, 0, 0)'>
-            <Text style={styles.buttonText}>Inviter</Text>
-          </TouchableHighlight>
+          _.includes(this.state.requests_received_ids, user.id) ? [
+            <TouchableHighlight
+            key={'invite_friend_' + user.id}
+            style={styles.buttonWrapper}
+            underlayColor='rgba(0, 0, 0, 0)'
+            onPress={() => {
+              var user_request = ProfilStore.getRequestReceived(user.id);
+              FriendsActions.acceptFriendship(user_request.friendship_id);
+            }}>
+              <Text style={styles.buttonText}>Accepter</Text>
+            </TouchableHighlight>
+          ] : [
+            <TouchableHighlight
+              key={'invite_friend_' + user.id}
+              style={styles.buttonWrapper}
+              onPress={() => FriendsActions.askFriendship(user.id)}
+              underlayColor='rgba(0, 0, 0, 0)'>
+              <Text style={styles.buttonText}>Inviter</Text>
+            </TouchableHighlight>
+          ]
         ]}
       </View>
     );

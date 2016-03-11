@@ -65,7 +65,6 @@ export class RestaurantsStore extends CachedStore {
       handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
 
       handleSetRegion: RestaurantsActions.SET_REGION,
-      handleSetRegionSuccess: RestaurantsActions.SET_REGION_SUCCESS,
 
       handleAddWish: RecoActions.ADD_WISH,
       handleAddWishFailed: RecoActions.ADD_WISH_FAILED,
@@ -123,6 +122,7 @@ export class RestaurantsStore extends CachedStore {
   handleFetchRestaurantsSuccess(restaurants) {
     var newRestaurants = restaurants;
 
+    // Extend each restaurant with necessary information
     _.each(newRestaurants, (restaurant) => {
       return _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
     });
@@ -143,6 +143,8 @@ export class RestaurantsStore extends CachedStore {
 
   handleFetchRestaurantSuccess(restaurant) {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id});
+
+    // Update restaurant
     if (index > -1) {
       this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
     } else {
@@ -158,7 +160,11 @@ export class RestaurantsStore extends CachedStore {
 
   handleAcceptFriendshipSuccess(result) {
     var ids = [];
+
+    // Populate array of ids of restaurants
     _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+
+    // Update each restaurant
     _.forEach(result.restaurants, (restaurant) => {
       var index = _.findIndex(ids, (id) => restaurant.id == id);
       if (index > -1) {
@@ -169,29 +175,43 @@ export class RestaurantsStore extends CachedStore {
     });
   }
 
-  handleRemoveFriendshipSuccess(friendship_id) {
-    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+  handleRemoveFriendshipSuccess(result) {
+    var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
+    var ids = [];
+
+    // Remove all the restaurants where friend was only recommender or wisher
     _.remove(this.restaurants, (restaurant) => {
       var nb = 0;
-
       if (restaurant.my_friends_recommending) {
         nb += restaurant.my_friends_recommending.length;
       }
       if (restaurant.my_friends_wishing) {
         nb += restaurant.my_friends_wishing.length;
       }
-
       if (nb > 1) {
         return false;
       }
-
       if (_.isEqual(restaurant.my_friends_recommending, [friend_id]) || _.isEqual(restaurant.my_friends_wishing, [friend_id])) {
         return true;
+      }
+    });
+
+    // Populate array of ids of restaurants
+    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+
+    // Update each restaurant
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(ids, (id) => restaurant.id == id);
+      if (index > -1) {
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
+      } else {
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)}));
       }
     });
   }
 
   handleMaskProfilSuccess(id) {
+    // Mask all the restaurants where friend was only recommender or wisher
     _.map(this.restaurants, (restaurant) => {
       var nb = 0;
 
@@ -213,6 +233,8 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleDisplayProfilSuccess(id) {
+
+    // Display all the restaurants where friend was recommender or wisher and restaurant wasn't on map
     _.map(this.restaurants, (restaurant) => {
       if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, id) || _.includes(restaurant.my_friends_recommending, id)) {
         restaurant.ON_MAP = true;
@@ -222,6 +244,7 @@ export class RestaurantsStore extends CachedStore {
 
   handleFollowExpertSuccess(result) {
     var ids = []
+
     _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
     _.forEach(result.restaurants, (restaurant) => {
       var index = _.findIndex(ids, (id) => {return id == restaurant.id});
@@ -235,8 +258,11 @@ export class RestaurantsStore extends CachedStore {
 
   handleUnfollowExpertSuccess(result) {
     var ids = [];
-    console.log(result);
+
+    // Populate array of ids of restaurants
     _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
+
+    // Update each restaurant
     _.forEach(result.restaurants, (restaurant) => {
       var index = _.findIndex(ids, (id) => {return id == restaurant.id});
       if (index > -1) {
@@ -247,33 +273,13 @@ export class RestaurantsStore extends CachedStore {
     });
   }
 
-  handleSetFilter(data) {
-    var newFilters = _.clone(this.filters);
-    newFilters[data.label] = data.ids;
-    this.filters = newFilters;
-  }
-
-  handleSetDisplayPersonal(display) {
-    this.showPersonalContent = display;
-  }
-
-  handleSetRegion() {
+  handleAddReco() {
     this.status.loading = true;
   }
-
-  handleSetRegionSuccess(data) {
-    this.status.loading = false;
-    this.currentRegion = data.currentRegion;
-    this.region = data.region;
-  }
-
+  
   handleAddRecoFailed(err) {
     this.status.error = err;
     this.status.loading = false;
-  }
-
-  handleAddReco() {
-    this.status.loading = true;
   }
 
   handleAddRecoSuccess(result) {
@@ -363,6 +369,20 @@ export class RestaurantsStore extends CachedStore {
     var index = _.findIndex(this.restaurants, function(o) {return o.id === restaurant.id;});
     this.restaurants[index] = _.extend(restaurant, {subways: this.parseSubways(restaurant.subways), ON_MAP: this.isOnMap(restaurant)});
     this.status.loading = false;
+  }
+
+  handleSetFilter(data) {
+    var newFilters = _.clone(this.filters);
+    newFilters[data.label] = data.ids;
+    this.filters = newFilters;
+  }
+
+  handleSetDisplayPersonal(display) {
+    this.showPersonalContent = display;
+  }
+
+  handleSetRegion(region) {
+    this.currentRegion = region;
   }
 
   parseSubways(subways) {
@@ -526,14 +546,7 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      if (restaurant.longitude <= currentRegion.west || restaurant.longitude >= currentRegion.east || restaurant.latitude <= currentRegion.south || restaurant.latitude >= currentRegion.north) {
-        return false;
-      }
-
-      // var deltaX = (region.width / region.deltaLong) * (region.longCentre - restaurant.longitude);
-      // var deltaY = (region.mapHeight / region.deltaLat) * (region.latCentre - restaurant.latitude);
-
-      // if (Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) + 15 > region.radius) {
+      // if (restaurant.longitude <= currentRegion.west || restaurant.longitude >= currentRegion.east || restaurant.latitude <= currentRegion.south || restaurant.latitude >= currentRegion.north) {
       //   return false;
       // }
 

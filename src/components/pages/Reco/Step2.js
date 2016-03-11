@@ -18,11 +18,12 @@ import Step3 from './Step3';
 import StepSave from './StepSave';
 
 class RecoStep2 extends Component {
-  static route() {
+  static route(props) {
     
     return {
       component: RecoStep2,
-      title: 'Statut'
+      title: 'Statut',
+      passProps: props
     };
   };
 
@@ -46,20 +47,22 @@ class RecoStep2 extends Component {
               
               if (typeof activity == 'undefined') {
                 if (reco.approved) {
-                  return this.props.navigator.push(Step3.route());
+                  return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
                 }
 
-                this.props.navigator.resetTo(StepSave.route());
+                this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
               } else {
                 if (reco.approved) {
                   if (activity.notification_type == 'recommendation') {
-                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                  } else {
+                    return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
                   }
                 } else {
                   if (activity.notification_type == 'wish') {
-                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
                   } else if (activity.notification_type == 'recommendation') {
-                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
                   }
                 }
               }

@@ -34,9 +34,9 @@ export class ProfilActions {
       
       request('GET', '/api/v2/friendships')
         .end((err, result) => {
-          console.log('fetch friends');
-          console.log(err);
-          console.log(result);
+          // console.log('fetch friends');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.fetchFriendsFailed(err);
           }
@@ -59,9 +59,9 @@ export class ProfilActions {
 
       request('GET', '/api/v2/followerships')
         .end((err, result) => {
-          console.log('fetch followings');
-          console.log(err);
-          console.log(result);
+          // console.log('fetch followings');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.fetchFollowingsFailed(err);
           }
@@ -85,9 +85,9 @@ export class ProfilActions {
 
       request('GET', '/api/v2/users/experts')
         .end((err, result) => {
-          console.log('fetch all experts');
-          console.log(err);
-          console.log(result);
+          // console.log('fetch all experts');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.fetchAllExpertsFailed(err);
           }

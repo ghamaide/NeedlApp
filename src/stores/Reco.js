@@ -22,9 +22,6 @@ export class RecoStore {
       handleFetchRestaurantsFailed: RecoActions.FETCH_RESTAURANTS_FAILED,
 
       handleSetReco: RecoActions.SET_RECO,
-
-      handleAddRecoFailed: RecoActions.ADD_RECO_FAILED,
-
 // ================================================================================================
 
     });
@@ -48,25 +45,6 @@ export class RecoStore {
 
   handleSetReco(reco) {
     this.reco = reco;
-  }
-
-  handleAddRecoFailed(err) {
-    this.error = err;
-  }
-
-  handleGetReco(restaurantId) {
-    this.loading = true;
-    delete this.error;
-  }
-
-  handleGetRecoFailed(data) {
-    this.loading = false;
-    this.error = data.err;
-  }
-
-  handleGetRecoSuccess(reco) {
-    this.reco = reco;
-    this.loading = false;
   }
 
   static error() {

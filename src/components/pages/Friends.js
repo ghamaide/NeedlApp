@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Image, ListView, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
@@ -49,16 +49,19 @@ class Friends extends Page {
       filtered_followings: ProfilStore.getFollowings(),
       requests_received: ProfilStore.getRequestsReceived(),
       loading: ProfilStore.loading(),
+      friendsLoading: FriendsStore.loading(),
       error: ProfilStore.error(),
     };
   };
 
   componentWillMount() {
     ProfilStore.listen(this.onFriendsChange);
+    FriendsStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
     ProfilStore.unlisten(this.onFriendsChange);
+    FriendsStore.unlisten(this.onFriendsChange);
   };
 
   onFriendsChange = () => {
@@ -209,21 +212,29 @@ class Friends extends Page {
 
         {this.state.friends_active && this.state.requests_received.length > 0 ? [
           _.map(this.state.requests_received, (request) => {
-            return (
-              <View key={'request_received_' + request.friendship_id} style={styles.requestsContainer}>
-                <Image source={{uri: request.picture}} style={{height: 60, width: 60, borderRadius: 30}} />
-                <Text style={styles.requestName}>{request.fullname}</Text>
-                <View style={styles.requestButtonsContainer}>
-                  <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.acceptFriendship(request.friendship_id)} style={styles.requestButtonAccept}>
-                    <Text style={styles.requestButtonAcceptText}>Accepter</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.refuseFriendship(request.friendship_id)} style={styles.requestButtonRefuse}>
-                    <Text style={styles.requestButtonRefuseText}>Refuser</Text>
-                  </TouchableHighlight>
+            if (!this.state.friendsLoading) {
+              return (
+                <View key={'request_received_' + request.friendship_id} style={styles.requestsContainer}>
+                  <Image source={{uri: request.picture}} style={{height: 60, width: 60, borderRadius: 30}} />
+                  <Text style={styles.requestName}>{request.fullname}</Text>
+                  <View style={styles.requestButtonsContainer}>
+                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.acceptFriendship(request.friendship_id)} style={styles.requestButtonAccept}>
+                      <Text style={styles.requestButtonAcceptText}>Accepter</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => FriendsActions.refuseFriendship(request.friendship_id)} style={styles.requestButtonRefuse}>
+                      <Text style={styles.requestButtonRefuseText}>Refuser</Text>
+                    </TouchableHighlight>
+                  </View>
+                  <Text style={{position: 'absolute', top: 10, left: 10, color: '#555555', fontWeight: '500', fontSize: 12}}>On t'a invité !</Text>
                 </View>
-                <Text style={{position: 'absolute', top: 10, left: 10, color: '#555555', fontWeight: '500', fontSize: 12}}>On t'a invité !</Text>
-              </View>
-            );
+              );
+            } else {
+              if (Platform.OS === 'ios') {
+                return (<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />);
+              } else {
+                return (<ProgressBarAndroid indeterminate />);
+              }
+            }
           })
         ] : null}
 
@@ -240,7 +251,7 @@ class Friends extends Page {
           showsVerticalScrollIndicator={false}
           onScroll={this.closeKeyboard} />
 
-        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };

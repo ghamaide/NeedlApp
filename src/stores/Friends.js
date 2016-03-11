@@ -49,8 +49,8 @@ export class FriendsStore {
   }
 
   handleAskFriendshipFailed(err) {
-    return err;
-  }
+    this.error = err;
+    this.loading = false;  }
 
   handleAskFriendshipSuccess(result) {
     this.loading = false;
@@ -62,7 +62,8 @@ export class FriendsStore {
   }
 
   handleAcceptFriendshipFailed(err) {
-    return err;
+    this.error = err;
+    this.loading = false;
   }
 
   handleAcceptFriendshipSuccess(result) {
@@ -75,8 +76,8 @@ export class FriendsStore {
   }
 
   handleRefuseFriendshipFailed(err) {
-    return err;
-  }
+    this.error = err;
+    this.loading = false;  }
 
   handleRefuseFriendshipSuccess(result) {
     this.loading = false;

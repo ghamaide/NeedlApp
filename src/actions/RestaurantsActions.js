@@ -54,17 +54,8 @@ export class RestaurantsActions {
     return {label: label, ids: ids};
   }
 
-  setRegion(currentRegion, region, callback) {
-    return (dispatch) => {
-      dispatch();
-      
-      this.setRegionSuccess({currentRegion: currentRegion, region: region}, callback);
-     }
-  }
-
-  setRegionSuccess(data, callback) {
-    callback();
-    return data;
+  setRegion(region) {
+    return region;
   }
 
   setDisplayPersonal(display) {

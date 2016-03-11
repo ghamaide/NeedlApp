@@ -14,9 +14,9 @@ export class FollowingsActions {
           following_id: expert_id
         })
         .end((err, result) => {
-          console.log('follow expert');
-          console.log(err);
-          console.log(result);
+          // console.log('follow expert');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.followExpertFailed(err);
           }

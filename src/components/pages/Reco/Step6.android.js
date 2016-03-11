@@ -20,10 +20,11 @@ import StepSave from './StepSave';
 let IMAGE_WIDTH = 70; 
 
 class RecoStep6 extends Component {
-  static route() {
+  static route(props) {
     return {
       component: RecoStep6,
       title: 'Mot de la fin',
+      passProps: props
     };
   };
 
@@ -46,7 +47,7 @@ class RecoStep6 extends Component {
     var reco = RecoStore.getReco();
     reco.friends_thanking = this.state.friendsThanksIds;
     reco.experts_thanking = this.state.expertsThanksIds;
-    this.props.navigator.resetTo(StepSave.route());
+    this.props.navigator.resetTo(StepSave.route({toggle: this.props.toggle}));
   };
 
   thankRecommender = (recommenderId) => {

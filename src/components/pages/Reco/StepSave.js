@@ -16,19 +16,18 @@ import Liste from '../Liste';
 import Restaurant from '../Restaurant';
 
 class RecoStepSave extends Component {
-  static route(title) {
+  static route(props) {
     return {
       component: RecoStepSave,
-      title: 'StepSave'
+      title: 'StepSave', 
+      passProps: props
     };
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      has_shared: MeStore.getState().me.HAS_SHARED
-    };
+    this.state = this.restaurantsState();
   };
 
   restaurantsState() {
@@ -41,7 +40,9 @@ class RecoStepSave extends Component {
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
-    this.props.navigator.replace(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
+    setTimeout(() => {
+      this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: id, fromReco: true}, reco.restaurant.name));
+    }, 1000);
   };
 
   componentDidMount() {

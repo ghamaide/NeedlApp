@@ -185,7 +185,7 @@ class Notifs extends Page {
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
 
-        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };

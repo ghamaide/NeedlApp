@@ -31,7 +31,8 @@ export class FollowingsStore {
   }
 
   handleFollowExpertFailed(err) {
-    return err;
+    this.loading = false;
+    this.error = err;
   }
 
   handleFollowExpertSuccess(result) {
@@ -44,7 +45,8 @@ export class FollowingsStore {
   }
 
   handleUnfollowExpertFailed(err) {
-    return err;
+    this.loading = false;
+    this.error = err;
   }
 
   handleUnfollowExpertSuccess(result) {

@@ -126,7 +126,7 @@ class CarteProfil extends Page {
             title='Carte'
             rightImage={require('../../assets/img/tabs/icons/account.png')}
             rightButtonTitle='Profil'
-            onRightButtonPress={() => this.props.navigator.replace(Profil.route({toggle: this.props.toggle, has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications}))} />
+            onRightButtonPress={() => this.props.navigator.replace(Profil.route({toggle: this.props.toggle}))} />
         ] : [
           <NavigationBar 
             key='navbarfrompush'
@@ -174,7 +174,7 @@ class CarteProfil extends Page {
           </MapView>
         </View>
         {!this.props.id ? [
-        <MenuIcon key='menu_icon' pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon key='menu_icon' onPress={this.props.toggle} />
         ] : null}
       </View>
     );

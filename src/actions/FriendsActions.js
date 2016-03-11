@@ -14,9 +14,9 @@ export class FriendsActions {
           friend_id: id
         })
         .end((err, result) => {
-          console.log('ask friendship');
-          console.log(err);
-          console.log(result);
+          // console.log('ask friendship');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.askFriendshipFailed(err);
           }
@@ -40,16 +40,15 @@ export class FriendsActions {
     
       request('POST', '/api/v2/friendships/accept')
         .query({id: friendship_id})
-        .end((err) => {
+        .end((err, result) => {
           console.log('accept friendship');
           console.log(err);
           console.log(result);
-          // besoin de me retourner la friendship ie infos du friend
-          if (err, result) {
+          if (err) {
             return this.acceptFriendshipFailed(err);
           }
 
-          this.acceptFriendshipSuccess(result);
+          this.acceptFriendshipSuccess({friendship_id: friendship_id, friend: result.friend, restaurants: result.restaurants, activities: result.activities});
         });
     }
   }
@@ -59,6 +58,7 @@ export class FriendsActions {
   }
 
   acceptFriendshipSuccess(result) {
+    console.log('-----------------');
     return result;
   }
 
@@ -94,9 +94,9 @@ export class FriendsActions {
     
       request('DELETE', '/api/v2/friendships/' + friendship_id)
         .end((err, result) => {
-          console.log('remove friendship');
-          console.log(err);
-          console.log(result);
+          // console.log('remove friendship');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.removeFriendshipFailed(err);
           }
@@ -125,9 +125,9 @@ export class FriendsActions {
       request('POST', '/api/v2/friendships/make_invisible')
         .query({id: friendship_id})
         .end((err, result) => {
-          console.log('mask profil');
-          console.log(err);
-          console.log(result);
+          // console.log('mask profil');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.maskProfilFailed(err);
           }
@@ -152,9 +152,9 @@ export class FriendsActions {
       request('POST', '/api/v2/friendships/make_visible')
         .query({id: friendship_id})
         .end((err, result) => {
-          console.log('display profil');
-          console.log(err);
-          console.log(result);
+          // console.log('display profil');
+          // console.log(err);
+          // console.log(result);
           if (err) {
             return this.displayProfilFailed(err);
           }

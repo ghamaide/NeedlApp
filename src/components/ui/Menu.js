@@ -6,12 +6,32 @@ import _ from 'lodash';
 
 import Text from './Text';
 
+import MeStore from '../../stores/Me'
+import NotifsStore from '../../stores/Notifs'
+import ProfilStore from '../../stores/Profil'
+
 class Menu extends Component {
   constructor(props) {
     super(props);
   }
 
-  renderItem = (index, name, icon, pastille, has_shared) => {
+  renderItem = (index, name, icon) => {
+    var pastille;
+    var has_shared;
+    switch (index) {
+      case 1 : 
+        pastille = ProfilStore.getRequestsReceived().length;
+        break;
+      case 2 : 
+        has_shared = MeStore.getState().me.HAS_SHARED;
+        break;
+      case 3 :
+        pastille = NotifsStore.nbUnseenNotifs();
+        break;
+      default :
+        break;
+    }
+
     return (
       <View key={index} style={styles.itemContainer}>
         <TouchableWithoutFeedback onPress={() => {
@@ -41,10 +61,11 @@ class Menu extends Component {
   };
 
   render() {
+
     return (
       <View style={styles.menuContainer}>
         {_.map(this.props.tabs, (tab, index) => {
-          return this.renderItem(index, tab.title, tab.icon, tab.pastille, tab.has_shared);
+          return this.renderItem(index, tab.title, tab.icon);
         })}
       </View>
     );
@@ -70,20 +91,21 @@ var styles = StyleSheet.create({
   itemText: {
     color: '#FFFFFF',
     fontWeight: '400',
+    fontSize: 13,
     marginLeft: 15
   },
   icons: {
     tintColor:'#FFFFFF',
-    width: 25,
-    height: 25
+    width: 20,
+    height: 20
   },
   pastilleContainer: {
     position: 'absolute',
-    left: 28,
+    left: 23,
     top: 0,
-    height: 20,
-    width: 20,
-    borderRadius: 10,
+    height: 18,
+    width: 18,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',

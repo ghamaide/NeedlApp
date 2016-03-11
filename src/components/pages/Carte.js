@@ -5,6 +5,7 @@ import React, {ActivityIndicatorIOS, Image, Platform, ProgressBarAndroid, StyleS
 import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
+import Slider from 'react-native-slider';
 
 import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
@@ -22,6 +23,8 @@ import RestaurantsStore from '../../stores/Restaurants';
 import Liste from './Liste';
 import Restaurant from './Restaurant';
 
+var RATIO = 0.4;
+
 class Carte extends Page {
   static route(props) {
     return {
@@ -33,38 +36,53 @@ class Carte extends Page {
 
   restaurantsState() {
     return {
-      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 18),
       loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),      
+      error: RestaurantsStore.error(),
     };
   };
 
   constructor(props) {
     super(props);
 
+    var region = RestaurantsStore.getState().currentRegion || RestaurantsStore.getState().region;
+
     this.state = this.restaurantsState();
-    this.state.region = RestaurantsStore.getState().region;
+
+    this.state.region = region;
     this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition,
     this.state.showsUserLocation = false;
+
+    // To specify the default level of zoom
     this.state.defaultLatitudeDelta = 10 / 110.574;
-    this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
+    this.state.defaultLongitudeDelta = 1 / (111.320 * Math.cos(this.state.defaultLatitudeDelta)) ;
+
+    // Paris 4 point coordinates
     this.state.paris = {
       northLatitude: 48.91,
       southLatitude: 48.8,
       westLongitude: 2.25,
       eastLongitude: 2.42
     };
-    this.state.showChangeRegion = false;
+
+    // Remove if removing overlays
+    this.state.radius = RATIO * this.getDistance(region.latitude, region.longitude - region.longitudeDelta / 2, region.latitude, region.longitude + region.longitudeDelta / 2);
   };
 
+  // Actions to be done on mounting the component
   startActions() {
     this.setState({showsUserLocation: true});
 
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
-        if (!MeStore.getState().showedCurrentPosition && this.isInParis(initialPosition)) {
+        if (!this.state.showedCurrentPosition && this.isInParis(initialPosition)) {
           this.setState({
-            region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
+            region: {
+              latitude: initialPosition.coords.latitude,
+              longitude: initialPosition.coords.longitude,
+              latitudeDelta: this.state.defaultLatitudeDelta,
+              longitudeDelta: this.state.defaultLongitudeDelta
+            },
+            radius: RATIO * this.getDistance(initialPosition.coords.latitude, initialPosition.coords.longitude - this.state.defaultLongitudeDelta / 2, initialPosition.coords.latitude, initialPosition.coords.longitude + this.state.defaultLongitudeDelta / 2)
           });
           MeActions.showedCurrentPosition(true);
         }
@@ -74,6 +92,7 @@ class Carte extends Page {
     );
   };
 
+  // Check if position is in paris
   isInParis = (initialPosition) => {
     return (initialPosition.coords.latitude <= this.state.paris.northLatitude && initialPosition.coords.latitude >= this.state.paris.southLatitude && initialPosition.coords.longitude <= this.state.paris.eastLongitude && initialPosition.coords.longitude >= this.state.paris.westLongitude);
   };
@@ -83,7 +102,7 @@ class Carte extends Page {
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
-  componentWillUnount() {
+  componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
   };
 
@@ -91,91 +110,92 @@ class Carte extends Page {
     this.setState(this.restaurantsState());
   };
 
-  onSubmitChangeRegion = () => {
-    this.setState({loading: true});
-    var currentRegion = {
-      east: this.state.region.longitude + this.state.region.longitudeDelta / 2,
-      west:this.state.region.longitude - this.state.region.longitudeDelta / 2,
-      south:this.state.region.latitude - this.state.region.latitudeDelta / 2,
-      north:this.state.region.latitude + this.state.region.latitudeDelta / 2
+  // Set the region and circle radius, and set region for future map displays (not centering on user's location afterwards)
+  onRegionChangeComplete = (region) => {
+    this.setState({region: region});
+    var west = {
+      latitude: region.latitude,
+      longitude: region.longitude - region.longitudeDelta / 2
     };
 
-    RestaurantsActions.setRegion(currentRegion, this.state.region, () => {this.setState({showChangeRegion: false})});
+    var east = {
+      latitude: region.latitude,
+      longitude: region.longitude + region.longitudeDelta / 2
+    };
+
+    var radius = RATIO * this.getDistance(west.latitude, west.longitude, east.latitude, east.longitude)
+
+    this.setState({radius: radius});
+    RestaurantsActions.setRegion(this.state.region);
   };
 
-  onRegionChangeComplete = (region) => {
-    this.setState({region: region, displayRestaurant: false});
-    this.setState({showChangeRegion: true});    
+  // Update the region and circle radius
+  onRegionChange = (region) => {
+    this.setState({region: region});
+    var west = {
+      latitude: region.latitude,
+      longitude: region.longitude - region.longitudeDelta / 2
+    };
+
+    var east = {
+      latitude: region.latitude,
+      longitude: region.longitude + region.longitudeDelta / 2
+    };
+
+    var radius = RATIO * this.getDistance(west.latitude, west.longitude, east.latitude, east.longitude)
+    this.setState({radius: radius});
   };
 
-  onMapPress = (zone) => {
-     // this.setState({displayRestaurant: false});
+  // get distance in meters between two points defined by their coordinates
+  getDistance = (lat1,lon1,lat2,lon2) => {
+    var R = 6371; // radius of the earth in km
+    var dLat = this.deg2rad(lat2-lat1);
+    var dLon = this.deg2rad(lon2-lon1); 
+    var a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c;
+    return d * 1000; // distance in meters
   };
 
-  onSelect = (event) => {
-    // trigger event marker
-    // console.log('on select');
-    // console.log(event);
-    // this.setState({displayRestaurant: true});
+  // support function to get measure in radians from measure in degrees
+  deg2rad = (deg) => {
+    return deg * (Math.PI/180)
   };
 
   renderPage() {
+    var center = {
+      latitude: this.state.region.latitude,
+      longitude: this.state.region.longitude
+    };
+
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar key='navbar' type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications, toggle: this.props.toggle}))} />
-        <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
+        <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({toggle: this.props.toggle}))} />
+        <View style={{flex: 1, position: 'relative'}}>
           <MapView
-            key='map'
             ref='mapview'
             style={styles.restaurantsMap}
             showsUserLocation={this.state.showsUserLocation}
             region={this.state.region}
             onRegionChangeComplete={this.onRegionChangeComplete}
-            onPress={this.onMapPress}
+            onRegionChange={this.onRegionChange}
+            onPress={this.onPress}
             onMarkerSelect={this.onMarkerSelect}>
-            
-            {_.map(this.state.restaurants, (restaurant) => {
-              var myRestaurant = _.includes(restaurant.friends_recommending, MeStore.getState().me.id);
-              myRestaurant = myRestaurant || _.includes(restaurant.friends_wishing, MeStore.getState().me.id);
-              var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
-              return (
-                <MapView.Marker
-                  ref={restaurant.id}
-                  key={restaurant.id}
-                  coordinate={coordinates}
-                  onSelect={this.onSelect}
-                  pinColor={myRestaurant ? 'green' : 'red'}>
-                  <PriceMarker text={_.findIndex(this.state.restaurants, restaurant) + 1} />
-                  <MapView.Callout>
-                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
-                      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                        <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
-                        <View>
-                          <Text style={{color: '#333333', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
-                          <Text style={{color: '#333333', fontSize: 13}}>{restaurant.food[1]}</Text>
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                  </MapView.Callout>
-                </MapView.Marker>
-              );
-            })}
-          </MapView>
 
-          {this.state.showChangeRegion ? [
-            <View key='change_region_button' style={styles.changeRegionButtonContainer}>
-              {this.state.loading ? [
-                Platform.OS === 'ios' ? <ActivityIndicatorIOS key='loading' animating={true} style={[{height: 40}]} size='small' /> : <ProgressBarAndroid key='loading' indeterminate /> 
-               ] : [
-                <TouchableHighlight key='button' onPress={this.onSubmitChangeRegion} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={{fontSize: 12, color: '#333333'}}>Rechercher dans cette zone</Text>
-                </TouchableHighlight>
-              ]}
-            </View>
-          ] : null}
+            <MapView.Circle
+              center={center}
+              radius={this.state.radius}
+              fillColor='rgba(0, 0, 0, 0.2)'
+              strokeColor='#EF582D'
+            />
+          </MapView>
         </View>
 
-        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };
@@ -185,26 +205,6 @@ var styles = StyleSheet.create({
   restaurantsMap: {
     flex: 1,
     position: 'relative'
-  },
-  restaurantContainer: {
-    height: 120,
-    position: 'absolute',
-    bottom: 5,
-    left: 5,
-    right: 5,
-  },
-  changeRegionButtonContainer: {
-    position: 'absolute',
-    top: 5,
-    left: 5,
-    right: 5,
-    height: 40,
-    width: 200,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderColor: '#EF582D',
-    borderWidth: 1
   }
 });
 

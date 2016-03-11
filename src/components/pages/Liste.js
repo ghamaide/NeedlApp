@@ -122,7 +122,7 @@ class Liste extends Page {
         <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route({has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications, toggle: this.props.toggle}))} />
 
         <TouchableHighlight key='filter_button' style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
-        	this.props.navigator.push(Filtre.route({navigator: this.props.navigator}));
+          this.props.navigator.push(Filtre.route());
         }}>
             <Text style={styles.filterMessageText}>
               {RestaurantsStore.filterActive() ? 'Modifiez les critères' : 'Besoin d\'aide ?'}
@@ -139,7 +139,7 @@ class Liste extends Page {
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
 
-        <MenuIcon pastille={this.props.pastille_notifications} has_shared={this.props.has_shared} onPress={this.props.toggle} />
+        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };

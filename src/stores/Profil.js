@@ -86,7 +86,6 @@ export class ProfilStore extends CachedStore {
     this.friends = result.friends;
     this.requests_received = result.requests_received;
     this.requests_sent = result.requests_sent;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
     this.removed_friends = [];
     this.status.loading = false;
   }
@@ -116,7 +115,6 @@ export class ProfilStore extends CachedStore {
         this.profil = profil;
       }
     }
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
     this.status.loading = false;
   }
 
@@ -131,7 +129,9 @@ export class ProfilStore extends CachedStore {
 
   handleAcceptFriendshipSuccess(result) {
     this.friends.push(result.friend);
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
+    _.remove(this.requests_received, (request) => {
+      return request.friendship_id == result.friendship_id;
+    });
   }
 
   handleRefuseFriendshipSuccess(friendship_id) {
@@ -145,8 +145,7 @@ export class ProfilStore extends CachedStore {
     var removed_friend = _.remove(this.friends, (friend) => {
       return friend.id == friend_id;
     });
-    this.removed_friends.push(removed_friend);
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts, this.removed_friends);
+    this.removed_friends.push(removed_friend[0]);
   }
 
   handleFollowExpertSuccess(result) {
@@ -155,7 +154,6 @@ export class ProfilStore extends CachedStore {
     });
 
     this.followings.push(expert[0]);
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleUnfollowExpertSuccess(result) {
@@ -165,7 +163,6 @@ export class ProfilStore extends CachedStore {
     });
 
     this.experts.push(expert[0]);
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleFetchFollowings() {
@@ -180,7 +177,6 @@ export class ProfilStore extends CachedStore {
 
   handleFetchFollowingsSuccess(result) {
     this.followings = result.followings;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
     this.status.loading = false;
   }
 
@@ -210,7 +206,7 @@ export class ProfilStore extends CachedStore {
   }
 
   handleMaskProfilSuccess(result) {
-    var friend_id = _.find(this.profils, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendship_id}).id;
     var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = true;
@@ -219,7 +215,6 @@ export class ProfilStore extends CachedStore {
       index = _.findIndex(this.followings, function(o) {return o.id === friend_id});
       this.followings[index].invisible = true;
     }
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
     this.status.loading = false;
   }
 
@@ -234,7 +229,7 @@ export class ProfilStore extends CachedStore {
   }
 
   handleDisplayProfilSuccess(result) {
-    var friend_id = _.find(this.profils, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendship_id}).id;
     var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = false;
@@ -243,7 +238,6 @@ export class ProfilStore extends CachedStore {
       index = _.findIndex(this.followings, function(o) {return o.id === friend_id});
       this.followings[index].invisible = false;
     }
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
     this.status.loading = false;
   }
 
@@ -256,7 +250,6 @@ export class ProfilStore extends CachedStore {
       })
     }
     this.me = newProfil;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleRemoveRecoSuccess(restaurant) {
@@ -265,14 +258,12 @@ export class ProfilStore extends CachedStore {
      return restaurantID === restaurant.id;
     });
     this.me = newProfil;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleAddWishSuccess(result) {
     var newProfil = this.me;
     newProfil.wishes.push(result.restaurant.id);
     this.me = newProfil;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleRemoveWishSuccess(restaurant) {
@@ -281,12 +272,10 @@ export class ProfilStore extends CachedStore {
      return restaurantID === restaurant.id;
     });
     this.me = newProfil;
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
   
   handleEditSuccess(data) {
     this.me = _.extend(this.me, {fullname : data.name});
-    this.profils = _.concat(this.friends, this.me, this.followings, this.experts);
   }
 
   handleLogout() {
@@ -308,16 +297,20 @@ export class ProfilStore extends CachedStore {
     return this.getState().status.loading;
   }
 
-  static getFriendFromFriendship(id) {
-    return _.find(this.getState().profils, (profil) => {return profil.friendship_id === id});
+  static getFriendFromFriendship(friendship_id) {
+    return _.find(_.concat(this.getState().friends, this.getState().removed_friends), (friend) => {return friend.friendship_id === friendship_id});
   }
 
-  static getFollowingFromFollowership(id) {
-    return _.find(this.getState().profils, (profil) => {return profil.followership_id === id});
+  static getFollowingFromFollowership(followership_id) {
+    return _.find(_.concat(this.getState().followings, this.getState().experts), (following) => {return following.followership_id === followership_id});
+  }
+
+  static getRequestReceived(user_id) {
+    return _.find(this.getState().requests_received, (request) => {return request.id == user_id});
   }
 
   static getProfil(id) {
-    return _.find(this.getState().profils, (profil) => {return profil.id === id});
+    return _.find(_.concat(this.getState().me, this.getState().friends, this.getState().experts, this.getState().followings, this.getState().removed_friends), (profil) => {return profil.id === id});
   }
 
   static getProfils() {

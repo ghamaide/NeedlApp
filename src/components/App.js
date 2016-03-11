@@ -66,21 +66,18 @@ class App extends Component {
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
-      showTabBar: MeStore.getState().showTabBar
     });
   };
 
   onNotificationsChange = () => {
     this.setState({
       notificationsLoading: NotifsStore.loading(),
-      unseen_notifications: NotifsStore.nbUnseenNotifs()
     });
   };
 
   onProfileChange = () => {
     this.setState({
       profileLoading: ProfilStore.loading(),
-      friends_requests: ProfilStore.getRequestsReceived().length
     });
   };
 
@@ -351,19 +348,16 @@ class App extends Component {
               component: Friends,
               title: 'Mes conseillers',
               icon: require('../assets/img/tabs/icons/friend.png'),
-              pastille: this.state.friends_requests
             },
             {
               component: RecoStep1,
-              icon: require('../assets/img/tabs/icons/add.png'),
               title: 'Recommander',
-              has_shared: MeStore.getState().me.HAS_SHARED
+              icon: require('../assets/img/tabs/icons/add.png'),
             },
             {
               component: Notifs,
               title: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
-              pastille: this.state.unseen_notifications
             },
             {
               component: Profil,

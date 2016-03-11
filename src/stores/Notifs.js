@@ -131,13 +131,13 @@ export class NotifsStore extends CachedStore {
     this.friendsNotifications.push(friend_activities);
   }
 
-  handleRemoveFriendshipSuccess(friendship_id) {
-    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+  handleRemoveFriendshipSuccess(result) {
+    var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
     _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 
-  handleMaskProfilSuccess(friendship_id) {
-    var friend_id = ProfilStore.getFriendFromFriendship(friendship_id).id;
+  handleMaskProfilSuccess(result) {
+    var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
     _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 

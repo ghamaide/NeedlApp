@@ -187,7 +187,7 @@ class Restaurant extends Page {
     return (
       <View>
         {this.props.fromReco ? [
-          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route())} />
+          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route({toggle: this.props.toggle}))} />
         ] : [
           <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         ]}
@@ -265,7 +265,6 @@ class Restaurant extends Page {
                       } else {
                         var profil = ProfilStore.getProfil(userId);
                         var source = profil ? {uri: profil.picture} : {};
-
                         return (
                           <View key={'reco_' + profil.id} style={styles.slide}>
                             <View style={styles.avatarWrapper}>

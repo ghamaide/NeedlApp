@@ -63,7 +63,7 @@ class RecoStep3 extends Component {
       return;
     }
 
-    this.props.navigator.push(Step4.route());
+    this.props.navigator.push(Step4.route({toggle: this.props.toggle}));
   };
 
   render() {

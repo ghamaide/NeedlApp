@@ -14,11 +14,11 @@ import Step5 from './Step5';
 var windowWidth = Dimensions.get('window').width;
 
 class RecoStep4 extends Component {
-  static route() {
+  static route(props) {
     return {
       component: RecoStep4,
       title: 'Points forts',
-      rightButtonTitle: 'Valider',
+      passProps: props
       
     };
   };
@@ -30,7 +30,7 @@ class RecoStep4 extends Component {
     if (!reco.strengths || !reco.strengths.length) {
       return;
     }
-    this.props.navigator.push(Step5.route());
+    this.props.navigator.push(Step5.route({toggle: this.props.toggle}));
   };
 
   render() {
