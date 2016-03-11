@@ -14,9 +14,11 @@ import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
 
 import FriendsActions from '../../actions/FriendsActions';
+import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
 
 import FriendsStore from '../../stores/Friends';
+import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 
 import Profil from './Profil';
@@ -49,19 +51,22 @@ class Friends extends Page {
       filtered_followings: ProfilStore.getFollowings(),
       requests_received: ProfilStore.getRequestsReceived(),
       loading: ProfilStore.loading(),
+      facebook_loading: MeStore.loading(),
       friendsLoading: FriendsStore.loading(),
       error: ProfilStore.error(),
     };
   };
 
   componentWillMount() {
-    ProfilStore.listen(this.onFriendsChange);
     FriendsStore.listen(this.onFriendsChange);
+    MeStore.listen(this.onFriendsChange);
+    ProfilStore.listen(this.onFriendsChange);
   };
 
   componentWillUnmount() {
-    ProfilStore.unlisten(this.onFriendsChange);
     FriendsStore.unlisten(this.onFriendsChange);
+    MeStore.unlisten(this.onFriendsChange);
+    ProfilStore.unlisten(this.onFriendsChange);
   };
 
   onFriendsChange = () => {
@@ -69,32 +74,39 @@ class Friends extends Page {
   };
 
   // Remove to activate search bar for friends
-  // searchFriends = (searched_text) => {
-  //   this.setState({searched_text});
-  //   var new_filtered_friends = _.filter(this.state.friends, function(friend) {
-  //     return friend.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
-  //   });
+  /* 
+  searchFriends = (searched_text) => {
+    this.setState({searched_text});
+    var new_filtered_friends = _.filter(this.state.friends, function(friend) {
+      return friend.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
+    });
 
-  //   this.setState({filtered_friends: new_filtered_friends});
-  // };
+    this.setState({filtered_friends: new_filtered_friends});
+  };
+  */
 
   // Remove to activate search bar for followings
-  // searchFollowings = (searched_text) => {
-  //   this.setState({searched_text});
-  //   var new_filtered_followings = _.filter(this.state.followings, function(following) {
-  //     return following.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
-  //   });
+  
+  /*
+  searchFollowings = (searched_text) => {
+    this.setState({searched_text});
+    var new_filtered_followings = _.filter(this.state.followings, function(following) {
+      return following.name.toLowerCase().indexOf(searched_text.toLowerCase()) > -1;
+    });
 
-  //   this.setState({filtered_followings: new_filtered_followings});
-  // };
+    this.setState({filtered_followings: new_filtered_followings});
+  };
+  */
 
 
   // Remove to activate search bar closing
-  // closeKeyboard = () => {
-  //   if (Platform.OS === 'ios') {
-  //     NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-  //   }
-  // };
+  /*
+  closeKeyboard = () => {
+    if (Platform.OS === 'ios') {
+      NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
+    }
+  };
+  */
 
   onRefresh = () => {
     ProfilActions.fetchFriends();
@@ -116,13 +128,29 @@ class Friends extends Page {
   renderFriend = (friend) => {
     return (
       <TouchableHighlight style={styles.friendRowWrapper} underlayColor='#FFFFFF' onPress={() => {
-        this.props.navigator.push(Profil.route({id: friend.id}, friend.name));
+        this.props.navigator.push(Profil.route({id: friend.id}));
       }}>
         <View style={styles.friendRow}>
           <Image source={{uri: friend.picture}} style={styles.friendImage} />
           <View style={styles.friendInfos}>
             <Text style={styles.friendName}>{friend.name}</Text>
-            <Text style={styles.friendRecos}>{friend.recommendations.length} reco{friend.recommendations.length > 1 ? 's' : ''}</Text>
+            <Text style={styles.friendRecos}>{friend.badge.name}</Text>
+          </View>
+        </View>
+      </TouchableHighlight>
+    );
+  };
+
+  renderFollowing = (following) => {
+    return (
+      <TouchableHighlight style={styles.friendRowWrapper} underlayColor='#FFFFFF' onPress={() => {
+        this.props.navigator.push(Profil.route({id: following.id}));
+      }}>
+        <View style={styles.friendRow}>
+          <Image source={{uri: following.picture}} style={styles.friendImage} />
+          <View style={styles.friendInfos}>
+            <Text style={styles.friendName}>{following.fullname}</Text>
+            <Text style={styles.friendRecos}>{following.number_of_followers} follower{following.number_of_followers > 1 ? 's' : ''}</Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -198,7 +226,17 @@ class Friends extends Page {
               hideBackground={true}
               onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
           ]
-        ] : null*/}
+        ] : null */}
+
+        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? [
+          <TouchableHighlight
+            key='link_to_facebook'
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={styles.linkFacebookButton}
+            onPress={() => MeActions.linkFacebookAccount()}>
+            <Text style={[styles.linkFacebookButtonText, {marginTop: 3}]}>Lier mon compte Facebook</Text>
+          </TouchableHighlight>
+        ] : null}
 
         {this.state.friends_active ? [
           <TouchableHighlight key='invite_friend' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchFriend.route())} underlayColor='rgba(0, 0, 0, 0)'>
@@ -243,7 +281,7 @@ class Friends extends Page {
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
           dataSource={this.state.friends_active ? ds.cloneWithRows(this.state.filtered_friends) : ds.cloneWithRows(this.state.filtered_followings)}
-          renderRow={this.renderFriend}
+          renderRow={this.state.friends_active ? this.renderFriend : this.renderFollowing}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
@@ -374,6 +412,22 @@ var styles = StyleSheet.create({
     color: '#EF582D',
     fontSize: 13,
     fontWeight: '500'
+  },
+  linkFacebookButton: {
+    marginLeft: 0,
+    marginRight: 0,
+    marginTop: 0,
+    marginBottom: 5,
+    padding: 10,
+    backgroundColor: '#3B5998',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  linkFacebookButtonText: {
+    textAlign: 'center',
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#FFFFFF'
   }
 });
 

@@ -7,10 +7,8 @@ import _ from 'lodash';
 import alt from '../alt';
 
 import FriendsActions from '../actions/FriendsActions';
-import LoginActions from '../actions/LoginActions';
 
 import CachedStore from './CachedStore';
-import MeStore from './Me';
 
 export class FriendsStore {
 

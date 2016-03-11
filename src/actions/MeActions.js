@@ -2,6 +2,8 @@
 
 import {NetInfo, Platform} from 'react-native';
 
+import {FBLoginManager} from 'NativeModules';
+
 import alt from '../alt';
 import request from '../utils/api';
 
@@ -116,10 +118,6 @@ export class MeActions {
     return id;
   }
 
-  displayTabBar(display) {
-    return display;
-  }
-
   startActions(version) {
     return (dispatch) => {
       dispatch();
@@ -154,6 +152,45 @@ export class MeActions {
     return err;
   }
 
+  linkFacebookAccount(callback) {
+    return (dispatch) => {
+      dispatch()
+      
+      FBLoginManager.loginWithPermissions(['email', 'user_friends'], (err, data) => {
+        if (err) {
+          return this.linkFacebookAccountFailed(err);
+        }
+
+        var token = (typeof data.credentials === 'undefined' ? data.token : data.credentials.token);
+
+        request('GET', '/users/auth/facebook_access_token/callback')
+          .query({
+            'access_token': token,
+            'link_to_facebook': 'true'
+          })
+          .end((err, result) => {
+            if (err) {
+              return this.linkFacebookAccountFailed(err);
+            }
+
+            if (callback) {
+              callback();
+            }
+
+            this.linkFacebookAccountSuccess(result);
+          });
+      });
+    }
+  }
+
+  linkFacebookAccountFailed(err) {
+    return err;
+  }
+
+  linkFacebookAccountSuccess(result) {
+    return result;
+  }
+
   showedCurrentPosition(showed) {
     return showed;
   }
@@ -168,20 +205,6 @@ export class MeActions {
     return function (dispatch) {
       dispatch();
     }
-  }
-
-  checkConnectivity() {
-    return (dispatch) => {
-      dispatch();
-
-      NetInfo.isConnected.fetch().done((isConnected) => {
-        return this.checkConnectivitySuccess(isConnected);
-      });
-    }
-  }
-
-  checkConnectivitySuccess(isConnected) {
-    return isConnected;
   }
 }
 

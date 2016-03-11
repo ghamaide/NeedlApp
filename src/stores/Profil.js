@@ -9,11 +9,10 @@ import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
 import ProfilActions from '../actions/ProfilActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
+import RecoActions from '../actions/RecoActions';
 
 import CachedStore from './CachedStore';
 import MeStore from './Me';
-import RecoActions from '../actions/RecoActions';
 
 export class ProfilStore extends CachedStore {
 
@@ -83,7 +82,9 @@ export class ProfilStore extends CachedStore {
   }
 
   handleFetchFriendsSuccess(result) {
-    this.friends = result.friends;
+    this.friends = _.forEach(result.friends, (friend) => {
+      friend.badge = this.renderBadge(friend.score);
+    });
     this.requests_received = result.requests_received;
     this.requests_sent = result.requests_sent;
     this.removed_friends = [];
@@ -102,17 +103,16 @@ export class ProfilStore extends CachedStore {
 
   handleFetchProfilSuccess(profil) {
     if (profil.id == MeStore.getState().me.id) {
-      this.me = profil;
+      this.me = _.extend(profil, {badge: this.renderBadge(profil.score)});;
     } else {
-      var newProfil = profil;
-      var indexFriends = _.findIndex(this.friends, function(o) {return o.id === profil.id;});
-      var indexFollowings = _.findIndex(this.followings, function(o) {return o.id === profil.id;});
+      var indexFriends = _.findIndex(this.friends, (friend) => {return friend.id === profil.id});
+      var indexFollowings = _.findIndex(this.followings, (following) => {return following.id === profil.id;});
       if (indexFriends > -1) {
-        this.friends[index] = profil;
+        this.friends[index] = _.extend(profil, {badge: this.renderBadge(profil.score)});
       } else if (indexFollowings > -1) {
-        this.followings[index] = profil
+        this.followings[index] = _.extend(profil, {badge: this.renderBadge(profil.score)});
       } else {
-        this.profil = profil;
+        this.profil = _.extend(profil, {badge: this.renderBadge(profil.score)});;
       }
     }
     this.status.loading = false;
@@ -128,7 +128,7 @@ export class ProfilStore extends CachedStore {
   }
 
   handleAcceptFriendshipSuccess(result) {
-    this.friends.push(result.friend);
+    this.friends.push(_.extend(result.friend, {badge: this.renderBadge(result.friend.score)}));
     _.remove(this.requests_received, (request) => {
       return request.friendship_id == result.friendship_id;
     });
@@ -287,6 +287,60 @@ export class ProfilStore extends CachedStore {
     this.requests_sent = [];
     this.requests_received = [];
     this.removed_friends = [];
+  }
+
+  renderBadge(score) {
+    if (score == 0) {
+      return {
+        image: require('../assets/img/badges/novice.png'),
+        name: 'Novice'
+      };
+    } else if (score < 1) {
+      return {
+        image: require('../assets/img/badges/brodeur.png'),
+        name: 'Brodeur'
+      };
+    } else if (score < 3) {
+      return {
+        image: require('../assets/img/badges/apprenti.png'),
+        name: 'Apprenti'
+      };
+    } else if (score < 5) {
+      return {
+        image: require('../assets/img/badges/retoucheur.png'),
+        name: 'Retoucheur'
+      };
+    } else if (score < 10) {
+      return {
+        image: require('../assets/img/badges/tricoteur.png'),
+        name: 'Tricoteur'
+      };
+    } else if (score < 30) {
+      return {
+        image: require('../assets/img/badges/confectionneur.png'),
+        name: 'Confectionneur'
+      };
+    } else if (score < 60) {
+      return {
+        image: require('../assets/img/badges/faconneur.png'),
+        name: 'Façonneur'
+      };
+    } else if (score < 100) {
+      return {
+        image: require('../assets/img/badges/tailleur.png'),
+        name: 'Tailleur'
+      };
+    } else if (score < 200) {
+      return {
+        image: require('../assets/img/badges/createur.png'),
+        name: 'Créateur'
+      };
+    } else if (score < 500) {
+      return {
+        image: require('../assets/img/badges/hautcouturier.png'),
+        name: 'Grand Couturier'
+      };
+    }
   }
 
   static error() {

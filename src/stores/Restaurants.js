@@ -7,14 +7,12 @@ import alt from '../alt';
 import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
-import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 
 import CachedStore from './CachedStore';
 import MeStore from './Me';
 import ProfilStore from './Profil';
-import RecoStore from './Reco';
 
 export class RestaurantsStore extends CachedStore {
 
@@ -89,9 +87,6 @@ export class RestaurantsStore extends CachedStore {
       handleSetFilter: RestaurantsActions.SET_FILTER,
 
       handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL
-
-// ================================================================================================
-
     });
   }
 
@@ -414,6 +409,26 @@ export class RestaurantsStore extends CachedStore {
     }
   }
 
+  // get distance in meters between two points defined by their coordinates
+  static getDistance(latitude1, longitude1, latitude2, longitude2) {
+    var R = 6371; // radius of the earth in km
+    var dLat = this.deg2rad(latitude2 - latitude1);
+    var dLon = this.deg2rad(longitude2 - longitude1); 
+    var a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(latitude1)) * Math.cos(this.deg2rad(latitude2)) * 
+      Math.sin(dLon / 2) * Math.sin(dLon / 2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    var d = R * c;
+    return d * 1000; // distance in meters
+  }
+
+  // support function to get measure in radians from measure in degrees
+  static deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
+
   static getRestaurants() {
     return this.getState().restaurants;
   }
@@ -516,6 +531,16 @@ export class RestaurantsStore extends CachedStore {
     var currentRegion = this.getState().currentRegion;
     var showPersonalContent = this.getState().showPersonalContent;
 
+    var west = {
+      latitude: currentRegion.latitude,
+      longitude: currentRegion.longitude - currentRegion.longitudeDelta / 2
+    };
+    var east = {
+      latitude: currentRegion.latitude,
+      longitude: currentRegion.longitude + currentRegion.longitudeDelta / 2
+    };
+    var radius = 0.4 * this.getDistance(west.latitude, west.longitude, east.latitude, east.longitude);
+
     var filteredRestaurants =  _.filter(this.searchable(), (restaurant) => {
 
       var intAmbiences = _.map(restaurant.ambiences, (ambience) => {
@@ -546,7 +571,8 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      // if (restaurant.longitude <= currentRegion.west || restaurant.longitude >= currentRegion.east || restaurant.latitude <= currentRegion.south || restaurant.latitude >= currentRegion.north) {
+      // uncomment to get restaurants in circle only
+      // if (this.getDistance(restaurant.latitude, restaurant.longitude, currentRegion.latitude, currentRegion.longitude) > radius) {
       //   return false;
       // }
 

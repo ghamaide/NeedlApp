@@ -209,7 +209,6 @@ class Restaurant extends Page {
 
           <View key='restaurant_image' style={styles.header}>
             <Carousel
-              key='carouselRestaurant'
               ref='carouselRestaurant' 
               style={{flexDirection: 'row', flex: 1, position: 'relative'}}>
               {_.map(restaurant.pictures, (picture) => {
@@ -326,7 +325,6 @@ class Restaurant extends Page {
               <View key='restaurant_wishlist_wrapper' style={{alignItems: 'center'}}>
                 <Text style={styles.containerTitle}>Ils ont envie d'y aller</Text>        
                 <Carousel 
-                  key='carouselWish'
                   style={{marginTop: 10, flexDirection: 'row', height: 80, width: 80, alignItems: 'center', justifyContent: 'center', backgroundColor: 'transparent'}}
                   elemSize={80}
                   insetMargin={0}>

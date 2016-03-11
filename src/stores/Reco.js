@@ -4,9 +4,6 @@ import alt from '../alt';
 
 import RecoActions from '../actions/RecoActions';
 
-import MeStore from './Me';
-import RestaurantsStore from './Restaurants';
-
 export class RecoStore {
 
   constructor() {
@@ -22,8 +19,6 @@ export class RecoStore {
       handleFetchRestaurantsFailed: RecoActions.FETCH_RESTAURANTS_FAILED,
 
       handleSetReco: RecoActions.SET_RECO,
-// ================================================================================================
-
     });
   }
 

@@ -12,8 +12,6 @@ import MeStore from '../../stores/Me';
 
 import MeActions from '../../actions/MeActions';
 
-import Profil from './Profil';
-
 class EditMe extends Component {
   static route() {
     return {

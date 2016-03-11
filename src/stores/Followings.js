@@ -6,8 +6,6 @@ import alt from '../alt';
 
 import FollowingsActions from '../actions/FollowingsActions';
 
-import MeStore from './Me';
-
 export class FollowingsStore {
 
   constructor() {

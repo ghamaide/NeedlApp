@@ -82,6 +82,7 @@ var styles = StyleSheet.create({
   },
   itemContainer: {
     padding: 10,
+    margin: 5,
     backgroundColor: 'transparent'
   },
   itemInnerContainer: {
@@ -91,7 +92,7 @@ var styles = StyleSheet.create({
   itemText: {
     color: '#FFFFFF',
     fontWeight: '400',
-    fontSize: 13,
+    fontSize: 14,
     marginLeft: 15
   },
   icons: {

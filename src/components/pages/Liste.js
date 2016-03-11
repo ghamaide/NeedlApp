@@ -51,9 +51,6 @@ class Liste extends Page {
   };
 
   componentWillMount() {
-    if (!MeStore.getState().showTabBar) {
-      MeActions.displayTabBar(true);
-    }
     RestaurantsStore.listen(this.onRestaurantsChange);
   };
 
@@ -67,10 +64,6 @@ class Liste extends Page {
 
   onRefresh = () => {
     RestaurantsActions.fetchRestaurants();
-  };
-
-  onPressText = () => {
-    this.props.navigator.push(Help.route({from: 'liste'}));
   };
 
   renderRestaurant = (restaurant) => {
@@ -99,9 +92,6 @@ class Liste extends Page {
       return (
         <View>
           {refreshingIndicator}
-          {
-            //<Text key='number_restaurants' onPress={this.onPressText} style={styles.numberRestaurants}>{this.state.restaurants.length} {this.state.restaurants.length > 1 ? 'restaurants classés' : 'restaurant classé'} par pertinence personnalisée via ton activité et celle de tes amis (+) </Text>
-          }
         </View>
       );
     } else {
@@ -121,7 +111,7 @@ class Liste extends Page {
       <View style={{flex: 1, position: 'relative'}}>
         <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/map.png')} title='Restaurants' rightButtonTitle='Carte' onRightButtonPress={() => this.props.navigator.replace(Carte.route({has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications, toggle: this.props.toggle}))} />
 
-        <TouchableHighlight key='filter_button' style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
+        <TouchableHighlight style={styles.filterContainerWrapper} underlayColor='#FFFFFF' onPress={() => {
           this.props.navigator.push(Filtre.route());
         }}>
             <Text style={styles.filterMessageText}>
@@ -129,7 +119,6 @@ class Liste extends Page {
             </Text>
         </TouchableHighlight>
         <RefreshableListView
-          key='list_restaurants'
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
           dataSource={ds.cloneWithRows(this.state.restaurants.slice(0, 18))}
@@ -175,16 +164,6 @@ var styles = StyleSheet.create({
     padding: 20,
     fontSize: 15,
     fontWeight: '600'
-  },
-  numberRestaurants: {
-    textAlign: 'center',
-    color: '#444444',
-    marginLeft: 10,
-    marginRight: 10,
-    fontSize: Platform.OS === 'ios' ? 13 : 11,
-    textDecorationLine: 'underline',
-    textDecorationStyle: 'solid',
-    textDecorationColor: '#444444'
   }
 });
 

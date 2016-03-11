@@ -6,9 +6,7 @@ import alt from '../alt';
 
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
-import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
 
 import CachedStore from './CachedStore';
 
@@ -19,23 +17,15 @@ export class MeStore extends CachedStore {
 
     this.me = {};
 
-    this.first_loading = true;
-
     this.hasBeenUploadWelcomed = false;
-
     this.showOverlayMapTutorial = true;
-
-    this.showedCurrentPosition = false;
-
     this.showedUpdateMessage = true;
-    
     this.dismissedUpdateMessage = false;
 
+    this.showedCurrentPosition = false;
     this.showTabBar = true;
 
     this.version = 0;
-
-    this.isConnected = false;
 
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
@@ -64,8 +54,6 @@ export class MeStore extends CachedStore {
       handleCreateAccountFailed: LoginActions.CREATE_ACCOUNT_FAILED,
       handleCreateAccountSuccess: LoginActions.CREATE_ACCOUNT_SUCCESS,
 
-      handleLogout: LoginActions.LOGOUT,
-
       handleEditSuccess: MeActions.EDIT_SUCCESS,
       handleEditFailed: MeActions.EDIT_FAILED,
       handleEdit: MeActions.EDIT,
@@ -78,19 +66,16 @@ export class MeStore extends CachedStore {
       handleSendMessageContactSuccess : MeActions.SEND_MESSAGE_CONTACT_SUCCESS,
       handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
 
-      handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
-      
-      handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
+      handleLinkFacebookAccount: MeActions.LINK_FACEBOOK_ACCOUNT,
+      handleLinkFacebookAccountFailed: MeActions.LINK_FACEBOOK_ACCOUNT_FAILED,
+      handleLinkFacebookAccountSuccess: MeActions.LINK_FACEBOOK_ACCOUNT_SUCCESS,
+
+      handleLogout: LoginActions.LOGOUT,
 
       handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
 
-      handleCheckConnectivity: MeActions.checkConnectivity,
-      handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
-
-// ================================================================================================
-
+      handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
       handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
-
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE
 
     });
@@ -228,8 +213,8 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleDisplayTabBar(display) {
-    this.showTabBar = display;
+  handleSendVersion() {
+    this.status.loading = true;
   }
 
   handleSendVersionFailed(err) {
@@ -244,21 +229,31 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleSendVersion() {
+  handleLinkFacebookAccount() {
     this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleLinkFacebookAccountFailed(err) {
+    this.status.error = err;
+    this.status.loading = false;
+  }
+
+  handleLinkFacebookAccountSuccess() {
+    this.status.loading = false;
   }
 
   handleShowedCurrentPosition(showed) {
     this.showedCurrentPosition = showed;
   }
 
-  handleCheckConnectivity() {
-    this.status.loading = true;
+  handleShowedUpdateMessage() {
+    this.showedUpdateMessage = true;
+    this.dismissedUpdateMessage = true;
   }
 
-  handleCheckConnectivitySuccess(isConnected) {
-    this.isConnected = isConnected;
-    this.status.loading = false;
+  handleHideOverlayMapTutorial() {
+    this.showOverlayMapTutorial = false;
   }
 
   static getMe() {
@@ -275,19 +270,6 @@ export class MeStore extends CachedStore {
 
   static hasBeenUploadWelcomed() {
     return this.getState().hasBeenUploadWelcomed;
-  }
-
-  static isConnected() {
-    return this.getState().isConnected;
-  }
-
-  handleShowedUpdateMessage() {
-    this.showedUpdateMessage = true;
-    this.dismissedUpdateMessage = true;
-  }
-
-  handleHideOverlayMapTutorial() {
-    this.showOverlayMapTutorial = false;
   }
 
   static showedUpdateMessage() {

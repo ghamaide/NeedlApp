@@ -202,7 +202,9 @@ class SearchFriend extends Page {
         <Image style={styles.profileImage} source={{uri: user.picture}} />
         <Text style={styles.profileName}>{user.fullname}</Text>
         {_.includes(this.state.friends_and_requests_sent_ids, user.id) ? [
-          <Image key={'check_' + user.id} style={styles.imageCheckUser} source={require('../../assets/img/actions/icons/check.png')} />
+          <View key={'invited_friend_' + user.id} style={styles.invitedContainer}>
+            <Text style={styles.invitedText}>Invité</Text>
+          </View>
         ] : [
           _.includes(this.state.requests_received_ids, user.id) ? [
             <TouchableHighlight
@@ -538,6 +540,22 @@ var styles = StyleSheet.create({
   noResultText: {
     fontWeight: 'bold',
     color: '#000000',
+    textAlign: 'center'
+  },
+  invitedContainer: {
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#EF582D',
+    borderWidth: 1
+  },
+  invitedText: {
+    color: '#EF582D',
+    fontWeight: '400',
+    fontSize: 13,
     textAlign: 'center'
   },
   buttonWrapper: {

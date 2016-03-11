@@ -47,7 +47,6 @@ class Filtre extends Component {
   };
 
   componentWillMount() {
-    MeActions.displayTabBar(false);
     this.setState(this.filtersState());
   };
 
@@ -117,7 +116,6 @@ class Filtre extends Component {
     return (
       <View style={{flex: 1}}>
         <NavigationBar type='back' title='Filtrer' leftButtonTitle='Annuler' onLeftButtonPress={() => {
-          MeActions.displayTabBar(true);
           this.props.navigator.pop();
         }}/>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEEEEE', position: 'relative'}}>
@@ -246,7 +244,6 @@ class Filtre extends Component {
               onPress={() => {
                 this.setFilters();
                 this.props.navigator.pop();
-                MeActions.displayTabBar(true);
               }}>
               <Text style={styles.submitText}>Valider</Text>
             </TouchableHighlight>

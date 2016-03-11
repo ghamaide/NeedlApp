@@ -18,7 +18,7 @@ class PriceMarker extends Component {
         {Platform.OS === 'ios' ? [
           <View key='triangle' style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
         ] : [
-          <View key='triangle' style={[styles.rectangle, {backgroundColor: backgroundColor}]} />
+          <View key='rectangle' style={[styles.rectangle, {backgroundColor: backgroundColor}]} />
         ]}
       </View>
     );

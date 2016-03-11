@@ -11,9 +11,7 @@ import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
-import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
 
 import MeStore from './Me';
 import ProfilStore from './Profil';

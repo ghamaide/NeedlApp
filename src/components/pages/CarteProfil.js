@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Image, PixelRatio, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Dimensions from 'Dimensions';

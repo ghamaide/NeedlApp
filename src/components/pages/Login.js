@@ -15,10 +15,9 @@ class Login extends Component {
   
   getLoginState() {
     return {
-      status: MeStore.getState().status,
       me: MeStore.getState().me,
       error: MeStore.error(),
-      laoding: MeStore.loading()
+      loading: MeStore.loading()
     };
   };
 
@@ -30,7 +29,7 @@ class Login extends Component {
     this.state.name = '';
     this.state.password = '';
     this.state.password_confirmation = '';
-    this.state.viewSignIn = true;
+    this.state.view_sign_in = true;
   };
 
   componentDidMount() {
@@ -51,7 +50,7 @@ class Login extends Component {
   };
 
   onLogin = () => {
-    if (!this.state.status.loading) {
+    if (!this.state.loading) {
       LoginActions.loginFacebook();
     }
   };
@@ -121,7 +120,7 @@ class Login extends Component {
           break;
         default:
           message = 'Erreur lors de l\'authentification';
-          if (this.state.viewSignIn) {
+          if (this.state.view_sign_in) {
             showSignInError = true;
           } else {
             showSignUpError = true;  
@@ -138,7 +137,7 @@ class Login extends Component {
             <Text style={styles.sublineText}>Les restos préférés de vos amis</Text>
           </View>
 
-          {this.state.viewSignIn ? [
+          {this.state.view_sign_in ? [
             this.state.loading ? [
               <View key='loading' style={styles.loginWrapper}>
                 {Platform.OS === 'ios' ? [<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />] : [<ProgressBarAndroid indeterminate />]}
@@ -180,7 +179,7 @@ class Login extends Component {
                   <Text style={styles.submitText}>Connexion</Text>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: false})} underlayColor='rgba(0, 0, 0, 0)'>
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({view_sign_in: false})} underlayColor='rgba(0, 0, 0, 0)'>
                   <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
                 </TouchableHighlight>
               </View>
@@ -253,7 +252,7 @@ class Login extends Component {
                   <Text style={styles.submitText}>Créer mon compte</Text>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({viewSignIn: true})} underlayColor='rgba(0, 0, 0, 0)'>
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({view_sign_in: true})} underlayColor='rgba(0, 0, 0, 0)'>
                   <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
                 </TouchableHighlight>
               </View>
@@ -264,7 +263,7 @@ class Login extends Component {
 
         <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='#308edc'>
           <Text style={styles.loginBtnText}>
-            {this.state.status.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
+            {this.state.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
           </Text>
         </TouchableHighlight>
       </View>
@@ -289,6 +288,7 @@ var styles = StyleSheet.create({
     marginBottom: 10,
     height: (Dimensions.get('window').width - 80) / 3,
     width: Dimensions.get('window').width - 80,
+    tintColor: '#FFFFFF'
   },
   sublineText: {
     backgroundColor: 'transparent',

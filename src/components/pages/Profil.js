@@ -212,11 +212,11 @@ class Profil extends Page {
               </View>
             </View>
             <View style={styles.badgeInfoContainer}>
-              <Text style={styles.badgeName}>Créateur</Text>
+              <Text style={styles.badgeName}>{profil.badge.name}</Text>
               <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
             </View>
             <Image source={{uri: profil.picture}} style={styles.image} />
-            <Image source={{uri: profil.picture}} style={styles.badgeImage} />
+            <Image source={profil.badge.image} style={styles.badgeImage} />
             <View style={styles.profileNameContainer}>
               <Text style={[styles.profileName, {top: 10}]}>
                 {first_name}
