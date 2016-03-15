@@ -86,7 +86,7 @@ var styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     marginBottom: 40,
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     marginTop: 20
   }
 });

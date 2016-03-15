@@ -176,7 +176,7 @@ var styles = StyleSheet.create({
   flexDirection: 'row'
  },
  progressBarCompleted: {
-  backgroundColor: '#38E1B2',
+  backgroundColor: '#9EE43E',
   position: 'absolute',
   top: 0,
   left: 0,

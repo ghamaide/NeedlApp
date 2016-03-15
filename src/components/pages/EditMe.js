@@ -111,8 +111,8 @@ var styles = StyleSheet.create({
     borderRadius: 2
   },
   submit: {
-    backgroundColor: '#38E1B2',
-    borderColor: '#22DEA9',
+    backgroundColor: '#9EE43E',
+    borderColor: '#9EE43E',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',

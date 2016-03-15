@@ -22,9 +22,9 @@ class MenuIcon extends Component {
     var has_shared = MeStore.getState().me.HAS_SHARED;
 
     return (
-      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 22 : 2, left: 0, width: 40, height: 40}}>
+      <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 18 : 2, left: 0, width: 40, height: 40}}>
         <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
-          <Image style={{width: 22, height: 22, tintColor: '#EF582D'}} source={require('../../assets/img/other/icons/list.png')} />
+          <Image style={{width: 22, height: 22, tintColor: '#FE3139'}} source={require('../../assets/img/other/icons/list.png')} />
         </TouchableHighlight>
         
         {pastille ?
@@ -53,7 +53,7 @@ var styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     borderColor: '#FFFFFF',
     borderWidth: 1
   },

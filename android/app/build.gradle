@@ -142,4 +142,5 @@ dependencies {
     compile project(':RNMixpanel')
     compile project(':RNSendIntentModule')
     compile project(':react-native-branch')
+    compile project(':react-native-linear-gradient')
 }

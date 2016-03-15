@@ -28,7 +28,7 @@ var styles = StyleSheet.create({
     margin: 5
   },
   optionsButton: {
-    backgroundColor: '#888888',
+    backgroundColor: '#C1BFCC',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,

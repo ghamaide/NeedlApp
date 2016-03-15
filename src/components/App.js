@@ -27,7 +27,6 @@ import RestaurantsStore from '../stores/Restaurants';
 
 import Carte from './pages/Carte';
 import Friends from './pages/Friends';
-import Liste from './pages/Liste';
 import Notifs from './pages/Notifs';
 import Profil from './pages/Profil';
 import RecoStep1 from './pages/Reco/Step1';
@@ -136,6 +135,7 @@ class App extends Component {
   };
 
   onAppStateChange = (state) => {
+    // Remove to update app when users goes back on it
     // if (state === 'active') {
     //   this.startActions();
     // }
@@ -233,6 +233,7 @@ class App extends Component {
   };
 
   componentWillMount() {
+    this.onUpdate();
     MeStore.listen(this.onMeChange);
     NotifsStore.listen(this.onNotificationsChange);
     ProfilStore.listen(this.onProfileChange);
@@ -320,6 +321,14 @@ class App extends Component {
     }
   };
 
+
+  // Actions to add the new variables in local storage when user upgrades his version
+  onUpdate = () => {
+    if ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '2.1.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0')) {
+      RestaurantsActions.setFilter('friends', []);
+    }
+  };
+
   render() {
     var loading_array = [this.state.meLoading, this.state.notificationsLoading, this.state.profileLoading, this.state.restaurantsLoading];
     var index_loading = 0;
@@ -340,7 +349,7 @@ class App extends Component {
           }}
           tabs={[
             {
-              component: Liste,
+              component: Carte,
               title: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
             },
@@ -481,7 +490,7 @@ var styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     marginBottom: 40,
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     marginTop: 20
   },
   arrow: {

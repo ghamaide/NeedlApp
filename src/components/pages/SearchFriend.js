@@ -371,14 +371,14 @@ class SearchFriend extends Page {
 
         <View key='switch_buttons' style={styles.contactsButtonContainer}>
           <TouchableHighlight 
-            style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#EF582D' : 'transparent'}]}
+            style={[styles.contactButton, {backgroundColor: this.state.needlActive ? '#FE3139' : 'transparent'}]}
             onPress={() => this.onPressContactButton('needl')}>
-            <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#EF582D'}}>Needl</Text>
+            <Text style={{color: this.state.needlActive ? '#FFFFFF' : '#FE3139'}}>Needl</Text>
           </TouchableHighlight>
           <TouchableHighlight 
-            style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#EF582D' : 'transparent'}]}
+            style={[styles.contactButton, {backgroundColor: this.state.phoneActive ? '#FE3139' : 'transparent'}]}
             onPress={() => this.onPressContactButton('phone')}>
-            <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#EF582D'}}>Téléphone</Text>
+            <Text style={{color: this.state.phoneActive ? '#FFFFFF' : '#FE3139'}}>Téléphone</Text>
           </TouchableHighlight>
         </View>
 
@@ -402,7 +402,7 @@ class SearchFriend extends Page {
             ref='searchBar'
             key='search_android'
             placeholder='Rechercher'
-            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#333333'}}
+            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#3A325D'}}
             onChangeText={(text) => {
               if (this.state.needlActive) {
                 this.searchUsers(text);
@@ -410,7 +410,7 @@ class SearchFriend extends Page {
                 this.searchContacts(text);
               }
             }}
-            placeholderTextColor='#333333' />
+            placeholderTextColor='#3A325D' />
         ]}
 
         {content}
@@ -454,7 +454,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: '500',
-    color: '#EF582D'
+    color: '#FE3139'
   },
   contactInfoWrapper: {
     marginLeft: 10,
@@ -477,7 +477,7 @@ var styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#EF582D'
+    backgroundColor: '#FE3139'
   },
   imageMail: {
     width: 20,
@@ -509,7 +509,7 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 10,
     borderWidth: 1,
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderRadius: 5
   },
   contactButton: {
@@ -549,11 +549,11 @@ var styles = StyleSheet.create({
     paddingRight: 15,
     borderRadius: 5,
     backgroundColor: '#FFFFFF',
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderWidth: 1
   },
   invitedText: {
-    color: '#EF582D',
+    color: '#FE3139',
     fontWeight: '400',
     fontSize: 13,
     textAlign: 'center'
@@ -564,7 +564,7 @@ var styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 5,
-    backgroundColor: '#EF582D'
+    backgroundColor: '#FE3139'
   },
   buttonText: {
     color: '#FFFFFF',

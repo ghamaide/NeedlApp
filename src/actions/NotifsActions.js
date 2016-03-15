@@ -11,9 +11,6 @@ export class NotifsActions {
 
       request('GET', '/api/v2/activities')
         .end((err, result) => {
-          // console.log('fetch notifs');
-          // console.log(err);
-          // console.log(result);
           if (err) {
             return this.fetchNotificationsFailed(err);
           }

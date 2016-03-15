@@ -136,7 +136,7 @@ class Liste extends Page {
 
 var styles = StyleSheet.create({
   filterMessageText: {
-    color: '#EF582D',
+    color: '#FE3139',
     fontSize: 15,
     fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
     textAlign: 'center',
@@ -144,7 +144,7 @@ var styles = StyleSheet.create({
     fontFamily: 'test'
   },
   filterContainerWrapper: {
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderWidth: 1,
     borderRadius: 1,
     margin: 5,

@@ -110,7 +110,7 @@ class RecoStep6 extends Component {
             {!active ? [
               <View key={'active_' + recommenderId} style={styles.grayImage} />
             ] : null}
-            <Text style={[styles.recommenderName, {color: active ? '#333333' : '#AAAAAA'}]}>{recommender.name}</Text>
+            <Text style={[styles.recommenderName, {color: active ? '#3A325D' : '#AAAAAA'}]}>{recommender.name}</Text>
           </View>
         </TouchableHighlight>
       </View>
@@ -280,7 +280,7 @@ var styles = StyleSheet.create({
     width: 150,
     padding: 10,
     borderRadius: 5,
-    backgroundColor: '#EF582D'
+    backgroundColor: '#FE3139'
   },
   progressBar: {
     top: Platform.OS === 'ios' ? 60 : 40,
@@ -291,7 +291,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#DDDDDD'
   },
   progressBarCompleted: {
-    backgroundColor: '#38E1B2',
+    backgroundColor: '#9EE43E',
     position: 'absolute',
     top: 0,
     left: 0,

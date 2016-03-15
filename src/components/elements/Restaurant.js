@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Image, processColor, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
@@ -26,7 +26,7 @@ class Restaurant extends Component {
     var content = (
       <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.picture} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.picture}}>
-          <LinearGradient colors={[processColor('#FFFFFF'), processColor('#000000')]} style={styles.restaurantImageMask} />
+          <LinearGradient colors={['#FFFFFF', '#000000']} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
             <Text key='restaurant_name' style={styles.restaurantName}>{this.props.name}</Text>
             {budget ? [

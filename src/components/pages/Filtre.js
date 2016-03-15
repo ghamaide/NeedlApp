@@ -1,297 +1,230 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
-
-import _ from 'lodash';
-import Mixpanel from 'react-native-mixpanel';
-
-import NavigationBar from '../ui/NavigationBar';
-import Text from '../ui/Text';
-
-import Overlay from '../elements/Overlay';
+import React, {Component, Dimensions, Image, StyleSheet, ScrollView, TouchableHighlight, View} from 'react-native';
 
 import ToggleGroup from './Reco/ToggleGroup';
 
-import MeActions from '../../actions/MeActions';
+import Text from '../ui/Text';
+import NavigationBar from '../ui/NavigationBar';
+
+import Overlay from '../elements/Overlay';
+
 import RestaurantsActions from '../../actions/RestaurantsActions';
 
 import MeStore from '../../stores/Me';
+import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
 var windowWidth = Dimensions.get('window').width;
 
 class Filtre extends Component {
-  static route() {
+  static route(props) {
     return {
-      component: Filtre
+      component: Filtre,
+      title: 'Filtres',
+      passProps: props
     };
   };
 
   constructor(props) {
     super(props);
 
-    this.state = this.filtersState();
+    this.state = this.restaurantsState();
+
+    this.state.showOverlayAmbiences = false;
+    this.state.showOverlayOccasions = false;
+    this.state.showOverlayTypes = false;
+  }
+
+  componentWillMount() {
+    RestaurantsStore.listen(this.onRestaurantsChange);
+  }
+
+  componentWillUnmount() {
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
+  }
+
+  onRestaurantsChange = () => {
+    this.setState(this.restaurantsState());
   };
 
-  filtersState() {
-    return {
-      showOverlayAmbiences: false,
-      showOverlayOccasions: false,
-      showOverlayTypes: false,
-      showPersonalContent: RestaurantsStore.getState().showPersonalContent,
-      prices: RestaurantsStore.getState().filters.prices,
-      ambiences: RestaurantsStore.getState().filters.ambiences,
-      occasions: RestaurantsStore.getState().filters.occasions,
-      types: RestaurantsStore.getState().filters.types
+  restaurantsState = () => {
+    return  {
+      me_friends_and_followings: _.union(ProfilStore.getFriends(), ProfilStore.getFollowings(), [ProfilStore.getMe()]),
+      prices_available: RestaurantsStore.getPrices(),
+      occasions_available: RestaurantsStore.getOccasions(),
+      types_available: RestaurantsStore.getTypes(),
+      friends_available: RestaurantsStore.getFriends(),
+      prices_filter: RestaurantsStore.getState().filters.prices,
+      occasions_filter: RestaurantsStore.getState().filters.occasions,
+      types_filter: RestaurantsStore.getState().filters.types,
+      friends_filter: RestaurantsStore.getState().filters.friends,
+      prices_available_with_exception: RestaurantsStore.getAvailableFilters('price'),
+      occasions_available_with_exception: RestaurantsStore.getAvailableFilters('occasion'),
+      types_available_with_exception: RestaurantsStore.getAvailableFilters('type'),
+      friends_available_with_exception: RestaurantsStore.getAvailableFilters('friend'),
     };
   };
 
-  componentWillMount() {
-    this.setState(this.filtersState());
-  };
-
-  componentDidMount() {
-    Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
-  };
-
-  setFilters = () => {
-    RestaurantsActions.setFilter('prices', this.state.prices);
-    RestaurantsActions.setFilter('ambiences', this.state.ambiences);
-    RestaurantsActions.setFilter('occasions', this.state.occasions);
-    RestaurantsActions.setFilter('types', this.state.types);
-    RestaurantsActions.setDisplayPersonal(this.state.showPersonalContent);
-
-    var hash = {
-      prices: this.state.prices,
-      ambiences: this.state.ambiences,
-      occasions: this.state.occasions,
-      types: this.state.types
-    }
-
-    Mixpanel.trackWithProperties('Filtre Global', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, hash: hash});
-    Mixpanel.trackWithProperties('Show Own Recommendations', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, display: this.state.showPersonalContent});
-
-    _.map(this.state.prices, (price) => {
-      Mixpanel.trackWithProperties('Filtre Prices', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, price: price});
+  resetFilters = () => {
+    RestaurantsActions.setFilter('prices', []);
+    RestaurantsActions.setFilter('occasions', []);
+    RestaurantsActions.setFilter('types', []);
+    RestaurantsActions.setFilter('friends', []);
+    _.map(RestaurantsStore.MAP_PRICES, (price) => {
+      this.refs.togglegroupprices.onUnselect(price.label);
     });
-
-    _.map(this.state.occasions, (occasion) => {
-      Mixpanel.trackWithProperties('Filtre Occasions', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, occasions: RestaurantsStore.MAP_OCCASIONS[occasion - 1].label});
-    });
-
-    _.map(this.state.ambiences, (ambience) => {
-      Mixpanel.trackWithProperties('Filtre Ambiences', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, ambiences: RestaurantsStore.MAP_AMBIENCES[ambience - 1].label});
-    });
-
-    _.map(this.state.types, (type) => {
-      Mixpanel.trackWithProperties('Filtre Types', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, types: RestaurantsStore.MAP_TYPES[type - 1].label});
-    });
-  };
-
-  clearFilters = () => {
-    this.setState({ambiences: []});
-    this.setState({occasions: []});
-    this.setState({types: []});
-    _.map(this.state.prices, (id) => {
-      this.refs.togglegroupprices.onUnselect(id);
-    });
-  };
-
-  onValueChange = (value) => {
-    this.setState({showPersonalContent: value});
   };
 
   render() {
+    var me_friends_and_followings_ids = _.map(this.state.me_friends_and_followings, (user) => {
+      return user.id
+    });
+
     var backgroundColor = '#FFFFFF';
     var backgroundColorOverlay = 'rgba(0, 0, 0, 0)';
-    var backgroundColorActive = '#FFFFFF';
-    var backgroundColorActiveOverlay = 'rgba(0, 0, 0 ,0)';
-    var labelColor = '#888888';
-    var labelColorOverlay = '#FFFFFF';
-    var labelColorActive = '#EF582D';
-    var tintColor = '#888888';
-    var tintColorOverlay = '#FFFFFF';
-    var tintColorActive = '#EF582D';
+    var color = '#FFFFFF';
+    var colorInactive = '#555555';
+    var colorOverlay = '#FFFFFF';
+    var colorActive = '#FE3139';
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar type='back' title='Filtrer' leftButtonTitle='Annuler' onLeftButtonPress={() => {
-          this.props.navigator.pop();
-        }}/>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#EEEEEE', position: 'relative'}}>
-          <ScrollView key='filter_scrollview' style={styles.container}>
-            <ToggleGroup
-              ref='togglegroupprices'
-              maxSelection={4}
-              fifo={true}
-              selectedInitial={RestaurantsStore.getState().filters.prices}
-              onSelect={(v, selected) => {
-                this.setState({prices: selected});
-              }}
-              onUnselect={(v, selected) => {
-                this.setState({prices: selected});
-              }}>
-              {(Toggle) => {
-                return (
-                  <View style={{flex: 1, alignItems: 'center'}}>
-                    <Text style={styles.filtreTitle}>Prix</Text>
-                    <View style={styles.pastilleWrapper}>
-                      <View style={styles.pastilleContainer}>
-                        <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_1.png')} value={1} />
-                        <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_2.png')} value={2} />
-                        <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_3.png')} value={3} />
-                        <Toggle size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColorActive} tintColor={tintColor} tintColorActive={tintColorActive} labelColor={labelColor} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/prices/icons/prix_4.png')} value={4} />
-                      </View>
+        <NavigationBar type='back' title='Filtres' rightButtonTitle='Réinitialiser' onRightButtonPress={this.resetFilters} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <ScrollView key='filter_scrollview' style={styles.container}>
+
+          <ToggleGroup
+            ref='togglegroupprices'
+            key='price_filter_togglegroup'
+            maxSelection={4}
+            fifo={true}
+            selectedInitial={this.state.prices_filter}
+            onSelect={(v, selected) => {
+              this.setState({prices_filter: selected});
+              RestaurantsActions.setFilter('prices', this.state.prices_filter);
+            }}
+            onUnselect={(v, selected) => {
+              this.setState({prices_filter: selected});
+              RestaurantsActions.setFilter('prices', this.state.prices_filter);
+            }}>
+            {(Toggle) => {
+              return (
+                <View style={{flex: 1, alignItems: 'center'}}>
+                  <Text style={styles.filtreTitle}>Prix</Text>
+                  <View style={styles.pastilleWrapper}>
+                    <View style={styles.pastilleContainer}>
+                      {_.map(this.state.prices_available_with_exception, (id) => {
+                        var price = RestaurantsStore.MAP_PRICES[id - 1];
+                        return <Toggle key={price.label} size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColor} tintColor={'#C1BFCC'} tintColorActive={'#FE3139'} labelColor={'#C1BFCC'} labelColorActive={'#FE3139'} style={styles.pastille} icon={price.icon} value={price.label} />
+                      })}
                     </View>
                   </View>
-                );
-              }}
-            </ToggleGroup>
+                </View>
+              );
+            }}
+          </ToggleGroup>
 
-            <View key='ambiences_filter' style={{flex: 1, alignItems: 'center'}}>
-              <Text style={styles.filtreTitle}>Ambiances</Text>
-              {this.state.ambiences.length > 0 ? [
-                <TouchableHighlight key='ambiences_filter_button' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayAmbiences: true})}>
-                  <View key='ambiences_filter_icon_container' style={styles.pastilleContainer}>
-                    {_.map(this.state.ambiences.slice(0, 3), (id) => {
-                      var icon = RestaurantsStore.MAP_AMBIENCES[id - 1].icon;
-                      return <Image key={icon} style={styles.pastilleOverlay} source={icon} />;
-                    })}
-                    {this.state.ambiences.length > 3 ? [
-                      <Text style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.ambiences.length - 3}</Text>
-                    ] : []}
-                  </View>
-                </TouchableHighlight>
-              ] : [
-                <TouchableHighlight key='ambiences_filter_button' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayAmbiences: true})}>
-                  <View key='ambiences_filter_icon_container' style={styles.pastilleContainer}>
-                    <Image key='chic' style={styles.pastilleOverlay} source={require('../../assets/img/ambiances/icons/chic.png')} />
-                    <Image key='festif' style={styles.pastilleOverlay} source={require('../../assets/img/ambiances/icons/festif.png')} />
-                    <Image key='typique' style={styles.pastilleOverlay} source={require('../../assets/img/ambiances/icons/typique.png')} />
-                    <Text key='ambiences_remaining' style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{RestaurantsStore.MAP_AMBIENCES.length - 4}</Text>
-                  </View>
-                </TouchableHighlight>
-              ]}
-            </View>
-
+          {!_.isEmpty(this.state.occasions_available_with_exception) || !_.isEmpty(this.state.occasions_filter) ? [
             <View key='occasions_filter' style={{flex: 1, alignItems: 'center'}}>
               <Text style={styles.filtreTitle}>Occasions</Text>
-              {this.state.occasions.length > 0 ? [
-                <TouchableHighlight key='occasions_filter_button' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayOccasions: true})}>
+              {this.state.occasions_filter.length > 0 ? [
+                <TouchableHighlight key='occasions_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayOccasions: true})}>
                   <View style={styles.pastilleContainer}>
-                    {_.map(this.state.occasions.slice(0, 3), (id) => {
+                    {_.map(this.state.occasions_filter.slice(0, 3), (id) => {
                       var icon = RestaurantsStore.MAP_OCCASIONS[id - 1].icon;
-                      return <Image key={icon} style={styles.pastilleOverlay} source={icon} />;
+                      return <Image key={id} style={[styles.pastilleOverlay, {tintColor: '#FE3139'}]} source={icon} />;
                     })}
-                    {this.state.occasions.length > 3 ? [
-                      <Text style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.occasions.length - 3}</Text>
-                    ] : []}
+                    {this.state.occasions_filter.length > 3 ? [
+                      <Text key='occasions_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.occasions_filter.length - 3}</Text>
+                    ] : null}
                   </View>
                 </TouchableHighlight>
               ] : [
-                <TouchableHighlight key='occasions_filter_button' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayOccasions: true})}>
+                <TouchableHighlight key='occasions_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayOccasions: true})}>
                   <View style={styles.pastilleContainer}>
-                    <Image key='business' style={styles.pastilleOverlay} source={require('../../assets/img/occasions/icons/dej_business.png')} />
-                    <Image key='couple' style={styles.pastilleOverlay} source={require('../../assets/img/occasions/icons/en_couple.png')} />
-                    <Image key='famille' style={styles.pastilleOverlay} source={require('../../assets/img/occasions/icons/en_famille.png')} />
-                    <Text key='occasions_remaining' style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{RestaurantsStore.MAP_OCCASIONS.length - 3}</Text>
+                    {_.map(this.state.occasions_available_with_exception.slice(0, 3), (id) => {
+                      var occasion = RestaurantsStore.MAP_OCCASIONS[id - 1];
+                      return <Image key={id} style={[styles.pastilleOverlay, {tintColor: '#C1BFCC'}]} source={occasion.icon} />
+                    })}
+                    {this.state.occasions_available_with_exception.length > 3 ? [
+                      <Text key='occasions_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.occasions_available_with_exception.length - 3}</Text>
+                    ] : null}
                   </View>
                 </TouchableHighlight>
               ]}
             </View>
+          ] : null}
 
+          {!_.isEmpty(this.state.types_available_with_exception) || !_.isEmpty(this.state.types_filter) ? [
             <View key='types_filter' style={{flex: 1, alignItems: 'center'}}>
               <Text style={styles.filtreTitle}>Types</Text>
-              {this.state.types.length > 0 ? [
-                <TouchableHighlight key='types_filter_button'  style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayTypes: true})}>
+              {this.state.types_filter.length > 0 ? [
+                <TouchableHighlight key='types_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayTypes: true})}>
                   <View style={styles.pastilleContainer}>
-                    {_.map(this.state.types.slice(0, 3), (id) => {
+                    {_.map(this.state.types_filter.slice(0, 3), (id) => {
                       var icon = RestaurantsStore.MAP_TYPES[id - 1].icon
-                      return <Image key={icon} style={styles.pastilleOverlay} source={icon} />;
+                      return <Image key={id} style={[styles.pastilleOverlay, {tintColor: '#FE3139'}]} source={icon} />;
                     })}
-                    {this.state.types.length > 3 ? [
-                      <Text style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.types.length - 3}</Text>
-                    ] : []}
+                    {this.state.types_filter.length > 3 ? [
+                      <Text key='types_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.types_filter.length - 3}</Text>
+                    ] : null}
                   </View>
                 </TouchableHighlight>
               ] : [
-                <TouchableHighlight key='types_filter_button'  style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayTypes: true})}>
+                <TouchableHighlight key='types_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayTypes: true})}>
                   <View style={styles.pastilleContainer}>
-                    <Image key='burger' style={styles.pastilleOverlay} source={require('../../assets/img/types/icons/burger.png')} />
-                    <Image key='chinese' style={styles.pastilleOverlay} source={require('../../assets/img/types/icons/chinese.png')} />
-                    <Image key='african' style={styles.pastilleOverlay} source={require('../../assets/img/types/icons/african.png')} />
-                    <Text key='types_remaining' style={{width: 40, color: '#EF582D', margin: 10, fontSize: 15, fontWeight: '700'}}>+{RestaurantsStore.MAP_TYPES.length - 3}</Text>
+                    {_.map(this.state.types_available_with_exception.slice(0, 3), (id) => {
+                      var type = RestaurantsStore.MAP_TYPES[id - 1];
+                      return <Image key={id} style={[styles.pastilleOverlay, {tintColor: '#C1BFCC'}]} source={type.icon} />
+                    })}
+                    {this.state.types_available_with_exception.length > 3 ? [
+                      <Text key='types_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.types_available_with_exception.length - 3}</Text>
+                    ] : null}
                   </View>
                 </TouchableHighlight>
               ]}
             </View>
-            <View style={{flex: 1, width: windowWidth, flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
-              <Switch
-                onValueChange={this.onValueChange}
-                style={{marginRight: 10}}
-                value={this.state.showPersonalContent} />
-              <Text style={{flex: 1}}>Afficher les restaurants que j'ai recommandés</Text>
-            </View>
-            <TouchableHighlight 
-              underlayColor='rgba(0, 0, 0, 0.3)'
-              style={styles.resetButton}
-              onPress={this.clearFilters}>
-              <Text style={styles.resetText}>Réinitialiser</Text>
-            </TouchableHighlight>
-            <TouchableHighlight 
-              underlayColor='rgba(0, 0, 0, 0.3)'
-              style={styles.submitButton}
-              onPress={() => {
-                this.setFilters();
-                this.props.navigator.pop();
-              }}>
-              <Text style={styles.submitText}>Valider</Text>
-            </TouchableHighlight>
-          </ScrollView>
-        </View>
+          ] : null}
 
-        {this.state.showOverlayAmbiences ? [
-          <Overlay key='ambiences_overlay'>
-            <ToggleGroup
-              ref='togglegroupambiences'
-              maxSelection={7}
-              fifo={true}
-              selectedInitial={this.state.ambiences}
-              onSelect={(v, selected) => {
-                this.setState({ambiences: selected});
-              }}
-              onUnselect={(v, selected) => {
-                this.setState({ambiences: selected});
-              }}>
-              {(Toggle) => {
-                return (
-                  <View style={{flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
-                    <Text style={styles.filtreTitleOverlay}>Ambiances</Text>
-                    <View style={styles.pastilleWrapperOverlay}>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle key='chic' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/chic.png')} label='Chic' value={1} />
-                        <Toggle key='festif' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/festif.png')} label='Festif' value={2} />
-                        <Toggle key='convivial' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/convivial.png')} label='Convivial' value={3} />
-                        <Toggle key='romantique' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/romantique.png')} label='Romantique' value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle key='branche' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/branche.png')} label='Branché' value={5} />
-                        <Toggle key='typique' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/typique.png')} label='Typique' value={6} />
-                        <Toggle key='cosy' size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/ambiances/icons/cosy.png')} label='Cosy' value={7} />
-                      </View>
-                      <TouchableHighlight 
-                        underlayColor='rgba(0, 0, 0, 0.3)'
-                        style={styles.submitButtonOverlay} 
-                        onPress={() => this.setState({showOverlayAmbiences: false})}>
-                        <Text style={styles.submitText}>Valider</Text>
-                      </TouchableHighlight>
-                    </View>
+          {!_.isEmpty(this.state.friends_available_with_exception) || !_.isEmpty(this.state.friends_filter) ? [
+            <View key='friends_filter' style={{flex: 1, alignItems: 'center'}}>
+              <Text style={styles.filtreTitle}>Amis</Text>
+              {this.state.friends_filter.length > 0 ? [
+                <TouchableHighlight key='friends_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => {
+                  this.setState({showOverlayFriends: true});
+                  var new_friends_filter = _.intersection(this.state.friends_filter, this.state.friends_available);
+                  this.setState({friends_filter: new_friends_filter});
+                }}>
+                  <View style={styles.pastilleContainer}>
+                    {_.map(this.state.friends_filter.slice(0, 3), (id) => {
+                      var friend = ProfilStore.getProfil(id);
+                      return <Image key={id} style={styles.profilePicture} source={{uri: friend.picture}} />;
+                    })}
+                    {this.state.friends_filter.length > 3 ? [
+                      <Text key='friends_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.friends_filter.length - 3}</Text>
+                    ] : []}
                   </View>
-                );
-              }}
-            </ToggleGroup>
-          </Overlay>
-        ] : null}
+                </TouchableHighlight>
+              ] : [
+                <TouchableHighlight key='friends_filter_button' underlayColor='rgba(0, 0, 0, 0)' style={styles.pastilleWrapper} onPress={() => this.setState({showOverlayFriends: true})}>
+                  <View style={styles.pastilleContainer}>
+                    {_.map(this.state.friends_available_with_exception.slice(0, 3), (id) => {
+                      var friend = ProfilStore.getProfil(id);
+                      return <Image key={id} style={styles.profilePicture} source={{uri: friend.picture}} />
+                    })}
+                    {this.state.friends_available_with_exception.length > 3 ? [
+                      <Text key='friends_remaining' style={{width: 40, color: '#FE3139', margin: 10, fontSize: 15, fontWeight: '700'}}>+{this.state.friends_available_with_exception.length - 3}</Text>
+                    ] : null}
+                  </View>
+                </TouchableHighlight>
+              ]}
+            </View>
+          ] : null}
+
+          <TouchableHighlight onPress={() => this.props.navigator.pop()} underlayColor='rgba(0, 0, 0, 0)' style={styles.submitButton}>
+            <Text style={styles.submitText}>Valider</Text>
+          </TouchableHighlight>
+        </ScrollView>
 
         {this.state.showOverlayOccasions ? [
           <Overlay key='occasions_overlay'>
@@ -299,12 +232,12 @@ class Filtre extends Component {
               ref='togglegroupoccasions'
               maxSelection={9}
               fifo={true}
-              selectedInitial={this.state.occasions}
+              selectedInitial={this.state.occasions_filter}
               onSelect={(v, selected) => {
-                this.setState({occasions: selected});
+                this.setState({occasions_filter: selected});
               }}
               onUnselect={(v, selected) => {
-                this.setState({occasions: selected});
+                this.setState({occasions_filter: selected});
               }}>
               {(Toggle) => {
                 return (
@@ -312,24 +245,19 @@ class Filtre extends Component {
                     <Text style={styles.filtreTitleOverlay}>Occasions</Text>
                     <View style={styles.pastilleWrapperOverlay}>
                       <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label='Business' value={1} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label='Couple' value={2} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label='Famille' value={3} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label='Amis' value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label='Groupe' value={5} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label='Brunch' value={6} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label='Terrasse' value={7} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/fast.png')} activeInitial={false} label='Rapide' value={8} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlay}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/occasions/icons/date.png')} activeInitial={false} label='Date' value={9} />
+                        {_.map(RestaurantsStore.MAP_OCCASIONS, (occasion) => {
+                          var index = _.findIndex(RestaurantsStore.MAP_OCCASIONS, occasion) + 1;
+                          var enabled = _.includes(this.state.occasions_available_with_exception, index);
+                          return <Toggle key={occasion.label} disabled={!enabled} size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorOverlay} tintColor={enabled ? colorOverlay : colorInactive} tintColorActive={enabled ? colorActive : colorInactive} labelColor={enabled ? colorOverlay : colorInactive} labelColorActive={enabled ? colorActive : colorInactive} style={styles.pastille} icon={occasion.icon} activeInitial={false} label={occasion.label} value={index} />
+                        })}
                       </View>
                       <TouchableHighlight 
                         underlayColor='rgba(0, 0, 0, 0.3)'
                         style={styles.submitButtonOverlay}
-                        onPress={() => this.setState({showOverlayOccasions: false})}>
+                        onPress={() => {
+                          this.setState({showOverlayOccasions: false});
+                          RestaurantsActions.setFilter('occasions', this.state.occasions_filter);
+                        }}>
                         <Text style={styles.submitText}>Valider</Text>
                       </TouchableHighlight>
                     </View>
@@ -346,12 +274,12 @@ class Filtre extends Component {
               ref='togglegrouptypes'
               maxSelection={23}
               fifo={true}
-              selectedInitial={this.state.types}
+              selectedInitial={this.state.types_filter}
               onSelect={(v, selected) => {
-                this.setState({types: selected});
+                this.setState({types_filter: selected});
               }}
               onUnselect={(v, selected) => {
-                this.setState({types: selected});
+                this.setState({types_filter: selected});
               }}>
               {(Toggle) => {
                 return (
@@ -359,45 +287,20 @@ class Filtre extends Component {
                     <Text style={[styles.filtreTitleOverlay, {marginTop: 20, marginBottom: 10}]}>Types</Text>
                     <ScrollView style={styles.pastilleWrapperOverlayScroll} automaticallyAdjustContentInsets={false} alignItems='center'>
                       <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/korean.png')} activeInitial={false} label='Coréen' value={1} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/thai.png')} activeInitial={false} label='Thai' value={2} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/chinese.png')} activeInitial={false} label='Chinois' value={3} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/indian.png')} activeInitial={false} label='Indien' value={4} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/japanese.png')} activeInitial={false} label='Japonais' value={5} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/sushi.png')} activeInitial={false} label='Sushi' value={6} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_asia.png')} activeInitial={false} label='Autres Asie' value={7} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/french.png')} activeInitial={false} label='Français' value={8} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/italian.png')} activeInitial={false} label='Italien' value={9} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/pizza.png')} activeInitial={false} label='Pizza' value={10} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/burger.png')} activeInitial={false} label='Burger' value={11} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/street_food.png')} activeInitial={false} label='Street Food' value={12} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/others_europe.png')} activeInitial={false} label='Autres Europe' value={13} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/grill.png')} activeInitial={false} label='Viandes' value={14} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/oriental.png')} activeInitial={false} label='Oriental' value={15} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/mexican.png')} activeInitial={false} label='Mexicain' value={16} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/latino.png')} activeInitial={false} label='Autres Latino' value={17} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/seafood.png')} activeInitial={false} label='Fruits de mer' value={18} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/african.png')} activeInitial={false} label='Africain' value={19} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/creole.png')} activeInitial={false} label='Créole' value={20} />
-                      </View>
-                      <View style={styles.pastilleContainerOverlayScroll}>
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/crepes.png')} activeInitial={false} label='Crêpes' value={21} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/tapas.png')} activeInitial={false} label='Tapas' value={22} />
-                        <Toggle size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorActiveOverlay} tintColor={tintColorOverlay} tintColorActive={tintColorActive} labelColor={labelColorOverlay} labelColorActive={labelColorActive} style={styles.pastille} icon={require('../../assets/img/types/icons/vegetarian.png')} activeInitial={false} label='Végétarien' value={23} />
+                        {_.map(RestaurantsStore.MAP_TYPES, (type) => {
+                          var index = _.findIndex(RestaurantsStore.MAP_TYPES, type) + 1;
+                          var enabled = _.includes(this.state.types_available_with_exception, index);
+                          return <Toggle key={type.label} disabled={!enabled} size={40} width={82} fontSize={12} marginTop={0} backgroundColor={backgroundColorOverlay} backgroundColorActive={backgroundColorOverlay} tintColor={enabled ? colorOverlay : colorInactive} tintColorActive={enabled ? colorActive : colorInactive} labelColor={enabled ? colorOverlay : colorInactive} labelColorActive={enabled ? colorActive : colorInactive} style={styles.pastille} icon={type.icon} activeInitial={false} label={type.label} value={index} />
+                        })}
                       </View>
                     </ScrollView>
                     <TouchableHighlight
                       underlayColor='rgba(0, 0, 0, 0.3)'
                       style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 11, width: 160, left: (windowWidth - 200) / 2}]}
-                      onPress={() => this.setState({showOverlayTypes: false})}>
+                      onPress={() => {
+                        this.setState({showOverlayTypes: false});
+                        RestaurantsActions.setFilter('types', this.state.types_filter);
+                      }}>
                       <Text style={styles.submitText}>Valider</Text>
                     </TouchableHighlight>
                   </View>
@@ -406,6 +309,71 @@ class Filtre extends Component {
             </ToggleGroup>
           </Overlay>
         ] : null}
+
+        {this.state.showOverlayFriends ? [
+          <Overlay key='friends_overlay'>
+            <View style={{flex: 1, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0, 0, 0, 0.9)'}}>
+              <Text style={[styles.filtreTitleOverlay, {marginTop: 20, marginBottom: 10}]}>Amis</Text>
+              <ScrollView style={styles.pastilleWrapperOverlayScroll} automaticallyAdjustContentInsets={false} alignItems='center'>
+                <View style={styles.pastilleContainerOverlayScroll}>
+                  {_.map(me_friends_and_followings_ids, (id) => {
+                    var profile = ProfilStore.getProfil(id);
+                    var active = _.includes(this.state.friends_filter, id);
+                    var enabled = _.includes(this.state.friends_available_with_exception, id);
+                    if (enabled) {
+                      return (
+                        <TouchableHighlight
+                          key={id} 
+                          underlayColor='rgba(0, 0, 0, 0)'
+                          style={styles.profilePictureButton}
+                          onPress={() => {
+                            if (_.includes(this.state.friends_filter, id)) {
+                              var new_friends_filter = _.filter(this.state.friends_filter, (friend_id) => {return friend_id !== id});
+                              this.setState({friends_filter: new_friends_filter});
+                            } else {
+                              var new_friends_filter = this.state.friends_filter;
+                              new_friends_filter.push(id);
+                              this.setState({friends_filter: new_friends_filter});
+                            }
+                          }}>
+                            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                              <Image style={styles.profilePictureOverlay} source={{uri: profile.picture}} />
+                              {!active ? [
+                                <View key={'active_' + id} style={styles.grayImage} />
+                              ] : null}
+                              <Text style={{color: active ? '#FE3139' : '#CCCCCC', textAlign: 'center'}}>{profile.name}</Text>
+                            </View>
+                        </TouchableHighlight>
+                      );
+                    } else {
+                      return (
+                        <View
+                          key={id} 
+                          style={styles.profilePictureButton}>
+                            <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                              <Image style={styles.profilePictureOverlay} source={{uri: profile.picture}} />
+                              <View style={styles.blackImage} />
+                              <Text style={{color: '#333333', textAlign: 'center'}}>{profile.name}</Text>
+                            </View>
+                        </View>
+                      );
+                    }
+                  })}
+                </View>
+              </ScrollView>
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0.3)'
+                style={[styles.submitButtonOverlay, {position: 'absolute', bottom: 11, width: 160, left: (windowWidth - 200) / 2}]}
+                onPress={() => {
+                  this.setState({showOverlayFriends: false});
+                  RestaurantsActions.setFilter('friends', this.state.friends_filter);
+                }}>
+                <Text style={styles.submitText}>Valider</Text>
+              </TouchableHighlight>
+            </View>
+          </Overlay>
+        ] : null}
+
       </View>
     );
   };
@@ -423,13 +391,13 @@ var styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 0.5,
     padding: 10,
-    borderColor: '#EF582D'
+    borderColor: '#FE3139'
   },
   resetButton : {
     backgroundColor: '#EEEEEE',
     borderRadius: 3,
     padding: 10,
-    borderColor: '#888888',
+    borderColor: '#C1BFCC',
     borderWidth: 1,
     width: 240,
     marginLeft: (windowWidth - 240) / 2,
@@ -438,15 +406,15 @@ var styles = StyleSheet.create({
   resetText: {
     flex: 1,
     fontSize: 15,
-    color: '#888888',
+    color: '#C1BFCC',
     textAlign: 'center',
     fontWeight: '600',
   },
   submitButton : {
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     borderRadius: 3,
     padding: 10,
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     width: 160,
     marginTop: 5,
     marginBottom: 10,
@@ -516,15 +484,21 @@ var styles = StyleSheet.create({
   },
   pastilleContainerOverlay: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'transparent',
-    marginBottom: 20
+    marginBottom: 20,
+    flexWrap: 'wrap',
+    width: windowWidth
   },
   pastilleContainerOverlayScroll: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'transparent',
-    marginBottom: 20
+    marginBottom: 20,
+    flexWrap: 'wrap',
+    width: windowWidth
   },
   pastille: {
     marginLeft: 10,
@@ -539,8 +513,7 @@ var styles = StyleSheet.create({
     marginBottom: 5,
     width: 25,
     height: 25,
-    margin: 10,
-    tintColor: '#888888'
+    margin: 10
   },
   filtreTitle: {
     margin: 2,
@@ -558,7 +531,43 @@ var styles = StyleSheet.create({
     fontWeight: '700',
     justifyContent: 'center',
     alignItems: 'center'
-  }
+  },
+  profilePicture: {
+    marginLeft: 25,
+    marginRight: 25,
+    marginTop: 5,
+    marginBottom: 5,
+    width: 30,
+    height: 30,
+    borderRadius: 15
+  },
+  profilePictureOverlay: {
+    marginLeft: 25,
+    marginRight: 25,
+    marginTop: 5,
+    marginBottom: 5,
+    width: 40,
+    height: 40,
+    borderRadius: 20
+  },
+  grayImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    position: 'absolute',
+    top: 5,
+    left: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  blackImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    position: 'absolute',
+    top: 5,
+    left: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)'
+  },
 });
 
 export default Filtre;

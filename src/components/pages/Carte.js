@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Text, TouchableHighlight,   View} from 'react-native';
+import React, {Dimensions, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
@@ -8,6 +8,9 @@ import MapView from 'react-native-maps';
 import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
+import Text from '../ui/Text';
+
+import Overlay from '../elements/Overlay';
 
 import MeActions from '../../actions/MeActions';
 import RestaurantsActions from '../../actions/RestaurantsActions';
@@ -15,8 +18,11 @@ import RestaurantsActions from '../../actions/RestaurantsActions';
 import MeStore from '../../stores/Me';
 import RestaurantsStore from '../../stores/Restaurants';
 
-import Liste from './Liste';
-import NewFiltre from './NewFiltre';
+import Restaurant from './Restaurant';
+import Results from './Results';
+import Filtre from './Filtre';
+
+var windowWidth = Dimensions.get('window').width;
 
 var RATIO = 0.4;
 
@@ -26,13 +32,6 @@ class Carte extends Page {
       component: Carte,
       title: 'Carte',
       passProps: props
-    };
-  };
-
-  restaurantsState() {
-    return {
-      loading: RestaurantsStore.loading(),
-      error: RestaurantsStore.error(),
     };
   };
 
@@ -59,8 +58,20 @@ class Carte extends Page {
       eastLongitude: 2.42
     };
 
-    // Remove if removing overlays
+    // Radius for center circle
     this.state.radius = RATIO * RestaurantsStore.getDistance(region.latitude, region.longitude - region.longitudeDelta / 2, region.latitude, region.longitude + region.longitudeDelta / 2);
+
+    // Overlay in case no restaurants with criteria are found. Defauts to false.
+    this.state.error_overlay = false;
+  };
+
+  // State update with every store update
+  restaurantsState() {
+    return {
+      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 3),
+      loading: RestaurantsStore.loading(),
+      error: RestaurantsStore.error(),
+    };
   };
 
   // Actions to be done on mounting the component
@@ -149,13 +160,17 @@ class Carte extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        {/* Current navigation bar, uncomment to go back to old version
-          <NavigationBar type='default' rightImage={require('../../assets/img/other/icons/list.png')} title='Carte' rightButtonTitle='Liste' onRightButtonPress={() => this.props.navigator.replace(Liste.route({toggle: this.props.toggle}))} />
-        */}
-        <NavigationBar type='default' title='Carte' rightButtonTitle="+ d'options" onRightButtonPress={() => this.props.navigator.push(NewFiltre.route())} />
+        <NavigationBar 
+          type='default' 
+          title='Carte'
+          rightImage={require('../../assets/img/actions/icons/filter.png')}
+          rightButtonTitle="+ d'options" 
+          onRightButtonPress={() => this.props.navigator.push(Filtre.route())} />
+
         <View style={{flex: 1, position: 'relative'}}>
           <MapView
             ref='mapview'
+            rotateEnabled={false}
             style={styles.restaurantsMap}
             showsUserLocation={this.state.showsUserLocation}
             region={this.state.region}
@@ -165,19 +180,36 @@ class Carte extends Page {
               center={center}
               radius={this.state.radius}
               fillColor='rgba(0, 0, 0, 0.1)'
-              strokeColor='#EF582D' />
+              strokeColor='#FE3139' />
           </MapView>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
-            style={styles.filterButton}
+            style={styles.submitButton}
             onPress={() => {
-              console.log('lol');
+              if (this.state.restaurants.length > 0) {
+                this.props.navigator.push(Results.route({rank: 1}))
+              } else {
+                this.setState({error_overlay: true});
+              }
             }}>
-            <Text>Valider ma recherche</Text>
+            <Text style={styles.submitText}>Lancer ma recherche !</Text>
           </TouchableHighlight>
         </View>
 
         <MenuIcon onPress={this.props.toggle} />
+
+        {this.state.error_overlay ? [
+          <Overlay key='error_overlay' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorMessage}>Aucun restaurant ne correspond à tes critères dans la zone recherchée.</Text>
+              <Text style={styles.errorMessage}>Essaie de chercher avec d'autres critères ou dans une autre zone.</Text>
+              <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.setState({error_overlay: false})} style={styles.closeButton}>
+                <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize: 12}}>Fermer</Text>
+              </TouchableHighlight>
+            </View>
+          </Overlay>
+        ] : null}
+
       </View>
     );
   };
@@ -187,6 +219,49 @@ var styles = StyleSheet.create({
   restaurantsMap: {
     flex: 1,
     position: 'relative'
+  },
+  submitButton : {
+    backgroundColor: '#FE3139',
+    borderRadius: 3,
+    padding: 10,
+    borderColor: '#FE3139',
+    position: 'absolute',
+    bottom: 5,
+    left: 10,
+    width: windowWidth - 20
+  },
+  submitText: {
+    flex: 1,
+    fontSize: 15,
+    color: '#FFFFFF',
+    textAlign: 'center',
+    fontWeight: '600',
+  },
+  errorContainer: {
+    width: 250,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  errorMessage: {
+    textAlign: 'center',
+    fontSize: 12,
+    marginBottom: 5,
+    color: '#FE3139'
+  },
+  closeButton: {
+    backgroundColor: '#FE3139',
+    borderRadius: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    marginTop: 5
   }
 });
 

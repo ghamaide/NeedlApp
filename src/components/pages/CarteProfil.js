@@ -156,14 +156,14 @@ class CarteProfil extends Page {
                   key={restaurant.id}
                   coordinate={coordinates}
                   onSelect={this.onSelect}>
-                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#38E1B2' : '#EF582D'} />
+                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9EE43E' : '#FE3139'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
                         <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
                         <View>
-                          <Text style={{color: '#333333', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
-                          <Text style={{color: '#333333', fontSize: 13}}>{restaurant.food[1]}</Text>
+                          <Text style={{color: '#3A325D', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
+                          <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.food[1]}</Text>
                         </View>
                       </View>
                     </TouchableHighlight>

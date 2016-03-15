@@ -36,18 +36,18 @@ import Toggle from './Reco/Toggle';
 var windowHeight = Dimensions.get('window').height;
 var windowWidth = Dimensions.get('window').width;
 
-class Restaurant extends Page {
+class Results extends Page {
   static route(props) {
     return {
-      component: Restaurant,
-      title: 'Restaurant',
+      component: Results,
+      title: 'Results',
       passProps: props
     };
   };
 
-  restaurantsState() {
+  resultsState() {
     return {
-      restaurant: RestaurantsStore.getRestaurant(this.props.id),
+      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 3),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),
     };
@@ -56,13 +56,12 @@ class Restaurant extends Page {
   constructor(props) {
     super(props);
 
-    this.state = this.restaurantsState();
-    this.state.already_wishlisted = false;
-    this.state.already_recommended = false;
+    this.state = this.resultsState();
+    this.state.rank = this.props.rank;
   };
 
   onRestaurantsChange = () => {
-    this.setState(this.restaurantsState());
+    this.setState(this.resultsState());
   };
 
   componentWillMount() {
@@ -72,24 +71,7 @@ class Restaurant extends Page {
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
-    if (this.props.note == 'already_wishlisted' || this.props.note == 'already_recommended') {
-      clearTimeout(this.timer);
-    }
   };
-
-  componentDidMount() {
-    if (this.props.note == 'already_wishlisted') {
-      this.setState({already_wishlisted: true});
-      this.timer = setTimeout(() => {
-        this.setState({already_wishlisted: false});
-      }, 3000);
-    } else if (this.props.note == 'already_recommended') {
-      this.setState({already_recommended: true});
-      this.timer = setTimeout(() => {
-        this.setState({already_recommended: false});
-      }, 3000);
-    }
-  }
 
   getToggle (map, v, color) {
     if (v <= map.length && v != 0) {
@@ -107,9 +89,7 @@ class Restaurant extends Page {
   };
 
   recommend = (editing) => {
-    var restaurant = this.state.restaurant;
-
-    var props;
+    var restaurant = this.state.restaurants[this.state.rank - 1];
 
     if (editing) {
       props = {
@@ -148,8 +128,8 @@ class Restaurant extends Page {
   };
 
   call = () => {
-    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.restaurant.id, restaurantName: this.state.restaurant.name});
-    RNComm.phonecall(this.state.restaurant.phone_number, false);
+    Mixpanel.trackWithProperties('Call restaurant', {id: MeStore.getState().me.id, user: MeStore.getState().me.id, restaurantID: this.state.restaurants[this.state.rank - 1].id, restaurantName: this.state.restaurants[this.state.rank - 1].name});
+    RNComm.phonecall(this.state.restaurants[this.state.rank - 1].phone_number, false);
   };
 
   onPressText = () => {
@@ -157,7 +137,7 @@ class Restaurant extends Page {
   };
 
   goWithCityMapper = () => {
-    var restaurant = this.state.restaurant;
+    var restaurant = this.state.restaurants[this.state.rank - 1];
     if (DeviceInfo.getSystemVersion() < 9.0) {
       var url = encodeURI('citymapper://x-callback-url/directions?endcoord=') + restaurant.latitude + '%2C' + restaurant.longitude + '&endname=' + encodeURI(restaurant.name) + '&endaddress=' + encodeURI(restaurant.address) + '&x-source=Needl&x-success=needl%3A%2F%2F';
     } else {
@@ -178,18 +158,35 @@ class Restaurant extends Page {
   };
 
   onRefresh = () => {
-    RestaurantsActions.fetchRestaurant(this.state.restaurant.id);
+    RestaurantsActions.fetchRestaurant(this.state.restaurants[this.state.rank - 1].id);
+  };
+
+  onPressMenu = (index) => {
+    if (this.state.rank != index) {
+      this.setState({rank: index});
+    }
   };
 
   renderPage() {
-    var restaurant = this.state.restaurant;
+    var restaurant = this.state.restaurants[this.state.rank - 1];
+    var titles = [], index = 0;
+    _.map(this.state.restaurants, (restaurant) => {
+      index +=1;
+      titles.push('#' + index);
+    });
+
     return (
       <View>
-        {this.props.fromReco ? [
-          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.resetTo(Liste.route({toggle: this.props.toggle}))} />
-        ] : [
-          <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
-        ]}
+        <NavigationBar 
+          key='navbar' 
+          type='switch_and_back'
+          active={this.state.rank}
+          data={this.state.restaurants}
+          titles={titles}
+          onPress={this.onPressMenu}
+          leftButtonTitle='Retour'
+          onLeftButtonPress={() => this.props.navigator.pop()} />
+
         <ScrollView
           style={{flex: 1, height: windowHeight - 60}}
           contentInset={{top: 0}}
@@ -215,6 +212,7 @@ class Restaurant extends Page {
                   <RestaurantElement
                     key={picture}
                     name={restaurant.name}
+                    rank={this.state.rank}
                     picture={picture}
                     type={restaurant.food[1]}
                     height={250}
@@ -312,7 +310,7 @@ class Restaurant extends Page {
               <Text style={styles.containerTitle}>Points forts</Text>
               <View style={styles.toggleBox}>
                 {_.map(restaurant.strengths.slice(0, 3), (strength) => {
-                	return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, '#444444');
+                  return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, '#444444');
                 })}
               </View>
             </View>
@@ -664,4 +662,4 @@ var styles = StyleSheet.create({
   }
 });
 
-export default Restaurant;
+export default Results;

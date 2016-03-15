@@ -8,7 +8,7 @@ class PriceMarker extends Component {
   };
 
   render() {
-    var backgroundColor = this.props.backgroundColor ? this.props.backgroundColor : '#EF582D';
+    var backgroundColor = this.props.backgroundColor ? this.props.backgroundColor : '#FE3139';
 
     return (
       <View style={styles.container}>

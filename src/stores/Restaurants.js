@@ -26,7 +26,8 @@ export class RestaurantsStore extends CachedStore {
       prices: [],
       types: [],
       ambiences: [],
-      occasions: []
+      occasions: [],
+      friends: []
     };
 
     this.currentRegion = {};
@@ -97,7 +98,8 @@ export class RestaurantsStore extends CachedStore {
       prices: [],
       types: [],
       ambiences: [],
-      occasions: []
+      occasions: [],
+      friends: []
     };
     this.currentRegion = {};
     this.region = {
@@ -526,8 +528,10 @@ export class RestaurantsStore extends CachedStore {
     return _.find(restaurant.subways, function(subway) {return subway.id === restaurant.closest_subway}).name;
   }
 
-  static filteredRestaurants() {
-    var filters = this.getState().filters;
+  static filteredRestaurants(filters) {
+    if (_.isEmpty(filters)) {
+      var filters = this.getState().filters;
+    }
     var currentRegion = this.getState().currentRegion;
     var showPersonalContent = this.getState().showPersonalContent;
 
@@ -567,14 +571,19 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      if(!showPersonalContent && _.includes(restaurant.friends_recommending, MeStore.getState().me.id)) {
+      if (filters.friends.length > 0 && _.isEmpty(_.intersection(filters.friends, restaurant.my_friends_recommending))) {
         return false;
       }
 
-      // uncomment to get restaurants in circle only
-      // if (this.getDistance(restaurant.latitude, restaurant.longitude, currentRegion.latitude, currentRegion.longitude) > radius) {
+      // uncomment to show personal content
+      // if(!showPersonalContent && _.includes(restaurant.friends_recommending, MeStore.getState().me.id)) {
       //   return false;
       // }
+
+      // uncomment to get restaurants in circle only
+      if (this.getDistance(restaurant.latitude, restaurant.longitude, currentRegion.latitude, currentRegion.longitude) > radius) {
+        return false;
+      }
 
       return true;
     });
@@ -582,16 +591,22 @@ export class RestaurantsStore extends CachedStore {
     return _.reverse(_.sortBy(filteredRestaurants, ['score']));
   }
 
-  static getPrices() {
-    var prices =  _.map(this.filteredRestaurants(), (restaurant) => {
+  static getPrices(restaurants) {
+    if (_.isEmpty(restaurants)) {
+      restaurants = this.filteredRestaurants();
+    }
+    var prices =  _.map(restaurants, (restaurant) => {
       return restaurant.price_range;
     });
     return _.sortBy(_.remove(_.uniq(prices), null));
   }
 
-  static getOccasions() {
+  static getOccasions(restaurants) {
+    if (_.isEmpty(restaurants)) {
+      restaurants = this.filteredRestaurants();
+    }
     var occasions = [];
-    _.forEach(this.filteredRestaurants(), (restaurant) => {
+    _.forEach(restaurants, (restaurant) => {
       _.forEach(restaurant.occasions, (occasion) => {
         occasions.push(parseInt(occasion));
       });
@@ -599,9 +614,12 @@ export class RestaurantsStore extends CachedStore {
     return _.sortBy(_.uniq(occasions));
   }
 
-  static getTypes() {
+  static getTypes(restaurants) {
+    if (_.isEmpty(restaurants)) {
+      restaurants = this.filteredRestaurants();
+    }
     var types = [];
-    _.forEach(this.filteredRestaurants(), (restaurant) => {
+    _.forEach(restaurants, (restaurant) => {
       _.forEach(restaurant.types, (type) => {
         types.push(type);
       });
@@ -609,20 +627,71 @@ export class RestaurantsStore extends CachedStore {
     return _.sortBy(_.uniq(types));
   }
 
-  static getFriends() {
+  static getFriends(restaurants) {
+    if (_.isEmpty(restaurants)) {
+      restaurants = this.filteredRestaurants();
+    }
     var friends = [];
-    _.forEach(this.filteredRestaurants(), (restaurant) => {
+    _.forEach(restaurants, (restaurant) => {
       _.forEach(restaurant.my_friends_recommending, (friend_id) => {
-        friends.push(friend_id);
+        var friend = ProfilStore.getProfil(friend_id);
+        friends.push(friend);
       });
     });
-    return _.uniq(friends);
+
+    var sorted_friends = _.sortBy(_.uniq(friends), ['name']);
+    var ids = _.map(sorted_friends, (friend) => {
+      return friend.id;
+    });
+
+    return ids;
+  }
+
+  static getAvailableFilters(exception) {
+    var restaurants;
+    switch (exception) {
+      case 'price' : 
+        restaurants = this.filteredRestaurants({prices: [], occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends});
+        return this.getPrices(restaurants);
+        break;
+      case 'occasion' :
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: [], ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends});
+        return this.getOccasions(restaurants);
+        break;
+      case 'type' :
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: [], friends: this.getState().filters.friends});
+        return this.getTypes(restaurants);
+        break;
+      case 'friend' :
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: []});
+        return this.getFriends(restaurants);
+        break;
+    }
   }
 
   static filterActive() {
     var filters = this.getState().filters;
     return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0);
   }
+
+  static MAP_PRICES = [
+    {
+      label: 1,
+      icon: require('../assets/img/prices/icons/prix_1.png')
+    },
+    {
+      label: 2,
+      icon: require('../assets/img/prices/icons/prix_2.png')
+    },
+    {
+      label: 3,
+      icon: require('../assets/img/prices/icons/prix_3.png')
+    },
+    {
+      label: 4,
+      icon: require('../assets/img/prices/icons/prix_4.png')
+    }
+  ];
 
   static MAP_AMBIENCES = [
     {
@@ -665,15 +734,15 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/occasions/icons/dej_business.png')
     },
     {
-      label: 'En Couple',
+      label: 'Couple',
       icon: require('../assets/img/occasions/icons/en_couple.png')
     },
     {
-      label: 'En Famille',
+      label: 'Famille',
       icon: require('../assets/img/occasions/icons/en_famille.png')
     },
     {
-      label: 'Entre amis',
+      label: 'Amis',
       icon: require('../assets/img/occasions/icons/entre_amis.png')
     },
     {
@@ -689,7 +758,7 @@ export class RestaurantsStore extends CachedStore {
       icon: require('../assets/img/occasions/icons/terrasse.png')
     },
     {
-      label: 'Fast',
+      label: 'Rapide',
       icon: require('../assets/img/occasions/icons/fast.png')
     },
     {

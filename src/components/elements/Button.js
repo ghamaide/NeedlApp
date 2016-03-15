@@ -22,7 +22,7 @@ var styles = StyleSheet.create({
     height: 40
   },
   button: {
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     borderColor: '#ed4515',
     borderWidth: 1,
     borderRadius: 20,

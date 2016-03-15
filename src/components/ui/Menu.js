@@ -3,6 +3,7 @@
 import React, {Component, Dimensions, Image, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 
 import _ from 'lodash';
+import LinearGradient from 'react-native-linear-gradient';
 
 import Text from './Text';
 
@@ -64,21 +65,29 @@ class Menu extends Component {
 
     return (
       <View style={styles.menuContainer}>
-        {_.map(this.props.tabs, (tab, index) => {
-          return this.renderItem(index, tab.title, tab.icon);
-        })}
+        <LinearGradient start={[0.0, 0.0]} end={[1.0, 1.0]} colors={['#FE3824', '#FE2851']} style={styles.linearGradient} />
+          {_.map(this.props.tabs, (tab, index) => {
+            return this.renderItem(index, tab.title, tab.icon);
+          })}
       </View>
     );
   }
 }
 
 var styles = StyleSheet.create({
+  linearGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0
+  },
   menuContainer: {
     flex: 1,
     height: Dimensions.get('window').height,
     width: 2 * Dimensions.get('window').width / 3,
     paddingTop: 60,
-    backgroundColor: '#EF582D'
+    backgroundColor: '#FE3139'
   },
   itemContainer: {
     padding: 10,
@@ -112,7 +121,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   pastilleText: {
-    color: '#EF582D',
+    color: '#FE3139',
     fontWeight: 'bold',
     fontSize: 10
   }

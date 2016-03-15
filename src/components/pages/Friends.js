@@ -134,7 +134,7 @@ class Friends extends Page {
           <Image source={{uri: friend.picture}} style={styles.friendImage} />
           <View style={styles.friendInfos}>
             <Text style={styles.friendName}>{friend.name}</Text>
-            <Text style={styles.friendRecos}>{friend.badge.name}</Text>
+            <Text style={styles.friendBadge}>{friend.badge.name}</Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -150,7 +150,7 @@ class Friends extends Page {
           <Image source={{uri: following.picture}} style={styles.friendImage} />
           <View style={styles.friendInfos}>
             <Text style={styles.friendName}>{following.fullname}</Text>
-            <Text style={styles.friendRecos}>{following.number_of_followers} follower{following.number_of_followers > 1 ? 's' : ''}</Text>
+            <Text style={styles.friendFollowers}>{following.number_of_followers} follower{following.number_of_followers > 1 ? 's' : ''}</Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -222,13 +222,13 @@ class Friends extends Page {
               style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
               ref='searchBar'
               placeholder='Rechercher'
-              placeholderTextColor='#333333'
+              placeholderTextColor='#3A325D'
               hideBackground={true}
               onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
           ]
         ] : null */}
 
-        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked || true ? [
+        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? [
           !this.state.facebook_loading || true ? [
             <TouchableHighlight
               key='link_to_facebook'
@@ -269,7 +269,7 @@ class Friends extends Page {
                       <Text style={styles.requestButtonRefuseText}>Refuser</Text>
                     </TouchableHighlight>
                   </View>
-                  <Text style={{position: 'absolute', top: 10, left: 10, color: '#555555', fontWeight: '500', fontSize: 12}}>On t'a invité !</Text>
+                  <Text style={{position: 'absolute', top: 10, left: 10, color: '#3A325D', fontWeight: '500', fontSize: 12}}>On t'a invité !</Text>
                 </View>
               );
             } else {
@@ -327,12 +327,16 @@ var styles = StyleSheet.create({
     paddingTop: 4
   },
   friendName: {
-    color: '#000000',
+    color: '#3A325D',
     fontSize: 14,
     fontWeight: '500'
   },
-  friendRecos: {
-    color: '#444444',
+  friendBadge: {
+    color: '#3A325D',
+    fontSize: 14
+  },
+  friendFollowers: {
+    color: '#3A325D',
     fontSize: 14
   },
   emptyContainer: {
@@ -347,7 +351,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: '500',
-    color: '#EF582D'
+    color: '#FE3139'
   },
   requestsContainer: {
     backgroundColor: '#DDDDDD',
@@ -359,7 +363,7 @@ var styles = StyleSheet.create({
   },
   requestName: {
     textAlign: 'center',
-    color: '#555555',
+    color: '#3A325D',
     marginTop: 10,
     marginBottom: 5
   },
@@ -369,7 +373,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
   },
   requestButtonAccept: {
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 10,
@@ -384,7 +388,7 @@ var styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     borderRadius: 5,
-    borderColor: '#888888',
+    borderColor: '#C1BFCC',
     borderWidth: 1,
     margin: 5
   },
@@ -395,7 +399,7 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   requestButtonRefuseText: {
-    color: '#555555',
+    color: '#3A325D',
     fontWeight: '400',
     fontSize: 13,
     textAlign: 'center'
@@ -405,7 +409,7 @@ var styles = StyleSheet.create({
     marginBottom: 5,
     marginLeft: 20,
     marginRight: 20,
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderRadius: 5,
     borderWidth: 1,
     paddingTop: 5,
@@ -415,7 +419,7 @@ var styles = StyleSheet.create({
   },
   invitationText: {
     textAlign: 'center',
-    color: '#EF582D',
+    color: '#FE3139',
     fontSize: 13,
     fontWeight: '500'
   },

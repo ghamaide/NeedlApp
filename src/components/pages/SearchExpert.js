@@ -131,7 +131,7 @@ var styles = StyleSheet.create({
     paddingRight: 20,
     fontSize: 15,
     fontWeight: '500',
-    color: '#EF582D'
+    color: '#FE3139'
   },
   buttonWrapper: {
     paddingTop: 5,
@@ -139,7 +139,7 @@ var styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 5,
-    backgroundColor: '#EF582D'
+    backgroundColor: '#FE3139'
   },
   buttonText: {
     color: '#FFFFFF',

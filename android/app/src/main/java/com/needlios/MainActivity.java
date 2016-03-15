@@ -27,6 +27,8 @@ import com.burnweb.rnsendintent.RNSendIntentPackage;
 import android.content.Intent;
 import com.dispatcher.rnbranch.*;
 
+import com.BV.LinearGradient.LinearGradientPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -67,6 +69,7 @@ public class MainActivity extends ReactActivity {
             new RNMixpanel(),
             new RNSendIntentPackage(),
             new RNBranchPackage()
+            new LinearGradientPackage(),
         );
     }
 

@@ -153,7 +153,7 @@ export class ProfilStore extends CachedStore {
       return expert.id == result.expert_id;
     });
 
-    this.followings.push(expert[0]);
+    this.followings.push(_.extend(expert[0], {badge: this.renderBadge(expert.score)}));
   }
 
   handleUnfollowExpertSuccess(result) {
@@ -176,7 +176,9 @@ export class ProfilStore extends CachedStore {
   }
 
   handleFetchFollowingsSuccess(result) {
-    this.followings = result.followings;
+    this.followings = _.forEach(result.followings, (following) => {
+      following.badge = this.renderBadge(following.score);
+    });
     this.status.loading = false;
   }
 
@@ -191,7 +193,9 @@ export class ProfilStore extends CachedStore {
   }
 
   handleFetchAllExpertsSuccess(result) {
-    this.experts = result.experts;
+    this.experts = _.forEach(result.experts, (expert) => {
+      expert.badge = this.renderBadge(expert.score);
+    });
     this.status.loading = false;
   }
 
@@ -372,11 +376,15 @@ export class ProfilStore extends CachedStore {
   }
 
   static getFriends() {
-    return this.getState().friends;
+    return _.sortBy(this.getState().friends, ['name']);
   }
 
   static getFollowings() {
     return this.getState().followings;
+  }
+
+  static getMe() {
+    return this.getState().me;
   }
 
   static getRequestsSent() {

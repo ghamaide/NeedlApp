@@ -4,6 +4,7 @@ import React, {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules,
 
 import _ from 'lodash';
 import Collapsible from 'react-native-collapsible';
+import CustomActionSheet from 'react-native-custom-action-sheet';
 import RNComm from 'react-native-communications';
 
 import MenuIcon from '../ui/MenuIcon';
@@ -37,9 +38,9 @@ var windowHeight = Dimensions.get('window').height;
 let IMAGE_HEIGHT = 90;
 let BADGE_IMAGE_HEIGHT = 50;
 let INNER_BANNER_HEIGHT = IMAGE_HEIGHT - 40;
-let MARGIN_LEFT = 15;
+let MARGIN_LEFT = 10;
 let MARGIN_TOP = 20;
-let TEXT_INFO_WIDTH = Dimensions.get('window').width - IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2;
+let TEXT_INFO_WIDTH = Dimensions.get('window').width - IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2 + 10;
 
 class Profil extends Page {
   static route(props) {
@@ -59,6 +60,7 @@ class Profil extends Page {
       profile: ProfilStore.getProfil(this.currentProfil()),
       loading: ProfilStore.loading(),
       followingsLoading: FollowingsStore.loading(),
+      friendsLoading: FriendsStore.loading(),
       error: ProfilStore.error(),
     };
   };
@@ -114,6 +116,7 @@ class Profil extends Page {
   };
 
   contactUs = () => {
+    this.setState({confirmation_opened: false});
     RNComm.email(['contact@needl-app.com'], '', '', 'J\'ai une question !', '');
   };
 
@@ -176,7 +179,7 @@ class Profil extends Page {
             <RefreshControl
               refreshing={this.state.loading}
               onRefresh={this.onRefresh}
-              tintColor='#EF582D'
+              tintColor='#FE3139'
               title='Chargement...'
               colors={['#FFFFFF']}
               progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
@@ -198,7 +201,7 @@ class Profil extends Page {
                     {profil.followings.length}
                   </Text>
                   <Text style={[styles.textInfoText, {top: 20}]}>
-                    expert{profil.followings.length > 1 ? 's' : ''}
+                    influenceur{profil.followings.length > 1 ? 's' : ''}
                   </Text>
                 </View>
                 <View style={styles.textInfo}>
@@ -211,161 +214,77 @@ class Profil extends Page {
                 </View>
               </View>
             </View>
+
+            {/* Container for badge information */}
             <View style={styles.badgeInfoContainer}>
               <Text style={styles.badgeName}>{profil.badge.name}</Text>
               <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
             </View>
-            <Image source={{uri: profil.picture}} style={styles.image} />
-            <Image source={profil.badge.image} style={styles.badgeImage} />
-            <View style={styles.profileNameContainer}>
-              <Text style={[styles.profileName, {top: 10}]}>
-                {first_name}
-              </Text>
-              <Text style={[styles.profileName, {top: 25, fontWeight: '500'}]}>
-                {last_name}
-              </Text>
-            </View>
-          </View>
 
-          <View style={styles.actionContainer}>
-            {MeStore.getState().me.id === profil.id ? [
-              <TouchableHighlight
-                underlayColor='rgba(0, 0, 0, 0)'
-                key={'edit_' + profil.id}
-                style={[styles.leftButtonContainer, {borderColor: '#AAAAAA'}]}
-                onPress={() => this.props.navigator.push(EditMe.route())}>
-                <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier mon profil</Text>
-              </TouchableHighlight>
-            ] : [
-              !is_following ? [
-                !profil.invisible ? [
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={[styles.leftButtonContainer, {backgroundColor: '#38E1B2', borderColor: '#38E1B2'}]}
-                    key={'hide_reco_' + profil.id}
-                    onPress={() => {
-                      if (this.state.loading) {
-                        return;
-                      }
-                      FriendsActions.maskProfil(profil.friendship_id);
-                    }}>
-                    <Text style={styles.buttonText}>{this.state.loading ? 'Masque...' : 'Apparait dans mes recos'}</Text>
-                  </TouchableHighlight>
+            {/* Profile Image */}
+            <Image source={{uri: profil.picture}} style={styles.image} />
+
+            {/* Badge Image */}
+            <Image source={profil.badge.image} style={styles.badgeImage} />
+
+            {/* Container for actions on profile */}
+            <View style={styles.actionContainer}>
+              {MeStore.getState().me.id === profil.id ? [
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  key={'edit_' + profil.id}
+                  style={[styles.actionButton, {borderColor: '#AAAAAA'}]}
+                  onPress={() => this.setState({confirmation_opened: true})}>
+                  <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier</Text>
+                </TouchableHighlight>
+              ] : [
+                !is_following ? [
+                  !profil.invisible ? [
+                    <TouchableHighlight
+                      key={'hide_reco_' + profil.id}
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                      onPress={() => this.setState({confirmation_opened: true})}>
+                      <Text style={[styles.buttonText, {color: '#9EE43E'}]}>{this.state.loading ? 'Masque...' : 'Visible'}</Text>
+                    </TouchableHighlight>
+                  ] : [
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#FE3139'}]}
+                      key={'show_reco_' + profil.id}
+                      onPress={() => this.setState({confirmation_opened: true})}>
+                      <Text style={[styles.buttonText, {color: '#FE3139'}]}>{this.state.loading ? 'Affichage...' : 'Invisible'}</Text>
+                    </TouchableHighlight>
+                  ]
                 ] : [
                   <TouchableHighlight
                     underlayColor='rgba(0, 0, 0, 0)'
-                    style={[styles.leftButtonContainer, {backgroundColor: 'red', borderColor: 'red'}]}
-                    key={'show_reco_' + profil.id}
-                    onPress={() => {
-                      if (this.state.loading) {
-                        return;
-                      }
-                      FriendsActions.displayProfil(profil.friendship_id);
-                    }}>
-                    <Text style={[styles.buttonText, {color: '#FFFFFF'}]}>{this.state.loading ? 'Affichage...' : 'N\'apparait pas dans mes recos'}</Text>
+                    style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                    key={'unfollow_' + profil.id}
+                    onPress={() => this.setState({confirmation_opened: true})}>
+                    <Text style={[styles.buttonText, {color: '#9EE43E'}]}>Suivi</Text>
                   </TouchableHighlight>
                 ]
-              ] : [
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.leftButtonContainer, {backgroundColor: '#FFFFFF', borderColor: '#38E1B2'}]}
-                  key={'unfollow_' + profil.id}
-                  onPress={() => this.setState({confirmation_opened: true})}>
-                  <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                    {!this.state.followingsLoading ? [
-                      <Image key='check' source={require('../../assets/img/actions/icons/check.png')} style={{tintColor: '#38E1B2', width: 20, height: 20, marginRight: 10}} />
-                    ] : null}
-                    <Text style={[styles.buttonText, {fontWeight: '500', fontSize: 13, color: '#38E1B2'}]}>Suivi</Text>
-                  </View>
-                </TouchableHighlight>
-              ]
-            ]}
-            {!is_following ? [
-              Platform.OS === 'ios' ? [
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.rightButtonContainer, {borderWidth: MeStore.getState().me.id === profil.id ? 1 : 0, backgroundColor: MeStore.getState().me.id === profil.id ? 'transparent' : (profil.invisible ? 'red' : '#38E1B2')}]}
-                  key={'dropdown_' + profil.id}
-                  onPress={this.showButtons}>
-                    <View style={styles.triangle} />
-                </TouchableHighlight>
-              ] : [
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.rightButtonContainer, {borderWidth: MeStore.getState().me.id === profil.id ? 1 : 0, backgroundColor: MeStore.getState().me.id === profil.id ? 'transparent' : (profil.invisible ? 'red' : '#38E1B2')}]}
-                  key={'dropdown_' + profil.id}
-                  onPress={this.showButtons}>
-                  <Image source={require('../../assets/img/other/icons/triangle_down.png')} style={{transform: [{rotate: '180deg'}], height: 10, width: 10, tintColor: '#999999'}} />
-                </TouchableHighlight>
-              ]
-            ] : null}
+              ]}
+            </View>
           </View>
 
-          {!is_following ? [
-            <Collapsible key='dropdown_menu' duration={500} align='center' collapsed={!this.state.isOpened}>
-              {MeStore.getState().me.id === profil.id ? [
-                <View key={'buttons_' + profil.id}>
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={styles.dropdownButton}
-                    key={'contact' + profil.id}
-                    onPress={this.contactUs}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Image source={require('../../assets/img/actions/icons/chat.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                      <Text style={[styles.buttonText, {marginTop: 3}]}>Nous contacter</Text>
-                    </View>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={styles.dropdownButton}
-                    key={'logout_' + profil.id}
-                    onPress={() => LoginActions.logout()}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Image source={require('../../assets/img/actions/icons/signout.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                      <Text style={[styles.buttonText, {marginTop: 3}]}>Me Déconnecter</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              ] : [
-                <View key={'buttons_' + profil.id}>
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={styles.dropdownButton}
-                    key={'delete_friend_' + profil.id}
-                    onPress={() => {
-                      if (FriendsStore.loading()) {
-                        return;
-                      }
-                      FriendsActions.removeFriendship(profil.friendship_id, () => {
-                        this.props.navigator.pop();
-                      });
-                    }}>
-                    <View style={{flexDirection: 'row'}}>
-                      <Image source={require('../../assets/img/actions/icons/retirer.png')} style={{tintColor: '#555555', height: 20, width: 20, marginLeft: 5, marginRight: 20}} />
-                      <Text style={[styles.buttonText, {marginTop: 3}]}>{this.state.loading ? 'Suppression...' : 'Retirer de mes amis'}</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              ]}
-            </Collapsible>
-          ] : null}
-         
           {!is_following ? [ 
             <View key='switch_buttons' style={styles.restaurantButtonsContainer}>
               <TouchableHighlight 
-                style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#EF582D' : 'transparent'}]}
+                style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#FE3139' : 'transparent'}]}
                 onPress={() => this.onPressRestaurant('recommendation')}>
-                <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#EF582D'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
+                <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#FE3139'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
               </TouchableHighlight>
               <TouchableHighlight 
-                style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#EF582D' : 'transparent'}]}
+                style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#FE3139' : 'transparent'}]}
                 onPress={() => this.onPressRestaurant('wishlist')}>
-                <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#EF582D'}}>Wishlist</Text>
+                <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#FE3139'}}>Wishlist</Text>
               </TouchableHighlight>
             </View>
           ] : [
             <View key='recommendation_title_container' style={{margin: 15, alignItems: 'center', justifyContent: 'center', flex: 1}}>
-              <Text style={{textAlign: 'center', fontSize: 15, color: '#EF582D', fontWeight: '500'}}>Ses recommendations</Text>
+              <Text style={{textAlign: 'center', fontSize: 15, color: '#FE3139', fontWeight: '500'}}>Ses recommendations</Text>
             </View>
           ]}
 
@@ -376,7 +295,7 @@ class Profil extends Page {
                   var restaurant = RestaurantsStore.getRestaurant(id);
                   return (
                     <RestaurantElement
-                      height={200}
+                      height={205}
                       style={{marginBottom: 5, backgroundColor: 'transparent'}}
                       key={restaurant.id}
                       name={restaurant.name}
@@ -424,40 +343,111 @@ class Profil extends Page {
           <MenuIcon key='menu_icon' onPress={this.props.toggle} />
         ] : null}
 
-        {this.state.confirmation_opened ? [
-          <Overlay key='confirmation_overlay' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', alignItems: 'center', justifyContent: 'center'}}>
-            <View style={styles.confirmationOverlay}>
-              <Text style={{textAlign: 'center', color: '#EF582D', fontWeight: '500', fontSize: 14, marginBottom: 10}}>Ne plus suivre {profil.fullname} ?</Text>
-              {!this.state.followingsLoading ? [
-                <View key='buttons' style={styles.confirmationOverlayButtonsContainer}>
+        <View>
+          <CustomActionSheet modalVisible={this.state.confirmation_opened} onCancel={() => {this.setState({confirmation_opened: false})}}>
+            {MeStore.getState().me.id == profil.id ? [
+              <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                <TouchableHighlight 
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  onPress={() => this.props.navigator.push(EditMe.route())}>
+                  <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Modifier mon profil</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.confirmationContainer, {borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  onPress={this.contactUs}>
+                  <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Nous contacter</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.confirmationContainer, {borderBottomLeftRadius: 5, borderBottomRightRadius: 5}]}
+                  onPress={() => LoginActions.logout()}>
+                  <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Me déconnecter</Text>
+                </TouchableHighlight>
+              </View>
+            ] : [
+              !is_following ? [
+                !profil.invisible ? [
+                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                      onPress={() => {
+                        this.setState({confirmation_opened: false});
+                        if (this.state.loading) {
+                          return;
+                        }
+                        FriendsActions.maskProfil(profil.friendship_id);
+                      }}>
+                      <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Masquer ses recos</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.confirmationContainer, {borderBottomLeftRadius: 5, borderBottomRightRadius: 5}]}
+                      onPress={() => {
+                        this.setState({confirmation_opened: false});
+                        if (this.state.friendsLoading) {
+                          return;
+                        }
+                        FriendsActions.removeFriendship(profil.friendship_id, () => {
+                          this.props.navigator.pop();
+                        });
+                      }}>
+                      <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Retirer de mes amis</Text>
+                    </TouchableHighlight>
+                  </View>
+                ] : [
+                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                      onPress={() => {
+                        this.setState({confirmation_opened: false});
+                        if (this.state.loading) {
+                          return;
+                        }
+                        FriendsActions.displayProfil(profil.friendship_id);
+                      }}>
+                      <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Afficher ses recos</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.confirmationContainer, {borderBottomLeftRadius: 5, borderBottomRightRadius: 5}]}
+                      onPress={() => {
+                        this.setState({confirmation_opened: false});
+                        if (this.state.friendsLoading) {
+                          return;
+                        }
+                        FriendsActions.removeFriendship(profil.friendship_id, () => {
+                          this.props.navigator.pop();
+                        });
+                      }}>
+                      <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Retirer de mes amis</Text>
+                    </TouchableHighlight>
+                  </View>
+                ]
+              ] : [
+                <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
                   <TouchableHighlight
                     underlayColor='rgba(0, 0, 0, 0)'
-                    style={[styles.confirmationButton, {backgroundColor: '#EF582D'}]}
+                    style={[styles.confirmationContainer, {borderRadius: 5}]}
                     onPress={() => {
+                      this.setState({confirmation_opened: false});
                       if (this.state.followingsLoading) {
                         return;
                       }
                       FollowingsActions.unfollowExpert(profil.followership_id, () => {
-                        this.setState({confirmation_opened: false});
                         this.props.navigator.pop();
                       });
-                      this.forceUpdate();
                     }}>
-                    <Text style={[styles.confirmationButtonText, {color: '#FFFFFF', fontWeight: '500'}]}>Confirmer</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={[styles.confirmationButton, {backgroundColor: '#FFFFFF', borderColor: '#AAAAAA', borderWidth: 1}]}
-                    onPress={() => this.setState({confirmation_opened: false})}>
-                    <Text style={[styles.confirmationButtonText, {color: '#AAAAAA', fontWeight: '400'}]}>Annuler</Text>
+                    <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Ne plus suivre</Text>
                   </TouchableHighlight>
                 </View>
-              ] : [
-                Platform.OS === 'ios' ? <ActivityIndicatorIOS key='loading' animating={true} style={[{height: 40}]} size='small' /> : <ProgressBarAndroid key='loading' indeterminate />
-              ]}
-            </View>
-          </Overlay>
-        ] : null}
+              ]
+            ]}
+          </CustomActionSheet>
+        </View>
       </View>
     );
   };
@@ -467,7 +457,8 @@ var styles = StyleSheet.create({
   infoContainer: {
     flex: 1,
     padding: 0,
-    alignItems: 'flex-end' 
+    alignItems: 'flex-end',
+    marginBottom: 10
   },
   infoInnerContainer: {
     width: Dimensions.get('window').width,
@@ -493,24 +484,25 @@ var styles = StyleSheet.create({
     position: 'absolute',
     left: 1,
     right: 1,
-    color: '#000000',
-    fontSize: 12,
+    color: '#3A325D',
+    fontSize: 11,
     textAlign: 'center',
   },
   badgeInfoContainer: {
-    width: TEXT_INFO_WIDTH - BADGE_IMAGE_HEIGHT / 2 - 5,
+    width: TEXT_INFO_WIDTH - BADGE_IMAGE_HEIGHT / 2 + MARGIN_LEFT / 2,
     height: 70,
-    marginTop: 5,
     backgroundColor: 'transparent',
     padding: 5
   },
   badgeName: {
     fontWeight: '500',
-    fontSize: 13
+    fontSize: 13,
+    color: '#3A325D'
   },
   badgeDescription: {
     fontSize: 12,
-    marginTop: 3
+    marginTop: 3,
+    color: '#3A325D'
   },
   image: {
     position: 'absolute',
@@ -522,87 +514,39 @@ var styles = StyleSheet.create({
   },
   badgeImage: {
     position: 'absolute',
-    top: IMAGE_HEIGHT + MARGIN_TOP / 2 - BADGE_IMAGE_HEIGHT / 2,
-    left: IMAGE_HEIGHT + MARGIN_LEFT - BADGE_IMAGE_HEIGHT / 2 + 10,
+    top: IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2,
+    left: IMAGE_HEIGHT + MARGIN_LEFT - BADGE_IMAGE_HEIGHT / 2,
     height: BADGE_IMAGE_HEIGHT,
     width: BADGE_IMAGE_HEIGHT,
     borderRadius: BADGE_IMAGE_HEIGHT / 2
   },
-  profileNameContainer: {
+  actionContainer: {
     position: 'absolute',
-    top: IMAGE_HEIGHT + MARGIN_TOP / 2,
-    left: MARGIN_LEFT,
-    width: IMAGE_HEIGHT,
+    top: IMAGE_HEIGHT + MARGIN_TOP + 5,
+    left: MARGIN_LEFT + 7.5,
+    width: IMAGE_HEIGHT - 15,
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: 'transparent'
   },
-  profileName: {
-    position: 'absolute',
-    left: 0,
-    width: IMAGE_HEIGHT,
-    color: '#000000',
-    fontSize: 12,
-    textAlign: 'center',
-    flex: 1,
-  },
-  actionContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-    paddingLeft: 5,
-    paddingRight: 5
-  },
-  leftButtonContainer: {
-    flex: 1,
+  actionButton: {
+    width: IMAGE_HEIGHT - 15,
     height: 25,
-    margin: 5,
     borderRadius: 5,
-    borderWidth: 1,
+    borderWidth: .5,
+    padding: 5,
     justifyContent: 'center',
     alignItems: 'center'
-  },
-  rightButtonContainer: {
-    width: 25,
-    height: 25,
-    margin: 5,
-    borderColor: '#AAAAAA',
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-   triangle: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 5,
-    borderRightWidth: 5,
-    borderBottomWidth: 10,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#999999',
-    transform: [
-      {rotate: '180deg'}
-    ]
-  },
-  buttonContainer: {
-    flex: 1
   },
   buttonText: {
-    color: '#555555',
-    fontSize: 13,
-  },
-  dropdownButton: {
-    padding: 10,
-    backgroundColor: '#DDDDDD',
-    justifyContent: 'center',
-    alignItems: 'flex-start'
+    color: '#AAAAAA',
+    fontSize: 11,
   },
   restaurantButtonsContainer: {
     flexDirection: 'row',
     margin: 10,
     borderWidth: 1,
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderRadius: 5
   },
   restaurantButton: {
@@ -612,36 +556,20 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
   emptyText: {
-    color: '#EF582D',
+    color: '#FE3139',
     textAlign: 'center',
     padding: 20,
     fontSize: 14
   },
-  confirmationOverlay: {
-    backgroundColor: '#FFFFFF',
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  confirmationOverlayButtonsContainer: {
-    flexDirection: 'row',
+  confirmationContainer: {
+    height: windowWidth / 6.5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    backgroundColor: 'transparent'
   },
-  confirmationButton: {
-    borderRadius: 5,
-    width: 100,
-    margin: 5,
-    padding: 5
-  },
-  confirmationButtonText: {
+  confirmationText: {
     textAlign: 'center',
-    fontSize: 13
+    margin: 10,
   }
 });
 

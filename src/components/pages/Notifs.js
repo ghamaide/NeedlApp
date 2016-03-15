@@ -113,8 +113,8 @@ class Notifs extends Page {
 
   renderNotification = (notification) => {
     var is_recommendation = false;
-    var textColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {color: 'white'} : {color: '#333333'};
-    var blockColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {backgroundColor: '#EF582D'} : {};
+    var textColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {color: '#FFFFFF'} : {color: '#3A325D'};
+    var blockColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {backgroundColor: '#FE3139'} : {backgroundColor: '#FFFFFF'};
 
     var user = ProfilStore.getProfil(notification.user_id);
     var restaurant = RestaurantsStore.getRestaurant(notification.restaurant_id);
@@ -160,15 +160,15 @@ class Notifs extends Page {
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
-            style={[styles.notificationsButton, {backgroundColor: this.state.friendsActive ? '#EF582D' : 'transparent'}]}
+            style={[styles.notificationsButton, {backgroundColor: this.state.friendsActive ? '#FE3139' : 'transparent'}]}
             onPress={() => this.onPressNotification('friends')}>
-            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#EF582D'}}>Amis</Text>
+            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#FE3139'}}>Amis</Text>
           </TouchableHighlight>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
-            style={[styles.notificationsButton, {backgroundColor: this.state.followingsActive ? '#EF582D' : 'transparent'}]}
+            style={[styles.notificationsButton, {backgroundColor: this.state.followingsActive ? '#FE3139' : 'transparent'}]}
             onPress={() => this.onPressNotification('followings')}>
-            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#EF582D'}}>Influenceurs</Text>
+            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#FE3139'}}>Influenceurs</Text>
           </TouchableHighlight>
         </View>
 
@@ -204,7 +204,7 @@ var styles = StyleSheet.create({
     position: 'relative',
   },
   notifInfos: {
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#E6E5EA',
     padding: 20,
     flexDirection: 'row'
   },
@@ -226,7 +226,7 @@ var styles = StyleSheet.create({
   friendQuoteDate: {
     marginTop: 5,
     fontSize: 12,
-    color: '#888888'
+    color: '#837E9A'
   },
   triangle: {
     height: 15,
@@ -243,7 +243,7 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     margin: 10,
     borderWidth: 1,
-    borderColor: '#EF582D',
+    borderColor: '#FE3139',
     borderRadius: 5
   },
   notificationsButton: {
@@ -264,7 +264,7 @@ var styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     fontWeight: '500',
-    color: '#EF582D'
+    color: '#FE3139'
   }
 });
 
