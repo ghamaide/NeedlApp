@@ -70,10 +70,10 @@ class CarteProfil extends Page {
     // Paris 4 point coordinates and center
     this.state.paris = {
       northLatitude: 48.91,
-      centerLatitude: 48.85,
+      centerLatitude: 48.86,
       southLatitude: 48.8,
       westLongitude: 2.25,
-      centerLongitude: 2.32,
+      centerLongitude: 2.34,
       eastLongitude: 2.42
     };
   };
@@ -83,11 +83,39 @@ class CarteProfil extends Page {
 
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
+        if (this.isInParis(initialPosition)) {
           this.setState({
-            region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
+            region: {
+              latitude: initialPosition.coords.latitude,
+              longitude: initialPosition.coords.longitude,
+              latitudeDelta: this.state.defaultLatitudeDelta,
+              longitudeDelta: this.state.defaultLongitudeDelta
+            }
           });
+        } else {
+          this.setState({
+            region: {
+              latitude: this.state.paris.centerLatitude,
+              longitude: this.state.paris.centerLongitude,
+              latitudeDelta: this.state.defaultLatitudeDelta,
+              longitudeDelta: this.state.defaultLongitudeDelta
+            }
+          });
+        }
       },
-      (error) => console.log(error.message),
+      (error) => {
+        if (__DEV__) {
+          console.log(error);
+        }
+        this.setState({
+           region: {
+            latitude: this.state.paris.centerLatitude,
+            longitude: this.state.paris.centerLongitude,
+            latitudeDelta: this.state.defaultLatitudeDelta,
+            longitudeDelta: this.state.defaultLongitudeDelta
+          }
+        });
+      },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
   };
@@ -105,13 +133,19 @@ class CarteProfil extends Page {
     this.setState(this.mapState());
   };
 
+  // Check if position is in paris
+  isInParis = (initialPosition) => {
+    return (initialPosition.coords.latitude <= this.state.paris.northLatitude && initialPosition.coords.latitude >= this.state.paris.southLatitude && initialPosition.coords.longitude <= this.state.paris.eastLongitude && initialPosition.coords.longitude >= this.state.paris.westLongitude);
+  };
+
   onRegionChangeComplete = (region) => {
     this.setState({region: region});
   };
 
   renderPage() {
     var profile = this.state.profile;
-    var recommendations_and_wishes = _.concat(profile.recommendations, profile.wishes);
+    var is_following = !_.includes(ProfilStore.getFriends(), profile.id);
+    var recommendations_and_wishes = is_following ? profile.public_recommendations : _.concat(profile.recommendations, profile.wishes);
     var restaurants = [];
     _.forEach(recommendations_and_wishes, (restaurantId) => {
       var restaurant = RestaurantsStore.getRestaurant(restaurantId);
@@ -139,7 +173,7 @@ class CarteProfil extends Page {
             onLeftButtonPress={() => this.props.navigator.pop()}
             rightImage={require('../../assets/img/tabs/icons/account.png')}
             rightButtonTitle='Profil'
-            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+            onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: this.props.id, toggle: this.props.toggle}))} />
         ]}
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
@@ -158,7 +192,7 @@ class CarteProfil extends Page {
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}>
-                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9EE43E' : '#FE3139'} />
+                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9CE62A' : '#FE3139'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>

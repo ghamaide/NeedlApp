@@ -303,14 +303,18 @@ class App extends Component {
         this.handleOpenURL(url, 'closed_app');
       }
     }).catch((err) => {
-      console.log(err);
+      if (__DEV__) {
+        console.log(err);
+      }
     })
 
     if (Platform.OS === 'android') {
       GcmAndroid.addEventListener('register', this.onDeviceToken);
 
       GcmAndroid.addEventListener('registerError', (error) => {
-        console.log('registerError', error.message);
+        if (__DEV__) {
+          console.log('registerError', error.message);
+        }
       });
 
       GcmAndroid.addEventListener('notification', this.onNotificationAndroid);
@@ -382,7 +386,7 @@ class App extends Component {
           <Overlay key='overlay_tutorial'>
             <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayTutorial()}>
               <ScrollView
-                style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
+                style={{flex: 1, height: Dimensions.get('window').height, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
                 contentInset={{top: 0}}
                 automaticallyAdjustContentInsets={false}
                 showsVerticalScrollIndicator={false}
@@ -396,10 +400,10 @@ class App extends Component {
           </Overlay>
         ] : null}
 
-        {!this.state.hasBeenUploadWelcomed && false ? [
+        {!this.state.hasBeenUploadWelcomed ? [
           <Overlay key='has_been_upload_welcomed'>
             <ScrollView
-              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false}
@@ -419,7 +423,7 @@ class App extends Component {
         {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage && false ? [
           <Overlay key='show_update_message'>
             <ScrollView
-              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false}
@@ -450,6 +454,7 @@ class App extends Component {
                 <ActivityIndicatorIOS
                   key='loading_ios'
                   animating={true}
+                  color='#FE3139'
                   style={[{height: 80}]}
                   size='large' />
               ] : [

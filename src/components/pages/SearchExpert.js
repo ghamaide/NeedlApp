@@ -135,7 +135,7 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
     borderBottomWidth: 1,
-    borderColor: '#DDDDDD',
+    borderColor: '#EEEDF1',
     padding: 10
   },
   emptyText: {

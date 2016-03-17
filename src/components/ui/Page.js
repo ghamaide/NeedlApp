@@ -34,7 +34,7 @@ class Page extends Component {
 
     if (__DEV__ && !_.isEmpty(this.state.error)) {
       console.log(this.state.error);
-      // return this.renderError();
+      return this.renderError();
     }
 
     return this.renderPage();

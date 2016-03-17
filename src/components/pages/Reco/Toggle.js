@@ -66,7 +66,7 @@ class Toggle extends Component {
             width: this.props.size,
             height: this.props.size,
             borderRadius: this.props.size / 2,
-            backgroundColor: this.props.active ? (this.props.backgroundColorActive ? this.props.backgroundColorActive : '#9EE43E') : (this.props.backgroundColor ? this.props.backgroundColor : '#C1BFCC'),
+            backgroundColor: this.props.active ? (this.props.backgroundColorActive ? this.props.backgroundColorActive : '##9CE62A') : (this.props.backgroundColor ? this.props.backgroundColor : '#C1BFCC'),
             alignItems: 'center',
             justifyContent: 'center',
             transform: [
@@ -83,7 +83,7 @@ class Toggle extends Component {
             marginTop: 0,
             marginBottom: this.props.marginBottom ? this.props.marginBottom : 5,
             marginRight: this.props.marginRight ? this.props.marginRight : 5,
-            color: this.props.active ? (this.props.labelColorActive ? this.props.labelColorActive : '#9EE43E') : (this.props.labelColor ? this.props.labelColor : '#C1BFCC'),
+            color: this.props.active ? (this.props.labelColorActive ? this.props.labelColorActive : '#9CE62A') : (this.props.labelColor ? this.props.labelColor : '#C1BFCC'),
             textAlign: 'center'
           }}>{this.props.label}</Text>
         ] : []}

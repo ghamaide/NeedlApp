@@ -58,10 +58,6 @@ class Notifs extends Page {
     NotifsActions.notificationsSeen();
   };
 
-  componentDidMount() {
-    NotifsActions.notificationsSeen();
-  }
-
   onNotificationsChange = () => {
     this.setState(this.notificationsState());
   };
@@ -144,7 +140,7 @@ class Notifs extends Page {
           </TouchableHighlight>
           <View style={[styles.friendQuote, blockColor]}>
             <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
-            <Text style={[styles.friendQuoteDate, textColor]}>{user.name}, le {notification.formatted_date}</Text>
+            <Text style={[styles.friendQuoteDate, textColor]}>{this.state.friendsActive ? user.name : user.fullname}, le {notification.formatted_date}</Text>
             <View style={[styles.triangle,  blockColor]} />
           </View>
         </View>
@@ -204,7 +200,7 @@ var styles = StyleSheet.create({
     position: 'relative',
   },
   notifInfos: {
-    backgroundColor: '#E6E5EA',
+    backgroundColor: '#EEEDF1',
     padding: 20,
     flexDirection: 'row'
   },
@@ -226,7 +222,7 @@ var styles = StyleSheet.create({
   friendQuoteDate: {
     marginTop: 5,
     fontSize: 12,
-    color: '#837E9A'
+    color: '#3A325D'
   },
   triangle: {
     height: 15,

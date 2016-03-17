@@ -3,6 +3,7 @@
 import React, {Component, Dimensions, Image, ListView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -59,7 +60,8 @@ class Information extends Component {
         data: this.props.origin == 'users' ? ProfilStore.getFriendsFromUser(this.props.id) : (this.props.origin == 'experts' ? ProfilStore.getFollowingsFromUser(this.props.id) : ProfilStore.getThanksFromUser(this.props.id)),
       },
       requests_received_ids: requests_received_ids,
-      friends_and_requests_sent_ids: _.concat(requests_sent_ids, friends_ids)
+      friends_ids: friends_ids,
+      requests_sent_ids: requests_sent_ids,
     }
   };
 
@@ -88,10 +90,19 @@ class Information extends Component {
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.badge}>{user.badge.name}</Text>
           </View>
-          {_.includes(this.state.friends_and_requests_sent_ids, user.id) ? [
-            <View key={'invited_friend_' + user.id} style={styles.invitedContainer}>
-              <Text style={styles.invitedText}>Invité</Text>
-            </View>
+          {_.includes(_.concat(this.state.friends_ids, this.state.requests_sent_ids), user.id) ? [
+            _.includes(this.state.requests_sent_ids, this.props.id) ? [
+              <View key={'invited_friend_' + user.id} style={styles.invitedContainer}>
+                <Text style={styles.invitedText}>Invité</Text>
+              </View>
+            ] : [
+              <View key={'already_friend_' + user.id} style={[styles.invitedContainer, {borderWidth: 0}]}>
+                <Icon
+                  name='check'
+                  size={25}
+                  color='#FE3139' />
+              </View>
+            ]
           ] : [
             _.includes(this.state.requests_received_ids, user.id) ? [
               <TouchableHighlight

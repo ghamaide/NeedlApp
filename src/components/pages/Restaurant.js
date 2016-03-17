@@ -253,7 +253,7 @@ class Restaurant extends Page {
                         <View style={styles.avatarWrapper}>
                           <Image style={styles.avatar} source={source} />
                         </View>
-                        <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
+                        <View style={{backgroundColor: '#C1BFCC', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
                           <View style={styles.triangleContainer}>
                             <View style={styles.triangle} />
                           </View>
@@ -399,7 +399,7 @@ class Restaurant extends Page {
             </View>
           : null}
 
-          <View key='restaurant_infos' style={[styles.lieuContainer, RestaurantsStore.hasMenu(restaurant.id) ? {backgroundColor: '#E0E0E0'} : {}]}>
+          <View key='restaurant_infos' style={[styles.lieuContainer, RestaurantsStore.hasMenu(restaurant.id) ? {backgroundColor: '#C1BFCC'} : {}]}>
             <Text style={styles.containerTitle}>Adresse</Text>
             <Text style={styles.address}>{restaurant.address}</Text>
             <View style={styles.metroContainer}>
@@ -503,7 +503,7 @@ var styles = StyleSheet.create({
     height: 250
   },
   callContainer: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#C1BFCC',
     padding: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -523,7 +523,7 @@ var styles = StyleSheet.create({
   },
   wishContainer: {
     padding: 20,
-    backgroundColor: '#E0E0E0'
+    backgroundColor: '#C1BFCC'
   },
   containerTitle: {
     fontSize: 16,
@@ -588,7 +588,7 @@ var styles = StyleSheet.create({
     top: -7,
     left: -7,
     position: 'absolute',
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#C1BFCC',
     transform: [
       {rotate: '45deg'}
     ]
@@ -604,7 +604,7 @@ var styles = StyleSheet.create({
   },
   recoButton: {
     marginTop: 20,
-    backgroundColor: '#9EE43E'
+    backgroundColor: '#9CE62A'
   },
   toggleBox: {
     flexDirection: 'row',
@@ -612,7 +612,7 @@ var styles = StyleSheet.create({
   },
   toggle: {
     margin: 10,
-    backgroundColor: '#9EE43E'
+    backgroundColor: '#9CE62A'
   },
   menuInnerContainer: {
     alignItems: 'center',

@@ -136,16 +136,16 @@ class RecoStep6 extends Component {
             Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
             break;
           case NativeModules.RNMessageComposer.Cancelled:
-            // console.log('user cancelled sending the message');
+            // User cancelled sending the message
             break;
           case NativeModules.RNMessageComposer.Failed:
-            // console.log('failed to send the message');
+            // Message failed to send
             break;
           case NativeModules.RNMessageComposer.NotSupported:
-            // console.log('this device does not support sending texts');
+            // The device does not support sending text messages
             break;
           default:
-            // console.log('something unexpected happened');
+            // Something unexpected happened
             break;
         }
       });
@@ -244,7 +244,7 @@ var styles = StyleSheet.create({
     padding: 10,
     marginBottom: 5,
     height: 100,
-    backgroundColor: '#C1BFCC',
+    backgroundColor: '#EEEDF1',
     textAlignVertical: 'top',
     color: '#3A325D',
     borderColor: '#C1BFCC',
@@ -316,7 +316,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#C1BFCC'
   },
   progressBarCompleted: {
-    backgroundColor: '#9EE43E',
+    backgroundColor: '#9CE62A',
     position: 'absolute',
     top: 0,
     left: 0,

@@ -28,7 +28,6 @@ class Web extends Component {
   }
 
   render() {
-    console.log(this.props.source);
     return (
       <View style={styles.container}>
         <NavigationBar key='navbar' type='back' title={this.state.title} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />

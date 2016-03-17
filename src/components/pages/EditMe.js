@@ -1,12 +1,14 @@
 'use strict';
 
-import React, {Component, Dimensions, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Dimensions, Platform, ProgressBarAndroid, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import NavigationBar from '../ui/NavigationBar';
 
+import NavigationBar from '../ui/NavigationBar';
 import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
+
+import Overlay from '../elements/Overlay';
 
 import MeActions from '../../actions/MeActions';
 
@@ -58,7 +60,7 @@ class EditMe extends Component {
   };
 
   closeKeyboard = () => {
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' && ProfilStore.getProfil(MeStore.getState().me.id).score >= 20) {
       this.refs.description.blur();
     }
   };
@@ -88,10 +90,10 @@ class EditMe extends Component {
     } else if (this.state.public && totalTagLength == 0) {
       var error = {error_message: 'empty_tags'};
       this.setState({error: error});
-    } else if (this.state.password != this.state.password_confirmation) {
+    } else if (this.state.password.length > 0 && this.state.password != this.state.password_confirmation) {
       var error = {error_message: 'different_passwords'};
       this.setState({error: error});
-    } else if (this.state.password.length < 6) {
+    } else if (this.state.password.length > 0 && this.state.password.length < 6) {
       var error = {error_message: 'password_too_short'};
       this.setState({error: error});
     } else {
@@ -124,7 +126,7 @@ class EditMe extends Component {
           break;
         case 'empty_description':
           message = 'Ton profil ne peut pas être public et ne pas avoir de description';
-          showSignUpError = true;
+          showError = true;
           break;
         case 'empty_tags':
           message = 'Ton profil ne peut pas être public et ne pas avoir de tag';
@@ -132,11 +134,11 @@ class EditMe extends Component {
           break;
         case 'different_passwords':
           message = 'Les mots de passe ne correspondent pas';
-          showSignUpError = true;
+          showError = true;
           break;
         case'password_too_short':
           message = 'Le mot de passe doit compter au minimum 6 caractères';
-          showSignUpError = true;
+          showError = true;
           break;
         default:
           showError = false;
@@ -147,7 +149,7 @@ class EditMe extends Component {
     return (
       <View style={{flex: 1}}>
         <NavigationBar type='back' title='Modification' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
-        <ScrollView keyboardShouldPersistTaps={true} style={styles.editContainer} onScroll={this.closeKeyboard} scrollEventThrottle={16}>
+        <ScrollView key='container' keyboardShouldPersistTaps={true} style={styles.editContainer} onScroll={this.closeKeyboard} scrollEventThrottle={16}>
           {showError ? [
             <View key='error' style={styles.error}>
               <Text style={{fontSize: 11, color: '#FFFFFF'}}>{message}</Text>
@@ -219,16 +221,40 @@ class EditMe extends Component {
                 <Switch
                   onValueChange={(value) => this.setState({public: value})}
                   value={this.state.public} />
-                <Text style={{marginLeft: 10, fontSize: 12, color: '#3A325D'}}>Ton profil sera {this.state.public ? 'public' : 'privé'}</Text>
+                <Text style={{marginLeft: 10, fontSize: 13, color: '#3A325D'}}>Ton profil sera {this.state.public ? 'public' : 'privé'}</Text>
               </View>
             </View>
           ] : null}
           <TouchableHighlight style={styles.submitWrapper} onPress={this.onSubmit}>
             <View style={styles.submit}>
-              <Text style={styles.submitText}>{this.state.loading ? 'Validation...' : 'Valider'}</Text>
+              <Text style={styles.submitText}>Valider</Text>
             </View>
           </TouchableHighlight>
         </ScrollView>
+        
+        {/* Loading overlay */}
+        {this.state.loading ? [
+          <Overlay key='loading_overlay'>
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
+              contentInset={{top: 0}}
+              alignItems='center'
+              justifyContent='center'
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              {Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS
+                  key='loading_ios'
+                  animating={true}
+                  style={[{height: 80}]}
+                  size='large' />
+              ] : [
+                <ProgressBarAndroid key='loading_android' indeterminate />
+              ]}
+            </ScrollView>
+          </Overlay>
+        ] : null}
       </View>
     );
   };
@@ -243,14 +269,14 @@ var styles = StyleSheet.create({
   label: {
     marginBottom: 5,
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: 13,
     color: '#FE3139'
   },
   input: {
     height: 25,
     borderRadius: 4,
     padding: 5,
-    fontSize: 12,
+    fontSize: 13,
     backgroundColor: '#C1BFCC',
     marginBottom: 15,
     color: '#3A325D'
@@ -259,7 +285,7 @@ var styles = StyleSheet.create({
     height: 25,
     borderRadius: 4,
     padding: 5,
-    fontSize: 12,
+    fontSize: 13,
     width: (windowWidth - 40) / 2 - 5,
     backgroundColor: '#C1BFCC',
     marginBottom: 5
@@ -270,8 +296,8 @@ var styles = StyleSheet.create({
     borderRadius: 2
   },
   submit: {
-    backgroundColor: '#9EE43E',
-    borderColor: '#9EE43E',
+    backgroundColor: '#9CE62A',
+    borderColor: '#9CE62A',
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',

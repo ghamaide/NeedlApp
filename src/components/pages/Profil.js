@@ -171,7 +171,7 @@ class Profil extends Page {
         ]}
 
         {MeStore.getState().me.id === profil.id && !is_following && this.state.index == 2 ? [
-          <Text key='no_public_profile' style={{padding: 20, marginTop: 20, textAlign: 'center', color: '#FE3139', fontSize: 14, fontWeight: Platform.OS === 'ios' ? '500' : '400'}}>Ton profil n'est pas encore public. Pour le rendre public, il te faut au moins 20 remerciements. Pour en obtenir, recommande tes restaurants préférés.</Text>
+          <Text key='no_public_profile' style={{margin: 20, textAlign: 'center', color: '#FE3139', fontSize: 14, fontWeight: Platform.OS === 'ios' ? '500' : '400'}}>Ton profil n'est pas encore public. Pour le rendre public, il te faut au moins 20 remerciements. Pour en obtenir, recommande tes restaurants préférés.</Text>
         ] : [
           <ScrollView
             key='private_profile_container'
@@ -257,7 +257,7 @@ class Profil extends Page {
                     underlayColor='rgba(0, 0, 0, 0)'
                     style={styles.textInfo}
                     onPress={() => {
-                      if (!is_following && MeStore.getState().me.id === profil.id) {
+                      if (!is_following && MeStore.getState().me.id === profil.id && profil.score > 1) {
                         this.props.navigator.push(Information.route({id: profil.id, origin: 'score'}));
                       } else {
                         return ;
@@ -279,7 +279,7 @@ class Profil extends Page {
               {!is_following ? [
                 <View key='badge_container' style={styles.badgeInfoContainer}>
                   <Text style={styles.badgeName}>{profil.badge.name}</Text>
-                  <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
+                  <Text style={styles.badgeDescription} numberOfLines={3}>{profil.badge.description}</Text>
                 </View>
               ] : [
                 <View key='description_container' style={styles.descriptionContainer}>
@@ -316,9 +316,9 @@ class Profil extends Page {
                       <TouchableHighlight
                         key={'hide_reco_' + profil.id}
                         underlayColor='rgba(0, 0, 0, 0)'
-                        style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                        style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9CE62A'}]}
                         onPress={() => this.setState({confirmation_opened: true})}>
-                        <Text style={[styles.buttonText, {color: '#9EE43E'}]}>{this.state.loading ? 'Masque...' : 'Visible'}</Text>
+                        <Text style={[styles.buttonText, {color: '#9CE62A'}]}>{this.state.loading ? 'Masque...' : 'Visible'}</Text>
                       </TouchableHighlight>
                     ] : [
                       <TouchableHighlight
@@ -335,9 +335,9 @@ class Profil extends Page {
                         <TouchableHighlight
                           key={'unfollow_' + profil.id}
                           underlayColor='rgba(0, 0, 0, 0)'
-                          style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                          style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9CE62A'}]}
                           onPress={() => this.setState({confirmation_opened: true})}>
-                          <Text style={[styles.buttonText, {color: '#9EE43E'}]}>Suivi</Text>
+                          <Text style={[styles.buttonText, {color: '#9CE62A'}]}>Suivi</Text>
                         </TouchableHighlight>
                       ] : [
                         <TouchableHighlight
@@ -458,13 +458,13 @@ class Profil extends Page {
         <View>
           <CustomActionSheet modalVisible={this.state.confirmation_opened} onCancel={() => {this.setState({confirmation_opened: false})}}>
             {MeStore.getState().me.id == profil.id ? [
-              <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+              <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                 <TouchableHighlight 
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
                   onPress={() => {
-                    this.setState({confirmation_opened: false});
                     this.props.navigator.push(EditMe.route());
+                    this.setState({confirmation_opened: false});
                   }}>
                   <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Modifier mon profil</Text>
                 </TouchableHighlight>
@@ -487,16 +487,16 @@ class Profil extends Page {
             ] : [
               !is_following ? [
                 !profil.invisible ? [
-                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                     <TouchableHighlight
                       underlayColor='rgba(0, 0, 0, 0)'
                       style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
                       onPress={() => {
-                        this.setState({confirmation_opened: false});
                         if (this.state.loading) {
                           return;
                         }
                         FriendsActions.maskProfil(profil.friendship_id);
+                        this.setState({confirmation_opened: false});
                       }}>
                       <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Masquer ses recos</Text>
                     </TouchableHighlight>
@@ -516,7 +516,7 @@ class Profil extends Page {
                     </TouchableHighlight>
                   </View>
                 ] : [
-                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                  <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                     <TouchableHighlight
                       underlayColor='rgba(0, 0, 0, 0)'
                       style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
@@ -546,7 +546,7 @@ class Profil extends Page {
                   </View>
                 ]
               ] : [
-                <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(255, 255, 255, 0.95)', marginBottom: 8}}>
+                <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                   <TouchableHighlight
                     underlayColor='rgba(0, 0, 0, 0)'
                     style={[styles.confirmationContainer, {borderRadius: 5}]}

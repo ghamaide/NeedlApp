@@ -44,9 +44,6 @@ export class LoginActions {
       request('POST', '/api/v2/sessions.json')
         .query(qs.stringify(user, { arrayFormat: 'brackets' }))
           .end((err, result) => {
-            // console.log('--------------');
-            // console.log(err);
-            // console.log(result);
           if (err) {
             return this.loginEmailFailed(err);
           }

@@ -59,10 +59,10 @@ class Carte extends Page {
     // Paris 4 point coordinates and center
     this.state.paris = {
       northLatitude: 48.91,
-      centerLatitude: 48.85,
+      centerLatitude: 48.86,
       southLatitude: 48.8,
       westLongitude: 2.25,
-      centerLongitude: 2.32,
+      centerLongitude: 2.34,
       eastLongitude: 2.42
     };
 
@@ -98,9 +98,32 @@ class Carte extends Page {
             },
             radius: RATIO * RestaurantsStore.getDistance(initialPosition.coords.latitude, initialPosition.coords.longitude - this.state.defaultLongitudeDelta / 2, initialPosition.coords.latitude, initialPosition.coords.longitude + this.state.defaultLongitudeDelta / 2)
           });
+        } else {
+          this.setState({
+            region: {
+              latitude: this.state.paris.centerLatitude,
+              longitude: this.state.paris.centerLongitude,
+              latitudeDelta: this.state.defaultLatitudeDelta,
+              longitudeDelta: this.state.defaultLongitudeDelta
+            },
+            radius: RATIO * RestaurantsStore.getDistance(this.state.paris.centerLatitude, this.state.paris.centerLongitude - this.state.defaultLongitudeDelta / 2, this.state.paris.centerLatitude, this.state.paris.centerLongitude + this.state.defaultLongitudeDelta / 2)
+          });
         }
       },
-      (error) => console.log(error.message),
+      (error) => {
+        if (__DEV__) {
+          console.log(error);
+        }
+        this.setState({
+          region: {
+            latitude: this.state.paris.centerLatitude,
+            longitude: this.state.paris.centerLongitude,
+            latitudeDelta: this.state.defaultLatitudeDelta,
+            longitudeDelta: this.state.defaultLongitudeDelta
+          },
+          radius: RATIO * RestaurantsStore.getDistance(this.state.paris.centerLatitude, this.state.paris.centerLongitude - this.state.defaultLongitudeDelta / 2, this.state.paris.centerLatitude, this.state.paris.centerLongitude + this.state.defaultLongitudeDelta / 2)
+        });
+      },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
   };

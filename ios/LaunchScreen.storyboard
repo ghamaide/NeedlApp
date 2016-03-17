@@ -9,7 +9,7 @@
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
-                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default-667h.png" highlightedImage="Default-667h.png" highlighted="YES" id="qvP-Lo-TIo">
+                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Default-667h.png" highlightedImage="Default-667h.png" id="qvP-Lo-TIo">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
@@ -20,6 +20,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Default-667h.png" width="187" height="333"/>
+        <image name="Default-667h.png" width="375" height="667"/>
     </resources>
 </document>

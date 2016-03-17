@@ -8,6 +8,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
 
+import Overlay from '../elements/Overlay';
+
 import LoginActions from '../../actions/LoginActions';
 
 import MeStore from '../../stores/Me';
@@ -138,13 +140,16 @@ class Login extends Component {
           showPasswordForgottenError = true;
           break;
         default:
-          message = 'Erreur lors de l\'authentification';
-          if (this.state.index == 1) {
-            showSignInError = true;
-          } else if (this.state.index == 2) {
-            showSignUpError = true;
-          } else if (this.state.index == 3) {
-            showPasswordForgottenError = true;
+          // Show message if it's not a Cancel from the Facebook Login
+          if (this.state.error !== 'Cancel' && this.state.error.type !== 'cancel') {
+            message = 'Erreur lors de l\'authentification';
+            if (this.state.index == 1) {
+              showSignInError = true;
+            } else if (this.state.index == 2) {
+              showSignUpError = true;
+            } else if (this.state.index == 3) {
+              showPasswordForgottenError = true;
+            }
           }
           break;
       }
@@ -159,22 +164,82 @@ class Login extends Component {
           </View>
 
           {this.state.index == 1 ? [
-            this.state.loading ? [
-              <View key='loading' style={styles.loginWrapper}>
-                {Platform.OS === 'ios' ? [<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />] : [<ProgressBarAndroid indeterminate />]}
-              </View>
-            ] : [
-              <View key='sign_in' style={styles.loginWrapper}>
-                {showSignInError ? [
+            <View key='sign_in' style={styles.loginWrapper}>
+              {showSignInError ? [
+                <View key='sign_in_error' style={styles.error}>
+                  <Text style={styles.errorText}>{message}</Text>
+                </View>
+              ] : null}
+              <TextInput
+                ref='sign_in_email'
+                keyboardType='email-address'
+                returnKeyType='next'
+                autoCorrect={false}
+                autoCapitalize='none'
+                placeholder='Adresse email'
+                placeholderTextColor='#FFFFFF'
+                style={styles.input}
+                maxLength={40}
+                multiline={false}
+                onChangeText={(email) => {
+                  this.setState({email: email});
+                }} />
+              <TextInput
+                ref='sign_in_password'
+                autoCorrect={false}
+                returnKeyType='go'
+                autoCapitalize='none'
+                placeholder='Mot de passe'
+                placeholderTextColor='#FFFFFF'
+                style={styles.input}
+                maxLength={20}
+                multiline={false}
+                secureTextEntry={true}
+                onChangeText={(password) => {
+                  this.setState({password: password});
+                }} />
+
+              <TouchableHighlight style={styles.submitButton} onPress={this.onMailLogin} underlayColor='rgba(0, 0, 0, 0)'>
+                <Text style={styles.submitText}>Connexion</Text>
+              </TouchableHighlight>
+
+              <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 2})} underlayColor='rgba(0, 0, 0, 0)'>
+                <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
+              </TouchableHighlight>
+
+              <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 3})} underlayColor='rgba(0, 0, 0, 0)'>
+                <Text style={styles.switchMethodText}>Vous avez oublié votre mot de passe ?</Text>
+              </TouchableHighlight>
+            </View>
+          ] : [
+            this.state.index == 2 ? [
+              <View key='sign_up' style={styles.loginWrapper}>
+                {showSignUpError ? [
                   <View key='sign_in_error' style={styles.error}>
                     <Text style={styles.errorText}>{message}</Text>
                   </View>
                 ] : null}
                 <TextInput
-                  ref='sign_in_email'
+                  ref='sign_up_name'
+                  returnKeyType='next'
                   autoCorrect={false}
                   autoCapitalize='none'
-                  placeholder='Adresse email'
+                  placeholder="Nom d'utilisateur"
+                  placeholderTextColor='#FFFFFF'
+                  selectionColor='#00000'
+                  style={styles.input}
+                  maxLength={40}
+                  multiline={false}
+                  onChangeText={(name) => {
+                    this.setState({name: name});
+                  }} />
+                <TextInput
+                  ref='sign_up_email'
+                  returnKeyType='next'
+                  keyboardType='email-address'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Adresse mail'
                   placeholderTextColor='#FFFFFF'
                   style={styles.input}
                   maxLength={40}
@@ -183,7 +248,8 @@ class Login extends Component {
                     this.setState({email: email});
                   }} />
                 <TextInput
-                  ref='sign_in_password'
+                  ref='sign_up_password'
+                  returnKeyType='go'
                   autoCorrect={false}
                   autoCapitalize='none'
                   placeholder='Mot de passe'
@@ -196,134 +262,64 @@ class Login extends Component {
                     this.setState({password: password});
                   }} />
 
-                <TouchableHighlight style={styles.submitButton} onPress={this.onMailLogin} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.submitText}>Connexion</Text>
+                {/* Remove to add password confirmation */}
+                {/*
+                <TextInput
+                  ref='sign_up_password_confirmation'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder='Confirmation du mot de passe'
+                  placeholderTextColor='#FFFFFF'
+                  style={styles.input}
+                  maxLength={20}
+                  multiline={false}
+                  secureTextEntry={true}
+                  onChangeText={(password_confirmation) => {
+                    this.setState({password_confirmation: password_confirmation});
+                  }} />
+                */}
+
+                <TouchableHighlight style={styles.submitButton} onPress={this.onMailCreation} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.submitText}>Créer mon compte</Text>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 2})} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
+                </TouchableHighlight>
+              </View>
+            ] : [
+              <View key='password_Forgotten' style={styles.loginWrapper}>
+                {showPasswordForgottenError ? [
+                  <View key='sign_in_error' style={styles.error}>
+                    <Text style={styles.errorText}>{message}</Text>
+                  </View>
+                ] : null}
+                <TextInput
+                  ref='recovery_email'
+                  returnKeyType='go'
+                  keyboardType='email-address'
+                  autoCorrect={false}
+                  autoCapitalize='none'
+                  placeholder="Email"
+                  placeholderTextColor='#FFFFFF'
+                  selectionColor='#00000'
+                  style={styles.input}
+                  maxLength={40}
+                  multiline={false}
+                  onChangeText={(email) => {
+                    this.setState({recovery_email: email});
+                  }} />
+
+                <TouchableHighlight style={styles.submitButton} onPress={this.onPasswordRecovery} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.submitText}>Valider</Text>
                 </TouchableHighlight>
 
-                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 3})} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.switchMethodText}>Vous avez oublié votre mot de passe ?</Text>
+                <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
+                  <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
                 </TouchableHighlight>
               </View>
             ]
-          ] : [
-            this.state.index == 2 ? [
-              this.state.loading ? [
-                <View key='loading' style={styles.loginWrapper}>
-                  Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />
-                </View>
-              ] : [
-                <View key='sign_up'style={styles.loginWrapper}>
-                  {showSignUpError ? [
-                    <View key='sign_in_error' style={styles.error}>
-                      <Text style={styles.errorText}>{message}</Text>
-                    </View>
-                  ] : null}
-                  <TextInput
-                    ref='sign_up_name'
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    placeholder="Nom d'utilisateur"
-                    placeholderTextColor='#FFFFFF'
-                    selectionColor='#00000'
-                    style={styles.input}
-                    maxLength={40}
-                    multiline={false}
-                    onChangeText={(name) => {
-                      this.setState({name: name});
-                    }} />
-                  <TextInput
-                    ref='sign_up_email'
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    placeholder='Adresse mail'
-                    placeholderTextColor='#FFFFFF'
-                    style={styles.input}
-                    maxLength={40}
-                    multiline={false}
-                    onChangeText={(email) => {
-                      this.setState({email: email});
-                    }} />
-                  <TextInput
-                    ref='sign_up_password'
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    placeholder='Mot de passe'
-                    placeholderTextColor='#FFFFFF'
-                    style={styles.input}
-                    maxLength={20}
-                    multiline={false}
-                    secureTextEntry={true}
-                    onChangeText={(password) => {
-                      this.setState({password: password});
-                    }} />
-                  {/* Remove to add password confirmation */}
-                  {/*
-                  <TextInput
-                    ref='sign_up_password_confirmation'
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    placeholder='Confirmation du mot de passe'
-                    placeholderTextColor='#FFFFFF'
-                    style={styles.input}
-                    maxLength={20}
-                    multiline={false}
-                    secureTextEntry={true}
-                    onChangeText={(password_confirmation) => {
-                      this.setState({password_confirmation: password_confirmation});
-                    }} />
-                  */}
-
-                  <TouchableHighlight style={styles.submitButton} onPress={this.onMailCreation} underlayColor='rgba(0, 0, 0, 0)'>
-                    <Text style={styles.submitText}>Créer mon compte</Text>
-                  </TouchableHighlight>
-
-                  <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
-                    <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
-                  </TouchableHighlight>
-                </View>
-              ]
-            ] : [
-              this.state.loading ? [
-                <View key='loading' style={styles.loginWrapper}>
-                  Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />
-                </View>
-              ] : [
-                <View key='password_forgotten' style={styles.loginWrapper}>
-                  {showPasswordForgottenError ? [
-                    <View key='sign_in_error' style={styles.error}>
-                      <Text style={styles.errorText}>{message}</Text>
-                    </View>
-                  ] : null}
-                  <TextInput
-                    ref='recovery_email'
-                    autoCorrect={false}
-                    autoCapitalize='none'
-                    placeholder="Email"
-                    placeholderTextColor='#FFFFFF'
-                    selectionColor='#00000'
-                    style={styles.input}
-                    maxLength={40}
-                    multiline={false}
-                    onChangeText={(email) => {
-                      this.setState({recovery_email: email});
-                    }} />
-
-                  <TouchableHighlight style={styles.submitButton} onPress={this.onPasswordRecovery} underlayColor='rgba(0, 0, 0, 0)'>
-                    <Text style={styles.submitText}>Valider</Text>
-                  </TouchableHighlight>
-
-                  <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
-                    <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
-                  </TouchableHighlight>
-                </View>
-              ]
-            ]
           ]}
-
         </ScrollView>
 
         <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='rgba(0, 0, 0, 0)'>
@@ -338,6 +334,31 @@ class Login extends Component {
             </Text>
           </View>
         </TouchableHighlight>
+
+        {/* Loading overlay */}
+        {this.state.loading ? [
+          <Overlay key='loading_overlay'>
+            <ScrollView
+              style={{flex: 1, height: Dimensions.get('window').height, backgroundColor: 'rgba(255, 255, 255, 0.5)'}}
+              contentInset={{top: 0}}
+              alignItems='center'
+              justifyContent='center'
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              {Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS
+                  key='loading_ios'
+                  animating={true}
+                  color='#FE3139'
+                  style={[{height: 80}]}
+                  size='large' />
+              ] : [
+                <ProgressBarAndroid key='loading_android' indeterminate />
+              ]}
+            </ScrollView>
+          </Overlay>
+        ] : null}
       </View>
     );
   };
@@ -382,15 +403,18 @@ var styles = StyleSheet.create({
     marginRight: 20,
     marginTop: 15,
     height: 30,
+    paddingBottom: Platform.OS === 'ios' ? 0 : 5,
     color: '#FFFFFF',
     backgroundColor: 'rgba(0, 0, 0, 0.3)'
   },
   switchMethodButton: {
     marginLeft: 20,
     marginRight: 20,
-    marginTop: 10,
+    marginTop: Platform.OS === 'ios' ? 10 : 15,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderBottomWidth: Platform.OS === 'ios' ? 0 : 1,
+    borderColor: '#FFFFFF'
   },
   switchMethodText: {
     textAlign: 'center',
@@ -398,7 +422,7 @@ var styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: 13,
     paddingTop: 5,
-    paddingBottom: 5
+    paddingBottom: Platform.OS === 'ios' ? 5 : 0
   },
   submitButton: {
     width: 150,

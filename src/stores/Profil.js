@@ -304,52 +304,62 @@ export class ProfilStore extends CachedStore {
     if (score == 0) {
       return {
         image: require('../assets/img/badges/novice.png'),
-        name: 'Novice'
-      };
-    } else if (score < 1) {
-      return {
-        image: require('../assets/img/badges/brodeur.png'),
-        name: 'Brodeur'
+        name: 'Novice',
+        description: 'Tu as maintenant tous les outils pour tisser la toile de tes restaurants préférés !'
       };
     } else if (score < 3) {
       return {
-        image: require('../assets/img/badges/apprenti.png'),
-        name: 'Apprenti'
+        image: require('../assets/img/badges/brodeur.png'),
+        name: 'Brodeur',
+        description: 'Ton âme d’explorateur a été dévoilée, elle peut désormais s’épanouir librement !'
       };
     } else if (score < 5) {
       return {
-        image: require('../assets/img/badges/retoucheur.png'),
-        name: 'Retoucheur'
+        image: require('../assets/img/badges/apprenti.png'),
+        name: 'Apprenti',
+        description: 'Tes premières tentatives ont porté leurs fruits, continue ainsi à développer tes talents !'
       };
     } else if (score < 10) {
       return {
-        image: require('../assets/img/badges/tricoteur.png'),
-        name: 'Tricoteur'
+        image: require('../assets/img/badges/retoucheur.png'),
+        name: 'Retoucheur',
+        description: 'Tu es une solution en situation de crise et tu n’as jamais laissé tombé l’un des tiens.'
       };
     } else if (score < 30) {
       return {
-        image: require('../assets/img/badges/confectionneur.png'),
-        name: 'Confectionneur'
+        image: require('../assets/img/badges/tricoteur.png'),
+        name: 'Tricoteur',
+        description: 'Tu as toujours une bonne idée qu’importe le lieu, et tu la partages avec plaisir.'
       };
     } else if (score < 60) {
       return {
-        image: require('../assets/img/badges/faconneur.png'),
-        name: 'Façonneur'
+        image: require('../assets/img/badges/confectionneur.png'),
+        name: 'Confectionneur',
+        description: 'Ta toile s’est étoffée et tes recommandations sont plus que jamais recherchées.'
       };
     } else if (score < 100) {
       return {
-        image: require('../assets/img/badges/tailleur.png'),
-        name: 'Tailleur'
+        image: require('../assets/img/badges/faconneur.png'),
+        name: 'Façonneur',
+        description: 'L’ascension par l’adresse, la reconnaissance par la maîtrise.'
       };
     } else if (score < 200) {
       return {
-        image: require('../assets/img/badges/createur.png'),
-        name: 'Créateur'
+        image: require('../assets/img/badges/tailleur.png'),
+        name: 'Tailleur',
+        description: 'Tu dessines le paysage culinaire de tes fidèles.'
       };
     } else if (score < 500) {
       return {
+        image: require('../assets/img/badges/createur.png'),
+        name: 'Créateur',
+        description: 'Tu inities les tendances par l’univers que tu partages.'
+      };
+    } else {
+      return {
         image: require('../assets/img/badges/hautcouturier.png'),
-        name: 'Grand Couturier'
+        name: 'Grand Couturier',
+        description: 'Tes coups de cœur se sèment et s’essaiment.'
       };
     }
   }

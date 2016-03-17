@@ -132,7 +132,7 @@ class RecoStep1 extends Component {
             ref='searchBar'
             placeholder='Sélectionne ton restaurant'
             hideBackground={true}
-            textFieldBackgroundColor='#C1BFCC'
+            textFieldBackgroundColor='#EEEDF1'
             tintColor='#3A325D'
             onChangeText={this.onRestaurantQuery} />
         ] : [
@@ -141,7 +141,7 @@ class RecoStep1 extends Component {
             ref='searchBar'
             placeholderTextColor='#3A325D'
             placeholder='Sélectionne ton restaurant'
-            style={{backgroundColor: '#C1BFCC', margin: 10, padding: 5, color: '#3A325D'}}
+            style={{backgroundColor: '#EEEDF1', margin: 10, padding: 5, color: '#3A325D'}}
             onChangeText={this.onRestaurantQuery} />
         ]}
 
@@ -163,16 +163,6 @@ var styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingBottom: 10
-  },
-  restaurantQueryInput: {
-    height: 50,
-    backgroundColor: '#C1BFCC',
-    borderRadius: 15,
-    paddingLeft: 15,
-    paddingRight: 15,
-    margin: 10,
-    fontSize: 14,
-    color: '#222222'
   },
   restaurantsList: {
     flex: 1,

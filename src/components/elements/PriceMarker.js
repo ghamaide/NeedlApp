@@ -15,11 +15,7 @@ class PriceMarker extends Component {
         <View style={[styles.bubble, {backgroundColor: backgroundColor, borderColor: backgroundColor}]}>
           <Text style={styles.budget}>{this.props.text}</Text>
         </View>
-        {Platform.OS === 'ios' ? [
-          <View key='triangle' style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
-        ] : [
-          <View key='rectangle' style={[styles.rectangle, {backgroundColor: backgroundColor}]} />
-        ]}
+        <View key='triangle' style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
       </View>
     );
   };
