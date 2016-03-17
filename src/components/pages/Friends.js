@@ -236,7 +236,7 @@ class Friends extends Page {
             </TouchableHighlight>
           ] : [
             <View style={styles.linkFacebookButton}>
-              {Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />}
+              {Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />}
             </View>
           ]
         ] : null}
@@ -271,7 +271,7 @@ class Friends extends Page {
               );
             } else {
               if (Platform.OS === 'ios') {
-                return (<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />);
+                return (<ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' />);
               } else {
                 return (<ProgressBarAndroid indeterminate />);
               }

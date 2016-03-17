@@ -71,7 +71,7 @@ class RecoStep3 extends Component {
       var content;
 
       if (this.state.loading) {
-        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />);
+        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />);
       }
 
       if (!_.isEmpty(this.state.error)) {

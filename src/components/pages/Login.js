@@ -33,6 +33,7 @@ class Login extends Component {
     this.state.recovery_email = '';
     this.state.name = '';
     this.state.password = '';
+    this.state.passwordRecovered = false;
 
     // Remove to add password confirmation
     //this.state.password_confirmation = '';
@@ -95,7 +96,9 @@ class Login extends Component {
       var error = {error_message: 'incorrect_mail_recovery'};
       this.setState({error: error});
     } else {
-      LoginActions.recoverPassword(this.state.recovery_email);
+      LoginActions.recoverPassword(this.state.recovery_email, () => {
+        this.setState({passwordRecovered: true})
+      });
     }
   };
 
@@ -160,7 +163,7 @@ class Login extends Component {
         <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false} style={styles.loginContainer}>
           <View style={styles.logoImageWrapper}>
             <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
-            <Text style={styles.sublineText}>Les restos préférés de vos amis</Text>
+            <Text style={styles.sublineText}>Les restos préférés de tes amis</Text>
           </View>
 
           {this.state.index == 1 ? [
@@ -204,11 +207,11 @@ class Login extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 2})} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.switchMethodText}>Vous n'avez pas encore de compte ?</Text>
+                <Text style={styles.switchMethodText}>Tu n'as pas encore de compte ?</Text>
               </TouchableHighlight>
 
               <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 3})} underlayColor='rgba(0, 0, 0, 0)'>
-                <Text style={styles.switchMethodText}>Vous avez oublié votre mot de passe ?</Text>
+                <Text style={styles.switchMethodText}>Tu as oublié ton mot de passe ?</Text>
               </TouchableHighlight>
             </View>
           ] : [
@@ -284,7 +287,7 @@ class Login extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
+                  <Text style={styles.switchMethodText}>Tu as déja un compte ?</Text>
                 </TouchableHighlight>
               </View>
             ] : [
@@ -294,28 +297,36 @@ class Login extends Component {
                     <Text style={styles.errorText}>{message}</Text>
                   </View>
                 ] : null}
-                <TextInput
-                  ref='recovery_email'
-                  returnKeyType='go'
-                  keyboardType='email-address'
-                  autoCorrect={false}
-                  autoCapitalize='none'
-                  placeholder="Email"
-                  placeholderTextColor='#FFFFFF'
-                  selectionColor='#00000'
-                  style={styles.input}
-                  maxLength={40}
-                  multiline={false}
-                  onChangeText={(email) => {
-                    this.setState({recovery_email: email});
-                  }} />
+                {!this.state.passwordRecovered ? [
+                  <View key='recoveryEmailInput' style={{width: Dimensions.get('window').width, alignItems: 'center', justifyContent: 'center'}}>
+                    <TextInput
+                      ref='recoveryEmail'
+                      returnKeyType='go'
+                      keyboardType='email-address'
+                      autoCorrect={false}
+                      autoCapitalize='none'
+                      placeholder="Email"
+                      placeholderTextColor='#FFFFFF'
+                      selectionColor='#00000'
+                      style={styles.input}
+                      maxLength={40}
+                      multiline={false}
+                      onChangeText={(email) => {
+                        this.setState({recovery_email: email});
+                      }} />
 
-                <TouchableHighlight style={styles.submitButton} onPress={this.onPasswordRecovery} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.submitText}>Valider</Text>
-                </TouchableHighlight>
+                      <TouchableHighlight style={styles.submitButton} onPress={this.onPasswordRecovery} underlayColor='rgba(0, 0, 0, 0)'>
+                        <Text style={styles.submitText}>Valider</Text>
+                      </TouchableHighlight>
+                    </View>
+                  ] : [
+                  <View key='recoveryEmailSent' style={{marginLeft: 20, marginRight: 20, padding: 5, backgroundColor: '#9CE62A', borderRadius: 5}}>
+                    <Text style={{textAlign: 'center', color: '#3A325D', fontSize: 12}}>Un mail avec un lien de réinitialisation de ton mot de passe vient de t'être envoyé</Text>
+                  </View>
+                ]}
 
                 <TouchableHighlight style={styles.switchMethodButton} onPress={() => this.setState({index: 1})} underlayColor='rgba(0, 0, 0, 0)'>
-                  <Text style={styles.switchMethodText}>Vous avez déja un compte ?</Text>
+                  <Text style={styles.switchMethodText}>Tu as déja un compte ?</Text>
                 </TouchableHighlight>
               </View>
             ]

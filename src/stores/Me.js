@@ -54,9 +54,13 @@ export class MeStore extends CachedStore {
       handleCreateAccountFailed: LoginActions.CREATE_ACCOUNT_FAILED,
       handleCreateAccountSuccess: LoginActions.CREATE_ACCOUNT_SUCCESS,
 
-      handleEditSuccess: MeActions.EDIT_SUCCESS,
-      handleEditFailed: MeActions.EDIT_FAILED,
+      handleRecoverPassword: LoginActions.RECOVER_PASSWORD,
+      handleRecoverPasswordFailed: LoginActions.RECOVER_PASSWORD_FAILED,
+      handleRecoverPasswordSuccess: LoginActions.RECOVER_PASSWORD_SUCCESS,
+
       handleEdit: MeActions.EDIT,
+      handleEditFailed: MeActions.EDIT_FAILED,
+      handleEditSuccess: MeActions.EDIT_SUCCESS,
 
       handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
       
@@ -160,15 +164,38 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleEdit() {
-    this.status.loading = true;
-  }
-
   handleFetchProfilSuccess(profil) {
     if (profil.id === this.me.id) {
       this.me.app_version = profil.app_version;
       this.me.platform = profil.platform;
+      var oldScore = this.me.score || 0;
+      this.me.score = profil.score;
+      if (oldScore < 1) {
+        this.displayUpgradeMessage = profil.score >= 1;
+      } else if (oldScore >= 1 && oldScore < 3) {
+        this.displayUpgradeMessage = profil.score >= 3;
+      } else if (oldScore >= 3 && oldScore < 5) {
+        this.displayUpgradeMessage = profil.score >= 5;
+      } else if (oldScore >= 5 && oldScore < 10) {
+        this.displayUpgradeMessage = profil.score >= 10;
+      } else if (oldScore >= 10 && oldScore < 30) {
+        this.displayUpgradeMessage = profil.score >= 30;
+      } else if (oldScore >= 30 && oldScore < 60) {
+        this.displayUpgradeMessage = profil.score >= 60;
+      } else if (oldScore >= 60 && oldScore < 100) {
+        this.displayUpgradeMessage = profil.score >= 100;
+      } else if (oldScore >= 100 && oldScore < 200) {
+        this.displayUpgradeMessage = profil.score >= 200;
+      } else if (oldScore >= 200 && oldScore < 500) {
+        this.displayUpgradeMessage = profil.score >= 500;
+      } else if (oldScore >= 500) {
+        this.displayUpgradeMessage = false;
+      }
     }
+  }
+
+  handleEdit() {
+    this.status.loading = true;
   }
 
   handleEditFailed(err) {
@@ -180,6 +207,20 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
     this.me.name = data.name;
     this.me.email = data.email;
+  }
+
+  handleRecoverPassword() {
+    delete this.status.error;
+    this.status.loading = true;
+  }
+
+  handleRecoverPasswordFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleRecoverPasswordSuccess(result) {
+    this.status.loading = false;
   }
 
   handleHasBeenUploadWelcomed() {

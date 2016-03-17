@@ -74,7 +74,7 @@ class RecoStepSave extends Component {
   render() {
     var content;
     if (!this.state.error) {
-      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
+      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
     }
 
     if (this.state.error) {

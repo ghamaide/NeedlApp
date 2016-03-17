@@ -60,7 +60,7 @@ class EditMe extends Component {
   };
 
   closeKeyboard = () => {
-    if (Platform.OS === 'ios' && ProfilStore.getProfil(MeStore.getState().me.id).score >= 20) {
+    if (Platform.OS === 'ios' && ProfilStore.getProfil(this.state.me.id).score >= 20) {
       this.refs.description.blur();
     }
   };
@@ -90,12 +90,13 @@ class EditMe extends Component {
     } else if (this.state.public && totalTagLength == 0) {
       var error = {error_message: 'empty_tags'};
       this.setState({error: error});
-    } else if (this.state.password.length > 0 && this.state.password != this.state.password_confirmation) {
-      var error = {error_message: 'different_passwords'};
-      this.setState({error: error});
-    } else if (this.state.password.length > 0 && this.state.password.length < 6) {
-      var error = {error_message: 'password_too_short'};
-      this.setState({error: error});
+    // Uncomment to add password change
+    // } else if (this.state.password.length > 0 && this.state.password != this.state.password_confirmation) {
+    //   var error = {error_message: 'different_passwords'};
+    //   this.setState({error: error});
+    // } else if (this.state.password.length > 0 && this.state.password.length < 6) {
+    //   var error = {error_message: 'password_too_short'};
+    //   this.setState({error: error});
     } else {
       var infos = {
         name: this.state.name,
@@ -103,8 +104,8 @@ class EditMe extends Component {
         description: this.state.description,
         is_public: this.state.public,
         tags: this.state.tags,
-        update_password : this.state.password.length > 5,
-        password: this.state.password
+        // update_password : this.state.password.length > 5,
+        // password: this.state.password
       }
 
       MeActions.edit(infos, () => {
@@ -114,7 +115,7 @@ class EditMe extends Component {
   };
 
   render() {
-    var can_be_public = ProfilStore.getProfil(MeStore.getState().me.id).score >= 20;
+    var can_be_public = ProfilStore.getProfil(this.state.me.id).score >= 20;
     if (!_.isEmpty(this.state.error)) {
       var showError = false;
       var message = '';
@@ -167,7 +168,7 @@ class EditMe extends Component {
             ref='email'
             onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
-          {can_be_public ? [
+          {can_be_public || true ? [
             <View key='public_informations' style={{flex: 1}}>
               <Text style={styles.label}>Description</Text>
               <TextInput
@@ -247,6 +248,7 @@ class EditMe extends Component {
                 <ActivityIndicatorIOS
                   key='loading_ios'
                   animating={true}
+                  color='#FE3139'
                   style={[{height: 80}]}
                   size='large' />
               ] : [

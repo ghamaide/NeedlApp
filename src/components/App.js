@@ -386,7 +386,7 @@ class App extends Component {
           <Overlay key='overlay_tutorial'>
             <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayTutorial()}>
               <ScrollView
-                style={{flex: 1, height: Dimensions.get('window').height, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
+                style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
                 contentInset={{top: 0}}
                 automaticallyAdjustContentInsets={false}
                 showsVerticalScrollIndicator={false}

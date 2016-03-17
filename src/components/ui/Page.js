@@ -13,6 +13,7 @@ class Page extends Component {
       <View style={styles.wrapper}>
         <ActivityIndicatorIOS
         animating={true}
+        color='#FE3139'
         style={[{height: 80}]}
         size='large' />
       </View>

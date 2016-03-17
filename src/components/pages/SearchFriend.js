@@ -275,6 +275,7 @@ class SearchFriend extends Page {
                   {Platform.OS === 'ios' ? [
                     <ActivityIndicatorIOS
                       animating={true}
+                      color='#FE3139'
                       style={[{height: 40}]}
                       size='large' />
                   ] : [
@@ -369,7 +370,7 @@ class SearchFriend extends Page {
         content = this.renderList();
       }
     } else if (this.state.loading) {
-      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} style={[{height: 80}]} size='large' />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
+      content = (Platform.OS === 'ios' ? this.renderBlankScreen(<ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' />) : this.renderBlankScreen(<ProgressBarAndroid indeterminate />));
     } else if (!_.isEmpty(this.state.error)) {
       content = this.renderBlankScreen(<Text style={styles.noResultText}>Votre requête a eu un problème d'exécution, veuillez réessayer</Text>);
     } else {

@@ -66,7 +66,7 @@ class Toggle extends Component {
             width: this.props.size,
             height: this.props.size,
             borderRadius: this.props.size / 2,
-            backgroundColor: this.props.active ? (this.props.backgroundColorActive ? this.props.backgroundColorActive : '##9CE62A') : (this.props.backgroundColor ? this.props.backgroundColor : '#C1BFCC'),
+            backgroundColor: this.props.active ? (this.props.backgroundColorActive ? this.props.backgroundColorActive : '#9CE62A') : (this.props.backgroundColor ? this.props.backgroundColor : '#C1BFCC'),
             alignItems: 'center',
             justifyContent: 'center',
             transform: [

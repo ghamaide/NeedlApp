@@ -85,6 +85,33 @@ export class LoginActions {
     return result;
   }
 
+  recoverPassword(email, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/users/update_password')
+        .query({
+          email: email
+        })
+        .end((err, result) => {
+          if (err) {
+            return this.recoverPasswordFailed(err);
+          }
+
+          return this.recoverPasswordSuccess(result, callback);
+        });
+    }
+  }
+
+  recoverPasswordFailed(err) {
+    return err;
+  }
+
+  recoverPasswordSuccess(result, callback) {
+    callback();
+    return result;
+  }
+
   logout() {
     return function (dispatch) {
       dispatch()
