@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Alert, AppState, Component, DeviceEventEmitter, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Alert, AppState, Component, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -55,7 +55,7 @@ class App extends Component {
     return {
       unseen_notifications: NotifsStore.nbUnseenNotifs(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
-      showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
+      showOverlayTutorial: MeStore.showOverlayTutorial()
     }
   };
 
@@ -64,7 +64,7 @@ class App extends Component {
       meLoading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
-      showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
+      showOverlayTutorial: MeStore.showOverlayTutorial(),
     });
   };
 
@@ -286,12 +286,12 @@ class App extends Component {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
 
     AppState.removeEventListener('change', this.onAppStateChange);
+    
+    Linking.removeEventListener('url', this.handleOpenURL);
 
     if (Platform.OS === 'ios') {
       PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
       PushNotificationIOS.removeEventListener('notification', this.onNotificationIOS);
-
-      Linking.removeEventListener('url', this.handleOpenURL);
 
       Branch.logout();
     }
@@ -325,7 +325,7 @@ class App extends Component {
   // Actions to add the new variables in local storage when user upgrades his version
   onUpdate = () => {
     if ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '2.1.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0')) {
-      RestaurantsActions.setFilter('friends', []);
+      RestaurantsActions.setFilter.defer('friends', []);
     }
   };
 
@@ -378,23 +378,25 @@ class App extends Component {
           initialSelected={this.notifLaunchTab || 0}
           tabsBlocked={false} />
 
-        {this.state.showOverlayMapTutorial ? [
-          <Overlay key='overlay_map_tutorial'>
-            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
+        {this.state.showOverlayTutorial ? [
+          <Overlay key='overlay_tutorial'>
+            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayTutorial()}>
               <ScrollView
                 style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
                 contentInset={{top: 0}}
                 automaticallyAdjustContentInsets={false}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.container}>
-                <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
-                <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+                <Image style={styles.arrowLeft} source={require('../assets/img/other/icons/arrow_curved.png')} />
+                <Image style={styles.arrowRight} source={require('../assets/img/other/icons/arrow_curved.png')} />
+                <Text style={styles.titleLeft}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+                <Text style={styles.titleRight}>Visualise les restaurants sur ta carte perso de Paris !</Text>
               </ScrollView>
             </TouchableHighlight>
           </Overlay>
         ] : null}
 
-        {!this.state.hasBeenUploadWelcomed ? [
+        {!this.state.hasBeenUploadWelcomed && false ? [
           <Overlay key='has_been_upload_welcomed'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
@@ -434,7 +436,7 @@ class App extends Component {
           </Overlay>
         ] : null}
 
-        {index_loading > 1 ? [
+        {index_loading > 1 && !this.state.showOverlayTutorial ? [
           <Overlay key='loading_overlay'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
@@ -493,21 +495,45 @@ var styles = StyleSheet.create({
     backgroundColor: '#FE3139',
     marginTop: 20
   },
-  arrow: {
+  arrowRight: {
     height: 60,
     width: 60,
     position: 'absolute',
     right: 40,
-    top: 0,
+    top: 10,
     tintColor: '#FFFFFF'
   },
-  titleShowMap: {
+  arrowLeft: {
+    height: 60,
+    width: 60,
+    position: 'absolute',
+    left: 20,
+    top: 10,
+    tintColor: '#FFFFFF',
+    transform: [
+      {rotateY: '180deg'}
+    ]
+  },
+  titleLeft: {
+    width: Dimensions.get('window').width / 2,
+    textAlign: 'center',
+    position: 'absolute',
+    left: 0,
+    top: 80,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
+  },
+  titleRight: {
+    width: Dimensions.get('window').width / 2,
+    position: 'absolute',
+    right: 0,
+    top: 80,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
     color: '#FFFFFF',
-    marginTop: 70
-  },
+  }
 });
 
 export default App;

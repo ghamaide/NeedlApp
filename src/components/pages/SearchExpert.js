@@ -8,10 +8,12 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 
+import FollowingsActions from '../../actions/FollowingsActions'
+
 import FollowingsStore from '../../stores/Followings'
 import ProfilStore from '../../stores/Profil'
 
-import FollowingsActions from '../../actions/FollowingsActions'
+import Profil from './Profil';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -64,21 +66,35 @@ class SearchExpert extends Page {
 
   renderExpert = (expert) => {
     return (
-      <View style={styles.contactContainer}>
-        <Image style={styles.profileImage} source={{uri: expert.picture}} />
-        <Text style={styles.profileName}>{expert.fullname}</Text>
-        {!this.state.loading ? [
-          <TouchableHighlight key={'follow_expert_' + expert.id} style={styles.buttonWrapper} onPress={() => FollowingsActions.followExpert(expert.id)} underlayColor='rgba(0, 0, 0, 0)'>
-            <Text style={styles.buttonText}>Suivre</Text>
-          </TouchableHighlight>
-        ] : [
-          Platform.OS === 'ios' ? [
-            <ActivityIndicatorIOS key={'loading_' + expert.id} animating={true} style={[{height: 40}]} size='small' />
-          ] : [
-            <ProgressBarAndroid key={'loading_' + expert.id} indeterminate /> 
-          ]
-        ]}
-      </View>
+      <TouchableHighlight
+        underlayColor='rgba(0, 0, 0, 0)'
+        onPress={() => {
+          this.props.navigator.push(Profil.route({id: expert.id}));
+        }}>
+          <View style={styles.contactContainer}>
+            <Image style={styles.profileImage} source={{uri: expert.picture}} />
+            <View style={styles.friendInfos}>
+              <Text style={styles.friendName}>{expert.fullname}</Text>
+              <Text style={styles.friendFollowers}>{expert.number_of_followers} follower{expert.number_of_followers > 1 ? 's' : ''}</Text>
+              <Text style={styles.tags}>
+                {_.map(expert.tags, (tag, key) => {
+                  return <Text key={'tag_' + key} style={{color: '#FE3139'}}>#{tag.replace(" ", "")} </Text>
+                })}
+              </Text>
+            </View>
+            {!this.state.loading ? [
+              <TouchableHighlight key={'follow_expert_' + expert.id} style={styles.buttonWrapper} onPress={() => FollowingsActions.followExpert(expert.id)} underlayColor='rgba(0, 0, 0, 0)'>
+                <Text style={styles.buttonText}>Suivre</Text>
+              </TouchableHighlight>
+            ] : [
+              Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS key={'loading_' + expert.id} animating={true} style={[{height: 40}]} size='small' />
+              ] : [
+                <ProgressBarAndroid key={'loading_' + expert.id} indeterminate /> 
+              ]
+            ]}
+        </View>
+      </TouchableHighlight>
     );
   };
 
@@ -168,7 +184,25 @@ var styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     flex: 1
-  }
+  },
+  friendInfos: {
+    flex: 1,
+    marginLeft: 20,
+    paddingTop: 4
+  },
+  friendName: {
+    color: '#3A325D',
+    fontSize: 14,
+    fontWeight: '500'
+  },
+  friendFollowers: {
+    color: '#3A325D',
+    marginTop: 2,
+    fontSize: 14
+  },
+  tags: {
+    marginTop: 2
+  },
 });
 
 export default SearchExpert;

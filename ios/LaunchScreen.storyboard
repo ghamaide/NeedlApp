@@ -20,6 +20,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Default-667h.png" width="375" height="667"/>
+        <image name="Default-667h.png" width="187" height="333"/>
     </resources>
 </document>

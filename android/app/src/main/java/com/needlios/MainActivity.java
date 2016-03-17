@@ -68,8 +68,8 @@ public class MainActivity extends ReactActivity {
             new NotificationPackage(this),
             new RNMixpanel(),
             new RNSendIntentPackage(),
-            new RNBranchPackage()
-            new LinearGradientPackage(),
+            new RNBranchPackage(),
+            new LinearGradientPackage()
         );
     }
 

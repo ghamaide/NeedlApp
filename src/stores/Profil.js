@@ -19,7 +19,8 @@ export class ProfilStore extends CachedStore {
   constructor() {
     super();
 
-    this.profil = {};
+    this.temporary_profiles = [];
+
     this.me = {};
     this.friends = [];
     this.followings = [];
@@ -84,6 +85,9 @@ export class ProfilStore extends CachedStore {
   handleFetchFriendsSuccess(result) {
     this.friends = _.forEach(result.friends, (friend) => {
       friend.badge = this.renderBadge(friend.score);
+      _.forEach(friend.friends, (friend_of_friend) => {
+        friend_of_friend.badge = this.renderBadge(friend_of_friend.score);
+      });
     });
     this.requests_received = result.requests_received;
     this.requests_sent = result.requests_sent;
@@ -103,16 +107,20 @@ export class ProfilStore extends CachedStore {
 
   handleFetchProfilSuccess(profil) {
     if (profil.id == MeStore.getState().me.id) {
-      this.me = _.extend(profil, {badge: this.renderBadge(profil.score)});;
+      _.forEach(profil.friends, (friend) => {
+        friend.badge = this.renderBadge(friend.score);
+      });
+      this.me = _.extend(profil, {badge: this.renderBadge(profil.score)});
     } else {
       var indexFriends = _.findIndex(this.friends, (friend) => {return friend.id === profil.id});
       var indexFollowings = _.findIndex(this.followings, (following) => {return following.id === profil.id;});
       if (indexFriends > -1) {
-        this.friends[index] = _.extend(profil, {badge: this.renderBadge(profil.score)});
+        _.forEach(profil.friends, (friend) => {
+          friend.badge = this.renderBadge(friend.score);
+        });
+        this.friends[indexFriends] = _.extend(profil, {badge: this.renderBadge(profil.score)});
       } else if (indexFollowings > -1) {
-        this.followings[index] = _.extend(profil, {badge: this.renderBadge(profil.score)});
-      } else {
-        this.profil = _.extend(profil, {badge: this.renderBadge(profil.score)});;
+        this.followings[indexFollowings] = _.extend(profil, {badge: this.renderBadge(profil.score)});
       }
     }
     this.status.loading = false;
@@ -283,7 +291,6 @@ export class ProfilStore extends CachedStore {
   }
 
   handleLogout() {
-    this.profil = {};
     this.me = {};
     this.friends = [];
     this.followings = [];
@@ -379,8 +386,20 @@ export class ProfilStore extends CachedStore {
     return _.sortBy(this.getState().friends, ['name']);
   }
 
+  static getFriendsFromUser(user_id) {
+    return _.sortBy(this.getProfil(user_id).friends, ['name']);
+  }
+
   static getFollowings() {
     return this.getState().followings;
+  }
+
+  static getFollowingsFromUser(user_id) {
+    return this.getProfil(user_id).followings;
+  }
+
+  static getThanksFromUser(user_id) {
+    return this.getProfil(user_id).thanks;
   }
 
   static getMe() {

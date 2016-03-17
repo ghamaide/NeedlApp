@@ -244,6 +244,16 @@ export class NotifsStore extends CachedStore {
     return notifications[index];
   }
 
+  static getRecommendationsFromUser(user_id) {
+    var notifications = _.concat(this.getState().myNotifications, this.getState().friendsNotifications, this.getState().followingsNotifications);
+    
+    var notifications_from_user = _.filter(notifications, (notification) => {
+      return notification.notification_type == 'recommendation' && notification.user_id == user_id;
+    });
+
+    return notifications_from_user;
+  }
+
   static getFriendsNotifications() {
     return _.reverse(_.sortBy(this.getState().friendsNotifications, 'date'));
   }

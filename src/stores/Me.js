@@ -6,6 +6,7 @@ import alt from '../alt';
 
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
+import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 
 import CachedStore from './CachedStore';
@@ -18,11 +19,10 @@ export class MeStore extends CachedStore {
     this.me = {};
 
     this.hasBeenUploadWelcomed = false;
-    this.showOverlayMapTutorial = true;
+    this.showOverlayTutorial = true;
     this.showedUpdateMessage = true;
     this.dismissedUpdateMessage = false;
 
-    this.showedCurrentPosition = false;
     this.showTabBar = true;
 
     this.version = 0;
@@ -57,6 +57,8 @@ export class MeStore extends CachedStore {
       handleEditSuccess: MeActions.EDIT_SUCCESS,
       handleEditFailed: MeActions.EDIT_FAILED,
       handleEdit: MeActions.EDIT,
+
+      handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
       
       handleUploadContacts : MeActions.UPLOAD_CONTACTS,
       handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
@@ -72,10 +74,8 @@ export class MeStore extends CachedStore {
 
       handleLogout: LoginActions.LOGOUT,
 
-      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
-
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
-      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
+      handleHideOverlayTutorial: MeActions.HIDE_OVERLAY_TUTORIAL,
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE
 
     });
@@ -86,7 +86,6 @@ export class MeStore extends CachedStore {
   }
 
   handleStartActions() {
-    this.showedCurrentPosition = false;
     delete this.status.error;
   }
 
@@ -96,7 +95,6 @@ export class MeStore extends CachedStore {
   }
 
   handleStartActionsSuccess(result) {
-    this.status.error = null;
     if (!result && !this.dismissedUpdateMessage) {
       this.showedUpdateMessage = false;
     }
@@ -121,7 +119,6 @@ export class MeStore extends CachedStore {
 
   handleLogout() {
     this.me = {};
-    this.showedCurrentPosition = false;
     delete this.status.error;
   }
 
@@ -136,8 +133,9 @@ export class MeStore extends CachedStore {
   }
 
   handleLoginEmailSuccess(me) {
-    this.me = me.user;
-    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    var me = me.user;
+    me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.me = me;
     this.status.loading = false;
   }
 
@@ -164,6 +162,13 @@ export class MeStore extends CachedStore {
 
   handleEdit() {
     this.status.loading = true;
+  }
+
+  handleFetchProfilSuccess(profil) {
+    if (profil.id === this.me.id) {
+      this.me.app_version = profil.app_version;
+      this.me.platform = profil.platform;
+    }
   }
 
   handleEditFailed(err) {
@@ -243,17 +248,13 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleShowedCurrentPosition(showed) {
-    this.showedCurrentPosition = showed;
-  }
-
   handleShowedUpdateMessage() {
     this.showedUpdateMessage = true;
     this.dismissedUpdateMessage = true;
   }
 
-  handleHideOverlayMapTutorial() {
-    this.showOverlayMapTutorial = false;
+  handleHideOverlayTutorial() {
+    this.showOverlayTutorial = false;
   }
 
   static getMe() {
@@ -276,8 +277,8 @@ export class MeStore extends CachedStore {
     return this.getState().showedUpdateMessage;
   }
 
-  static showOverlayMapTutorial() {
-    return this.getState().showOverlayMapTutorial;
+  static showOverlayTutorial() {
+    return this.getState().showOverlayTutorial;
   }
 }
 

@@ -3,7 +3,6 @@
 import React, {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import Collapsible from 'react-native-collapsible';
 import CustomActionSheet from 'react-native-custom-action-sheet';
 import RNComm from 'react-native-communications';
 
@@ -12,8 +11,8 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 
-import RestaurantElement from '../elements/Restaurant';
 import Overlay from '../elements/Overlay';
+import RestaurantElement from '../elements/Restaurant';
 
 import FollowingsActions from '../../actions/FollowingsActions';
 import FriendsActions from '../../actions/FriendsActions';
@@ -30,6 +29,7 @@ import RestaurantsStore from '../../stores/Restaurants';
 import CarteProfil from './CarteProfil';
 import EditMe from './EditMe';
 import Friends from './Friends';
+import Information from './Information';
 import Restaurant from './Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
@@ -69,11 +69,9 @@ class Profil extends Page {
     super(props);
 
     this.state = this.profilState();
-    this.state.isOpened = false;
     this.state.recommendationActive = true;
     this.state.wishlistActive = false;
-    this.state.private = true;
-    this.state.menu_opened = false;
+    this.state.index = this.props.index || 1;
     this.state.confirmation_opened = false;
   };
 
@@ -89,14 +87,6 @@ class Profil extends Page {
 
   onProfilsChange = () => {
     this.setState(this.profilState());
-  };
-
-  showButtons = () => {
-    if (this.state.isOpened) {
-      this.setState({isOpened: false})
-    } else {
-      this.setState({isOpened: true});
-    } 
   };
 
   onPressRestaurant = (from) => {
@@ -120,15 +110,9 @@ class Profil extends Page {
     RNComm.email(['contact@needl-app.com'], '', '', 'J\'ai une question !', '');
   };
 
-  onPressMenuPublic = () => {
-    if (this.state.private) {
-      this.setState({private: false});
-    }
-  };
-
-  onPressMenuPrivate = () => {
-    if (!this.state.private) {
-      this.setState({private: true});
+  onPressMenu = (index) => {
+    if (this.state.index != index) {
+      this.setState({index: index});
     }
   };
 
@@ -142,202 +126,330 @@ class Profil extends Page {
       return friend.id
     });
 
-    var is_following = !_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id;
+    var followingsIds =  _.map(ProfilStore.getFollowings(), (following) => {
+      return following.id
+    });
+
+    var is_following = (!_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id) || (MeStore.getState().me.id === profil.id && profil.public && this.state.index == 2);
 
     return (
       <View style={{flex: 1}}>
         {!this.props.id ? [
           <NavigationBar 
-            key='navbarfromtab'
+            key='navbar_from_tab'
             type='switch'
-            active={this.state.private}
-            title_left={'Privé'}
-            title_right={'Public'}
-            onPressLeft={this.onPressMenuPrivate}
-            onPressRight={this.onPressMenuPublic}
+            active={this.state.index}
+            titles={['Privé', 'Public']}
+            onPress={this.onPressMenu}
             rightImage={require('../../assets/img/other/icons/map.png')}
             rightButtonTitle='Carte'
             onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({toggle: this.props.toggle, has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications}))} />
         ] : [
-          <NavigationBar 
-            key='navbarfrompush'
-            type='back'
-            title={profil.fullname || profil.name}
-            leftButtonTitle='Retour'
-            onLeftButtonPress={() => this.props.navigator.pop()}
-            rightImage={require('../../assets/img/other/icons/map.png')}
-            rightButtonTitle='Carte'
-            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+          MeStore.getState().me.id !== profil.id ? [
+            <NavigationBar 
+              key='navbar_from_push'
+              type='back'
+              title={profil.fullname || profil.name}
+              leftButtonTitle='Retour'
+              onLeftButtonPress={() => this.props.navigator.pop()}
+              rightImage={require('../../assets/img/other/icons/map.png')}
+              rightButtonTitle='Carte'
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+          ] : [
+            <NavigationBar 
+              key='navbar_from_push_and_is_me'
+              type='switch_and_back'
+              active={this.state.index}
+              titles={['Privé', 'Public']}
+              onPress={this.onPressMenu}
+              leftButtonTitle='Retour'
+              onLeftButtonPress={() => this.props.navigator.pop()}
+              rightImage={require('../../assets/img/other/icons/map.png')}
+              rightButtonTitle='Carte'
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+          ]
         ]}
-        <ScrollView
-          contentInset={{top: 0}}
-          automaticallyAdjustContentInsets={false}
-          showsVerticalScrollIndicator={false}
-          onScroll={this.onScroll}
-          scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.loading}
-              onRefresh={this.onRefresh}
-              tintColor='#FE3139'
-              title='Chargement...'
-              colors={['#FFFFFF']}
-              progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
-          }>
 
-          <View style={styles.infoContainer}>
-            <View style={styles.infoInnerContainer}>
-              <View style={styles.textInfoContainer}>
-                <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
-                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    {profil.recommendations.length}
-                  </Text>
-                  <Text style={[styles.textInfoText, {top: 20}]}>
-                    ami{profil.recommendations.length > 1 ? 's' : ''}
+        {MeStore.getState().me.id === profil.id && !is_following && this.state.index == 2 ? [
+          <Text key='no_public_profile' style={{padding: 20, marginTop: 20, textAlign: 'center', color: '#FE3139', fontSize: 14, fontWeight: Platform.OS === 'ios' ? '500' : '400'}}>Ton profil n'est pas encore public. Pour le rendre public, il te faut au moins 20 remerciements. Pour en obtenir, recommande tes restaurants préférés.</Text>
+        ] : [
+          <ScrollView
+            key='private_profile_container'
+            contentInset={{top: 0}}
+            automaticallyAdjustContentInsets={false}
+            showsVerticalScrollIndicator={false}
+            onScroll={this.onScroll}
+            scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.loading}
+                onRefresh={this.onRefresh}
+                tintColor='#FE3139'
+                title='Chargement...'
+                colors={['#FFFFFF']}
+                progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
+            }>
+
+            <View style={styles.infoContainer}>
+              <View style={styles.infoInnerContainer}>
+                <View style={styles.textInfoContainer}>
+                  {/* Nombre d'amis (amis) ou de recommendations (followings) */}
+                  {!is_following ? [
+                    <TouchableHighlight
+                      key='friends'
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.textInfo, {borderRightWidth: 1.5}]}
+                      onPress={() => {
+                        // fetch info on friends
+                        this.props.navigator.push(Information.route({id: profil.id, origin: 'users'}));
+                      }}>
+                      <View>
+                        <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                          {profil.friends.length /* à remplacer par le nombre d'amis */}
+                        </Text>
+                        <Text style={[styles.textInfoText, {top: 20}]}>
+                          ami{profil.friends.length > 1 ? 's' : ''}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                  ] : [ // Nombre de recommendations pour un profil public
+                    <View key='recommendations' style={[styles.textInfo, {borderRightWidth: 1.5}]}>
+                      <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                        {profil.public_recommendations.length}
+                      </Text>
+                      <Text style={[styles.textInfoText, {top: 20}]}>
+                        resto{profil.public_recommendations.length > 1 ? 's' : ''}
+                      </Text>
+                    </View>
+                  ]}
+
+                  {/* Nombre de followings (amis) ou follwoers (followings) */}
+                  {!is_following ? [
+                    <TouchableHighlight
+                      key='followings'
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      style={[styles.textInfo, {borderRightWidth: 1.5}]}
+                      onPress={() => {
+                        this.props.navigator.push(Information.route({id: profil.id, origin: 'experts'}));
+                      }}>
+                      <View>
+                        <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                          {profil.followings.length}
+                        </Text>
+                        <Text style={[styles.textInfoText, {top: 20}]}>
+                          influenceur{profil.followings.length > 1 ? 's' : ''}
+                        </Text>
+                      </View>
+                    </TouchableHighlight>
+                  ] : [
+                    <View key='followers' style={[styles.textInfo, {borderRightWidth: 1.5}]}>
+                      <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                        {profil.number_of_followers}
+                      </Text>
+                      <Text style={[styles.textInfoText, {top: 20}]}>
+                        follower{profil.number_of_followers > 1 ? 's' : ''}
+                      </Text>
+                    </View>
+                  ]}
+
+                  {/* Nombre de remerciements */}
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.textInfo}
+                    onPress={() => {
+                      if (!is_following && MeStore.getState().me.id === profil.id) {
+                        this.props.navigator.push(Information.route({id: profil.id, origin: 'score'}));
+                      } else {
+                        return ;
+                      }
+                    }}>
+                    <View>
+                      <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
+                        {!is_following ? profil.score : profil.public_score}
+                      </Text>
+                      <Text style={[styles.textInfoText, {top: 20}]}>
+                        merci{!is_following ? (profil.score > 1 ? 's' : '') : (profil.public_score > 1 ? 's' : '')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              </View>
+
+              {/* Container for badge information or public description */}
+              {!is_following ? [
+                <View key='badge_container' style={styles.badgeInfoContainer}>
+                  <Text style={styles.badgeName}>{profil.badge.name}</Text>
+                  <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
+                </View>
+              ] : [
+                <View key='description_container' style={styles.descriptionContainer}>
+                  <Text style={styles.description} numberOfLines={3}>{profil.description}</Text>
+                  <Text style={styles.tags}>
+                    {_.map(profil.tags, (tag, key) => {
+                      return <Text style={{color: '#FE3139'}} key={'tag_' + key}>#{tag.replace(" ", "")} </Text>; 
+                    })}
                   </Text>
                 </View>
-                <View style={[styles.textInfo, {borderRightWidth: 1.5}]}>
-                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    {profil.followings.length}
-                  </Text>
-                  <Text style={[styles.textInfoText, {top: 20}]}>
-                    influenceur{profil.followings.length > 1 ? 's' : ''}
-                  </Text>
-                </View>
-                <View style={styles.textInfo}>
-                  <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                    {profil.score}
-                  </Text>
-                  <Text style={[styles.textInfoText, {top: 20}]}>
-                    merci{profil.score > 1 ? 's' : ''}
-                  </Text>
-                </View>
+              ]}
+
+              {/* Profile Image */}
+              <Image source={{uri: profil.picture}} style={styles.image} />
+
+              {/* Badge Image */}
+              {!is_following ? [
+                <Image key='badge_image' source={profil.badge.image} style={styles.badgeImage} />
+              ] : null}
+
+              {/* Container for actions on profile */}
+              <View style={styles.actionContainer}>
+                {MeStore.getState().me.id === profil.id ? [
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    key={'edit_' + profil.id}
+                    style={[styles.actionButton, {borderColor: '#AAAAAA'}]}
+                    onPress={() => this.setState({confirmation_opened: true})}>
+                    <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier</Text>
+                  </TouchableHighlight>
+                ] : [
+                  !is_following ? [
+                    !profil.invisible ? [
+                      <TouchableHighlight
+                        key={'hide_reco_' + profil.id}
+                        underlayColor='rgba(0, 0, 0, 0)'
+                        style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                        onPress={() => this.setState({confirmation_opened: true})}>
+                        <Text style={[styles.buttonText, {color: '#9EE43E'}]}>{this.state.loading ? 'Masque...' : 'Visible'}</Text>
+                      </TouchableHighlight>
+                    ] : [
+                      <TouchableHighlight
+                        underlayColor='rgba(0, 0, 0, 0)'
+                        style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#FE3139'}]}
+                        key={'show_reco_' + profil.id}
+                        onPress={() => this.setState({confirmation_opened: true})}>
+                        <Text style={[styles.buttonText, {color: '#FE3139'}]}>{this.state.loading ? 'Affichage...' : 'Invisible'}</Text>
+                      </TouchableHighlight>
+                    ]
+                  ] : [
+                    MeStore.getState().me.id !== profil.id ? [
+                      _.includes(followingsIds, profil.id) ? [
+                        <TouchableHighlight
+                          key={'unfollow_' + profil.id}
+                          underlayColor='rgba(0, 0, 0, 0)'
+                          style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
+                          onPress={() => this.setState({confirmation_opened: true})}>
+                          <Text style={[styles.buttonText, {color: '#9EE43E'}]}>Suivi</Text>
+                        </TouchableHighlight>
+                      ] : [
+                        <TouchableHighlight
+                          key={'unfollow_' + profil.id}
+                          underlayColor='rgba(0, 0, 0, 0)'
+                          style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#C1BFCC'}]}
+                          onPress={() => FollowingsActions.followExpert(profil.id)}>
+                          <Text style={[styles.buttonText, {color: '#C1BFCC'}]}>Suivre</Text>
+                        </TouchableHighlight>
+                      ]
+                    ] : []
+                  ]
+                ]}
               </View>
             </View>
 
-            {/* Container for badge information */}
-            <View style={styles.badgeInfoContainer}>
-              <Text style={styles.badgeName}>{profil.badge.name}</Text>
-              <Text style={styles.badgeDescription} numberOfLines={3}>Tu es créateur d'inspirations, tu peux faire ci et faire ca et puis ci et puis ca et puis tout ci et puis tout ca</Text>
-            </View>
-
-            {/* Profile Image */}
-            <Image source={{uri: profil.picture}} style={styles.image} />
-
-            {/* Badge Image */}
-            <Image source={profil.badge.image} style={styles.badgeImage} />
-
-            {/* Container for actions on profile */}
-            <View style={styles.actionContainer}>
-              {MeStore.getState().me.id === profil.id ? [
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  key={'edit_' + profil.id}
-                  style={[styles.actionButton, {borderColor: '#AAAAAA'}]}
-                  onPress={() => this.setState({confirmation_opened: true})}>
-                  <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier</Text>
+            {!is_following ? [ 
+              <View key='switch_buttons' style={styles.restaurantButtonsContainer}>
+                <TouchableHighlight 
+                  style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#FE3139' : 'transparent'}]}
+                  onPress={() => this.onPressRestaurant('recommendation')}>
+                  <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#FE3139'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
                 </TouchableHighlight>
-              ] : [
+                <TouchableHighlight 
+                  style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#FE3139' : 'transparent'}]}
+                  onPress={() => this.onPressRestaurant('wishlist')}>
+                  <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#FE3139'}}>Wishlist</Text>
+                </TouchableHighlight>
+              </View>
+            ] : [
+              <View key='recommendation_title_container' style={{margin: 15, alignItems: 'center', justifyContent: 'center', flex: 1}}>
+                <Text style={{textAlign: 'center', fontSize: 15, color: '#FE3139', fontWeight: '500'}}>Ses recommendations</Text>
+              </View>
+            ]}
+
+            <View style={styles.restaurantsContainer}>
+              {/* Recommendations */}
+              {this.state.recommendationActive ? [
                 !is_following ? [
-                  !profil.invisible ? [
-                    <TouchableHighlight
-                      key={'hide_reco_' + profil.id}
-                      underlayColor='rgba(0, 0, 0, 0)'
-                      style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
-                      onPress={() => this.setState({confirmation_opened: true})}>
-                      <Text style={[styles.buttonText, {color: '#9EE43E'}]}>{this.state.loading ? 'Masque...' : 'Visible'}</Text>
-                    </TouchableHighlight>
+                  profil.recommendations.length ? [
+                    _.map(profil.recommendations, (id) => {
+                      var restaurant = RestaurantsStore.getRestaurant(id);
+                      return (
+                        <RestaurantElement
+                          height={205}
+                          style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                          key={restaurant.id}
+                          name={restaurant.name}
+                          picture={restaurant.pictures[0]}
+                          type={restaurant.food[1]}
+                          budget={restaurant.price_range}
+                          underlayColor='#EEEEEE'
+                          onPress={() => {
+                            this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                          }}/>
+                      );
+                    })
                   ] : [
-                    <TouchableHighlight
-                      underlayColor='rgba(0, 0, 0, 0)'
-                      style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#FE3139'}]}
-                      key={'show_reco_' + profil.id}
-                      onPress={() => this.setState({confirmation_opened: true})}>
-                      <Text style={[styles.buttonText, {color: '#FE3139'}]}>{this.state.loading ? 'Affichage...' : 'Invisible'}</Text>
-                    </TouchableHighlight>
+                    <Text style={styles.emptyText}>Recommande les restaurants que tu as aimés et bénéficie d'une suggestion de restaurants personnalisée !</Text>
                   ]
                 ] : [
-                  <TouchableHighlight
-                    underlayColor='rgba(0, 0, 0, 0)'
-                    style={[styles.actionButton, {backgroundColor: '#FFFFFF', borderColor: '#9EE43E'}]}
-                    key={'unfollow_' + profil.id}
-                    onPress={() => this.setState({confirmation_opened: true})}>
-                    <Text style={[styles.buttonText, {color: '#9EE43E'}]}>Suivi</Text>
-                  </TouchableHighlight>
+                  profil.public_recommendations.length ? [
+                    _.map(profil.public_recommendations, (id) => {
+                      var restaurant = RestaurantsStore.getRestaurant(id);
+                      return (
+                        <RestaurantElement
+                          height={205}
+                          style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                          key={restaurant.id}
+                          name={restaurant.name}
+                          picture={restaurant.pictures[0]}
+                          type={restaurant.food[1]}
+                          budget={restaurant.price_range}
+                          underlayColor='#EEEEEE'
+                          onPress={() => {
+                            this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                          }}/>
+                      );
+                    })
+                  ] : [
+                    <Text style={styles.emptyText}>Recommande les restaurants que tu as aimés et bénéficie d'une suggestion de restaurants personnalisée !</Text>
+                  ]
                 ]
-              ]}
-            </View>
-          </View>
+              ] : null}
 
-          {!is_following ? [ 
-            <View key='switch_buttons' style={styles.restaurantButtonsContainer}>
-              <TouchableHighlight 
-                style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#FE3139' : 'transparent'}]}
-                onPress={() => this.onPressRestaurant('recommendation')}>
-                <Text style={{color: this.state.recommendationActive ? '#FFFFFF' : '#FE3139'}}>Recommendation{profil.recommendations.length > 1 ? 's' : ''}</Text>
-              </TouchableHighlight>
-              <TouchableHighlight 
-                style={[styles.restaurantButton, {backgroundColor: this.state.wishlistActive ? '#FE3139' : 'transparent'}]}
-                onPress={() => this.onPressRestaurant('wishlist')}>
-                <Text style={{color: this.state.wishlistActive ? '#FFFFFF' : '#FE3139'}}>Wishlist</Text>
-              </TouchableHighlight>
+              {/* Wishlist */}
+              {this.state.wishlistActive ? [
+                profil.wishes.length ? [
+                  _.map(profil.wishes, (id) => {
+                    var restaurant = RestaurantsStore.getRestaurant(id);
+                    return (
+                      <RestaurantElement
+                        height={200}
+                        style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                        key={restaurant.id}
+                        name={restaurant.name}
+                        picture={restaurant.pictures[0]}
+                        type={restaurant.food[1]}
+                        budget={restaurant.price_range}
+                        underlayColor='#EEEEEE'
+                        onPress={() => {
+                          this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
+                        }}/>
+                      );
+                  })
+                ] : [
+                  <Text style={styles.emptyText}>Construis ta propre liste de restaurants en les ajoutant à ta wishlist !</Text>
+                ]
+              ] : null}
             </View>
-          ] : [
-            <View key='recommendation_title_container' style={{margin: 15, alignItems: 'center', justifyContent: 'center', flex: 1}}>
-              <Text style={{textAlign: 'center', fontSize: 15, color: '#FE3139', fontWeight: '500'}}>Ses recommendations</Text>
-            </View>
-          ]}
-
-          <View style={styles.restaurantsContainer}>
-            {this.state.recommendationActive ? [
-              profil.recommendations.length ? [
-                _.map(profil.recommendations, (id) => {
-                  var restaurant = RestaurantsStore.getRestaurant(id);
-                  return (
-                    <RestaurantElement
-                      height={205}
-                      style={{marginBottom: 5, backgroundColor: 'transparent'}}
-                      key={restaurant.id}
-                      name={restaurant.name}
-                      picture={restaurant.pictures[0]}
-                      type={restaurant.food[1]}
-                      budget={restaurant.price_range}
-                      underlayColor='#EEEEEE'
-                      onPress={() => {
-                        this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                      }}/>
-                  );
-                })
-              ] : [
-                <Text style={styles.emptyText}>Recommande les restaurants que tu as aimés et bénéficie d'une suggestion de restaurants personnalisée !</Text>
-              ]
-            ] : null}
-
-            {this.state.wishlistActive ? [
-              profil.wishes.length ? [
-                _.map(profil.wishes, (id) => {
-                  var restaurant = RestaurantsStore.getRestaurant(id);
-                  return (
-                    <RestaurantElement
-                      height={200}
-                      style={{marginBottom: 5, backgroundColor: 'transparent'}}
-                      key={restaurant.id}
-                      name={restaurant.name}
-                      picture={restaurant.pictures[0]}
-                      type={restaurant.food[1]}
-                      budget={restaurant.price_range}
-                      underlayColor='#EEEEEE'
-                      onPress={() => {
-                        this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
-                      }}/>
-                    );
-                })
-              ] : [
-                <Text style={styles.emptyText}>Construis ta propre liste de restaurants en les ajoutant à ta wishlist !</Text>
-              ]
-            ] : null}
-          </View>
-        </ScrollView>
+          </ScrollView>
+        ]}
 
         {!this.props.id ? [
           <MenuIcon key='menu_icon' onPress={this.props.toggle} />
@@ -350,7 +462,10 @@ class Profil extends Page {
                 <TouchableHighlight 
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
-                  onPress={() => this.props.navigator.push(EditMe.route())}>
+                  onPress={() => {
+                    this.setState({confirmation_opened: false});
+                    this.props.navigator.push(EditMe.route());
+                  }}>
                   <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Modifier mon profil</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
@@ -362,7 +477,10 @@ class Profil extends Page {
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
                   style={[styles.confirmationContainer, {borderBottomLeftRadius: 5, borderBottomRightRadius: 5}]}
-                  onPress={() => LoginActions.logout()}>
+                  onPress={() => {
+                    this.setState({confirmation_opened: false});
+                    LoginActions.logout();
+                  }}>
                   <Text style={[styles.confirmationText, {color: '#FE3139'}]}>Me déconnecter</Text>
                 </TouchableHighlight>
               </View>
@@ -494,6 +612,15 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     padding: 5
   },
+  descriptionContainer: {
+    width: TEXT_INFO_WIDTH,
+    backgroundColor: 'transparent',
+    padding: 8,
+    marginTop: 5
+  },
+  tags: {
+    marginTop: 5,
+  },
   badgeName: {
     fontWeight: '500',
     fontSize: 13,
@@ -533,7 +660,7 @@ var styles = StyleSheet.create({
     width: IMAGE_HEIGHT - 15,
     height: 25,
     borderRadius: 5,
-    borderWidth: .5,
+    borderWidth: 1,
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center'
@@ -541,6 +668,7 @@ var styles = StyleSheet.create({
   buttonText: {
     color: '#AAAAAA',
     fontSize: 11,
+    fontWeight: '500'
   },
   restaurantButtonsContainer: {
     flexDirection: 'row',

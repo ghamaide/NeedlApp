@@ -39,7 +39,7 @@ class Friends extends Page {
     super(props);
 
     this.state = this.friendsState();
-    this.state.friends_active = true;
+    this.state.index = 1;
     this.state.searched_text = '';
   };
 
@@ -113,15 +113,9 @@ class Friends extends Page {
     ProfilActions.fetchFollowings();
   };
 
-  onPressMenuFriends = () => {
-    if (!this.state.friends_active) {
-      this.setState({friends_active: true});
-    }
-  };
-
-  onPressMenuFollowings = () => {
-    if (this.state.friends_active) {
-      this.setState({friends_active: false});
+  onPressMenu = (index) => {
+    if (this.state.index != index) {
+      this.setState({index: index});
     }
   };
 
@@ -151,6 +145,11 @@ class Friends extends Page {
           <View style={styles.friendInfos}>
             <Text style={styles.friendName}>{following.fullname}</Text>
             <Text style={styles.friendFollowers}>{following.number_of_followers} follower{following.number_of_followers > 1 ? 's' : ''}</Text>
+            <Text style={styles.tags}>
+              {_.map(following.tags, (tag, key) => {
+                return <Text key={'tag_' + key} style={{color: '#FE3139'}}>#{tag.replace(" ", "")} </Text>
+              })}
+            </Text>
           </View>
         </View>
       </TouchableHighlight>
@@ -161,7 +160,7 @@ class Friends extends Page {
     var friend_number = ProfilStore.getFriends().length;
     var following_number = ProfilStore.getFollowings().length;
 
-    if (this.state.friends_active) {
+    if (this.state.index == 1) {
       if (friend_number > 0) {
         return (
           <View>
@@ -200,14 +199,12 @@ class Friends extends Page {
       <View style={{flex: 1}}>
         <NavigationBar 
           type='switch'
-          active={this.state.friends_active}
-          title_left={'Amis'}
-          title_right={'Influenceurs'}
-          onPressLeft={this.onPressMenuFriends}
-          onPressRight={this.onPressMenuFollowings} />
+          active={this.state.index}
+          titles={['Amis', 'Influenceurs']}
+          onPress={this.onPressMenu} />
 
         {/* Remove to activate search bar
-        this.state.friends_active ? [
+        this.state.index == 1 ? [
           Platform.OS === 'ios' ? [
             <SearchBar
               key='search'
@@ -215,7 +212,7 @@ class Friends extends Page {
               placeholder='Rechercher'
               hideBackground={true}
               textFieldBackgroundColor='#DDDDDD'
-              onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
+              onChangeText={this.state.index == 1 ? this.searchFriends : this.searchFollowings} />
           ] : [
             <TextInput
               key='search'
@@ -224,7 +221,7 @@ class Friends extends Page {
               placeholder='Rechercher'
               placeholderTextColor='#3A325D'
               hideBackground={true}
-              onChangeText={this.state.friends_active ? this.searchFriends : this.searchFollowings} />
+              onChangeText={this.state.index == 1 ? this.searchFriends : this.searchFollowings} />
           ]
         ] : null */}
 
@@ -244,7 +241,7 @@ class Friends extends Page {
           ]
         ] : null}
 
-        {this.state.friends_active ? [
+        {this.state.index == 1 ? [
           <TouchableHighlight key='invite_friend' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchFriend.route())} underlayColor='rgba(0, 0, 0, 0)'>
             <Text style={styles.invitationText}>Ajouter un nouvel ami</Text>
           </TouchableHighlight>
@@ -254,7 +251,7 @@ class Friends extends Page {
           </TouchableHighlight>
         ]}
 
-        {this.state.friends_active && this.state.requests_received.length > 0 ? [
+        {this.state.index == 1 && this.state.requests_received.length > 0 ? [
           _.map(this.state.requests_received, (request) => {
             if (!this.state.friendsLoading) {
               return (
@@ -286,8 +283,8 @@ class Friends extends Page {
           style={styles.friendsList}
           refreshDescription='Chargement...'
           loadData={this.onRefresh}
-          dataSource={this.state.friends_active ? ds.cloneWithRows(this.state.filtered_friends) : ds.cloneWithRows(this.state.filtered_followings)}
-          renderRow={this.state.friends_active ? this.renderFriend : this.renderFollowing}
+          dataSource={this.state.index == 1 ? ds.cloneWithRows(this.state.filtered_friends) : ds.cloneWithRows(this.state.filtered_followings)}
+          renderRow={this.state.index == 1 ? this.renderFriend : this.renderFollowing}
           renderHeaderWrapper={this.renderHeader}
           contentInset={{top: 0}}
           scrollRenderAheadDistance={150}
@@ -337,7 +334,11 @@ var styles = StyleSheet.create({
   },
   friendFollowers: {
     color: '#3A325D',
+    marginTop: 2,
     fontSize: 14
+  },
+  tags: {
+    marginTop: 2
   },
   emptyContainer: {
     flex: 1,

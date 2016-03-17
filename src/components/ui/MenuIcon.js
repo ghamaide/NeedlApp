@@ -47,7 +47,7 @@ var styles = StyleSheet.create({
   pastilleContainer: {
     position: 'absolute',
     left: 20,
-    top: -5,
+    top: Platform.OS === 'ios' ? -2 : 0,
     height: 20,
     width: 20,
     borderRadius: 10,

@@ -181,7 +181,6 @@ class Results extends Page {
           key='navbar' 
           type='switch_and_back'
           active={this.state.rank}
-          data={this.state.restaurants}
           titles={titles}
           onPress={this.onPressMenu}
           leftButtonTitle='Retour'
@@ -242,40 +241,34 @@ class Results extends Page {
                   dot={<View style={{backgroundColor:'rgba(0,0,0,.2)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
                   activeDot={<View style={{backgroundColor: '#FE3139', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
                   {_.map(RestaurantsStore.getRecommenders(restaurant.id), (userId) => {
-                      if (userId === 553) {
-                        return (
-                          <View key='needl_reco' style={styles.slide}>
-                            <View style={[styles.avatarWrapper, {backgroundColor: '#FE3139'}]}>
-                              <TouchableHighlight onPress={this.onPressText} underlayColor='rgba(0, 0, 0, 0)'>
-                                <Image style={styles.avatarNeedl} source={require('../../assets/img/tabs/icons/home.png')} />
+                    var profil = ProfilStore.getProfil(userId);
+                    var notification = NotifsStore.getRecommendation(restaurant.id, profil.id);
+                    var is_following = notification.url.length > 0;
+                    var source = profil ? {uri: profil.picture} : {};
+                    return (
+                      <View key={'reco_' + profil.id} style={styles.slide}>
+                        <View style={styles.avatarWrapper}>
+                          <Image style={styles.avatar} source={source} />
+                        </View>
+                        <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
+                          <View style={styles.triangleContainer}>
+                            <View style={styles.triangle} />
+                          </View>
+                          <Text style={styles.reviewText}>{notification.review || 'Je recommande !'}</Text>
+                          {is_following ? [
+                            <TouchableHighlight
+                              key='more'
+                              underlayColor='rgba(0, 0, 0, 0)'
+                              onPress={() => {
+                                this.props.navigator.push(Web.route({source: notification.url, title: restaurant.name}));
+                              }}>
+                                <Text style={[styles.reviewAuthor, {textDecorationLine: 'underline', fontSize: 11}]}>En savoir plus</Text>
                               </TouchableHighlight>
-                            </View>
-                            <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
-                              <View style={styles.triangleContainer}>
-                                <View style={styles.triangle} />
-                              </View>
-                              <Text style={[styles.reviewText, {textDecorationLine: 'underline'}]} onPress={this.onPressText}>Labellisé valeur sûre par Needl (+)</Text>
-                            </View>
-                          </View>
-                        );
-                      } else {
-                        var profil = ProfilStore.getProfil(userId);
-                        var source = profil ? {uri: profil.picture} : {};
-                        return (
-                          <View key={'reco_' + profil.id} style={styles.slide}>
-                            <View style={styles.avatarWrapper}>
-                              <Image style={styles.avatar} source={source} />
-                            </View>
-                            <View style={{backgroundColor: '#E0E0E0', width: windowWidth - 40, padding: 10, borderRadius: 5}}>
-                              <View style={styles.triangleContainer}>
-                                <View style={styles.triangle} />
-                              </View>
-                              <Text style={styles.reviewText}>{NotifsStore.getRecommendation(restaurant.id, profil.id).review || 'Je recommande !'}</Text>
-                              <Text style={styles.reviewAuthor}>{profil.fullname || profil.name}</Text>
-                            </View>
-                          </View>
-                        );
-                      }
+                          ] : null}
+                          <Text style={styles.reviewAuthor}>{profil.fullname || profil.name}</Text>
+                        </View>
+                      </View>
+                    );
                   })}
                 </Swiper>
               </View>

@@ -70,8 +70,8 @@ class RecoStep1 extends Component {
         this.props.navigator.push(Step2.route({toggle: this.props.toggle}));
       }}>
         <View style={styles.restaurantRowInner}>
-          <Text style={{color: '#000000'}}>{restaurant.name_and_address.split(': ')[0]}</Text>
-          <Text style={{color: '#444444'}}>{restaurant.name_and_address.split(': ')[1]}</Text>
+          <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.name_and_address.split(': ')[0]}</Text>
+          <Text style={{color: '#3A325D', fontSize: 11, marginTop: 2}}>{restaurant.name_and_address.split(': ')[1]}</Text>
         </View>
       </TouchableHighlight> 
     );
@@ -132,7 +132,8 @@ class RecoStep1 extends Component {
             ref='searchBar'
             placeholder='Sélectionne ton restaurant'
             hideBackground={true}
-            textFieldBackgroundColor='#DDDDDD'
+            textFieldBackgroundColor='#C1BFCC'
+            tintColor='#3A325D'
             onChangeText={this.onRestaurantQuery} />
         ] : [
           <TextInput
@@ -140,7 +141,7 @@ class RecoStep1 extends Component {
             ref='searchBar'
             placeholderTextColor='#3A325D'
             placeholder='Sélectionne ton restaurant'
-            style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5, color: '#3A325D'}}
+            style={{backgroundColor: '#C1BFCC', margin: 10, padding: 5, color: '#3A325D'}}
             onChangeText={this.onRestaurantQuery} />
         ]}
 
@@ -165,7 +166,7 @@ var styles = StyleSheet.create({
   },
   restaurantQueryInput: {
     height: 50,
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#C1BFCC',
     borderRadius: 15,
     paddingLeft: 15,
     paddingRight: 15,
@@ -182,7 +183,7 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 10,
     borderBottomWidth: 0.5,
-    borderColor: '#DDDDDD'
+    borderColor: '#C1BFCC'
   },
   viewContainer: {
     backgroundColor: 'transparent',
@@ -191,7 +192,7 @@ var styles = StyleSheet.create({
   },
   noResultText: {
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#3A325D',
     textAlign: 'center'
   },
   firstMessage: {

@@ -1,9 +1,11 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
 
+import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Mixpanel from 'react-native-mixpanel';
+import SendIntentAndroid from 'react-native-send-intent';
 
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
@@ -18,7 +20,7 @@ import RestaurantsStore from '../../../stores/Restaurants';
 
 import StepSave from './StepSave';
 
-let IMAGE_WIDTH = 70; 
+let IMAGE_WIDTH = 60; 
 
 class RecoStep6 extends Component {
   static route(props) {
@@ -34,6 +36,7 @@ class RecoStep6 extends Component {
 
     this.state = this.stepState();
     this.state.characterNbRemaining = 140;
+    this.state.public_recommendation = ProfilStore.getProfil(MeStore.getState().me.id).score >= 20;
   }
 
   stepState() {
@@ -56,7 +59,9 @@ class RecoStep6 extends Component {
   };
 
   closeKeyboard = () => {
-    this.refs.review.blur();
+    if (Platform.OS === 'ios') {
+      this.refs.review.blur();
+    }
   };
 
   onRightButtonPress = () => {
@@ -64,6 +69,7 @@ class RecoStep6 extends Component {
     recommendation.friends_thanking = this.state.friendsThanksIds;
     recommendation.experts_thanking = this.state.expertsThanksIds;
     recommendation.review = this.state.review;
+    recommendation.public = this.state.public_recommendation;
     RecoActions.setReco(recommendation);
     this.props.navigator.resetTo(StepSave.route({toggle: this.props.toggle}));
   };
@@ -118,27 +124,32 @@ class RecoStep6 extends Component {
   };
 
   inviteFriend = () => {
-    NativeModules.RNMessageComposer.composeMessageWithArgs({
-      'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
-    }, (result) => {
-      switch(result) {
-        case NativeModules.RNMessageComposer.Sent:
-          Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
-          break;
-        case NativeModules.RNMessageComposer.Cancelled:
-          // console.log('user cancelled sending the message');
-          break;
-        case NativeModules.RNMessageComposer.Failed:
-          // console.log('failed to send the message');
-          break;
-        case NativeModules.RNMessageComposer.NotSupported:
-          // console.log('this device does not support sending texts');
-          break;
-        default:
-          // console.log('something unexpected happened');
-          break;
-      }
-    });
+    if (Platform.OS === 'android') {
+      SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation');
+      Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
+    } else if (Platform.OS === 'ios') {
+      NativeModules.RNMessageComposer.composeMessageWithArgs({
+        'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
+      }, (result) => {
+        switch(result) {
+          case NativeModules.RNMessageComposer.Sent:
+            Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
+            break;
+          case NativeModules.RNMessageComposer.Cancelled:
+            // console.log('user cancelled sending the message');
+            break;
+          case NativeModules.RNMessageComposer.Failed:
+            // console.log('failed to send the message');
+            break;
+          case NativeModules.RNMessageComposer.NotSupported:
+            // console.log('this device does not support sending texts');
+            break;
+          default:
+            // console.log('something unexpected happened');
+            break;
+        }
+      });
+    }
   };
 
   render() {
@@ -163,38 +174,46 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {true ? [ // on update, remove
-            <View key='recommenders' style={styles.thanksContainer}>
-              <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
-              <ScrollView 
-                style={styles.thanksScroller}
-                alignItems='center'
-                horizontal={true}>
-                <View style={styles.recommendersContainer}>
-                  <View style={styles.recommenderContainer}>
-                    <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.inviteFriend} style={styles.recommenderButton}>
-                      <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                        <View style={{borderColor: '#AAAAAA', borderWidth: 4, width: IMAGE_WIDTH, height: IMAGE_WIDTH, borderRadius: IMAGE_WIDTH / 2, alignItems: 'center', justifyContent: 'center'}}>
-                          <Icon
-                            name='plus'
-                            size={IMAGE_WIDTH / 2}
-                            color='#AAAAAA' 
-                            style={{marginTop: 5}} />
-                        </View>
-                        <Text style={[styles.recommenderName, {color: '#AAAAAA'}]}>Contacts</Text>
-                      </View>
-                    </TouchableHighlight>
-                  </View>
-                  {_.map(recommenders, (recommenderId) => {
-                    return this.renderRecommender(recommenderId);
-                  })}
-                </View>
-              </ScrollView>
+          {ProfilStore.getProfil(MeStore.getState().me.id).score >= 20 ? [
+            <View key='public_recommendation' style={{paddingLeft: 10, paddingRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+              <Switch
+                onValueChange={(value) => this.setState({public_recommendation: value})}
+                value={this.state.public_recommendation} />
+              <Text style={{marginLeft: 10, fontSize: 12, color: '#3A325D'}}>Recommandation {this.state.public_recommendation ? 'publique' : 'privée'}</Text>
             </View>
           ] : null}
-          <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+          
+          <View key='recommenders' style={styles.thanksContainer}>
+            <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
+            <ScrollView 
+              style={styles.thanksScroller}
+              alignItems='center'
+              horizontal={true}>
+              <View style={styles.recommendersContainer}>
+                <View style={styles.recommenderContainer}>
+                  <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.inviteFriend} style={styles.recommenderButton}>
+                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                      <View style={{borderColor: '#C1BFCC', borderWidth: 4, width: IMAGE_WIDTH, height: IMAGE_WIDTH, borderRadius: IMAGE_WIDTH / 2, alignItems: 'center', justifyContent: 'center'}}>
+                        <Icon
+                          name='plus'
+                          size={IMAGE_WIDTH / 2}
+                          color='#C1BFCC' 
+                          style={{marginTop: 5}} />
+                      </View>
+                      <Text style={[styles.recommenderName, {color: '#C1BFCC'}]}>Contacts</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+                {_.map(recommenders, (recommenderId) => {
+                  return this.renderRecommender(recommenderId);
+                })}
+              </View>
+            </ScrollView>
+          </View>
+
+          <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 20}}>
             <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.onRightButtonPress} style={styles.submitButton}>
-              <Text style={{color: '#FFFFFF', fontSize: 15, textAlign: 'center', fontWeight: '500'}}>Publier</Text>
+              <Text style={{color: '#FFFFFF', fontSize: 14, textAlign: 'center', fontWeight: '500'}}>Publier</Text>
             </TouchableHighlight>
           </View>
         </ScrollView>
@@ -211,13 +230,13 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     margin: 0,
     flex: 1,
-    height: Dimensions.get('window').height - 60
+    height: Platform.OS == 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40
   },
   recoContainer: {
-    margin: 8
+    margin: 10
   },
   character: {
-    color: '#555555',
+    color: '#3A325D',
     fontSize: 10,
     textAlign: 'right'
   },
@@ -225,22 +244,27 @@ var styles = StyleSheet.create({
     padding: 10,
     marginBottom: 5,
     height: 100,
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#C1BFCC',
     textAlignVertical: 'top',
-    color: '#555555',
-    borderColor: '#CCCCCC',
+    color: '#3A325D',
+    borderColor: '#C1BFCC',
     borderWidth: 0.5,
-    marginTop: Platform.OS === 'android' ? 20 : 0
+    marginTop: Platform.OS === 'android' ? 20 : 0,
+    fontSize: 12
   },
   thanksContainer: {
-    margin: 8
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 5,
+    marginBottom: 5,
   },
   thanksTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '500',
     textAlign: 'center',
     marginTop: 5,
-    marginBottom: 20
+    marginBottom: 20,
+    color: '#3A325D'
   },
   recommendersContainer: {
     flexWrap: 'wrap',
@@ -265,7 +289,8 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     width: IMAGE_WIDTH,
     marginTop: 10,
-    fontSize: 15
+    fontWeight: '500',
+    fontSize: 12
   },
   grayImage: {
     width: IMAGE_WIDTH,
@@ -288,7 +313,7 @@ var styles = StyleSheet.create({
     right: 0,
     height: 10,
     position: 'absolute',
-    backgroundColor: '#DDDDDD'
+    backgroundColor: '#C1BFCC'
   },
   progressBarCompleted: {
     backgroundColor: '#9EE43E',

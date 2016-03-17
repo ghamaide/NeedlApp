@@ -90,7 +90,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 30,
-  color: '#000000',
+  color: '#3A325D',
   fontSize: 13,
   textAlign: 'center'
  },
@@ -110,7 +110,7 @@ progressBar: {
   right: 0,
   height: 10,
   position: 'absolute',
-  backgroundColor: '#DDDDDD'
+  backgroundColor: '#C1BFCC'
  },
 progressBarCompleted: {
   backgroundColor: '#9EE43E',

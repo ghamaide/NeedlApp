@@ -49,18 +49,33 @@ class CarteProfil extends Page {
   constructor(props) {
     super(props);
 
+    if (Platform.OS === 'android') {
+      var region = typeof RestaurantsStore.getState().currentRegion.latitude !== 'undefined' ? RestaurantsStore.getState().currentRegion : RestaurantsStore.getState().region;
+    } else {
+      var region = RestaurantsStore.getState().currentRegion || RestaurantsStore.getState().region;
+    }
+
     this.state = this.mapState();
-    this.state.region = RestaurantsStore.getState().region;
+    
+    // Region is where the user left
+    this.state.region = region;
+    
+    // Whether to show user's location
     this.state.showsUserLocation = false;
-    this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition;
+
+    // To specify the default level of zoom
     this.state.defaultLatitudeDelta = 4 / 110.574;
     this.state.defaultLongitudeDelta = 1 / (111.320*Math.cos(this.state.defaultLatitudeDelta)) ;
+    
+    // Paris 4 point coordinates and center
     this.state.paris = {
       northLatitude: 48.91,
+      centerLatitude: 48.85,
       southLatitude: 48.8,
       westLongitude: 2.25,
+      centerLongitude: 2.32,
       eastLongitude: 2.42
-    }
+    };
   };
 
   startActions = () => {
@@ -71,7 +86,6 @@ class CarteProfil extends Page {
           this.setState({
             region: {latitude: initialPosition.coords.latitude, longitude: initialPosition.coords.longitude, latitudeDelta: this.state.defaultLatitudeDelta, longitudeDelta: this.state.defaultLongitudeDelta}
           });
-          MeActions.showedCurrentPosition(true);
       },
       (error) => console.log(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
@@ -92,18 +106,7 @@ class CarteProfil extends Page {
   };
 
   onRegionChangeComplete = (region) => {
-    this.setState({region: region, displayRestaurant: false});
-  };
-
-  onMapPress = (zone) => {
-    this.setState({displayRestaurant: false});
-  };
-
-  onSelect = (event) => {
-    // trigger event marker
-    console.log('on select');
-    console.log(event);
-    // this.setState({displayRestaurant: true});
+    this.setState({region: region});
   };
 
   renderPage() {
@@ -154,8 +157,7 @@ class CarteProfil extends Page {
               return (
                 <MapView.Marker
                   key={restaurant.id}
-                  coordinate={coordinates}
-                  onSelect={this.onSelect}>
+                  coordinate={coordinates}>
                   <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9EE43E' : '#FE3139'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>

@@ -150,7 +150,7 @@ var styles = StyleSheet.create({
  },
  title: {
   marginBottom: 20,
-  color: '#000000',
+  color: '#3A325D',
   fontSize: 13,
   textAlign: 'center'
  },
@@ -170,7 +170,7 @@ var styles = StyleSheet.create({
   right: 0,
   height: 10,
   position: 'absolute',
-  backgroundColor: '#DDDDDD',
+  backgroundColor: '#C1BFCC',
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'row'

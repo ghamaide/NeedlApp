@@ -31,6 +31,7 @@ export class RestaurantsStore extends CachedStore {
     };
 
     this.currentRegion = {};
+
     this.region = {
       latitude: 48.8534100,
       longitude: 2.3378000,
@@ -230,7 +231,6 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleDisplayProfilSuccess(id) {
-
     // Display all the restaurants where friend was recommender or wisher and restaurant wasn't on map
     _.map(this.restaurants, (restaurant) => {
       if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, id) || _.includes(restaurant.my_friends_recommending, id)) {
@@ -240,11 +240,8 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleFollowExpertSuccess(result) {
-    var ids = []
-
-    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(ids, (id) => {return id == restaurant.id});
+      var index = _.findIndex(this.restaurants, (restaurant_local) => {return restaurant_local.id == restaurant.id});
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
       } else {
@@ -254,14 +251,9 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleUnfollowExpertSuccess(result) {
-    var ids = [];
-
-    // Populate array of ids of restaurants
-    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
-
     // Update each restaurant
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(ids, (id) => {return id == restaurant.id});
+      var index = _.findIndex(this.restaurants, (restaurant_local) => {return restaurant_local.id == restaurant.id});
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
       } else {
@@ -571,7 +563,7 @@ export class RestaurantsStore extends CachedStore {
         return false;
       }
 
-      if (filters.friends.length > 0 && _.isEmpty(_.intersection(filters.friends, restaurant.my_friends_recommending))) {
+      if (filters.friends && filters.friends.length > 0 && _.isEmpty(_.intersection(filters.friends, restaurant.my_friends_recommending))) {
         return false;
       }
 

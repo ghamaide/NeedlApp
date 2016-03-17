@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Dimensions, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Dimensions, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
@@ -38,23 +38,31 @@ class Carte extends Page {
   constructor(props) {
     super(props);
 
-    var region = RestaurantsStore.getState().currentRegion || RestaurantsStore.getState().region;
+    if (Platform.OS === 'android') {
+      var region = typeof RestaurantsStore.getState().currentRegion.latitude !== 'undefined' ? RestaurantsStore.getState().currentRegion : RestaurantsStore.getState().region;
+    } else {
+      var region = RestaurantsStore.getState().currentRegion || RestaurantsStore.getState().region;
+    }
 
     this.state = this.restaurantsState();
 
+    // Region is where the user left
     this.state.region = region;
-    this.state.showedCurrentPosition = MeStore.getState().showedCurrentPosition,
+
+    // Whether to show user's location
     this.state.showsUserLocation = false;
 
     // To specify the default level of zoom
     this.state.defaultLatitudeDelta = 10 / 110.574;
-    this.state.defaultLongitudeDelta = 1 / (111.320 * Math.cos(this.state.defaultLatitudeDelta)) ;
+    this.state.defaultLongitudeDelta = 1 / (111.320 * Math.cos(this.state.defaultLatitudeDelta));
 
-    // Paris 4 point coordinates
+    // Paris 4 point coordinates and center
     this.state.paris = {
       northLatitude: 48.91,
+      centerLatitude: 48.85,
       southLatitude: 48.8,
       westLongitude: 2.25,
+      centerLongitude: 2.32,
       eastLongitude: 2.42
     };
 
@@ -80,7 +88,7 @@ class Carte extends Page {
 
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
-        if (!this.state.showedCurrentPosition && this.isInParis(initialPosition)) {
+        if (this.isInParis(initialPosition)) {
           this.setState({
             region: {
               latitude: initialPosition.coords.latitude,
@@ -90,7 +98,6 @@ class Carte extends Page {
             },
             radius: RATIO * RestaurantsStore.getDistance(initialPosition.coords.latitude, initialPosition.coords.longitude - this.state.defaultLongitudeDelta / 2, initialPosition.coords.latitude, initialPosition.coords.longitude + this.state.defaultLongitudeDelta / 2)
           });
-          MeActions.showedCurrentPosition(true);
         }
       },
       (error) => console.log(error.message),
@@ -111,6 +118,11 @@ class Carte extends Page {
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
   };
+
+  componentDidMount() {
+    var region = this.state.region;
+    this.setState({radius: RATIO * RestaurantsStore.getDistance(region.latitude, region.longitude - region.longitudeDelta / 2, region.latitude, region.longitude + region.longitudeDelta / 2)});
+  }
 
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
@@ -153,10 +165,17 @@ class Carte extends Page {
   };
 
   renderPage() {
-    var center = {
-      latitude: this.state.region.latitude,
-      longitude: this.state.region.longitude
-    };
+    if (Platform.OS === 'android') {
+      var center = {
+        latitude: this.state.region.latitude || this.state.paris.centerLatitude,
+        longitude: this.state.region.longitude || this.state.paris.centerLongitude
+      };
+    } else {
+      var center = {
+        latitude: this.state.region.latitude,
+        longitude: this.state.region.longitude
+      };
+    }
 
     return (
       <View style={{flex: 1, position: 'relative'}}>

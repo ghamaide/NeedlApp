@@ -4,6 +4,8 @@ import {NetInfo, Platform} from 'react-native';
 
 import {FBLoginManager} from 'NativeModules';
 
+import qs from 'qs';
+
 import alt from '../alt';
 import request from '../utils/api';
 
@@ -11,26 +13,34 @@ import MeStore from '../stores/Me';
 
 export class MeActions {
 
-  edit(name, email, success) {
+  edit(infos, callback) {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/v2/registrations/' + MeStore.getState().me.id + '/edit')
-        .query({
-          name: name,
-          email: email
-        })
-        .end((err) => {
+      request('PUT', '/api/v2/users/' + MeStore.getState().me.id)
+        .query(qs.stringify({
+          name: infos.name,
+          email: infos.email,
+          picture: infos.picture,
+          public: infos.is_public,
+          description: infos.description,
+          tags: infos.tags
+        }, {arrayFormat: 'brackets'}))
+        .end((err, result) => {
           if (err) {
             return this.editFailed(err);
           }
 
           this.editSuccess({
-            name: name,
-            email: email
+            name: infos.name,
+            email: infos.email,
+            picture: result.picture,
+            public: infos.is_public,
+            description: infos.description,
+            tags: infos.tags
           });
 
-          success();
+          callback();
         });
     }
   }
@@ -191,11 +201,7 @@ export class MeActions {
     return result;
   }
 
-  showedCurrentPosition(showed) {
-    return showed;
-  }
-
-  hideOverlayMapTutorial() {
+  hideOverlayTutorial() {
     return function (dispatch) {
       dispatch()
     }
