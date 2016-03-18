@@ -7,6 +7,7 @@ import alt from '../alt';
 import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
+import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 import RestaurantsActions from '../actions/RestaurantsActions';
 
@@ -21,6 +22,7 @@ export class RestaurantsStore extends CachedStore {
 
     this.showPersonalContent = true;
     this.restaurants = [];
+    this.expertsRestaurants = [];
 
     this.filters = {
       prices: [],
@@ -63,6 +65,8 @@ export class RestaurantsStore extends CachedStore {
 
       handleMaskProfilSuccess: FriendsActions.MASK_PROFIL_SUCCESS,
       handleDisplayProfilSuccess: FriendsActions.DISPLAY_PROFIL_SUCCESS,
+
+      handleFetchAllExpertsSuccess: ProfilActions.fetchAllExpertsSuccess,
 
       handleSetRegion: RestaurantsActions.SET_REGION,
 
@@ -262,6 +266,10 @@ export class RestaurantsStore extends CachedStore {
     });
   }
 
+  handleFetchAllExpertsSuccess(result) {
+    this.expertsRestaurants = result.restaurants;
+  }
+
   handleAddReco() {
     this.status.loading = true;
   }
@@ -428,7 +436,7 @@ export class RestaurantsStore extends CachedStore {
   }
 
   static getRestaurant(id) {
-    return _.find(this.getState().restaurants, function(o) {return o.id === id;});
+    return _.find(_.concat(this.getState().restaurants, this.getState().expertsRestaurants), function(o) {return o.id === id;});
   }
 
   static loading() {

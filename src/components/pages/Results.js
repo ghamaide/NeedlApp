@@ -74,6 +74,7 @@ class Results extends Page {
 
           <RestaurantElement 
             restaurant={restaurant}
+            navigator={this.props.navigator}
             loading={this.state.loading}
             rank={this.state.rank}
             already_recommended={this.state.already_recommended}

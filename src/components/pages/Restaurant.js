@@ -76,6 +76,7 @@ class Restaurant extends Page {
         ]}
         <RestaurantElement 
           restaurant={restaurant}
+          navigator={this.props.navigator}
           loading={this.state.loading}
           already_recommended={this.state.already_recommended}
           already_wishlisted={this.state.already_wishlisted} />

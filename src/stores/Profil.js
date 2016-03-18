@@ -396,6 +396,10 @@ export class ProfilStore extends CachedStore {
     return _.sortBy(this.getState().friends, ['name']);
   }
 
+  static isFriend(userId) {
+    return _.filter(this.getState().friends, (friend) => {return friend.id === userId}).length > 0;
+  }
+
   static getFriendsFromUser(user_id) {
     return _.sortBy(this.getProfil(user_id).friends, ['name']);
   }

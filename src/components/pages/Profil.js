@@ -403,7 +403,7 @@ class Profil extends Page {
                     _.map(profil.public_recommendations, (id) => {
                       var restaurant = RestaurantsStore.getRestaurant(id);
                       return (
-                        <RestaurantElement
+                        <RestaurantHeader
                           height={205}
                           style={{marginBottom: 5, backgroundColor: 'transparent'}}
                           key={restaurant.id}
@@ -429,7 +429,7 @@ class Profil extends Page {
                   _.map(profil.wishes, (id) => {
                     var restaurant = RestaurantsStore.getRestaurant(id);
                     return (
-                      <RestaurantElement
+                      <RestaurantHeader
                         height={200}
                         style={{marginBottom: 5, backgroundColor: 'transparent'}}
                         key={restaurant.id}

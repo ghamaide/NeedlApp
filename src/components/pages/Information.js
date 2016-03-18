@@ -85,11 +85,21 @@ class Information extends Component {
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.row}>
-          <Image source={{uri: user.picture}} style={styles.profilPicture} />
-          <View style={styles.infos}>
-            <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.badge}>{user.badge.name}</Text>
-          </View>
+          <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={{flex: 1}} onPress={() => {
+            if (ProfilStore.isFriend(user.id)) {
+              this.props.navigator.push(Profil.route({id: user.id}));
+            } else {
+              return ;
+            }
+          }}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Image source={{uri: user.picture}} style={styles.profilPicture} />
+              <View style={styles.infos}>
+                <Text style={styles.name}>{user.name}</Text>
+                <Text style={styles.badge}>{user.badge.name}</Text>
+              </View>
+            </View>
+          </TouchableHighlight>
           {_.includes(_.concat(this.state.friends_ids, this.state.requests_sent_ids), user.id) ? [
             _.includes(this.state.requests_sent_ids, this.props.id) ? [
               <View key={'invited_friend_' + user.id} style={styles.invitedContainer}>
@@ -137,11 +147,17 @@ class Information extends Component {
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.row}>
-          <Image source={{uri: expert.picture}} style={styles.profilPicture} />
-          <View style={styles.infos}>
-            <Text style={styles.name}>{expert.fullname}</Text>
-            <Text style={styles.badge}>{expert.number_of_followers} follower{expert.number_of_followers > 1 ? 's' : ''}</Text>
-          </View>
+          <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' style={{flex: 1}} onPress={() => {
+            this.props.navigator.push(Profil.route({id: expert.id}));
+          }}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Image source={{uri: expert.picture}} style={styles.profilPicture} />
+              <View style={styles.infos}>
+                <Text style={styles.name}>{expert.fullname}</Text>
+                <Text style={styles.badge}>{expert.number_of_followers} follower{expert.number_of_followers > 1 ? 's' : ''}</Text>
+              </View>
+            </View>
+          </TouchableHighlight>
           {_.includes(this.state.followings, expert.id) ? [
             <TouchableHighlight key={'follow_expert_' + expert.id} style={styles.buttonWrapper} onPress={() => FollowingsActions.followExpert(expert.id)} underlayColor='rgba(0, 0, 0, 0)'>
               <Text style={styles.buttonText}>Suivre</Text>
