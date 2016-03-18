@@ -391,50 +391,10 @@ class App extends Component {
                 contentContainerStyle={styles.container}>
                 <Image style={styles.arrowLeft} source={require('../assets/img/other/icons/arrow_curved.png')} />
                 <Image style={styles.arrowRight} source={require('../assets/img/other/icons/arrow_curved.png')} />
-                <Text style={styles.titleLeft}>Visualise les restaurants sur ta carte perso de Paris !</Text>
-                <Text style={styles.titleRight}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+                <Text style={styles.titleLeft}>Retrouve tes amis et influenceurs préférés !</Text>
+                <Text style={styles.titleRight}>Une envie particulière ?</Text>
               </ScrollView>
             </TouchableHighlight>
-          </Overlay>
-        ] : null}
-
-        {!this.state.hasBeenUploadWelcomed ? [
-          <Overlay key='has_been_upload_welcomed'>
-            <ScrollView
-              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.container}>
-              <View style={styles.avatarWrapper}>
-                <Image style={styles.avatar} source={require('../assets/img/other/icons/personal.png')} />
-              </View>
-              <Text style={styles.title}>Ton app est unique !</Text>
-              <Text style={styles.message}>Elle s’affine continuellement au rythme de ton utilisation. Tu découvriras les restaurants préférés de tes amis, et, en appoint, nos restaurants “valeurs sûres”.</Text>
-              <Button label='On y va !' onPress={() => {
-                MeActions.hasBeenUploadWelcomed();
-              }} style={{margin: 5}}/>
-            </ScrollView>
-          </Overlay>
-        ] : null}
-
-        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage && false ? [
-          <Overlay key='show_update_message'>
-            <ScrollView
-              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
-              contentInset={{top: 0}}
-              automaticallyAdjustContentInsets={false}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.container}>
-              <View style={styles.avatarWrapper}>
-                <Image style={styles.avatar} source={require('../assets/img/tabs/icons/home.png')} />
-              </View>
-              <Text style={styles.title}>Ton app a été updatée !</Text>
-              <Text style={styles.message}>Rends toi dès maintenant sur l'AppStore pour la mettre à jour !</Text>
-              <Button label='Passer' onPress={() => {
-                MeActions.showedUpdateMessage();
-              }} style={{margin: 5}}/>
-            </ScrollView>
           </Overlay>
         ] : null}
 

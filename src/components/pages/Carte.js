@@ -206,7 +206,7 @@ class Carte extends Page {
           type='default' 
           title='Carte'
           rightImage={require('../../assets/img/actions/icons/filter.png')}
-          rightButtonTitle="+ d'options" 
+          rightButtonTitle="mes envies" 
           onRightButtonPress={() => this.props.navigator.push(Filtre.route())} />
 
         <View style={{flex: 1, position: 'relative'}}>
