@@ -12,7 +12,6 @@ import RestaurantsStore from '../../../stores/Restaurants';
 
 import RecoActions from '../../../actions/RecoActions';
 
-import Liste from '../Liste';
 import Restaurant from '../Restaurant';
 
 class RecoStepSave extends Component {
@@ -60,7 +59,7 @@ class RecoStepSave extends Component {
 
   addActivity = () => {
     var reco = RecoStore.getReco();
-    if (reco.approved) {
+    if (reco.type === 'recommendation') {
       if (!reco.editing) {
         RecoActions.addReco(reco, this.goToRestaurant);
       } else {

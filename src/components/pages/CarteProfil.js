@@ -12,7 +12,6 @@ import Page from '../ui/Page';
 import Text from '../ui/Text';
 
 import PriceMarker from '../elements/PriceMarker';
-import RestaurantElement from '../elements/Restaurant';
 
 import MeActions from '../../actions/MeActions';
 import RestaurantsActions from '../../actions/RestaurantsActions';

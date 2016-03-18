@@ -10,7 +10,7 @@ import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
 
-import RestaurantElement from '../elements/Restaurant';
+import RestaurantHeader from '../elements/RestaurantHeader';
 
 import NotifsActions from '../../actions/NotifsActions';
 
@@ -122,7 +122,7 @@ class Notifs extends Page {
 
     return (
       <View style={styles.notifRow}>
-        <RestaurantElement
+        <RestaurantHeader
           name={restaurant.name}
           picture={restaurant.pictures[0]}
           type={restaurant.food[1]}

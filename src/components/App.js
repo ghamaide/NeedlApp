@@ -145,7 +145,6 @@ class App extends Component {
     switch(data.type) {
       case 'fr.needl.map':
         this.refs.tabs.resetToTab(0);
-        this.refs.tabs.refs.tabs.replace(Carte.route());
         break;
       case 'fr.needl.top_rated_restaurant':
         var top_rated_restaurant = RestaurantsStore.filteredRestaurants()[0] || RestaurantsStore.getRestaurants()[0];
@@ -181,7 +180,7 @@ class App extends Component {
     switch(newURL) {
       case 'user':
         this.refs.tabs.resetToTab(1);
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof ProfilStore.getProfil(parseInt(id)) !== 'undefined') {
           this.refs.tabs.refs.tabs.push(Profil.route({id: parseInt(id)}));
         }
         break;
@@ -199,19 +198,18 @@ class App extends Component {
         break;
       case 'map':
         this.refs.tabs.resetToTab(0);
-        this.refs.tabs.refs.tabs.replace(Carte.route());
         break;
       case 'restaurant':
         this.refs.tabs.resetToTab(0);
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(parseInt(id)) !== 'undefined') {
           this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(id)}));
         }
         break;
       case 'recommendation':
         this.refs.tabs.resetToTab(0)
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(id) !== 'undefined') {
           var restaurant = RestaurantsStore.getRestaurant(parseInt(id));
-          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, approved: true, step2: true});
+          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, recommendation: true});
           this.refs.tabs.refs.tabs.push(RecoStep3.route())
         }
         break;

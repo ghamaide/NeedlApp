@@ -42,17 +42,16 @@ class RecoStep2 extends Component {
             maxSelection={1}
             fifo={true}
             onSelect={(value) => {
-              reco.approved = (value === 'approved');
-              reco.step2 = true;
+              reco.type = value;
               
               if (typeof activity == 'undefined') {
-                if (reco.approved) {
+                if (reco.type === 'recommendation') {
                   return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
+                } else {
+                  return this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
                 }
-
-                this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
               } else {
-                if (reco.approved) {
+                if (reco.type === 'recommendation') {
                   if (activity.notification_type == 'recommendation') {
                     return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
                   } else {
@@ -68,8 +67,7 @@ class RecoStep2 extends Component {
               }
             }}
             onUnselect={() => {
-              delete reco.approved;
-              reco.step2 = false;
+              delete reco.type;
             }}>
             {(Toggle) => {
               return (
@@ -81,7 +79,7 @@ class RecoStep2 extends Component {
                     icon={require('../../../assets/img/actions/icons/japprouve.png')}
                     activeInitial={false}
                     label='Je recommande'
-                    value={'approved'} />
+                    value={'recommendation'} />
                   <Toggle
                     size={60}
                     width={140}
@@ -89,7 +87,7 @@ class RecoStep2 extends Component {
                     icon={require('../../../assets/img/actions/icons/aessayer.png')}
                     activeInitial={false}
                     label='Sur ma wishlist'
-                    value={'totry'} />
+                    value={'wish'} />
                 </View>
               );
             }}

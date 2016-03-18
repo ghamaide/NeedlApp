@@ -12,7 +12,7 @@ import Page from '../ui/Page';
 import Text from '../ui/Text';
 
 import Overlay from '../elements/Overlay';
-import RestaurantElement from '../elements/Restaurant';
+import RestaurantHeader from '../elements/RestaurantHeader';
 
 import FollowingsActions from '../../actions/FollowingsActions';
 import FriendsActions from '../../actions/FriendsActions';
@@ -381,7 +381,7 @@ class Profil extends Page {
                     _.map(profil.recommendations, (id) => {
                       var restaurant = RestaurantsStore.getRestaurant(id);
                       return (
-                        <RestaurantElement
+                        <RestaurantHeader
                           height={205}
                           style={{marginBottom: 5, backgroundColor: 'transparent'}}
                           key={restaurant.id}
