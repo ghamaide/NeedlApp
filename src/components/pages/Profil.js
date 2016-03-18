@@ -369,7 +369,7 @@ class Profil extends Page {
               </View>
             ] : [
               <View key='recommendation_title_container' style={{margin: 15, alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                <Text style={{textAlign: 'center', fontSize: 15, color: '#FE3139', fontWeight: '500'}}>Ses recommendations</Text>
+                <Text style={{textAlign: 'center', fontSize: 15, color: '#FE3139', fontWeight: '500'}}>Ses recommandations</Text>
               </View>
             ]}
 

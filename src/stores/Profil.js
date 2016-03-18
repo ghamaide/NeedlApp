@@ -408,6 +408,10 @@ export class ProfilStore extends CachedStore {
     return this.getState().followings;
   }
 
+  static isFollowing(userId) {
+    return _.filter(this.getState().followings, (following) => {return following.id === userId}).length > 0;
+  }
+
   static getFollowingsFromUser(user_id) {
     return this.getProfil(user_id).followings;
   }

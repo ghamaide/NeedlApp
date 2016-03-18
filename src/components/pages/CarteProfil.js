@@ -143,8 +143,8 @@ class CarteProfil extends Page {
 
   renderPage() {
     var profile = this.state.profile;
-    var is_following = !_.includes(ProfilStore.getFriends(), profile.id);
-    var recommendations_and_wishes = is_following ? profile.public_recommendations : _.concat(profile.recommendations, profile.wishes);
+    var isFollowing = ProfilStore.isFollowing(profile.id);
+    var recommendations_and_wishes = isFollowing ? profile.public_recommendations : _.concat(profile.recommendations, profile.wishes);
     var restaurants = [];
     _.forEach(recommendations_and_wishes, (restaurantId) => {
       var restaurant = RestaurantsStore.getRestaurant(restaurantId);
@@ -208,8 +208,9 @@ class CarteProfil extends Page {
             })}
           </MapView>
         </View>
+
         {!this.props.id ? [
-        <MenuIcon key='menu_icon' onPress={this.props.toggle} />
+          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
         ] : null}
       </View>
     );
