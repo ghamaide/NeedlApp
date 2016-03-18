@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ScrollView, Image, TouchableOpacity} from 'react-native';
+import React, {Component, Image, ScrollView, StyleSheet, TouchableOpacity, View, } from 'react-native';
 import _ from 'lodash';
 
 class Carousel extends Component{
@@ -93,11 +93,11 @@ class Carousel extends Component{
     }
 
     return (
-      <View ref="view" style={[{position: 'relative', backgroundColor: 'transparent'}, this.props.style]} onLayout={(e) => {
+      <View ref='view' style={[{position: 'relative', backgroundColor: 'transparent'}, this.props.style]} onLayout={(e) => {
         this.setState({width: e.nativeEvent.layout.width});
       }}>
         {this.state.width ?
-          <ScrollView ref="scrollview"
+          <ScrollView ref='scrollview'
             contentContainerStyle={[styles.container, {width: (this.props.elemSize || this.state.width) * nbChildren}]}
             automaticallyAdjustContentInsets={false}
             horizontal={true}
@@ -108,7 +108,7 @@ class Carousel extends Component{
               if (this.props.insetMargin && nbChildren === 1) {
                 return this.pageChange(-1);
               }
-              return this.pageChange(0, "layout");
+              return this.pageChange(0, 'layout');
             }}
             onMomentumScrollEnd={this.onAnimationEnd}
             contentInset={{top: 0, left: this.props.insetMargin, bottom: 0, right: this.props.insetMargin}}

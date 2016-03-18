@@ -1,11 +1,10 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, TouchableHighlight} from 'react-native';
+import React, {Component, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Text from '../ui/Text';
 
 class Button extends Component {
-
   render() {
     return (
       <TouchableHighlight style={[styles.buttonWrapper, this.props.style]} onPress={this.props.onPress}>
@@ -23,8 +22,8 @@ var styles = StyleSheet.create({
     height: 40
   },
   button: {
-    backgroundColor: '#EF582D',
-    borderColor: '#ed4515',
+    backgroundColor: '#FE3139',
+    borderColor: '#FE3139',
     borderWidth: 1,
     borderRadius: 20,
     height: 40,

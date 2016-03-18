@@ -2,87 +2,124 @@
 
 import {PushNotificationIOS} from 'react-native';
 
-import alt from '../alt';
 import _ from 'lodash';
+
+import alt from '../alt';
+
 import FriendsActions from '../actions/FriendsActions';
-import MeStore from './Me';
+
 import CachedStore from './CachedStore';
 
-export class FriendsStore extends CachedStore {
+export class FriendsStore {
 
   constructor() {
-    super();
-
-    this.status.notifsPush = 0;
-
-    PushNotificationIOS.addEventListener('notification', (notif) => {
-      if (notif.getData().type === 'friend') {
-        this.status.notifsPush = this.status.notifsPush + 1;
-        this.emitChange();
-      }
-    });
-
-    this.friends = [];
+    this.searched_users = [];
     
-    this.status.loading = false;
-    this.status.error = {};
+    this.loading = false;
+    this.error = {};
 
     this.bindListeners({
-      handleFetchFriends: FriendsActions.FETCH_FRIENDS,
-      handleFriendsFetched: FriendsActions.FRIENDS_FETCHED,
-      handleFriendsFetchFailed: FriendsActions.FRIENDS_FETCH_FAILED,
+      handleAskFriendship: FriendsActions.ASK_FRIENDSHIP,
+      handleAskFriendshipFailed: FriendsActions.ASK_FRIENDSHIP_FAILED,
+      handleAskFriendshipSuccess: FriendsActions.ASK_FRIENDSHIP_SUCCESS,
+
+      handleAcceptFriendship: FriendsActions.ACCEPT_FRIENDSHIP,
+      handleAcceptFriendshipFailed: FriendsActions.ACCEPT_FRIENDSHIP_FAILED,
+      handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
+
+      handleRefuseFriendship: FriendsActions.REFUSE_FRIENDSHIP,
+      handleRefuseFriendshipFailed: FriendsActions.REFUSE_FRIENDSHIP_FAILED,
+      handleRefuseFriendshipSuccess: FriendsActions.REFUSE_FRIENDSHIP_SUCCESS,
 
       handleRemoveFriendship: FriendsActions.REMOVE_FRIENDSHIP,
       handleRemoveFriendshipFailed: FriendsActions.REMOVE_FRIENDSHIP_FAILED,
-      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS
+      handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
 
-// ================================================================================================
+      handleSearchUsers: FriendsActions.SEARCH_USERS,
+      handleSearchUsersFailed: FriendsActions.SEARCH_USERS_FAILED,
+      handleSearchUsersSuccess: FriendsActions.SEARCH_USERS_SUCCESS,
     });
   }
 
-  handleFetchFriends() {
-    this.status.loading = true;
-    delete this.status.error;
+  handleAskFriendship() {
+    this.loading = true;
+    delete this.error;
   }
 
-  handleFriendsFetched(data) {
-    this.friends = data.friends;
-    this.status.notifsPush = 0;
-    this.status.loading = false;
+  handleAskFriendshipFailed(err) {
+    this.error = err;
+    this.loading = false;  }
+
+  handleAskFriendshipSuccess(result) {
+    this.loading = false;
   }
 
-  handleFriendsFetchFailed(err) {
-    this.status.loading = false;
-    this.status.error = err;
+  handleAcceptFriendship() {
+    this.loading = true;
+    delete this.error;
+  }
+
+  handleAcceptFriendshipFailed(err) {
+    this.error = err;
+    this.loading = false;
+  }
+
+  handleAcceptFriendshipSuccess(result) {
+    this.loading = false;
+  }
+
+  handleRefuseFriendship() {
+    this.loading = true;
+    delete this.error;
+  }
+
+  handleRefuseFriendshipFailed(err) {
+    this.error = err;
+    this.loading = false;  }
+
+  handleRefuseFriendshipSuccess(result) {
+    this.loading = false;
   }
 
   handleRemoveFriendship() {
-    this.status.loading = true;
-    delete this.status.error;
+    this.loading = true;
+    delete this.error;
   }
 
-  handleRemoveFriendshipFailed(error) {
-    this.status.loading = false;
-    this.status.error = err;
+  handleRemoveFriendshipFailed(err) {
+    this.loading = false;
+    this.error = err;
   }
 
-  handleRemoveFriendshipSuccess(idProfil) {
-    this.status.loading = false;
-    this.friends = _.filter(this.data.friends, function(friend) {
-      return friend.id !== idProfil;
-    });
+  handleRemoveFriendshipSuccess(result) {
+    this.loading = false;
   }
 
-  static getFriends() {
-    return this.getState().friends;
+  handleSearchUsers() {
+    this.loading = true;
+    delete this.error;
+  }
+
+  handleSearchUsersFailed(err) {
+    this.loading = false;
+    this.error = err;
+  }
+
+  handleSearchUsersSuccess(users) {
+    this.loading = false;
+    this.searched_users = users;
+  }
+
+  static getSearchedUsers() {
+    return this.getState().searched_users;
   }
 
   static error() {
-    return this.getState().status.error;
+    return this.getState().error;
   }
 
   static loading() {
-    return this.getState().status.loading;
+    return this.getState().loading;
   }
 }
 

@@ -5,58 +5,183 @@ import request from '../utils/api';
 
 export class FriendsActions {
 
-  fetchFriends() {
+  askFriendship(id) {
     return (dispatch) => {
       dispatch();
-      
-      request('GET', '/api/friendships')
+    
+      request('POST', '/api/v2/friendships/ask')
+        .query({
+          friend_id: id
+        })
         .end((err, result) => {
           if (err) {
-            return this.friendsFetchFailed(err);
+            return this.askFriendshipFailed(err);
           }
 
-          this.friendsFetched(result);
+          this.askFriendshipSuccess(result);
         });
     }
   }
 
-  friendsFetched(friends) {
-    return friends;
-  }
-
-  friendsFetchFailed(err) {
+  askFriendshipFailed(err) {
     return err;
   }
 
-  removeFriendship(id, callback) {
+  askFriendshipSuccess(result) {
+    return result;
+  }
+
+  acceptFriendship(friendship_id) {
     return (dispatch) => {
       dispatch();
     
-      request('GET', '/api/friendships')
-        .query({
-          'friend_id': id,
-          destroy: true
-        })
-        .end((err) => {
+      request('POST', '/api/v2/friendships/accept')
+        .query({id: friendship_id})
+        .end((err, result) => {
           if (err) {
-            return this.removeFriendshipFailed(id, err);
+            return this.acceptFriendshipFailed(err);
           }
 
-          this.removeFriendshipSuccess(id);
+          this.acceptFriendshipSuccess({friendship_id: friendship_id, friend: result.friend, restaurants: result.restaurants, activities: result.activities});
+        });
+    }
+  }
+
+  acceptFriendshipFailed(err) {
+    return err;
+  }
+
+  acceptFriendshipSuccess(result) {
+    return result;
+  }
+
+  refuseFriendship(friendship_id) {
+    return (dispatch) => {
+      dispatch();
+    
+      request('POST', '/api/v2/friendships/refuse')
+        .query({id: friendship_id})
+        .end((err) => {
+          if (err) {
+            return this.refuseFriendshipFailed(err);
+          }
+
+          this.refuseFriendshipSuccess(friendship_id);
+        });
+    }
+  }
+
+  refuseFriendshipFailed(err) {
+    return err;
+  }
+
+  refuseFriendshipSuccess(friendship_id) {
+    return friendship_id;
+  }
+
+  removeFriendship(friendship_id, callback) {
+    return (dispatch) => {
+      dispatch();
+    
+      request('DELETE', '/api/v2/friendships/' + friendship_id)
+        .end((err, result) => {
+          if (err) {
+            return this.removeFriendshipFailed(err);
+          }
 
           if (callback) {
             callback();
           }
+
+          this.removeFriendshipSuccess({friendship_id: friendship_id, restaurants: result});
         });
     }
   }
 
-  removeFriendshipSuccess(id) {
-    return id;
+  removeFriendshipSuccess(result) {
+    return result;
   }
 
-  removeFriendshipFailed(id, err) {
+  removeFriendshipFailed(err) {
     return err;
+  }
+
+  maskProfil(friendship_id) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/friendships/make_invisible')
+        .query({id: friendship_id})
+        .end((err, result) => {s
+          if (err) {
+            return this.maskProfilFailed(err);
+          }
+
+          this.maskProfilSuccess({friendship_id: friendship_id, restaurants: result.restaurants});
+        });
+    }
+  }
+
+  maskProfilSuccess(result) {
+    return result;
+  }
+
+  maskProfilFailed(err) {
+    return err;
+  }
+
+  displayProfil(friendship_id) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/friendships/make_visible')
+        .query({id: friendship_id})
+        .end((err, result) => {
+          if (err) {
+            return this.displayProfilFailed(err);
+          }
+
+          this.displayProfilSuccess({friendship_id: friendship_id, restaurants: result.restaurants});
+        });
+    }
+  }
+
+  displayProfilSuccess(result) {
+    return result;
+  }
+
+  displayProfilFailed(err) {
+    return err;
+  }
+
+  searchUsers(query) {
+    return (dispatch) => {
+      dispatch();
+
+      if (this.searchUsersRequest) {
+        this.searchUsersRequest.abort();
+      }
+
+      this.searchUsersRequest = request('GET', '/api/v2/users')
+        .query({
+          query: query
+        })
+        .end((err, result) => {
+          if (err) {
+            this.searchUsersFailed(err);
+          }
+
+          this.searchUsersSuccess(result);
+        });
+    }
+  }
+
+  searchUsersFailed(err) {
+    return err;
+  }
+
+  searchUsersSuccess(result) {
+    return result;
   }
 }
 

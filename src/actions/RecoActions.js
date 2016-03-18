@@ -1,10 +1,12 @@
 'use strict';
 
-import alt from '../alt';
 
 import _ from 'lodash';
-import request from '../utils/api';
 import qs from 'qs';
+
+import alt from '../alt';
+
+import request from '../utils/api';
 
 export class RecoActions {
 
@@ -16,25 +18,25 @@ export class RecoActions {
         this.fetchRestaurantRequest.abort();
       }
 
-      this.fetchRestaurantRequest = request('GET', '/api/restaurants/autocomplete')
+      this.fetchRestaurantRequest = request('GET', '/api/v2/restaurants/autocomplete')
         .query({query: query})
         .end((err, result) => {
           delete this.fetchRestaurantRequest;
 
           if (err) {
-            return this.restaurantsFetchFailed(err);
+            return this.fetchRestaurantsFailed(err);
           }
 
-          this.restaurantsFetched(result);
+          this.fetchRestaurantsSuccess(result);
         });
     }
   }
 
-  restaurantsFetched(restaurants) {
+  fetchRestaurantsSuccess(restaurants) {
     return restaurants;
   }
 
-  restaurantsFetchFailed(err) {
+  fetchRestaurantsFailed(err) {
     return err;
   }
 
@@ -42,83 +44,154 @@ export class RecoActions {
     return reco;
   }
 
-  saveReco(reco) {
+  addReco(reco, callback) {
     return (dispatch) => {
-      dispatch(reco);
+      dispatch();
 
-      request('GET', '/api/recommendations')
+      request('POST', '/api/v2/recommendations')
         .query(qs.stringify({
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
-            wish: !reco.approved,
+            friends_thanking: reco.friends_thanking,
+            experts_thanking: reco.experts_thanking,
             strengths: reco.strengths,
-            ambiences: reco.ambiances,
+            ambiences: reco.ambiences,
+            occasions: reco.occasions,
+            review: reco.review,
+            public: reco.public
+          }
+        }, { arrayFormat: 'brackets' }))
+        .end((err, result) => {
+          if (err) {
+            return this.addRecoFailed(err);
+          }
+          this.addRecoSuccess(result);
+          callback();
+        });
+    }
+  }
+
+  addRecoSuccess(result) {
+    return result;
+  }
+
+  addRecoFailed(err) {
+    return err;
+  }
+
+  updateRecommendation(reco, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('PUT', '/api/v2/recommendations/' + reco.restaurant.id)
+        .query(qs.stringify({
+          restaurant_origin: reco.restaurant.origin,
+          recommendation: {
+            friends_thanking: reco.friends_thanking,
+            experts_thanking: reco.experts_thanking,
+            strengths: reco.strengths,
+            ambiences: reco.ambiences,
             occasions: reco.occasions,
             review: reco.review
           }
         }, { arrayFormat: 'brackets' }))
-        .end((err, restaurant) => {
+        .end((err, result) => {
           if (err) {
-            return this.saveRecoFailed(err);
+            return this.updateRecommendationFailed(err);
           }
-
-          this.saveRecoSuccess(reco, restaurant);
+          this.updateRecommendationSuccess(result);
+          callback();
         });
     }
   }
 
-  saveRecoSuccess(reco, restaurant) {
-    reco.restaurant = restaurant;
-    return reco;
-  }
-
-  saveRecoFailed(err) {
+  updateRecommendationFailed(err) {
     return err;
   }
 
-  getReco(restaurantId, restaurantName) {
-    return (dispatch) => {
-      dispatch(restaurantId);
+  updateRecommendationSuccess(result) {
+    return result;
+  }
 
-      request('GET', '/api/recommendations/modify')
-        .query({'restaurant_id': restaurantId})
-        .end((err, res) => {
+  removeReco(restaurant, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('DELETE', '/api/v2/recommendations/' + restaurant.id)
+        .end((err, result) => {
           if (err) {
-            return this.getRecoFailed(err, restaurantId);
+            return this.removeRecoFailed(err);
           }
 
-          var reco = {
-            restaurant: {
-              id: restaurantId,
-              origin: 'db',
-              name: restaurantName
-            },
-            ambiances: _.map(res.ambiences, (id) => {
-              return parseInt(id);
-            }),
-            occasions: _.map(res.occasions, (id) => {
-              return parseInt(id);
-            }),
-            strengths: _.map(res.strengths, (id) => {
-              return parseInt(id);
-            }),
-            //'price_range': parseInt(res.price_range[0]),
-            review: res.review,
-            approved: true
-          };
+          this.removeRecoSuccess(result);
 
-          this.getRecoSuccess(reco);
+          callback();
         });
     }
   }
 
-  getRecoFailed(err, restaurantId) {
-    return {err: err, restaurantId: restaurantId};
+  removeRecoFailed(err) {
+    return err;
   }
 
-  getRecoSuccess(reco) {
-    return reco;
+  removeRecoSuccess(data) {
+    return data;
+  }
+
+  addWish(restaurant_id, origin, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/wishes')
+        .query(qs.stringify({
+          restaurant_id: restaurant_id,
+          restaurant_origin: origin
+        }, { arrayFormat: 'brackets' }))
+        .end((err, result) => {
+          if (err) {
+            return this.addWishFailed(err);
+          }
+
+          if (callback) {
+            callback()
+          }
+
+          this.addWishSuccess(result);
+        });
+    }
+  }
+
+  addWishFailed(err) {
+    return err;
+  }
+
+  addWishSuccess(result) {
+    return result;
+  }
+
+  removeWish(restaurant, callback) {
+    return (dispatch) => {
+      dispatch(restaurant);
+
+      request('DELETE', '/api/v2/wishes/' + restaurant.id)
+        .end((err, result) => {
+          if (err) {
+            return this.removeWishFailed(err);
+          }
+
+          callback();
+          this.removeWishSuccess(result);
+        });
+    }
+  }
+
+  removeWishFailed(err) {
+    return err;
+  }
+
+  removeWishSuccess(restaurant) {
+    return restaurant;
   }
 }
 

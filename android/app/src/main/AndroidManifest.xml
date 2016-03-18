@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.needlios"
-    android:versionCode="1"
-    android:versionName="1.0.0"
+    android:versionCode="2"
+    android:versionName="1.0.1"
     android:minSdkVersion="21"
     android:targetSdkVersion="23">
 
@@ -26,10 +26,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
 
     <application
+      android:name="io.branch.referral.BranchApp"
       android:allowBackup="true"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:theme="@style/AppTheme">
+
+      <meta-data 
+        android:name="io.branch.sdk.BranchKey" 
+        android:value="key_test_eln0dceslLCEV8U9nUfrvehpFxdpWl26" />
 
       <meta-data
         android:name="com.google.android.geo.API_KEY"
@@ -38,7 +43,8 @@
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
-        android:theme="@style/SplashTheme">
+        android:theme="@style/SplashTheme"
+        android:screenOrientation="portrait">
         <intent-filter>
           <action android:name="android.intent.action.MAIN" />
           <category android:name="android.intent.category.LAUNCHER" />
@@ -50,6 +56,25 @@
           <category android:name="android.intent.category.BROWSABLE" />
 
           <data android:scheme="needl" />
+        </intent-filter>
+
+        <!-- App Link your activity to Branch links-->
+        <intent-filter android:autoVerify="true">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+           <data android:scheme="https" android:host="download.needl-app.com" android:pathPrefix="/key_test_eln0dceslLCEV8U9nUfrvehpFxdpWl26" /> 
+           <data android:scheme="https" android:host="download.needl-app.com" android:pathPrefix="/key_live_lni5hjavnJFzJYS5jHjqfbmmFAjkXe2N" />
+          
+          <!-- If you set up a white label for your links in your Branch link settings then  only need to add the white label domain -->
+          <data android:scheme="https" android:host="download.needl-app.com"/>
+        </intent-filter>
+
+        <intent-filter>
+          <data android:scheme="needl" android:host="open" />
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
         </intent-filter>
       </activity>
 
@@ -101,6 +126,12 @@
       <receiver android:name="io.neson.react.notification.SystemBootEventReceiver">
         <intent-filter>
           <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+        </intent-filter>
+      </receiver>
+
+      <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+        <intent-filter>
+          <action android:name="com.android.vending.INSTALL_REFERRER" />
         </intent-filter>
       </receiver>
     </application>

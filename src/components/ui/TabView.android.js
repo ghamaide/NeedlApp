@@ -1,75 +1,61 @@
 'use strict';
 
-import React, {StyleSheet, View, Component, Image, TouchableWithoutFeedback, NavigatorIOS, Navigator} from 'react-native';
+import React, {BackAndroid, Component, Dimensions, Image, Navigator, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
 
 import _ from 'lodash';
+import SideMenu from 'react-native-side-menu';
 
 import Text from './Text';
 
 import MeStore from '../../stores/Me';
+
+import Menu from './Menu';
 
 class TabView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selected: this.props.initialSelected || 0,
-      rerender: 0
+      pressedOnce: false,
+      lastPress: 0,
+      menu_open: false
     };
   };
 
-  renderTab(index, name, icon, pastille, hasShared) {
-    var opacityStyle = {opacity: index === this.state.selected ? 1 : 0.3};
+  hardwareBackPress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
 
-    return (
-      <TouchableWithoutFeedback key={index} style={styles.tabbarTab} onPress={() => {
-        if (this.props.tabsBlocked) {
-          return;
-        }
-        this.resetToTab(index);
-      }}>
-        <View style={styles.tabbarTab}>
-          <Image source={icon} style={opacityStyle} />
-
-          {name ?
-            <Text style={[styles.tabbarTabText, opacityStyle]}>{name}</Text>
-          : null}
-
-          {pastille && this.state.selected !== index ?
-            <View style={styles.pastilleContainer}>
-              <Text style={styles.pastilleText}>{pastille}</Text>
-            </View>
-            : null}
-
-          {!hasShared && typeof hasShared !== 'undefined' ?
-            <View style={styles.pastilleContainer}>
-              <Text style={styles.pastilleText}>!</Text>
-            </View>
-            : null}
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  };
-
-  onMeChange = () => {
-    // this.setState({showTabBar: MeStore.getState().showTabBar});
+    if (delta < 500) {
+      return false;
+    } else if (this.refs.tabs.getCurrentRoutes().length > 1) {
+      this.refs.tabs.pop();
+      this.setState({
+        lastPress: new Date().getTime()
+      });
+      return true;
+    } else if (pressedOnce) {
+      return false;
+    } else {
+      this.setState({
+        lastPress: new Date().getTime(),
+        pressedOnce: true
+      });
+      return true;
+    }
   };
 
   componentDidMount() {
-    MeStore.listen(this.onMeChange);
-    this.setState({showTabBar: MeStore.getState().showTabBar});
-    this.props.onTab(this.state.selected);
+    BackAndroid.addEventListener('hardwareBackPress', this.hardwareBackPress);
+    this.props.onTab(this.props.initialSelected || 0);
   };
 
   componentWillUnmount() {
-    MeStore.unlisten(this.onMeChange);
+    BackAndroid.removeEventListener('hardwareBackPress', this.hardwareBackPress);
   };
 
-  resetToTab(index, opts) {
-    this.setState({selected: index});
-
-    this.refs.tabs.resetTo(this.props.tabs[index]);
-
+  resetToTab(index) {
+    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {toggle: this.toggle}}));
+    this.setState({menu_open: false});
     this.props.onTab(index);
   };
 
@@ -77,31 +63,38 @@ class TabView extends Component {
     return React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps));
   };
 
+  toggle = () => {
+    this.setState({menu_open: !this.state.menu_open});
+  };
+
   render() {
     return (
-     <View style={styles.tabbarContainer}>
-      	<Navigator
-          style={{backgroundColor: '#FFFFFF'}}
-          initialRoute={this.props.tabs[this.props.initialSelected || 0]}
-          ref="tabs"
-          key="navigator"
-          renderScene={this.renderScene}
-          configureScene={() => {
-            return {
-              ...Navigator.SceneConfigs.FadeAndroid,
-              defaultTransitionVelocity: 1000,
-              gestures: {}
-            };
-          }} />
-
-        {this.state.showTabBar ? [
-					<View key="tabBar" style={styles.tabbarTabs}>
-          	{_.map(this.props.tabs, (tab, index) => {
-            	return this.renderTab(index, tab.title, tab.icon, tab.pastille, tab.hasShared);
-          	})}
-        	</View>
-        ] : []}
-    	</View>
+      <View style={styles.tabbarContainer}>
+        <SideMenu 
+          menu={
+            <Menu tabs={this.props.tabs}
+              tabsBlocked={this.props.tabsBlocked} 
+              resetToTab={(index) => this.resetToTab(index)} />}
+          openMenuOffset={.6 * Dimensions.get('window').width}
+          bounceBackOnOverdraw={true}
+          disableGestures={true}
+          isOpen={this.state.menu_open}
+          onChange={(is_open) => this.setState({menu_open: is_open})}>
+          <Navigator
+            ref='tabs'
+            key='navigator'
+            style={{backgroundColor: '#FFFFFF'}}
+            initialRoute={_.extend(this.props.tabs[this.props.initialSelected || 0], {passProps: {toggle: this.toggle}})}
+            renderScene={this.renderScene}
+            configureScene={() => {
+              return {
+                ...Navigator.SceneConfigs.FadeAndroid,
+                defaultTransitionVelocity: 1000,
+                gestures: {}
+              };
+            }} />
+        </SideMenu>
+      </View>
     );
   };
 }
@@ -110,47 +103,6 @@ var styles = StyleSheet.create({
   tabbarContainer: {
     flex: 1,
     flexDirection: 'column',
-  },
-  tabbarContent: {
-    flex: 1
-  },
-  tabbarContentWrapper: {
-    marginTop: 0,
-    paddingBottom: 44,
-    backgroundColor: '#FFFFFF'
-  },
-  tabbarTabs: {
-    height: 60,
-    backgroundColor: '#EF582D',
-    flexDirection: 'row'
-  },
-  tabbarTab: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative'
-  },
-  tabbarTabText: {
-    marginTop: 5,
-    color: 'white',
-    fontSize: 10,
-    fontWeight: 'bold'
-  },
-  pastilleContainer: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: 2,
-    right: 2
-  },
-  pastilleText: {
-    color: '#EF582D',
-    fontWeight: 'bold',
-    fontSize: 11
   }
 });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {AppState, Component, DeviceEventEmitter, Image, Linking, Platform, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Alert, AppState, Component, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -27,7 +27,6 @@ import RestaurantsStore from '../stores/Restaurants';
 
 import Carte from './pages/Carte';
 import Friends from './pages/Friends';
-import Liste from './pages/Liste';
 import Notifs from './pages/Notifs';
 import Profil from './pages/Profil';
 import RecoStep1 from './pages/Reco/Step1';
@@ -54,24 +53,36 @@ class App extends Component {
 
   appState() {
     return {
-      notifsPastille: NotifsStore.nbUnseenNotifs(),
+      unseen_notifications: NotifsStore.nbUnseenNotifs(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
-      showOverlayMapTutorial: MeStore.showOverlayMapTutorial()
+      showOverlayTutorial: MeStore.showOverlayTutorial()
     }
-  };
-
-  onPastillesChange = () => {
-    this.setState({
-      notifsPastille: NotifsStore.nbUnseenNotifs()
-    });
   };
 
   onMeChange = () => {
     this.setState({
+      meLoading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
-      showOverlayMapTutorial: MeStore.showOverlayMapTutorial(),
-      showTabBar: MeStore.getState().showTabBar
+      showOverlayTutorial: MeStore.showOverlayTutorial(),
+    });
+  };
+
+  onNotificationsChange = () => {
+    this.setState({
+      notificationsLoading: NotifsStore.loading(),
+    });
+  };
+
+  onProfileChange = () => {
+    this.setState({
+      profileLoading: ProfilStore.loading(),
+    });
+  };
+
+  onRestaurantsChange = () => {
+    this.setState({
+      restaurantsLoading: RestaurantsStore.loading()
     });
   };
 
@@ -124,16 +135,16 @@ class App extends Component {
   };
 
   onAppStateChange = (state) => {
-    if (state === 'active') {
-      this.startActions();
-    }
+    // Remove to update app when users goes back on it
+    // if (state === 'active') {
+    //   this.startActions();
+    // }
   };
 
   onQuickActionShortcut = (data) => {
     switch(data.type) {
       case 'fr.needl.map':
         this.refs.tabs.resetToTab(0);
-        this.refs.tabs.refs.tabs.replace(Carte.route());
         break;
       case 'fr.needl.top_rated_restaurant':
         var top_rated_restaurant = RestaurantsStore.filteredRestaurants()[0] || RestaurantsStore.getRestaurants()[0];
@@ -169,7 +180,7 @@ class App extends Component {
     switch(newURL) {
       case 'user':
         this.refs.tabs.resetToTab(1);
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof ProfilStore.getProfil(parseInt(id)) !== 'undefined') {
           this.refs.tabs.refs.tabs.push(Profil.route({id: parseInt(id)}));
         }
         break;
@@ -187,19 +198,18 @@ class App extends Component {
         break;
       case 'map':
         this.refs.tabs.resetToTab(0);
-        this.refs.tabs.refs.tabs.replace(Carte.route());
         break;
       case 'restaurant':
         this.refs.tabs.resetToTab(0);
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(parseInt(id)) !== 'undefined') {
           this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(id)}));
         }
         break;
       case 'recommendation':
         this.refs.tabs.resetToTab(0)
-        if (!isNaN(id)) {
+        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(id) !== 'undefined') {
           var restaurant = RestaurantsStore.getRestaurant(parseInt(id));
-          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, approved: true, step2: true});
+          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, recommendation: true});
           this.refs.tabs.refs.tabs.push(RecoStep3.route())
         }
         break;
@@ -212,14 +222,20 @@ class App extends Component {
     }
 
     MeActions.startActions.defer(DeviceInfo.getVersion());
+    ProfilActions.fetchProfil.defer(MeStore.getState().me.id);
+    ProfilActions.fetchFriends.defer();
+    ProfilActions.fetchFollowings.defer();
+    ProfilActions.fetchAllExperts.defer();
     RestaurantsActions.fetchRestaurants.defer();
-    ProfilActions.fetchProfils.defer();
-    NotifsActions.fetchNotifs.defer();
+    NotifsActions.fetchNotifications.defer();
   };
 
   componentWillMount() {
+    this.onUpdate();
     MeStore.listen(this.onMeChange);
-    NotifsStore.listen(this.onPastillesChange);
+    NotifsStore.listen(this.onNotificationsChange);
+    ProfilStore.listen(this.onProfileChange);
+    RestaurantsStore.listen(this.onRestaurantsChange);
 
     AppState.addEventListener('change', this.onAppStateChange);
 
@@ -231,20 +247,6 @@ class App extends Component {
       DeviceEventEmitter.addListener('quickActionShortcut', this.onQuickActionShortcut);
 
       Linking.addEventListener('url', this.handleOpenURL);
-    
-      Branch.getInitSessionResultPatiently(({params, error}) => {
-        // console.log(params);
-      });
-      
-      Branch.setIdentity(MeStore.getState().me.id.toString());
-
-      Branch.getLatestReferringParams((params) => { 
-        // console.log(params);
-      });
-
-      Branch.getFirstReferringParams((params) => { 
-        // console.log(params);
-      });
 
       var coldNotif = PushNotificationIOS.popInitialNotification();
       if (coldNotif) {
@@ -252,20 +254,42 @@ class App extends Component {
       }
     }
 
+    Branch.getInitSessionResultPatiently(({params, error}) => {
+      // console.log('1');
+      // console.log(params);
+    });
+    
+    Branch.setIdentity(MeStore.getState().me.id.toString());
+
+    Branch.getFirstReferringParams((params) => {
+      // console.log('2');
+      // console.log(params);
+      if (params.from === 'friend_invitation') {
+        // do something because he arrived from friend invitation 
+      }
+    });
+
+    Branch.getLatestReferringParams((params) => {
+      // console.log('3');
+      // console.log(params);
+    });
+
     this.startActions();
   };
 
   componentWillUnmount() {
-    NotifsStore.unlisten(this.onPastillesChange);
     MeStore.unlisten(this.onMeChange);
+    NotifsStore.unlisten(this.onNotificationsChange);
+    ProfilStore.unlisten(this.onProfileChange);
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
 
     AppState.removeEventListener('change', this.onAppStateChange);
+    
+    Linking.removeEventListener('url', this.handleOpenURL);
 
     if (Platform.OS === 'ios') {
       PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
       PushNotificationIOS.removeEventListener('notification', this.onNotificationIOS);
-
-      Linking.removeEventListener('url', this.handleOpenURL);
 
       Branch.logout();
     }
@@ -277,14 +301,18 @@ class App extends Component {
         this.handleOpenURL(url, 'closed_app');
       }
     }).catch((err) => {
-      console.log(err);
+      if (__DEV__) {
+        console.log(err);
+      }
     })
 
     if (Platform.OS === 'android') {
       GcmAndroid.addEventListener('register', this.onDeviceToken);
 
-      GcmAndroid.addEventListener('registerError', function(error){
-        console.log('registerError', error.message);
+      GcmAndroid.addEventListener('registerError', (error) => {
+        if (__DEV__) {
+          console.log('registerError', error.message);
+        }
       });
 
       GcmAndroid.addEventListener('notification', this.onNotificationAndroid);
@@ -295,7 +323,25 @@ class App extends Component {
     }
   };
 
+
+  // Actions to add the new variables in local storage when user upgrades his version
+  onUpdate = () => {
+    if ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '2.1.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0')) {
+      RestaurantsActions.setFilter.defer('friends', []);
+    }
+  };
+
   render() {
+    var loading_array = [this.state.meLoading, this.state.notificationsLoading, this.state.profileLoading, this.state.restaurantsLoading];
+    var index_loading = 0;
+    _.forEach(loading_array, (loading) => {
+      if (typeof loading == 'undefined') {
+        index_loading += 2;
+      } else if (loading) {
+        index_loading += 1;
+      }
+    });
+
     return (
       <View style={{flex: 1}}>
         <TabView 
@@ -305,25 +351,24 @@ class App extends Component {
           }}
           tabs={[
             {
-              component: Liste,
+              component: Carte,
               title: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
             },
             {
               component: Friends,
-              title: 'Amis',
+              title: 'Mes conseillers',
               icon: require('../assets/img/tabs/icons/friend.png'),
             },
             {
               component: RecoStep1,
+              title: 'Recommander',
               icon: require('../assets/img/tabs/icons/add.png'),
-              hasShared: MeStore.getState().me.HAS_SHARED
             },
             {
               component: Notifs,
               title: 'Notifs',
               icon: require('../assets/img/tabs/icons/notif.png'),
-              pastille: this.state.notifsPastille < 10 ? this.state.notifsPastille : '9+'
             },
             {
               component: Profil,
@@ -335,26 +380,28 @@ class App extends Component {
           initialSelected={this.notifLaunchTab || 0}
           tabsBlocked={false} />
 
-        {this.state.showOverlayMapTutorial ? [
-          <Overlay key="overlay_map_tutorial">
-            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayMapTutorial()}>
+        {this.state.showOverlayTutorial ? [
+          <Overlay key='overlay_tutorial'>
+            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayTutorial()}>
               <ScrollView
                 style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
                 contentInset={{top: 0}}
                 automaticallyAdjustContentInsets={false}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.container}>
-                <Image style={styles.arrow} source={require('../assets/img/other/icons/arrow_curved.png')} />
-                <Text style={styles.titleShowMap}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+                <Image style={styles.arrowLeft} source={require('../assets/img/other/icons/arrow_curved.png')} />
+                <Image style={styles.arrowRight} source={require('../assets/img/other/icons/arrow_curved.png')} />
+                <Text style={styles.titleLeft}>Visualise les restaurants sur ta carte perso de Paris !</Text>
+                <Text style={styles.titleRight}>Visualise les restaurants sur ta carte perso de Paris !</Text>
               </ScrollView>
             </TouchableHighlight>
           </Overlay>
         ] : null}
 
         {!this.state.hasBeenUploadWelcomed ? [
-          <Overlay key="has_been_upload_welcomed">
+          <Overlay key='has_been_upload_welcomed'>
             <ScrollView
-              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false}
@@ -371,10 +418,10 @@ class App extends Component {
           </Overlay>
         ] : null}
 
-        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage? [
-          <Overlay key="show_update_message">
+        {typeof this.state.showedUpdateMessage !== 'undefined' && !this.state.showedUpdateMessage && false ? [
+          <Overlay key='show_update_message'>
             <ScrollView
-              style={{flex: 1, backgroundColor: 'white', paddingTop: 50}}
+              style={{flex: 1, backgroundColor: '#FFFFFF', paddingTop: 50}}
               contentInset={{top: 0}}
               automaticallyAdjustContentInsets={false}
               showsVerticalScrollIndicator={false}
@@ -387,6 +434,30 @@ class App extends Component {
               <Button label='Passer' onPress={() => {
                 MeActions.showedUpdateMessage();
               }} style={{margin: 5}}/>
+            </ScrollView>
+          </Overlay>
+        ] : null}
+
+        {index_loading > 1 && !this.state.showOverlayTutorial ? [
+          <Overlay key='loading_overlay'>
+            <ScrollView
+              style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}
+              contentInset={{top: 0}}
+              alignItems='center'
+              justifyContent='center'
+              automaticallyAdjustContentInsets={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.container}>
+              {Platform.OS === 'ios' ? [
+                <ActivityIndicatorIOS
+                  key='loading_ios'
+                  animating={true}
+                  color='#FE3139'
+                  style={[{height: 80}]}
+                  size='large' />
+              ] : [
+                <ProgressBarAndroid key='loading_android' indeterminate />
+              ]}
             </ScrollView>
           </Overlay>
         ] : null}
@@ -424,24 +495,48 @@ var styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     marginBottom: 40,
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     marginTop: 20
   },
-  arrow: {
+  arrowRight: {
     height: 60,
     width: 60,
     position: 'absolute',
     right: 40,
-    top: 0,
+    top: 10,
     tintColor: '#FFFFFF'
   },
-  titleShowMap: {
+  arrowLeft: {
+    height: 60,
+    width: 60,
+    position: 'absolute',
+    left: 20,
+    top: 10,
+    tintColor: '#FFFFFF',
+    transform: [
+      {rotateY: '180deg'}
+    ]
+  },
+  titleLeft: {
+    width: Dimensions.get('window').width / 2,
+    textAlign: 'center',
+    position: 'absolute',
+    left: 0,
+    top: 80,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
+  },
+  titleRight: {
+    width: Dimensions.get('window').width / 2,
+    position: 'absolute',
+    right: 0,
+    top: 80,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '500',
     color: '#FFFFFF',
-    marginTop: 70
-  },
+  }
 });
 
 export default App;

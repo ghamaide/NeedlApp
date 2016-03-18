@@ -1,13 +1,13 @@
 'use strict';
 
-import alt from '../alt';
 import _ from 'lodash';
+
+import alt from '../alt';
 
 import LoginActions from '../actions/LoginActions';
 import MeActions from '../actions/MeActions';
-import RecoActions from '../actions/RecoActions';
-import RestaurantsActions from '../actions/RestaurantsActions';
 import ProfilActions from '../actions/ProfilActions';
+import RecoActions from '../actions/RecoActions';
 
 import CachedStore from './CachedStore';
 
@@ -19,20 +19,13 @@ export class MeStore extends CachedStore {
     this.me = {};
 
     this.hasBeenUploadWelcomed = false;
-
-    this.showOverlayMapTutorial = true;
-
-    this.showedCurrentPosition = false;
-
+    this.showOverlayTutorial = true;
     this.showedUpdateMessage = true;
-    
     this.dismissedUpdateMessage = false;
 
     this.showTabBar = true;
 
     this.version = 0;
-
-    this.isConnected = false;
 
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
@@ -42,21 +35,34 @@ export class MeStore extends CachedStore {
 
     this.bindListeners({
 
-      handleSaveRecoSuccess: [RecoActions.SAVE_RECO_SUCCESS, RestaurantsActions.ADD_WISH],
+      handleAddActivitySuccess: [RecoActions.ADD_RECO_SUCCESS, RecoActions.ADD_WISH],
 
       handleStartActions: MeActions.START_ACTIONS,
       handleStartActionsFailed: MeActions.START_ACTIONS_FAILED,
       handleStartActionsSuccess: MeActions.START_ACTIONS_SUCCESS,
 
-      handleLoginSuccess: LoginActions.LOGIN_SUCCESS,
-      handleLoginFailed: LoginActions.LOGIN_FAILED,
-      handleLogout: LoginActions.LOGOUT,
-      handleLogin: LoginActions.LOGIN,
-      handleLoginCancelled: LoginActions.LOGIN_CANCELLED,
+      handleLoginFacebookSuccess: LoginActions.LOGIN_FACEBOOK_SUCCESS,
+      handleLoginFacebookFailed: LoginActions.LOGIN_FACEBOOK_FAILED,
+      handleLoginFacebook: LoginActions.LOGIN_FACEBOOK,
+      handleLoginFacebookCancelled: LoginActions.LOGIN_FACEBOOK_CANCELLED,
 
-      handleEditSuccess: MeActions.EDIT_SUCCESS,
-      handleEditFailed: MeActions.EDIT_FAILED,
+      handleLoginEmailSuccess: LoginActions.LOGIN_EMAIL_SUCCESS,
+      handleLoginEmailFailed: LoginActions.LOGIN_EMAIL_FAILED,
+      handleLoginEmail: LoginActions.LOGIN_EMAIL,
+
+      handleCreateAccount: LoginActions.CREATE_ACCOUNT,
+      handleCreateAccountFailed: LoginActions.CREATE_ACCOUNT_FAILED,
+      handleCreateAccountSuccess: LoginActions.CREATE_ACCOUNT_SUCCESS,
+
+      handleRecoverPassword: LoginActions.RECOVER_PASSWORD,
+      handleRecoverPasswordFailed: LoginActions.RECOVER_PASSWORD_FAILED,
+      handleRecoverPasswordSuccess: LoginActions.RECOVER_PASSWORD_SUCCESS,
+
       handleEdit: MeActions.EDIT,
+      handleEditFailed: MeActions.EDIT_FAILED,
+      handleEditSuccess: MeActions.EDIT_SUCCESS,
+
+      handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
       
       handleUploadContacts : MeActions.UPLOAD_CONTACTS,
       handleUploadContactsSuccess : MeActions.UPLOAD_CONTACTS_SUCCESS,
@@ -66,30 +72,24 @@ export class MeStore extends CachedStore {
       handleSendMessageContactSuccess : MeActions.SEND_MESSAGE_CONTACT_SUCCESS,
       handleSendMessageContactFailed : MeActions.SEND_MESSAGE_CONTACT_FAILED,
 
+      handleLinkFacebookAccount: MeActions.LINK_FACEBOOK_ACCOUNT,
+      handleLinkFacebookAccountFailed: MeActions.LINK_FACEBOOK_ACCOUNT_FAILED,
+      handleLinkFacebookAccountSuccess: MeActions.LINK_FACEBOOK_ACCOUNT_SUCCESS,
+
+      handleLogout: LoginActions.LOGOUT,
+
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
-      
-      handleDisplayTabBar: MeActions.DISPLAY_TAB_BAR,
-
-      handleShowedCurrentPosition: MeActions.SHOWED_CURRENT_POSITION,
-
-      handleCheckConnectivity: MeActions.checkConnectivity,
-      handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
-
-// ================================================================================================
-
-      handleHideOverlayMapTutorial: MeActions.HIDE_OVERLAY_MAP_TUTORIAL,
-
+      handleHideOverlayTutorial: MeActions.HIDE_OVERLAY_TUTORIAL,
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE
 
     });
   }
 
-  handleSaveRecoSuccess() {
+  handleAddActivitySuccess() {
     this.me.HAS_SHARED = true;
   }
 
   handleStartActions() {
-    this.showedCurrentPosition = false;
     delete this.status.error;
   }
 
@@ -99,36 +99,99 @@ export class MeStore extends CachedStore {
   }
 
   handleStartActionsSuccess(result) {
-    this.status.error = null;
     if (!result && !this.dismissedUpdateMessage) {
       this.showedUpdateMessage = false;
     }
     this.status.loading = false;
   }
 
-  handleLoginSuccess(me) {
+  handleLoginFacebookSuccess(me) {
     this.me = me.user;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
     this.status.loading = false;
   }
 
-  handleLoginFailed(err) {
+  handleLoginFacebookFailed(err) {
     this.status.loading = false;
     this.status.error = err;
   }
 
-  handleLoginCancelled() {
+  handleLoginFacebookCancelled() {
     this.status.loading = false;
     delete this.status.error;
   }
 
   handleLogout() {
     this.me = {};
+    delete this.status.error;
   }
 
-  handleLogin() {
+  handleLoginFacebook() {
     this.status.loading = true;
     delete this.status.error;
+  }
+
+  handleLoginEmail() {
+    this.status.loading = true;
+    delete this.status.error; 
+  }
+
+  handleLoginEmailSuccess(me) {
+    var me = me.user;
+    me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.me = me;
+    this.status.loading = false;
+  }
+
+  handleLoginEmailFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleCreateAccount() {
+    this.status.loading = true;
+    delete this.status.error; 
+  }
+
+  handleCreateAccountFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleCreateAccountSuccess(me) {
+    this.me = me.user;
+    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.status.loading = false;
+  }
+
+  handleFetchProfilSuccess(profil) {
+    if (profil.id === this.me.id) {
+      this.me.app_version = profil.app_version;
+      this.me.platform = profil.platform;
+      var oldScore = this.me.score || 0;
+      this.me.score = profil.score;
+      if (oldScore < 1) {
+        this.displayUpgradeMessage = profil.score >= 1;
+      } else if (oldScore >= 1 && oldScore < 3) {
+        this.displayUpgradeMessage = profil.score >= 3;
+      } else if (oldScore >= 3 && oldScore < 5) {
+        this.displayUpgradeMessage = profil.score >= 5;
+      } else if (oldScore >= 5 && oldScore < 10) {
+        this.displayUpgradeMessage = profil.score >= 10;
+      } else if (oldScore >= 10 && oldScore < 30) {
+        this.displayUpgradeMessage = profil.score >= 30;
+      } else if (oldScore >= 30 && oldScore < 60) {
+        this.displayUpgradeMessage = profil.score >= 60;
+      } else if (oldScore >= 60 && oldScore < 100) {
+        this.displayUpgradeMessage = profil.score >= 100;
+      } else if (oldScore >= 100 && oldScore < 200) {
+        this.displayUpgradeMessage = profil.score >= 200;
+      } else if (oldScore >= 200 && oldScore < 500) {
+        this.displayUpgradeMessage = profil.score >= 500;
+      } else if (oldScore >= 500) {
+        this.displayUpgradeMessage = false;
+      }
+    }
   }
 
   handleEdit() {
@@ -144,6 +207,20 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
     this.me.name = data.name;
     this.me.email = data.email;
+  }
+
+  handleRecoverPassword() {
+    delete this.status.error;
+    this.status.loading = true;
+  }
+
+  handleRecoverPasswordFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleRecoverPasswordSuccess(result) {
+    this.status.loading = false;
   }
 
   handleHasBeenUploadWelcomed() {
@@ -182,8 +259,8 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleDisplayTabBar(display) {
-    this.showTabBar = display;
+  handleSendVersion() {
+    this.status.loading = true;
   }
 
   handleSendVersionFailed(err) {
@@ -198,21 +275,27 @@ export class MeStore extends CachedStore {
     this.status.loading = false;
   }
 
-  handleSendVersion() {
+  handleLinkFacebookAccount() {
     this.status.loading = true;
+    delete this.status.error;
   }
 
-  handleShowedCurrentPosition(showed) {
-    this.showedCurrentPosition = showed;
-  }
-
-  handleCheckConnectivity() {
-    this.status.loading = true;
-  }
-
-  handleCheckConnectivitySuccess(isConnected) {
-    this.isConnected = isConnected;
+  handleLinkFacebookAccountFailed(err) {
+    this.status.error = err;
     this.status.loading = false;
+  }
+
+  handleLinkFacebookAccountSuccess() {
+    this.status.loading = false;
+  }
+
+  handleShowedUpdateMessage() {
+    this.showedUpdateMessage = true;
+    this.dismissedUpdateMessage = true;
+  }
+
+  handleHideOverlayTutorial() {
+    this.showOverlayTutorial = false;
   }
 
   static getMe() {
@@ -231,26 +314,12 @@ export class MeStore extends CachedStore {
     return this.getState().hasBeenUploadWelcomed;
   }
 
-  static isConnected() {
-    return this.getState().isConnected;
-  }
-
-
-  handleShowedUpdateMessage() {
-    this.showedUpdateMessage = true;
-    this.dismissedUpdateMessage = true;
-  }
-
-  handleHideOverlayMapTutorial() {
-    this.showOverlayMapTutorial = false;
-  }
-
   static showedUpdateMessage() {
     return this.getState().showedUpdateMessage;
   }
 
-  static showOverlayMapTutorial() {
-    return this.getState().showOverlayMapTutorial;
+  static showOverlayTutorial() {
+    return this.getState().showOverlayTutorial;
   }
 }
 

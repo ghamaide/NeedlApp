@@ -1,10 +1,12 @@
 'use strict';
 
-import request from 'superagent';
-import MeStore from '../stores/Me';
-import config from '../config';
-import _ from 'lodash';
 import {NativeModules} from 'react-native';
+
+import _ from 'lodash';
+import request from 'superagent';
+
+import config from '../config';
+import MeStore from '../stores/Me';
 
 var REQUESTS = {};
 

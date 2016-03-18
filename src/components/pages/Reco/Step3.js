@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ActivityIndicatorIOS, Dimensions, Platform, ProgressBarAndroid} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Dimensions, Platform, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -8,11 +8,13 @@ import request from '../../../utils/api';
 
 import Button from '../../elements/Button';
 
-import Text from '../../ui/Text';
 import NavigationBar from '../../ui/NavigationBar';
+import Text from '../../ui/Text';
 
 import ToggleGroup from './ToggleGroup';
 
+import MeStore from '../../../stores/Me';
+import NotifsStore from '../../../stores/Notifs';
 import RecoStore from '../../../stores/Reco';
 
 import RecoActions from '../../../actions/RecoActions';
@@ -46,7 +48,7 @@ class RecoStep3 extends Component {
   componentDidMount() {
     if (this.props.editing) {
       RecoStore.listen(this.onRecoUpdate);
-      RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);
+      RecoStore.getReco();
     }
   };
 
@@ -57,26 +59,29 @@ class RecoStep3 extends Component {
   onRightButtonPress= () => {
     var reco = RecoStore.getReco();
 
-    if (!reco.ambiances || !reco.ambiances.length) {
+    if (!reco.ambiences || !reco.ambiences.length) {
       return;
     }
 
-    this.props.navigator.push(Step4.route());
+    this.props.navigator.push(Step4.route({toggle: this.props.toggle}));
   };
 
   render() {
-    if (this.state.error || this.state.loading) {
+    if (!_.isEmpty(this.state.error) || this.state.loading) {
       var content;
 
       if (this.state.loading) {
-        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" /> : <ProgressBarAndroid indeterminate />);
+        content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />);
       }
 
-      if (this.state.error) {
+      if (!_.isEmpty(this.state.error)) {
+        if (__DEV__) {
+          console.log(this.state.error);
+        }
         content = <View style={styles.errorBlock}>
-          <Text style={{color: 'white'}}>Une erreur est survenue</Text>
+          <Text style={{color: '#555555', marginBottom: 20}}>Une erreur est survenue</Text>
           <Button style={styles.errorButton}
-            label="Réessayer"
+            label='Réessayer'
             onPress={() => {
               RecoActions.getReco(this.props.restaurant_id, this.props.restaurant_name);
             }} />
@@ -93,35 +98,35 @@ class RecoStep3 extends Component {
     var reco = RecoStore.getReco();
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Ambiances" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle="Valider" onRightButtonPress={this.onRightButtonPress} />
+        <NavigationBar type='back' title='Ambiances' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} rightButtonTitle='Valider' onRightButtonPress={this.onRightButtonPress} />
         <View style={styles.container}>
           <Text style={styles.title}>Sélectionne une ou plusieurs ambiances</Text>
           <ToggleGroup
-            ref="togglegroup"
-            maxSelection={5}
+            ref='togglegroup'
+            maxSelection={8}
             fifo={true}
-            selectedInitial={reco.ambiances}
+            selectedInitial={reco.ambiences}
             onSelect={(v, selected) => {
-              reco.ambiances = selected;
+              reco.ambiences = selected;
             }}
             onUnselect={(v, selected) => {
-              reco.ambiances = selected;
+              reco.ambiences = selected;
             }}>
             {(Toggle) => {
               return <View style={{alignItems: 'center'}}>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label="Chic" value={1} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label="Festif" value={2} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label="Convivial" value={3} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/chic.png')} activeInitial={false} label='Chic' value={1} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/festif.png')} activeInitial={false} label='Festif' value={2} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/convivial.png')} activeInitial={false} label='Convivial' value={3} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label="Romantique" value={4} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label="Branché" value={5} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label="Typique" value={6} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/romantique.png')} activeInitial={false} label='Romantique' value={4} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/branche.png')} activeInitial={false} label='Branché' value={5} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/typique.png')} activeInitial={false} label='Typique' value={6} />
                 </View>
                 <View style={styles.pastilleContainer}>
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label="Cosy" value={7} />
-                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label="Inclassable" value={8} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/cosy.png')} activeInitial={false} label='Cosy' value={7} />
+                  <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/ambiances/icons/autre.png')} activeInitial={false} label='Inclassable' value={8} />
                 </View>
               </View>;
             }}
@@ -144,8 +149,8 @@ var styles = StyleSheet.create({
   justifyContent: 'center'
  },
  title: {
-  marginBottom: 30,
-  color: '#000000',
+  marginBottom: 20,
+  color: '#3A325D',
   fontSize: 13,
   textAlign: 'center'
  },
@@ -165,13 +170,13 @@ var styles = StyleSheet.create({
   right: 0,
   height: 10,
   position: 'absolute',
-  backgroundColor: '#DDDDDD',
+  backgroundColor: '#C1BFCC',
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'row'
  },
  progressBarCompleted: {
-  backgroundColor: '#38E1B2',
+  backgroundColor: '#9CE62A',
   position: 'absolute',
   top: 0,
   left: 0,

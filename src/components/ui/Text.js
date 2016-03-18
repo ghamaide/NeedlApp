@@ -13,13 +13,12 @@ class NewText extends OldText {
 
   render() {
     var props = _.clone(this.props);
-
     if (this.props.customFont) {
       return super.render();
     }
 
     if (_.isArray(this.props.style)){
-      props.style.push({fontFamily: 'Quicksand-Regular'});
+      props.style = [props.style, {fontFamily: 'Quicksand-Regular'}];
     } else if (props.style) {
       props.style = [props.style, {fontFamily: 'Quicksand-Regular'}];
     } else {

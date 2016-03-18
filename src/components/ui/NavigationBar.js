@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {PixelRatio, StatusBarIOS, View, Component, StyleSheet, TouchableHighlight, TouchableOpacity, Image, Platform} from 'react-native';
+import React, {Component, Image, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -10,13 +10,13 @@ class BackButton extends Component {
   render() {
     return (
       <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent'}, this.props.style]}>
-        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', marginTop: 3, padding: 5, marginLeft: 7}}>
+        <View style={{flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', marginTop: 2, padding: 5, marginLeft: 7}}>
           <Icon
             name='angle-left'
             size={17}
-            color='#333333'
+            color='#3A325D'
             style={[{marginRight: 10}, this.props.style]}/>
-          <Text style={{color:'#333333', fontSize: 14, marginTop: 1}}>{this.props.title}</Text>
+          <Text style={{color:'#3A325D', fontSize: 14, marginTop: 1}}>{this.props.title}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -29,8 +29,8 @@ class NavBarButton extends Component {
       return (
         <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
           <View style={{alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
-            <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#000000'}} />
-            <Text style={{color:'#333333', fontSize: 11}}>{this.props.title}</Text>
+            <Image source={this.props.image} style={{height: 20, width: 20, tintColor: '#FE3139'}} />
+            <Text style={{color:'#FE3139', fontSize: 11}}>{this.props.title}</Text>
           </View>
         </TouchableOpacity>
       );
@@ -38,7 +38,7 @@ class NavBarButton extends Component {
       return (
         <TouchableOpacity onPress={this.props.onPress} style={[{backgroundColor: 'transparent', position: 'absolute', right: 0, top: 0}, this.props.style]}>
           <View style={{marginTop: (Platform.OS === 'ios' ? 3 : 2), padding: 5, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', marginRight: 7}}>
-            <Text style={{fontSize: 14, color: '#EF582D', fontWeight: '500', marginTop: 1}}>{this.props.title}</Text>
+            <Text style={{fontSize: 14, color: '#FE3139', fontWeight: '500', marginTop: 1}}>{this.props.title}</Text>
           </View>
         </TouchableOpacity>
       );
@@ -46,36 +46,105 @@ class NavBarButton extends Component {
   }
 }
 
+class NavBarSwitch extends Component {
+  render() {
+    return (
+      <View style={[styles.navBarTitle, {flexDirection: 'row'}]}>
+        {_.map(this.props.titles, (title, key) => {
+          return (
+            <View key={'button_' + key} style={{flexDirection: 'row'}}>
+              <TouchableOpacity style={{borderBottomWidth: this.props.active === (key + 1) ? 1 : 0, borderColor: '#FE3139'}} onPress={() => this.props.onPress(key + 1)}>
+                <Text
+                  style={[styles.navBarTitleSwitch, {color: this.props.active === (key + 1) ? '#FE3139' : '#3A325D'}]}>
+                  {title}
+                </Text>
+              </TouchableOpacity>
+              {key < this.props.titles.length - 1 ? [
+                <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {marginLeft: 6, marginRight: 6}]}>|</Text>
+              ] : null}
+            </View>
+          );
+        })}
+      </View>
+    );
+  }
+}
+
 class NavigationBar extends Component {
   render() {
-    const rightButtonConfig = {
+    const rightButtonConfiguration = {
       title: this.props.rightButtonTitle,
       handler: this.props.onRightButtonPress,
       image: this.props.image,
       tintColor: '#000000'
     };
 
-    const titleConfig = {
-      title: this.props.title
+    const titleConfiguration = {
+      title: this.props.title,
+      title_left: this.props.title_left,
+      title_right: this.props.title_right
     };
        
-    const leftButtonConfig = {
+    const leftButtonConfiguration = {
       title: this.props.leftButtonTitle,
       handler: this.props.onLeftButtonPress,
       tintColor: '#000000'
     };
 
-    return (
-      <NavBar
-        style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
-        title={titleConfig}
-        rightButton={rightButtonConfig.title ? <NavBarButton title={rightButtonConfig.title} onPress={rightButtonConfig.handler} image={this.props.image} /> : []}
-        leftButton={leftButtonConfig.title ? <BackButton icon={leftButtonConfig.icon} title={leftButtonConfig.title} onPress={this.props.onLeftButtonPress} /> : []} />
-    );
+    switch (this.props.type) {
+      case 'back' :
+        return (
+          <NavBar
+            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            title={titleConfiguration}
+            rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
+            leftButton={<BackButton icon={leftButtonConfiguration.icon} title={leftButtonConfiguration.title} onPress={this.props.onLeftButtonPress} /> } />
+        );
+        break;
+      case 'default' :
+        return (
+          <NavBar
+            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            title={titleConfiguration}
+            rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
+            leftButton={leftButtonConfiguration.title ? <NavBarButton title={leftButtonConfiguration.title} onPress={leftButtonConfiguration.handler} image={this.props.leftImage} /> : []} />
+        );
+        break;
+      case 'switch' : 
+        return (
+          <NavBar
+            switch={true}
+            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            titles={this.props.titles}
+            active={this.props.active}
+            onPress={this.props.onPress}
+            rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
+            leftButton={leftButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.leftImage} /> : []} />
+        );
+        break;
+      case 'switch_and_back' :
+        return (
+          <NavBar
+            switch={true}
+            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            titles={this.props.titles}
+            active={this.props.active}
+            onPress={this.props.onPress}
+            rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
+            leftButton={<BackButton icon={leftButtonConfiguration.icon} title={leftButtonConfiguration.title} onPress={this.props.onLeftButtonPress} /> } />
+        );
+        break;
+      default :
+        return <Text>Type not specified</Text>
+    }
   };
 }
 
 class NavBar extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   getButtonElement(data = {}, style) {
     if (!!data.props) {
       return <View style={styles.navBarButton}>{data}</View>;
@@ -91,18 +160,21 @@ class NavBar extends Component {
   }
 
   getTitleElement(data) {
-    if (!!data.props) {
-      return <View style={styles.customTitle}>{data}</View>;
+    if (!this.props.switch) {
+      return (
+        <Text
+          style={styles.navBarTitleText}>
+          {data.title}
+        </Text>
+      );
+    } else {
+      return (
+        <NavBarSwitch
+          active={this.props.active}
+          titles={this.props.titles}
+          onPress={this.props.onPress} />
+      );
     }
-
-    const colorStyle = data.tintColor ? { color: data.tintColor, } : null;
-
-    return (
-      <Text
-        style={[styles.navBarTitleText, colorStyle, ]}>
-        {data.title}
-      </Text>
-    );
   }
 
   render() {
@@ -145,20 +217,38 @@ var styles = StyleSheet.create({
     marginTop: 3,
   },
   navBarButtonText: {
-    fontSize: 14,
+    fontSize: 15,
     letterSpacing: 0.5,
     marginTop: 12,
-    color: '#333333'
+    color: '#3A325D'
+  },
+  navBarTitle: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent'
   },
   navBarTitleText: {
     fontSize: 14,
-    color: '#333333',
-    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
+    color: '#3A325D',
+    fontWeight: Platform.OS === 'ios' ? '500' : '400',
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: (Platform.OS === 'ios' ? 12 : 10),
     textAlign: 'center',
+    backgroundColor: 'transparent'
+  },
+  navBarTitleSwitch: {
+    fontSize: 15,
+    color: '#3A325D',
+    fontWeight: Platform.OS === 'ios' ? '500' : 'normal',
+    textAlign: 'center',
+    backgroundColor: 'transparent'
   }
 });
 

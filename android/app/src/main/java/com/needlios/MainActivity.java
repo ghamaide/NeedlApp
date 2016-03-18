@@ -22,6 +22,13 @@ import com.learnium.RNDeviceInfo.*;
 
 import com.kevinejohn.RNMixpanel.*;
 
+import com.burnweb.rnsendintent.RNSendIntentPackage;
+
+import android.content.Intent;
+import com.dispatcher.rnbranch.*;
+
+import com.BV.LinearGradient.LinearGradientPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -59,7 +66,22 @@ public class MainActivity extends ReactActivity {
             new FacebookLoginPackage(),
             new GcmPackage(),
             new NotificationPackage(this),
-            new RNMixpanel()
+            new RNMixpanel(),
+            new RNSendIntentPackage(),
+            new RNBranchPackage(),
+            new LinearGradientPackage()
         );
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        RNBranchModule.initSession(this.getIntent().getData(), this);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        this.setIntent(intent);
     }
 }

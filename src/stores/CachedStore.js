@@ -1,6 +1,7 @@
 'use strict';
 
 import {AsyncStorage} from 'react-native';
+
 import _ from 'lodash';
 
 export class CachedStore {

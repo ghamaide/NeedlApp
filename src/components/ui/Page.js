@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ActivityIndicatorIOS} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -10,17 +10,22 @@ class Page extends Component {
 
   renderLoading() {
     return (
-      <View style={styles.loadingWrapper}>
+      <View style={styles.wrapper}>
         <ActivityIndicatorIOS
         animating={true}
+        color='#FE3139'
         style={[{height: 80}]}
-        size="large" />
+        size='large' />
       </View>
     );
   };
 
   renderError() {
-    return <Text>Error</Text>;
+    return (
+      <View style={styles.wrapper}>
+        <Text>Error</Text>
+      </View>
+    );
   };
 
   render() {
@@ -28,7 +33,8 @@ class Page extends Component {
       return this.renderLoading();
     }
 
-    if (!_.isEmpty(this.state.error)) {
+    if (__DEV__ && !_.isEmpty(this.state.error)) {
+      console.log(this.state.error);
       return this.renderError();
     }
 
@@ -37,7 +43,7 @@ class Page extends Component {
 }
 
 var styles = StyleSheet.create({
-  loadingWrapper: {
+  wrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'

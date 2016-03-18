@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, Image, View, Platform} from 'react-native';
+import React, {Component, Image, Platform, StyleSheet, View} from 'react-native';
 
 import Mixpanel from 'react-native-mixpanel';
 
@@ -18,21 +18,6 @@ class Help extends Component {
     };
   };
 
-  getHelpState() {
-    return {
-      errors: this.state.errors
-    };
-  };
-
-  constructor() {
-    super();
-
-    this.state = {
-      errors: []
-    };
-    this.state = this.getHelpState();
-  };
-
   componentDidMount() {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
     Mixpanel.trackWithProperties('Help Page From ' + this.props.from, {id: MeStore.getState().me.id, user: MeStore.getState().me.name});
@@ -42,7 +27,7 @@ class Help extends Component {
     if (this.props.from === 'liste') {
       return (
         <View style={{flex: 1}}>
-          <NavigationBar title="Aide" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar type='back' title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
           <View style={styles.container}>
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatar} source={require('../../assets/img/other/icons/algorithm.png')} />
@@ -56,7 +41,7 @@ class Help extends Component {
     } else if (this.props.from === 'restaurant') {
       return (
         <View style={{flex: 1}}>        
-          <NavigationBar title="Aide" leftButtonTitle="Retour" onLeftButtonPress={() => this.props.navigator.pop()} />
+          <NavigationBar title='Aide' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
           <View style={styles.container}>
             <View style={styles.avatarWrapper}>
               <Image style={styles.avatar} source={require('../../assets/img/tabs/icons/home.png')} />
@@ -101,7 +86,7 @@ var styles = StyleSheet.create({
     width: 70,
     borderRadius: 35,
     marginBottom: 40,
-    backgroundColor: '#EF582D',
+    backgroundColor: '#FE3139',
     marginTop: 20
   }
 });

@@ -5,104 +5,98 @@ import request from '../utils/api';
 
 export class ProfilActions {
 
-  fetchProfil(id) {
+  fetchProfil(id, callback) {
     return (dispatch) => {
-      dispatch(id);
+      dispatch();
 
-      request('GET', '/api/users/' + id)
+      request('GET', '/api/v2/users/' + id)
         .end((err, result) => {
           if (err) {
-            return this.profilFetchFailed(err, id);
+            return this.fetchProfilFailed(err, id);
           }
 
-          this.profilFetched(result);
+          this.fetchProfilSuccess(result);
+
+          if (callback) {
+            callback();
+          }
         });
     }
   }
 
-  profilFetched(profil) {
+  fetchProfilSuccess(profil) {
     return profil;
   }
 
-  profilFetchFailed(err, id) {
-    return {err: err, id: id};
+  fetchProfilFailed(err, id) {
+    return err;
   }
 
-  fetchProfils() {
+  fetchFriends() {
     return (dispatch) => {
       dispatch();
       
-      request('GET', '/api/friendships')
+      request('GET', '/api/v2/friendships')
         .end((err, result) => {
           if (err) {
-            return this.fetchProfilsFailed(err);
+            return this.fetchFriendsFailed(err);
           }
 
-          this.fetchProfilsSuccess(result);
+          this.fetchFriendsSuccess(result);
         });
     }
   }
 
-  fetchProfilsSuccess(friends) {
+  fetchFriendsSuccess(friends) {
     return friends;
   }
 
-  fetchProfilsFailed(err) {
+  fetchFriendsFailed(err) {
     return err;
   }
 
-  maskProfil(id) {
+  fetchFollowings() {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/friendships')
-        .query({
-          'friend_id': id,
-          invisible: true
-        })
-        .end((err) => {
+      request('GET', '/api/v2/followerships')
+        .end((err, result) => {
           if (err) {
-            return this.maskProfilFailed(err);
+            return this.fetchFollowingsFailed(err);
           }
-
-          this.maskProfilSuccess(id);
+          this.fetchFollowingsSuccess(result);
         });
     }
   }
 
-  maskProfilSuccess(id) {
-    return id;
-  }
-
-  maskProfilFailed(err) {
+  fetchFollowingsFailed(err) {
     return err;
   }
 
-  displayProfil(id) {
+  fetchFollowingsSuccess(result) {
+    return result;
+  }
+
+  fetchAllExperts() {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/friendships')
-        .query({
-          'friend_id': id,
-          invisible: false
-        })
-        .end((err) => {
+      request('GET', '/api/v2/users/experts')
+        .end((err, result) => {
           if (err) {
-            return this.displayProfilFailed(err);
+            return this.fetchAllExpertsFailed(err);
           }
-
-          this.displayProfilSuccess(id);
+          this.fetchAllExpertsSuccess(result);
         });
     }
   }
 
-  displayProfilSuccess(id) {
-    return id;
+  fetchAllExpertsFailed(err) {
+    return err;
   }
 
-  displayProfilFailed(err) {
-    return err;
+  fetchAllExpertsSuccess(result) {
+    return result;
   }
 }
 

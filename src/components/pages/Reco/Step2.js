@@ -1,59 +1,73 @@
 'use strict';
 
-import React, {StyleSheet, Component, View} from 'react-native';
+import React, {Component, StyleSheet, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
-import Text from '../../ui/Text';
 import NavigationBar from '../../ui/NavigationBar';
+import Text from '../../ui/Text';
 
 import RecoActions from '../../../actions/RecoActions';
 
 import MeStore from '../../../stores/Me';
+import NotifsStore from '../../../stores/Notifs';
 import RecoStore from '../../../stores/Reco';
 
-import StepSave from './StepSave';
+import Restaurant from '../Restaurant';
 import Step3 from './Step3';
+import StepSave from './StepSave';
 
 class RecoStep2 extends Component {
-  static route() {
+  static route(props) {
     
     return {
       component: RecoStep2,
-      title: 'Statut'
+      title: 'Statut',
+      passProps: props
     };
   };
 
   state = {};
 
   render() {
-
     var reco = RecoStore.getReco();
+    var activity = NotifsStore.getRecommendation(reco.restaurant.id, MeStore.getState().me.id);
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Statut" />
+        <NavigationBar type='back' title='Statut' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <View style={styles.container}>
-          <Text style={styles.title}>As-tu déjà testé le restaurant "{reco.restaurant.name}" ?</Text>
+          <Text style={styles.title}>As-tu déjà testé le restaurant '{reco.restaurant.name}' ?</Text>
           <ToggleGroup
             maxSelection={1}
             fifo={true}
             onSelect={(value) => {
-              reco.approved = (value === 'approved');
-              reco.step2 = true;
-  						
-  						if (reco.approved) {
-  							return this.props.navigator.push(Step3.route());
-  						}
-
-  						// hack pour le fucking title ..
-  						// because resetTo does not change title if only one page in the stack
-          		var title = MeStore.getState().me.HAS_SHARED ? reco.restaurant.name : 'Bienvenue sur Needl !';
-          		this.props.navigator.resetTo(StepSave.route(title));
+              reco.type = value;
+              
+              if (typeof activity == 'undefined') {
+                if (reco.type === 'recommendation') {
+                  return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
+                } else {
+                  return this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
+                }
+              } else {
+                if (reco.type === 'recommendation') {
+                  if (activity.notification_type == 'recommendation') {
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                  } else {
+                    return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
+                  }
+                } else {
+                  if (activity.notification_type == 'wish') {
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
+                  } else if (activity.notification_type == 'recommendation') {
+                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                  }
+                }
+              }
             }}
             onUnselect={() => {
-              delete reco.approved;
-              reco.step2 = false;
+              delete reco.type;
             }}>
             {(Toggle) => {
               return (
@@ -64,16 +78,16 @@ class RecoStep2 extends Component {
                     style={styles.pastille}
                     icon={require('../../../assets/img/actions/icons/japprouve.png')}
                     activeInitial={false}
-                    label="Je recommande"
-                    value={'approved'} />
+                    label='Je recommande'
+                    value={'recommendation'} />
                   <Toggle
                     size={60}
                     width={140}
                     style={styles.pastille}
                     icon={require('../../../assets/img/actions/icons/aessayer.png')}
                     activeInitial={false}
-                    label="Sur ma wishlist"
-                    value={'totry'} />
+                    label='Sur ma wishlist'
+                    value={'wish'} />
                 </View>
               );
             }}
@@ -95,7 +109,7 @@ var styles = StyleSheet.create({
  title: {
   marginBottom: 30,
   fontSize: 13,
-  color: '#888888',
+  color: '#C1BFCC',
   textAlign: 'center'
  },
  pastilleContainer: {

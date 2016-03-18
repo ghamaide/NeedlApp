@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, TouchableHighlight, Image} from 'react-native';
+import React, {Component, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import Text from '../ui/Text';
 
@@ -28,7 +28,7 @@ var styles = StyleSheet.create({
     margin: 5
   },
   optionsButton: {
-    backgroundColor: '#888888',
+    backgroundColor: '#837D9B',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
@@ -42,7 +42,7 @@ var styles = StyleSheet.create({
     marginTop: 2
   },
   optionsText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontSize: 14,
     backgroundColor: 'transparent'
   }

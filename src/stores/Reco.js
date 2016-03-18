@@ -1,9 +1,8 @@
 'use strict';
 
 import alt from '../alt';
+
 import RecoActions from '../actions/RecoActions';
-import MeStore from './Me';
-import RestaurantsStore from './Restaurants';
 
 export class RecoStore {
 
@@ -11,26 +10,15 @@ export class RecoStore {
     this.restaurants = [];
     this.reco = {};
 
-    this.saved = false;
-
     this.loading = false;
     this.error = {};
 
     this.bindListeners({
       handleFetchRestaurants: RecoActions.FETCH_RESTAURANTS,
-      handleRestaurantsFetched: RecoActions.RESTAURANTS_FETCHED,
-      handleRestaurantsFetchFailed: RecoActions.RESTAURANTS_FETCH_FAILED,
+      handleFetchRestaurantsSuccess: RecoActions.FETCH_RESTAURANTS_SUCCESS,
+      handleFetchRestaurantsFailed: RecoActions.FETCH_RESTAURANTS_FAILED,
 
       handleSetReco: RecoActions.SET_RECO,
-
-      handleSaveRecoSuccess: RecoActions.SAVE_RECO_SUCCESS,
-      handleSaveRecoFailed: RecoActions.SAVE_RECO_FAILED,
-
-// ================================================================================================
-
-      handleGetReco: RecoActions.GET_RECO,
-      handleGetRecoFailed: RecoActions.GET_RECO_FAILED,
-      handleGetRecoSuccess: RecoActions.GET_RECO_SUCCESS
     });
   }
 
@@ -40,27 +28,18 @@ export class RecoStore {
     delete this.error;
   }
 
-  handleRestaurantsFetched(restaurants) {
+  handleFetchRestaurantsSuccess(restaurants) {
     this.restaurants = restaurants;
     this.loading = false;
   }
 
-  handleRestaurantsFetchFailed(err) {
+  handleFetchRestaurantsFailed(err) {
     this.loading = false;
     this.error = err;
   }
 
   handleSetReco(reco) {
     this.reco = reco;
-  }
-
-  handleSaveRecoSuccess() {
-    delete this.error;
-    this.saved = true;
-  }
-
-  handleSaveRecoFailed(err) {
-    this.error = err;
   }
 
   static error() {
@@ -77,21 +56,6 @@ export class RecoStore {
 
   static getQueryRestaurants() {
     return this.getState().restaurants;
-  }
-
-  handleGetReco(restaurantId) {
-    this.loading = true;
-    delete this.error;
-  }
-
-  handleGetRecoFailed(data) {
-    this.loading = false;
-    this.error = data.err;
-  }
-
-  handleGetRecoSuccess(reco) {
-    this.reco = reco;
-    this.loading = false;
   }
 }
 

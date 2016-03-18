@@ -8,18 +8,14 @@ class PriceMarker extends Component {
   };
 
   render() {
-    var backgroundColor = this.props.backgroundColor ? this.props.backgroundColor : '#EF582D';
+    var backgroundColor = this.props.backgroundColor ? this.props.backgroundColor : '#FE3139';
 
     return (
       <View style={styles.container}>
         <View style={[styles.bubble, {backgroundColor: backgroundColor, borderColor: backgroundColor}]}>
           <Text style={styles.budget}>{this.props.text}</Text>
         </View>
-        {Platform.OS === 'ios' ? [
-          <View style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
-        ] : [
-          <View style={[styles.rectangle, {backgroundColor: backgroundColor}]} />
-        ]}
+        <View key='triangle' style={[styles.triangle, {borderBottomColor: backgroundColor}]} />
       </View>
     );
   };

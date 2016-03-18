@@ -1,94 +1,95 @@
 'use strict';
 
-import React, {StyleSheet, Component, View, ProgressBarAndroid, Platform, ActivityIndicatorIOS} from 'react-native';
+import React, {ActivityIndicatorIOS, Component, Platform, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 
 import Text from '../../ui/Text';
 
 import Button from '../../elements/Button';
 
-import RecoStore from '../../../stores/Reco';
 import MeStore from '../../../stores/Me';
+import RecoStore from '../../../stores/Reco';
+import RestaurantsStore from '../../../stores/Restaurants';
 
 import RecoActions from '../../../actions/RecoActions';
 
 import Restaurant from '../Restaurant';
-import Liste from '../Liste';
 
 class RecoStepSave extends Component {
-  static route(title) {
+  static route(props) {
     return {
       component: RecoStepSave,
-      title: title
+      title: 'StepSave', 
+      passProps: props
     };
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      hasShared: MeStore.getState().me.HAS_SHARED
-    };
+    this.state = this.restaurantsState();
+  };
+
+  restaurantsState() {
+    return {
+      error: RestaurantsStore.error(),
+      loading: RestaurantsStore.loading()
+    }
   };
 
   goToRestaurant = () => {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.origin === 'foursquare' ? 0 : reco.restaurant.id;
-    this.props.navigator.resetTo(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
-  };
-
-  onRecoChange = () => {
-    if (RecoStore.getState().saved) {
-      if (!this.state.hasShared) {
-        return this.props.navigator.resetTo(Liste.route());
-      }
-      return this.goToRestaurant();
-    }
-
-    this.setState({error: RecoStore.error()});
+    setTimeout(() => {
+      this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: id, fromReco: true}, reco.restaurant.name));
+    }, 1000);
   };
 
   componentDidMount() {
-    RecoStore.listen(this.onRecoChange);
-    var reco = RecoStore.getReco();
-    RecoActions.saveReco(reco);
-  };
+    RestaurantsStore.listen(this.onRestaurantsChange);
+    this.addActivity();
+  }
 
   componentWillUnmount() {
-    RecoStore.unlisten(this.onRecoChange);
+    RestaurantsStore.unlisten(this.onRestaurantsChange);
+  }
+
+  onRestaurantsChange = () => {
+    this.setState(this.restaurantsState());
+  };
+
+  addActivity = () => {
+    var reco = RecoStore.getReco();
+    if (reco.type === 'recommendation') {
+      if (!reco.editing) {
+        RecoActions.addReco(reco, this.goToRestaurant);
+      } else {
+        RecoActions.updateRecommendation(reco, this.goToRestaurant);
+      }
+    } else {
+      RecoActions.addWish(reco.restaurant.id, reco.restaurant.origin, this.goToRestaurant);
+    }
   };
 
   render() {
     var content;
-
-    var reco = RecoStore.getReco();
-
     if (!this.state.error) {
-      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} style={[{height: 80}]} size="large" /> : <ProgressBarAndroid indeterminate />); 
+      content = (Platform.OS === 'ios' ? <ActivityIndicatorIOS animating={true} color='#FE3139' style={[{height: 80}]} size='large' /> : <ProgressBarAndroid indeterminate />); 
     }
 
-    if (this.state.error && this.state.error.notice) {
+    if (this.state.error) {
+      if (__DEV__) {
+        console.log(this.state.error);
+      }
       content = <View style={styles.errorBlock}>
-        <Text style={{color: 'white'}}>{this.state.err.notice}</Text>
+        <Text style={{color: '#555555', marginBottom: 15}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
-          label="Ok !"
-          onPress={this.goToRestaurant} />
-      </View>;
-    }
-
-    if (this.state.error && !this.state.error.notice) {
-      content = <View style={styles.errorBlock}>
-        <Text style={{color: 'white'}}>Erreur lors de l'enregistrement</Text>
-        <Button style={styles.errorButton}
-          label="Réessayer"
-          onPress={() => {
-            RecoActions.saveReco(reco);
-          }} />
+          label='Réessayer'
+          onPress={this.addActivity} />
       </View>;
     }
 
     return (
       <View style={styles.container}>
-        <Text style={{color: '#000000'}}>Merci d'avoir partagé!</Text>
         {content}
       </View>
     );

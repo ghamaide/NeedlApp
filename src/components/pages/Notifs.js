@@ -1,24 +1,26 @@
 'use strict';
 
-import React, {StyleSheet, View, Image, TouchableHighlight, ScrollView, ListView} from 'react-native';
+import React, {Dimensions, Image, ListView, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
+import MenuIcon from '../ui/MenuIcon';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
 
-import RestaurantElement from '../elements/Restaurant';
+import RestaurantHeader from '../elements/RestaurantHeader';
 
 import NotifsActions from '../../actions/NotifsActions';
 
-import NotifsStore from '../../stores/Notifs';
 import MeStore from '../../stores/Me';
+import NotifsStore from '../../stores/Notifs';
+import ProfilStore from '../../stores/Profil';
+import RestaurantsStore from '../../stores/Restaurants';
 
 import Restaurant from './Restaurant';
 import Profil from './Profil';
-import InviteFriend from './InviteFriend';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -30,90 +32,115 @@ class Notifs extends Page {
     };
   };
 
-  notifsState() {
+  constructor(props) {
+    super(props);
+    
+    this.state = this.notificationsState();
+    this.state.friendsActive = true;
+    this.state.followingsActive = false;
+  }
+
+  notificationsState() {
     return {
-      notifs: NotifsStore.getState().notifs,
+      friendsNotifications: NotifsStore.getFriendsNotifications(),
+      followingsNotifications: NotifsStore.getFollowingsNotifications(),
       loading: NotifsStore.loading(),
       error: NotifsStore.error()
     };
   };
 
-  constructor(props) {
-    super(props);
-    
-    this.state = this.notifsState();
-  }
-
   componentWillMount() {
-    NotifsStore.listen(this.onNotifsChange);
+    NotifsStore.listen(this.onNotificationsChange);
   }
 
   componentWillUnmount() {
-    NotifsStore.unlisten(this.onNotifsChange);
-    NotifsActions.notifsSeen();
+    NotifsStore.unlisten(this.onNotificationsChange);
+    NotifsActions.notificationsSeen();
   };
 
-  componentDidMount() {
-    NotifsActions.notifsSeen();
-  }
-
-  onNotifsChange = () => {
-    this.setState(this.notifsState());
+  onNotificationsChange = () => {
+    this.setState(this.notificationsState());
   };
 
   onRefresh() {
-    NotifsActions.notifsSeen();
-    NotifsActions.fetchNotifs();
+    NotifsActions.notificationsSeen();
+    NotifsActions.fetchNotifications();
+  };
+
+  onPressNotification = (from) => {
+    if (from === 'friends') {
+      this.setState({friendsActive: true});
+      this.setState({followingsActive: false});
+    }
+
+    if (from === 'followings') {
+      this.setState({followingsActive: true});
+      this.setState({friendsActive: false});
+    }
   };
 
   renderHeaderWrapper = (refreshingIndicator) => {
-    var nbPot = NotifsStore.getState().notifs.length;
+    if (this.state.friendsActive) {
+      var notificationNumber = this.state.friendsNotifications.length;
+    } else if (this.state.followingsActive) {
+      var notificationNumber = this.state.followingsNotifications.length;
+    }
 
-    if (nbPot) {
+    if (notificationNumber > 0) {
       return (
         <View>
           {refreshingIndicator}
         </View>
       );
+    } else {
+      return (
+        <View style={styles.emptyContainer}>
+          {refreshingIndicator}
+          <Text style={styles.emptyText}>Tu n'as pas encore de notification.</Text>
+          {this.state.friendsActive ? [
+            <Text key='invite_friends' style={styles.emptyText}>Invite tes amis sur Needl pour découvrir leur séléction de restaurants !</Text>
+          ] : [
+            <Text key='invite_experts' style={styles.emptyText}>Recherche tes influenceurs favoris sur Needl pour découvrir leur séléction de restaurants !</Text>
+          ]}
+        </View>
+      );
+    }
+  };
+
+  renderNotification = (notification) => {
+    var is_recommendation = false;
+    var textColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {color: '#FFFFFF'} : {color: '#3A325D'};
+    var blockColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {backgroundColor: '#FE3139'} : {backgroundColor: '#FFFFFF'};
+
+    var user = ProfilStore.getProfil(notification.user_id);
+    var restaurant = RestaurantsStore.getRestaurant(notification.restaurant_id);
+
+    if (notification.notification_type === 'recommendation') {
+      is_recommendation = true;
+      var recommendation = NotifsStore.getRecommendation(notification.restaurant_id, notification.user_id);
     }
 
     return (
-      <View style={styles.emptyContainer}>
-        {refreshingIndicator}
-        <View style={styles.textContainerWrapper}>
-          <TouchableHighlight style={styles.textContainer} underlayColor='#FFFFFF' onPress={() => this.props.navigator.push(InviteFriend.route())}>
-            <Text style={styles.emptyText}>Tu n'as pas d'amis sur Needl pour l'instant, invites en !</Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-    );
-  };
-
-  renderNotif = (notif) => {
-    var textColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {color: 'white'} : {color: '#333333'};
-    var blockColor = !NotifsStore.isSeen(notif.restaurant_id, notif.user_id) ? {backgroundColor: '#EF582D'} : {};
-
-    return (
       <View style={styles.notifRow}>
-        <RestaurantElement
-          name={notif.restaurant_name}
-          picture={notif.restaurant_picture}
-          type={notif.restaurant_food}
-          budget={notif.restaurant_price_range}
+        <RestaurantHeader
+          name={restaurant.name}
+          picture={restaurant.pictures[0]}
+          type={restaurant.food[1]}
+          budget={restaurant.price_range}
           height={180}
           onPress={() => {
-            this.props.navigator.push(Restaurant.route({id: notif.restaurant_id}, notif.restaurant_name));
+            this.props.navigator.push(Restaurant.route({id: notification.restaurant_id}, restaurant.name));
           }}/>
 
         <View style={[styles.notifInfos]}>
           <TouchableHighlight style={styles.friendImage} onPress={() => {
-            this.props.navigator.push(Profil.route({id: notif.user_id}, notif.user));
+            this.props.navigator.push(Profil.route({id: notification.user_id}, user.name));
           }}>
-            <Image source={{uri: notif.user_picture}} style={styles.friendImage} />
+            <Image source={{uri: user.picture}} style={styles.friendImage} />
           </TouchableHighlight>
           <View style={[styles.friendQuote, blockColor]}>
-            <Text style={[styles.friendQuoteText, textColor]}>{notif.review || 'Sur ma Wishlist !'}</Text>
-            <Text style={[styles.friendQuoteDate, textColor]}>{notif.user}, le {notif.date}</Text>
+            <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
+            <Text style={[styles.friendQuoteDate, textColor]}>{this.state.friendsActive ? user.name : user.fullname}, le {notification.formatted_date}</Text>
             <View style={[styles.triangle,  blockColor]} />
           </View>
         </View>
@@ -124,18 +151,37 @@ class Notifs extends Page {
   renderPage() {
     return (
       <View style={{flex: 1}}>
-        <NavigationBar title="Notifs" />
+        <NavigationBar type='default' title='Feed' />
+
+        <View key='switch_buttons' style={styles.notificationsButtonContainer}>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={[styles.notificationsButton, {backgroundColor: this.state.friendsActive ? '#FE3139' : 'transparent'}]}
+            onPress={() => this.onPressNotification('friends')}>
+            <Text style={{color: this.state.friendsActive ? '#FFFFFF' : '#FE3139'}}>Amis</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={[styles.notificationsButton, {backgroundColor: this.state.followingsActive ? '#FE3139' : 'transparent'}]}
+            onPress={() => this.onPressNotification('followings')}>
+            <Text style={{color: this.state.followingsActive ? '#FFFFFF' : '#FE3139'}}>Influenceurs</Text>
+          </TouchableHighlight>
+        </View>
+
         <RefreshableListView
-          key='notifs'
-          refreshDescription="Chargement..."
+          key='notifications'
+          refreshDescription='Chargement...'
           loadData={this.onRefresh}
           style={styles.notifsList}
-          dataSource={ds.cloneWithRows(this.state.notifs)}
-          renderRow={this.renderNotif}
+          dataSource={ds.cloneWithRows(this.state.friendsActive ? this.state.friendsNotifications : this.state.followingsNotifications)}
+          renderRow={this.renderNotification}
           contentInset={{top: 0}}
+          renderHeaderWrapper={this.renderHeaderWrapper}
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
+
+        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };
@@ -154,7 +200,7 @@ var styles = StyleSheet.create({
     position: 'relative',
   },
   notifInfos: {
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#EEEDF1',
     padding: 20,
     flexDirection: 'row'
   },
@@ -176,7 +222,7 @@ var styles = StyleSheet.create({
   friendQuoteDate: {
     marginTop: 5,
     fontSize: 12,
-    color: '#888888'
+    color: '#3A325D'
   },
   triangle: {
     height: 15,
@@ -189,40 +235,32 @@ var styles = StyleSheet.create({
       {rotate: '45deg'}
     ]
   },
+  notificationsButtonContainer: {
+    flexDirection: 'row',
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#FE3139',
+    borderRadius: 5
+  },
+  notificationsButton: {
+    flex: 1,
+    padding: 5,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 60,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF'
-  },
-  textContainerWrapper: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 10,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  textContainer: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderColor: '#EF582D',
-    borderWidth: 1,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    height: Dimensions.get('window').height - 170
   },
   emptyText: {
-    width: 175,
-    textAlign: 'center',
+    padding: 20,
     fontSize: 15,
-    color: '#EF582D',
+    textAlign: 'center',
+    fontWeight: '500',
+    color: '#FE3139'
   }
 });
 

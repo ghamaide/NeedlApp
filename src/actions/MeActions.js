@@ -1,6 +1,10 @@
 'use strict';
 
-import {Platform, NetInfo} from 'react-native';
+import {NetInfo, Platform} from 'react-native';
+
+import {FBLoginManager} from 'NativeModules';
+
+import qs from 'qs';
 
 import alt from '../alt';
 import request from '../utils/api';
@@ -9,26 +13,34 @@ import MeStore from '../stores/Me';
 
 export class MeActions {
 
-  edit(name, email, success) {
+  edit(infos, callback) {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/registrations/' + MeStore.getState().me.id + '/edit')
-        .query({
-          name: name,
-          email: email
-        })
-        .end((err) => {
+      request('PUT', '/api/v2/users/' + MeStore.getState().me.id)
+        .query(qs.stringify({
+          name: infos.name,
+          email: infos.email,
+          picture: infos.picture,
+          public: infos.is_public,
+          description: infos.description,
+          tags: infos.tags
+        }, {arrayFormat: 'brackets'}))
+        .end((err, result) => {
           if (err) {
             return this.editFailed(err);
           }
 
           this.editSuccess({
-            name: name,
-            email: email
+            name: infos.name,
+            email: infos.email,
+            picture: result.picture,
+            public: infos.is_public,
+            description: infos.description,
+            tags: infos.tags
           });
 
-          success();
+          callback();
         });
     }
   }
@@ -49,14 +61,13 @@ export class MeActions {
 
   saveDeviceToken(token) {
     return (dispatch) => {
-      request('POST', '/api/users/new_parse_installation.json')
+      request('POST', '/api/v2/users/new_parse_installation.json')
         .send({
           'device_type': Platform.OS,
           'device_token': token
         })
         .end((err) => {
           if (err) {
-            console.log(err);
           }
         });
     }
@@ -66,7 +77,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/users/contacts_access')
+      request('POST', '/api/v2/users/contacts_access')
         .send({
           'contact_list': data
         })
@@ -95,7 +106,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/users/invite_contact')
+      request('POST', '/api/v2/users/invite_contact')
         .send({
           'contact' : data
         })
@@ -117,15 +128,11 @@ export class MeActions {
     return id;
   }
 
-  displayTabBar(display) {
-    return display;
-  }
-
   startActions(version) {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/users/update_version')
+      request('GET', '/api/v2/users/update_version')
         .query({
           'platform': Platform.OS,
           'version' : version
@@ -135,7 +142,7 @@ export class MeActions {
             return this.startActionsFailed(err);
           }
 
-          request('GET', '/api/users/reset_badge_to_zero')
+          request('GET', '/api/v2/users/reset_badge_to_zero')
             .end((err2) => {
               if (err2) {
                 return this.startActionsFailed(err2);
@@ -155,11 +162,46 @@ export class MeActions {
     return err;
   }
 
-  showedCurrentPosition(showed) {
-    return showed;
+  linkFacebookAccount(callback) {
+    return (dispatch) => {
+      dispatch()
+      
+      FBLoginManager.loginWithPermissions(['email', 'user_friends'], (err, data) => {
+        if (err) {
+          return this.linkFacebookAccountFailed(err);
+        }
+
+        var token = (typeof data.credentials === 'undefined' ? data.token : data.credentials.token);
+
+        request('GET', '/users/auth/facebook_access_token/callback')
+          .query({
+            'access_token': token,
+            'link_to_facebook': 'true'
+          })
+          .end((err, result) => {
+            if (err) {
+              return this.linkFacebookAccountFailed(err);
+            }
+
+            if (callback) {
+              callback();
+            }
+
+            this.linkFacebookAccountSuccess(result);
+          });
+      });
+    }
   }
 
-  hideOverlayMapTutorial() {
+  linkFacebookAccountFailed(err) {
+    return err;
+  }
+
+  linkFacebookAccountSuccess(result) {
+    return result;
+  }
+
+  hideOverlayTutorial() {
     return function (dispatch) {
       dispatch()
     }
@@ -169,20 +211,6 @@ export class MeActions {
     return function (dispatch) {
       dispatch();
     }
-  }
-
-  checkConnectivity() {
-    return (dispatch) => {
-      dispatch();
-
-      NetInfo.isConnected.fetch().done((isConnected) => {
-        return this.checkConnectivitySuccess(isConnected);
-      });
-    }
-  }
-
-  checkConnectivitySuccess(isConnected) {
-    return isConnected;
   }
 }
 
