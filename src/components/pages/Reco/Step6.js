@@ -125,11 +125,11 @@ class RecoStep6 extends Component {
 
   inviteFriend = () => {
     if (Platform.OS === 'android') {
-      SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation');
+      SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl: http://download.needl-app.com/invitation');
       Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
     } else if (Platform.OS === 'ios') {
       NativeModules.RNMessageComposer.composeMessageWithArgs({
-        'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Tu as gagné un point d\'expertise sur Needl ! Tu peux venir le récupérer ici : http://download.needl-app.com/invitation',
+        'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl: http://download.needl-app.com/invitation',
       }, (result) => {
         switch(result) {
           case NativeModules.RNMessageComposer.Sent:
