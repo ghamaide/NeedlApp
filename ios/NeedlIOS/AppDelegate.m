@@ -12,6 +12,7 @@
 #import "RCTRootView.h"
 #import "RCTLinkingManager.h"
 #import "RCTUtils.h"
+#import "RCTPushNotificationManager.h"
 
 #import "Mixpanel.h"
 
@@ -21,8 +22,6 @@
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
-
-Class RCTPushNotificationManager = nil;
 
 @implementation AppDelegate
 
@@ -47,7 +46,7 @@ Class RCTPushNotificationManager = nil;
    * on the same Wi-Fi network.
    */
 
-//  jsCodeLocation = [NSURL URLWithString:@"http://10.19.248.216:8081/index.ios.bundle?platform=ios&dev=true"];
+//  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
 
   /**
    * OPTION 2
@@ -61,8 +60,6 @@ Class RCTPushNotificationManager = nil;
                                                       moduleName:@"NeedlIOS"
                                                initialProperties:nil
                                                    launchOptions:launchOptions];
-
-  RCTPushNotificationManager = NSClassFromString(@"RCTPushNotificationManager");
 
   // Get launch image
   NSString *launchImageName = nil;
@@ -129,32 +126,24 @@ Class RCTPushNotificationManager = nil;
 
 // Notifications
 
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+{
+  [RCTPushNotificationManager didRegisterUserNotificationSettings:notificationSettings];
+}
+
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-  }
+  [RCTPushNotificationManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
 {
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
-  }
+  [RCTPushNotificationManager didReceiveRemoteNotification:notification];
 }
 
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didRegisterUserNotificationSettings:notificationSettings];
-  }
-}
-
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
-  if(RCTPushNotificationManager){
-    [RCTPushNotificationManager application:application didFailToRegisterForRemoteNotificationsWithError:error];
-  }
+  [RCTPushNotificationManager didReceiveLocalNotification:notification];
 }
 
 // Branch deep-linking

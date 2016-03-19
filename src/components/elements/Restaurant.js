@@ -37,10 +37,30 @@ var windowWidth = Dimensions.get('window').width;
 class Restaurant extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      region: {
+        latitude: this.props.restaurant.latitude,
+        longitude: this.props.restaurant.longitude,
+        latitudeDelta: 0.02,
+        longitudeDelta: 0.02
+      }
+    };
   }
 
   componentWillMount() {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+  }
+
+  componentDidMount() {
+    console.log(this.props.restaurant.name);
+    var region = {
+      latitude: this.props.restaurant.latitude,
+      longitude: this.props.restaurant.longitude,
+      latitudeDelta: 0.02,
+      longitudeDelta: 0.02
+    };
+    this.setState({region: region});
   }
 
   getToggle (map, v, color) {
@@ -127,6 +147,10 @@ class Restaurant extends Component {
 
   onRefresh = () => {
     RestaurantsActions.fetchRestaurant(this.props.restaurant.id);
+  };
+
+  onRegionChangeComplete = (region) => {
+    this.setState({region: region});
   };
 
   render() {
@@ -367,13 +391,14 @@ class Restaurant extends Component {
         <MapView
           key='restaurant_map'
           ref='mapview'
-          style={styles.mapContainer} 
-          region={{
-            latitude: restaurant.latitude,
-            longitude: restaurant.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01
-          }}>
+          style={styles.mapContainer}
+          onRegionChangeComplete={this.onRegionChangeComplete}
+          region={this.state.region}>
+            <MapView.Polyline
+              coordinates={this.props.polylineCoords}
+              strokeWidth={5}
+              strokeColor='#FE3139'
+             />
             <MapView.Marker
               ref={restaurant.id}
               key={restaurant.id}
@@ -485,7 +510,7 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   mapContainer: {
-    height: 150
+    height: 250
   },
   lieuContainer: {
     backgroundColor: '#FFFFFF',
