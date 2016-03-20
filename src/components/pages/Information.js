@@ -40,6 +40,7 @@ class Information extends Component {
     var requests_received = ProfilStore.getRequestsReceived();
     var requests_sent = ProfilStore.getRequestsSent();
     var friends = ProfilStore.getFriends();
+    var followings = ProfilStore.getFollowings();
     var requests_sent_ids = _.map(requests_sent, (request) => {
       return request.id;
     });
@@ -49,19 +50,22 @@ class Information extends Component {
     var friends_ids = _.map(friends, (friend) => {
       return friend.id;
     });
+    var followings_ids = _.map(followings, (following) => {
+      return following.id;
+    });
 
     return {
       loading: FriendsStore.loading() || FollowingsStore.loading(),
       error: FriendsStore.error() || FollowingsStore.error(),
       origin: this.props.origin,
-      followings: ProfilStore.getFollowings(),
       information: {
         title: this.props.origin == 'users' ? 'Amis' : (this.props.origin == 'experts' ? 'Influenceurs' : 'Score'),
         data: this.props.origin == 'users' ? ProfilStore.getFriendsFromUser(this.props.id) : (this.props.origin == 'experts' ? ProfilStore.getFollowingsFromUser(this.props.id) : ProfilStore.getThanksFromUser(this.props.id)),
       },
       requests_received_ids: requests_received_ids,
-      friends_ids: friends_ids,
       requests_sent_ids: requests_sent_ids,
+      friends_ids: friends_ids,
+      followings_ids: followings_ids,
     }
   };
 
@@ -158,7 +162,7 @@ class Information extends Component {
               </View>
             </View>
           </TouchableHighlight>
-          {_.includes(this.state.followings, expert.id) ? [
+          {!_.includes(this.state.followings_ids, expert.id) ? [
             <TouchableHighlight key={'follow_expert_' + expert.id} style={styles.buttonWrapper} onPress={() => FollowingsActions.followExpert(expert.id)} underlayColor='rgba(0, 0, 0, 0)'>
               <Text style={styles.buttonText}>Suivre</Text>
             </TouchableHighlight>
