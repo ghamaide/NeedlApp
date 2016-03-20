@@ -52,17 +52,6 @@ class Restaurant extends Component {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
   }
 
-  componentDidMount() {
-    console.log(this.props.restaurant.name);
-    var region = {
-      latitude: this.props.restaurant.latitude,
-      longitude: this.props.restaurant.longitude,
-      latitudeDelta: 0.02,
-      longitudeDelta: 0.02
-    };
-    this.setState({region: region});
-  }
-
   getToggle (map, v, color) {
     if (v <= map.length && v != 0) {
       return <Toggle
@@ -149,12 +138,15 @@ class Restaurant extends Component {
     RestaurantsActions.fetchRestaurant(this.props.restaurant.id);
   };
 
-  onRegionChangeComplete = (region) => {
-    this.setState({region: region});
-  };
-
   render() {
     var restaurant = this.props.restaurant;
+
+    var region = {
+      latitude: restaurant.latitude,
+      longitude: restaurant.longitude,
+      latitudeDelta: 0.02,
+      longitudeDelta: 0.02
+    };
 
     return (
       <ScrollView
@@ -392,13 +384,14 @@ class Restaurant extends Component {
           key='restaurant_map'
           ref='mapview'
           style={styles.mapContainer}
-          onRegionChangeComplete={this.onRegionChangeComplete}
-          region={this.state.region}>
+          region={region}>
+            {/* Remove for line to destination
             <MapView.Polyline
               coordinates={this.props.polylineCoords}
               strokeWidth={5}
               strokeColor='#FE3139'
              />
+            */}
             <MapView.Marker
               ref={restaurant.id}
               key={restaurant.id}

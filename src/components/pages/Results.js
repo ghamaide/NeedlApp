@@ -3,7 +3,9 @@
 import React, {View} from 'react-native';
 
 import _ from 'lodash';
-import Polyline from 'polyline';
+
+// Uncomment for destination guide
+// import Polyline from 'polyline';
 
 import RestaurantElement from '../elements/Restaurant';
 
@@ -25,8 +27,10 @@ class Results extends Page {
     super(props);
 
     this.state = this.resultsState();
-    this.state.polylineCoords = [];
     this.state.rank = this.props.rank;
+
+    // Uncomment for destination guide
+    // this.state.polylineCoords = [];
   };
 
   resultsState() {
@@ -43,14 +47,14 @@ class Results extends Page {
 
   componentWillMount() {
     RestaurantsStore.listen(this.onRestaurantsChange);
-    //this.getDirections({latitude: 48.8, longitude: 2.34});
   };
 
-  componentDidMount() {
-    _.forEach(this.state.restaurants, (restaurant, key) => {
-      this.getDirections({latitude: 48.8, longitude: 2.34}, restaurant, key);
-    });
-  }
+  // Uncomment for destination guide
+  // componentDidMount() {
+  //   _.forEach(this.state.restaurants, (restaurant, key) => {
+  //     this.getDirections({latitude: 48.8, longitude: 2.34}, restaurant, key);
+  //   });
+  // }
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
@@ -62,51 +66,53 @@ class Results extends Page {
     }
   };
 
-  getDirections = (origin, restaurant, index) => {
-    console.log(origin);
-    var toCoords = {
-      latitude: restaurant.latitude,
-      longitude: restaurant.longitude,
-    };
+  // Uncomment for destination guide
+  // getDirections = (origin, restaurant, index) => {
+  //   console.log(origin);
+  //   var toCoords = {
+  //     latitude: restaurant.latitude,
+  //     longitude: restaurant.longitude,
+  //   };
 
-    var url = 'https://maps.googleapis.com/maps/api/directions/json?mode=walking&';
-        url += 'origin=' + origin.latitude + ',' + origin.longitude;
-        url += '&destination=' + toCoords.latitude + ',' + toCoords.longitude + '&key=AIzaSyC0gDzLFVYe_3PYk_MWuzQZ8P-kr18V7t8';
+  //   var url = 'https://maps.googleapis.com/maps/api/directions/json?mode=walking&';
+  //       url += 'origin=' + origin.latitude + ',' + origin.longitude;
+  //       url += '&destination=' + toCoords.latitude + ',' + toCoords.longitude + '&key=AIzaSyC0gDzLFVYe_3PYk_MWuzQZ8P-kr18V7t8';
 
-    return new Promise((resolve, reject) => {;
-      fetch(url)
-      .then((response) => {
-        return response.json();
-      }).then((json) => {
-        var polylineCoords = this.state.polylineCoords;
-        polylineCoords[index] = this.createRouteCoordinates(json);
-        this.setState({polylineCoords: polylineCoords});
-        resolve(json);
-      }).catch((err) => {
-        reject(err);
-      });
-    });
-  };
+  //   return new Promise((resolve, reject) => {;
+  //     fetch(url)
+  //     .then((response) => {
+  //       return response.json();
+  //     }).then((json) => {
+  //       var polylineCoords = this.state.polylineCoords;
+  //       polylineCoords[index] = this.createRouteCoordinates(json);
+  //       this.setState({polylineCoords: polylineCoords});
+  //       resolve(json);
+  //     }).catch((err) => {
+  //       reject(err);
+  //     });
+  //   });
+  // };
 
-  createRouteCoordinates = (data) => {
-    if (data.status !== 'OK') {
-      return [];
-    }
+  // Uncomment for destination guide
+  // createRouteCoordinates = (data) => {
+  //   if (data.status !== 'OK') {
+  //     return [];
+  //   }
 
-    let points = data.routes[0].overview_polyline.points;
-    let steps = Polyline.decode(points);
-    let polylineCoords = [];
+  //   let points = data.routes[0].overview_polyline.points;
+  //   let steps = Polyline.decode(points);
+  //   let polylineCoords = [];
 
-    for (let i=0; i < steps.length; i++) {
-      let tempLocation = {
-        latitude : steps[i][0],
-        longitude : steps[i][1]
-      }
-      polylineCoords.push(tempLocation);
-    }
+  //   for (let i=0; i < steps.length; i++) {
+  //     let tempLocation = {
+  //       latitude : steps[i][0],
+  //       longitude : steps[i][1]
+  //     }
+  //     polylineCoords.push(tempLocation);
+  //   }
 
-    return polylineCoords;
-  };
+  //   return polylineCoords;
+  // };
 
   renderPage() {
     var restaurant = this.state.restaurants[this.state.rank - 1];
@@ -129,10 +135,9 @@ class Results extends Page {
 
           <RestaurantElement
             restaurant={restaurant}
-            onRegionChangeComplete={this.onRegionChangeComplete}
-            polylineCoords={this.state.polylineCoords[this.state.rank - 1]}
             navigator={this.props.navigator}
             loading={this.state.loading}
+            //polylineCoords={this.state.polylineCoords[this.state.rank -s 1]}
             rank={_.findIndex(this.state.restaurants, restaurant) + 1} />
 
       </View>
