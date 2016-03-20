@@ -226,7 +226,7 @@ class Friends extends Page {
         ] : null */}
 
         {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? [
-          !this.state.facebook_loading || true ? [
+          !this.state.facebook_loading ? [
             <TouchableHighlight
               key='link_to_facebook'
               underlayColor='rgba(0, 0, 0, 0)'

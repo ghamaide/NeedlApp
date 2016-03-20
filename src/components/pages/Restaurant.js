@@ -4,6 +4,7 @@ import React, {View} from 'react-native';
 
 import _ from 'lodash';
 
+import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 
@@ -80,6 +81,9 @@ class Restaurant extends Page {
           loading={this.state.loading}
           already_recommended={this.state.already_recommended}
           already_wishlisted={this.state.already_wishlisted} />
+        {this.props.fromReco ? [
+          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
+        ] : null}
       </View>
     );
   };

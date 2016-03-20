@@ -174,7 +174,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
           
-          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
             <View key='public_recommendation' style={{paddingLeft: 10, paddingRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
               <Switch
                 onValueChange={(value) => this.setState({public_recommendation: value})}

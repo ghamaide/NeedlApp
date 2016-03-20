@@ -168,7 +168,7 @@ class EditMe extends Component {
             ref='email'
             onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
-          {can_be_public || true ? [
+          {can_be_public ? [
             <View key='public_informations' style={{flex: 1}}>
               <Text style={styles.label}>Description</Text>
               <TextInput

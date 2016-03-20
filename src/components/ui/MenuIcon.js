@@ -23,7 +23,7 @@ class MenuIcon extends Component {
 
     return (
       <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 18 : 2, left: 0, width: 40, height: 40}}>
-        <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
+        <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress} style={{padding: 10}}>
           <Image style={{width: 22, height: 22, tintColor: '#FE3139'}} source={require('../../assets/img/other/icons/list.png')} />
         </TouchableHighlight>
         
