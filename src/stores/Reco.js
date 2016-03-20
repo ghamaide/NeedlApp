@@ -18,6 +18,9 @@ export class RecoStore {
       handleFetchRestaurantsSuccess: RecoActions.FETCH_RESTAURANTS_SUCCESS,
       handleFetchRestaurantsFailed: RecoActions.FETCH_RESTAURANTS_FAILED,
 
+      handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
+      handleAddRecoSuccess: RecoActions.ADD_RECO_SUCCESS,
+
       handleSetReco: RecoActions.SET_RECO,
     });
   }
@@ -36,6 +39,14 @@ export class RecoStore {
   handleFetchRestaurantsFailed(err) {
     this.loading = false;
     this.error = err;
+  }
+
+  handleAddRecoSuccess(result) {
+    this.reco.restaurant.id = result.restaurant.id;
+  }
+
+  handleAddWishSuccess(result) {
+    this.reco.restaurant.id = result.restaurant.id;
   }
 
   handleSetReco(reco) {

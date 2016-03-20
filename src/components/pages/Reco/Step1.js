@@ -123,7 +123,7 @@ class RecoStep1 extends Component {
     }
 
     return (
-      <ScrollView scrollEnabled={false} keyboardShouldPersistTaps={true} style={styles.container}>
+      <View style={styles.container}>
         <NavigationBar type='default' title='Recommandation' />
       
         {Platform.OS === 'ios' ? [
@@ -148,7 +148,7 @@ class RecoStep1 extends Component {
         {content}
 
         <MenuIcon onPress={this.props.toggle} />
-      </ScrollView>
+      </View>
     );
   };
 
@@ -162,7 +162,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   restaurantsList: {
     flex: 1,

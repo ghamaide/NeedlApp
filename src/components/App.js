@@ -231,7 +231,6 @@ class App extends Component {
   };
 
   componentWillMount() {
-    this.onUpdate();
     MeStore.listen(this.onMeChange);
     NotifsStore.listen(this.onNotificationsChange);
     ProfilStore.listen(this.onProfileChange);
@@ -320,14 +319,6 @@ class App extends Component {
       DeviceEventEmitter.addListener('sysNotificationClick', this.onOpenNotificationAndroid);
 
       GcmAndroid.requestPermissions();
-    }
-  };
-
-
-  // Actions to add the new variables in local storage when user upgrades his version
-  onUpdate = () => {
-    if ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '2.1.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0')) {
-      RestaurantsActions.setFilter.defer('friends', []);
     }
   };
 

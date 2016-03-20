@@ -68,7 +68,6 @@ class Results extends Page {
 
   // Uncomment for destination guide
   // getDirections = (origin, restaurant, index) => {
-  //   console.log(origin);
   //   var toCoords = {
   //     latitude: restaurant.latitude,
   //     longitude: restaurant.longitude,

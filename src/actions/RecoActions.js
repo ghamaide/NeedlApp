@@ -153,11 +153,11 @@ export class RecoActions {
             return this.addWishFailed(err);
           }
 
-          if (callback) {
-            callback()
-          }
-
           this.addWishSuccess(result);
+
+          if (callback) {
+            callback();
+          }
         });
     }
   }

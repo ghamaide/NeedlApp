@@ -1,8 +1,10 @@
 'use strict';
 
-import React, {AppRegistry, Component} from 'react-native';
+import React, {AppRegistry, Component, Platform} from 'react-native';
 
 import _ from 'lodash';
+
+import RestaurantsActions from './src/actions/RestaurantsActions';
 
 import MeStore from './src/stores/Me';
 import ProfilStore from './src/stores/Profil';
@@ -31,6 +33,7 @@ class NeedlIOS extends Component {
   };
 
   componentWillMount() {
+    this.onUpdate();
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));
@@ -42,6 +45,14 @@ class NeedlIOS extends Component {
     ProfilStore.unlisten(this.onReadyChange.bind(this));
     RestaurantsStore.unlisten(this.onReadyChange.bind(this));
     FriendsStore.unlisten(this.onReadyChange.bind(this));
+  };
+
+  // Actions to add the new variables in local storage when user upgrades his version
+  onUpdate = () => {
+    if (_.isEmpty(MeStore.getState().me) || ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '3.0.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0'))) {
+      console.log('update');
+      RestaurantsActions.setFilter.defer('friends', []);
+    }
   };
 
   onReadyChange = () => {
