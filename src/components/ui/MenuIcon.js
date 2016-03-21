@@ -16,10 +16,11 @@ class MenuIcon extends Component {
   }
 
   render() {
-    var friends_requests = ProfilStore.getRequestsReceived().length;
-    var unseen_notifications = NotifsStore.nbUnseenNotifs();
-    var pastille = friends_requests + unseen_notifications;
-    var has_shared = MeStore.getState().me.HAS_SHARED;
+    var friendsRequests = ProfilStore.getRequestsReceived().length;
+    var unseenNotifications = NotifsStore.nbUnseenNotifs();
+    var newBadge = MeStore.hasNewBadge() ? 1 : 0;
+    var pastille = friendsRequests + unseenNotifications + newBadge;
+    var hasShared = MeStore.getState().me.HAS_SHARED;
 
     return (
       <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', top: Platform.OS === 'ios' ? 18 : 2, left: 0, width: 40, height: 40}}>
@@ -33,7 +34,7 @@ class MenuIcon extends Component {
           </View>
         : null}
 
-        {!has_shared && !pastille ?
+        {!hasShared && !pastille ?
           <View style={styles.pastilleContainer}>
             <Text style={styles.pastilleText}>!</Text>
           </View>

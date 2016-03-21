@@ -67,10 +67,7 @@ class Filtre extends Component {
   };
 
   resetFilters = () => {
-    RestaurantsActions.setFilter('prices', []);
-    RestaurantsActions.setFilter('occasions', []);
-    RestaurantsActions.setFilter('types', []);
-    RestaurantsActions.setFilter('friends', []);
+    RestaurantsActions.resetFilters();
     _.map(RestaurantsStore.MAP_PRICES, (price) => {
       this.refs.togglegroupprices.onUnselect(price.label);
     });
@@ -567,7 +564,7 @@ var styles = StyleSheet.create({
     top: 5,
     left: 25,
     backgroundColor: 'rgba(0, 0, 0, 0.8)'
-  },
+  }
 });
 
 export default Filtre;

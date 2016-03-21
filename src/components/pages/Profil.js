@@ -61,7 +61,7 @@ class Profil extends Page {
       loading: ProfilStore.loading(),
       followingsLoading: FollowingsStore.loading(),
       friendsLoading: FriendsStore.loading(),
-      error: ProfilStore.error(),
+      hasNewBadge: MeStore.hasNewBadge()
     };
   };
 
@@ -77,11 +77,13 @@ class Profil extends Page {
 
   componentWillMount() {
     FollowingsStore.listen(this.onProfilsChange);
+    MeStore.listen(this.onProfilsChange);
     ProfilStore.listen(this.onProfilsChange);
   };
 
   componentWillUnmount() {
     FollowingsStore.unlisten(this.onProfilsChange);
+    MeStore.unlisten(this.onProfilsChange);
     ProfilStore.unlisten(this.onProfilsChange);
   };
 
@@ -189,6 +191,22 @@ class Profil extends Page {
                 colors={['#FFFFFF']}
                 progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
             }>
+
+            {/* Show notification if badge updated */}
+            {MeStore.getState().me.id === profil.id && this.state.hasNewBadge ? [
+              <View key='new_badge_container' style={styles.newBadgeContainer}>
+                <Text style={{fontWeight: '400', color: '#FFFFFF', textAlign: 'center', fontSize: 12}}>Félicitations, tu as débloqué un nouveau badge : '{profil.badge.name}'</Text>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={styles.newBadgeButton}
+                  onPress={() => {
+                    MeActions.hideNewBadge();
+                    this.forceUpdate();
+                  }}>
+                  <Text style={{color: '#FE3139', textAlign: 'center', fontSize: 11}}>Masquer</Text>
+                </TouchableHighlight>
+              </View>
+            ] : null}
 
             <View style={styles.infoContainer}>
               <View style={styles.infoInnerContainer}>
@@ -698,6 +716,27 @@ var styles = StyleSheet.create({
   confirmationText: {
     textAlign: 'center',
     margin: 10,
+  },
+  newBadgeContainer: {
+    flex: 1,
+    backgroundColor: '#FE3139',
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 20,
+    paddingBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  newBadgeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5
   }
 });
 

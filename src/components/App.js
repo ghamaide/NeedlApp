@@ -65,6 +65,7 @@ class App extends Component {
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
       showOverlayTutorial: MeStore.showOverlayTutorial(),
+      hasNewBadge: MeStore.hasNewBadge()
     });
   };
 
@@ -132,13 +133,6 @@ class App extends Component {
         break;
     }
     return notificationTab;
-  };
-
-  onAppStateChange = (state) => {
-    // Remove to update app when users goes back on it
-    // if (state === 'active') {
-    //   this.startActions();
-    // }
   };
 
   onQuickActionShortcut = (data) => {
@@ -236,8 +230,6 @@ class App extends Component {
     ProfilStore.listen(this.onProfileChange);
     RestaurantsStore.listen(this.onRestaurantsChange);
 
-    AppState.addEventListener('change', this.onAppStateChange);
-
     if (Platform.OS === 'ios') {
       PushNotificationIOS.requestPermissions();
       PushNotificationIOS.addEventListener('register', this.onDeviceToken);
@@ -282,8 +274,6 @@ class App extends Component {
     ProfilStore.unlisten(this.onProfileChange);
     RestaurantsStore.unlisten(this.onRestaurantsChange);
 
-    AppState.removeEventListener('change', this.onAppStateChange);
-    
     Linking.removeEventListener('url', this.handleOpenURL);
 
     if (Platform.OS === 'ios') {

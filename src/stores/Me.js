@@ -23,7 +23,7 @@ export class MeStore extends CachedStore {
     this.showedUpdateMessage = true;
     this.dismissedUpdateMessage = false;
 
-    this.showTabBar = true;
+    this.hasNewBadge = false;
 
     this.version = 0;
 
@@ -79,9 +79,12 @@ export class MeStore extends CachedStore {
       handleLogout: LoginActions.LOGOUT,
 
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
-      handleHideOverlayTutorial: MeActions.HIDE_OVERLAY_TUTORIAL,
-      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE
 
+      handleHideOverlayTutorial: MeActions.HIDE_OVERLAY_TUTORIAL,
+
+      handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
+
+      handleHideNewBadge: MeActions.HIDE_NEW_BADGE
     });
   }
 
@@ -170,26 +173,28 @@ export class MeStore extends CachedStore {
       this.me.platform = profil.platform;
       var oldScore = this.me.score || 0;
       this.me.score = profil.score;
-      if (oldScore < 1) {
-        this.displayUpgradeMessage = profil.score >= 1;
-      } else if (oldScore >= 1 && oldScore < 3) {
-        this.displayUpgradeMessage = profil.score >= 3;
-      } else if (oldScore >= 3 && oldScore < 5) {
-        this.displayUpgradeMessage = profil.score >= 5;
-      } else if (oldScore >= 5 && oldScore < 10) {
-        this.displayUpgradeMessage = profil.score >= 10;
-      } else if (oldScore >= 10 && oldScore < 30) {
-        this.displayUpgradeMessage = profil.score >= 30;
-      } else if (oldScore >= 30 && oldScore < 60) {
-        this.displayUpgradeMessage = profil.score >= 60;
-      } else if (oldScore >= 60 && oldScore < 100) {
-        this.displayUpgradeMessage = profil.score >= 100;
-      } else if (oldScore >= 100 && oldScore < 200) {
-        this.displayUpgradeMessage = profil.score >= 200;
-      } else if (oldScore >= 200 && oldScore < 500) {
-        this.displayUpgradeMessage = profil.score >= 500;
-      } else if (oldScore >= 500) {
-        this.displayUpgradeMessage = false;
+      if (!this.hasNewBadge) {
+        if (oldScore < 1) {
+          this.hasNewBadge = profil.score >= 1;
+        } else if (oldScore >= 1 && oldScore < 3) {
+          this.hasNewBadge = profil.score >= 3;
+        } else if (oldScore >= 3 && oldScore < 5) {
+          this.hasNewBadge = profil.score >= 5;
+        } else if (oldScore >= 5 && oldScore < 10) {
+          this.hasNewBadge = profil.score >= 10;
+        } else if (oldScore >= 10 && oldScore < 30) {
+          this.hasNewBadge = profil.score >= 30;
+        } else if (oldScore >= 30 && oldScore < 60) {
+          this.hasNewBadge = profil.score >= 60;
+        } else if (oldScore >= 60 && oldScore < 100) {
+          this.hasNewBadge = profil.score >= 100;
+        } else if (oldScore >= 100 && oldScore < 200) {
+          this.hasNewBadge = profil.score >= 200;
+        } else if (oldScore >= 200 && oldScore < 500) {
+          this.hasNewBadge = profil.score >= 500;
+        } else if (oldScore >= 500) {
+          this.hasNewBadge = false;
+        }
       }
     }
   }
@@ -298,6 +303,10 @@ export class MeStore extends CachedStore {
     this.showOverlayTutorial = false;
   }
 
+  handleHideNewBadge() {
+    this.hasNewBadge = false;
+  }
+
   static getMe() {
     return this.getState().me;
   }
@@ -320,6 +329,10 @@ export class MeStore extends CachedStore {
 
   static showOverlayTutorial() {
     return this.getState().showOverlayTutorial;
+  }
+
+  static hasNewBadge() {
+    return this.getState().hasNewBadge;
   }
 }
 

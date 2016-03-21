@@ -14,7 +14,7 @@ var api = (method, URL) => {
   var r = request(method, config.API + URL);
 
   // ==> timeout error after 5s
-  r.timeout(15000);
+  r.timeout(60000);
 
   if (MeStore.getState().me.authentication_token) {
     r.query({

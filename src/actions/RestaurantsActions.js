@@ -54,6 +54,12 @@ export class RestaurantsActions {
     return {label: label, ids: ids};
   }
 
+  resetFilters() {
+    return function (dispatch) {
+      dispatch();
+    } 
+  }
+
   setRegion(region) {
     return region;
   }

@@ -91,6 +91,7 @@ export class RestaurantsStore extends CachedStore {
       handleRemoveRecoSuccess: RecoActions.REMOVE_RECO_SUCCESS,
 
       handleSetFilter: RestaurantsActions.SET_FILTER,
+      handleResetFilters: RestaurantsActions.RESET_FILTERS,
 
       handleSetDisplayPersonal: RestaurantsActions.SET_DISPLAY_PERSONAL
     });
@@ -245,7 +246,7 @@ export class RestaurantsStore extends CachedStore {
 
   handleFollowExpertSuccess(result) {
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(this.restaurants, (restaurant_local) => {return restaurant_local.id == restaurant.id});
+      var index = _.findIndex(this.restaurants, (localRestaurant) => {return localRestaurant.id == restaurant.id});
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
       } else {
@@ -257,7 +258,7 @@ export class RestaurantsStore extends CachedStore {
   handleUnfollowExpertSuccess(result) {
     // Update each restaurant
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(this.restaurants, (restaurant_local) => {return restaurant_local.id == restaurant.id});
+      var index = _.findIndex(this.restaurants, (localRestaurant) => {return localRestaurant.id == restaurant.id});
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
       } else {
@@ -372,6 +373,18 @@ export class RestaurantsStore extends CachedStore {
     var newFilters = _.clone(this.filters);
     newFilters[data.label] = data.ids;
     this.filters = newFilters;
+  }
+
+  handleResetFilters() {
+    this.status.loading = true;
+    this.filters = {
+      prices: [],
+      types: [],
+      ambiences: [],
+      occasions: [],
+      friends: []
+    };
+    this.status.loading = false;
   }
 
   handleSetDisplayPersonal(display) {
@@ -501,7 +514,8 @@ export class RestaurantsStore extends CachedStore {
       return false;
     }
 
-    var visible_friends_recommending = _.filter(restaurant.my_friends_recommending, function(friend) {
+    var visible_friends_recommending = _.filter(restaurant.my_friends_recommending, function(friendId) {
+      var friend = ProfilStore.getProfil(friendId);
       return !friend.invisible;
     });
 

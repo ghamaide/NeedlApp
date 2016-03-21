@@ -29,6 +29,9 @@ class Menu extends Component {
       case 3 :
         pastille = NotifsStore.nbUnseenNotifs();
         break;
+      case 4 :
+        pastille = MeStore.hasNewBadge() ? 1 : 0
+        break;
       default :
         break;
     }
@@ -46,6 +49,7 @@ class Menu extends Component {
             <Text style={styles.itemText}>{name}</Text>
           </View>
         </TouchableWithoutFeedback>
+
         {pastille ?
           <View style={styles.pastilleContainer}>
             <Text style={styles.pastilleText}>{pastille < 10 ? pastille : '9+'}</Text>

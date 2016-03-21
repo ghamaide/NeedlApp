@@ -212,6 +212,12 @@ export class MeActions {
       dispatch();
     }
   }
+
+  hideNewBadge() {
+    return function (dispatch) {
+      dispatch();
+    }
+  }
 }
 
 export default alt.createActions(MeActions);

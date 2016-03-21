@@ -49,8 +49,8 @@ class NeedlIOS extends Component {
 
   // Actions to add the new variables in local storage when user upgrades his version
   onUpdate = () => {
+    // If not logged in or logged in and below current version
     if (_.isEmpty(MeStore.getState().me) || ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '3.0.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0'))) {
-      console.log('update');
       RestaurantsActions.setFilter.defer('friends', []);
     }
   };
@@ -63,10 +63,6 @@ class NeedlIOS extends Component {
     if (!this.state.ready) {
       return null;
     }
-
-    // if (!this.state.isConnected) {
-    //   return <Connection />
-    // }
 
     if (!this.state.loggedIn) {
       return <Login />;
