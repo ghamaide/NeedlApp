@@ -45,12 +45,7 @@ class Restaurant extends Page {
       eastLongitude: 2.42
     };
 
-    // Initial position
-    this.state.position = {
-      latitude: this.state.paris.centerLatitude,
-      longitude: this.state.paris.centerLongitude
-    };
-
+    // Initially, we assume the user is not in Paris
     this.state.isInParis = false;
   };
 
