@@ -33,7 +33,7 @@ class TabView extends Component {
         lastPress: new Date().getTime()
       });
       return true;
-    } else if (pressedOnce) {
+    } else if (this.state.pressedOnce) {
       return false;
     } else {
       this.setState({
