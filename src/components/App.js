@@ -220,8 +220,8 @@ class App extends Component {
     ProfilActions.fetchFriends.defer();
     ProfilActions.fetchFollowings.defer();
     ProfilActions.fetchAllExperts.defer();
-    RestaurantsActions.fetchRestaurants.defer();
     NotifsActions.fetchNotifications.defer();
+    RestaurantsActions.fetchRestaurants.defer();
   };
 
   componentWillMount() {

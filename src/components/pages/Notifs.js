@@ -150,21 +150,7 @@ class Notifs extends Page {
 
   renderPage() {
     return (
-      <ScrollView
-        contentInset={{top: 0}}
-        automaticallyAdjustContentInsets={false}
-        showsVerticalScrollIndicator={false}
-        onScroll={this.onScroll}
-        scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.loading}
-            onRefresh={this.onRefresh}
-            tintColor='#FE3139'
-            title='Chargement...'
-            colors={['#FFFFFF']}
-            progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
-        }>
+      <View style={{flex: 1}}>
         <NavigationBar type='default' title='Feed' />
 
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
@@ -196,7 +182,7 @@ class Notifs extends Page {
           showsVerticalScrollIndicator={false} />
 
         <MenuIcon onPress={this.props.toggle} />
-      </ScrollView>
+      </View>
     );
   };
 }

@@ -46,6 +46,7 @@ class Restaurant extends Component {
         longitudeDelta: 0.02
       }
     };
+    this.state.polylineCoords = this.props.polylineCoords;
   }
 
   componentWillMount() {
@@ -147,6 +148,8 @@ class Restaurant extends Component {
       latitudeDelta: 0.02,
       longitudeDelta: 0.02
     };
+
+    var polylineCoords = this.props.polylineCoords;
 
     return (
       <ScrollView
@@ -384,14 +387,17 @@ class Restaurant extends Component {
           key='restaurant_map'
           ref='mapview'
           style={styles.mapContainer}
+          showsUserLocation={this.props.isInParis}
           region={region}>
-            {/* Remove for line to destination
-            <MapView.Polyline
-              coordinates={this.props.polylineCoords}
-              strokeWidth={5}
-              strokeColor='#FE3139'
-             />
-            */}
+            {/* Remove for line to destination */}
+            {this.props.isInParis ? [
+              <MapView.Polyline
+                key='direction'
+                coordinates={polylineCoords}
+                strokeWidth={5}
+                strokeColor='#FE3139'
+               />
+            ] : null}
             <MapView.Marker
               ref={restaurant.id}
               key={restaurant.id}

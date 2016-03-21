@@ -19,7 +19,6 @@ import MeStore from '../../stores/Me';
 import RestaurantsStore from '../../stores/Restaurants';
 
 import Restaurant from './Restaurant';
-import Results from './Results';
 import Filtre from './Filtre';
 
 var windowWidth = Dimensions.get('window').width;
@@ -237,7 +236,7 @@ class Carte extends Page {
             style={styles.submitButton}
             onPress={() => {
               if (this.state.restaurants.length > 0) {
-                this.props.navigator.push(Results.route({rank: 1}))
+                this.props.navigator.push(Restaurant.route({rank: 1}))
               } else {
                 this.setState({error_overlay: true, message1: 'Aucun restaurant ne correspond à tes critères dans la zone recherchée.', message2: 'Essaie de chercher avec d\'autres critères ou dans une autre zone.'});
               }

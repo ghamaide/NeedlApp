@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, StyleSheet, ScrollView, TouchableHighlight, View} from 'react-native';
+import React, {Animated, Component, Dimensions, Easing, Image, StyleSheet, ScrollView, TouchableHighlight, View} from 'react-native';
 
 import ToggleGroup from './Reco/ToggleGroup';
 
@@ -15,7 +15,7 @@ import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
-import Results from './Results';
+import Restaurant from './Restaurant';
 
 var windowWidth = Dimensions.get('window').width;
 
@@ -36,6 +36,7 @@ class Filtre extends Component {
     this.state.showOverlayAmbiences = false;
     this.state.showOverlayOccasions = false;
     this.state.showOverlayTypes = false;
+    this.state.bounceValue = [new Animated.Value(1), new Animated.Value(1), new Animated.Value(1), new Animated.Value(1)];
   }
 
   componentWillMount() {
@@ -70,9 +71,6 @@ class Filtre extends Component {
 
   resetFilters = () => {
     RestaurantsActions.resetFilters();
-    _.map(RestaurantsStore.MAP_PRICES, (price) => {
-      this.refs.togglegroupprices.onUnselect(price.label);
-    });
   };
 
   render() {
@@ -92,36 +90,46 @@ class Filtre extends Component {
         <NavigationBar type='back' title='Filtres' rightButtonTitle='Réinitialiser' onRightButtonPress={this.resetFilters} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <ScrollView key='filter_scrollview' style={styles.container}>
 
-          <ToggleGroup
-            ref='togglegroupprices'
-            key='price_filter_togglegroup'
-            maxSelection={4}
-            fifo={true}
-            selectedInitial={this.state.prices_filter}
-            onSelect={(v, selected) => {
-              this.setState({prices_filter: selected});
-              RestaurantsActions.setFilter('prices', this.state.prices_filter);
-            }}
-            onUnselect={(v, selected) => {
-              this.setState({prices_filter: selected});
-              RestaurantsActions.setFilter('prices', this.state.prices_filter);
-            }}>
-            {(Toggle) => {
-              return (
-                <View style={{flex: 1, alignItems: 'center'}}>
-                  <Text style={styles.filtreTitle}>Prix</Text>
-                  <View style={styles.pastilleWrapper}>
-                    <View style={styles.pastilleContainer}>
-                      {_.map(this.state.prices_available_with_exception, (id) => {
-                        var price = RestaurantsStore.MAP_PRICES[id - 1];
-                        return <Toggle key={price.label} size={40} width={70} fontSize={12} backgroundColor={backgroundColor} backgroundColorActive={backgroundColor} tintColor={'#C1BFCC'} tintColorActive={'#FE3139'} labelColor={'#C1BFCC'} labelColorActive={'#FE3139'} style={styles.pastille} icon={price.icon} value={price.label} />
-                      })}
-                    </View>
-                  </View>
-                </View>
-              );
-            }}
-          </ToggleGroup>
+
+          <View style={{flex: 1, alignItems: 'center'}}>
+            <Text style={styles.filtreTitle}>Prix</Text>
+            <View style={styles.priceWrapper}>
+              {_.map(this.state.prices_available_with_exception, (id) => {
+                var price = RestaurantsStore.MAP_PRICES[id - 1];
+                var active = _.includes(this.state.prices_filter, id);
+
+                return (
+                  <TouchableHighlight
+                    key={price.label}
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.priceButton}
+                    onPress={() => {
+                      var prices = this.state.prices_filter;
+                      Animated.sequence([
+                        Animated.timing(this.state.bounceValue[id - 1], {
+                          toValue: 1.2,
+                          easing: Easing.ease,
+                          duration: 200
+                        }),
+                        Animated.timing(this.state.bounceValue[id - 1], {
+                          toValue: 1,
+                          easing: Easing.ease,
+                          duration: 200
+                        })
+                      ]).start();
+                      if (!active) {
+                        this.setState({prices_filter: _.concat(prices, id)});
+                      } else {
+                        this.setState({prices_filter: _.filter(prices, (price) => {return price !== id})});
+                      }
+                      RestaurantsActions.setFilter('prices', this.state.prices_filter);
+                    }}>
+                    <Animated.Image style={{transform: [{scale: this.state.bounceValue[id - 1]}], height: 18, width: 18 * id, tintColor: active ? '#FE3139' : '#C1BFCC'}} resizeMode='contain' source={price.icon} />
+                  </TouchableHighlight>
+                );
+              })}
+            </View>
+          </View>
 
           {!_.isEmpty(this.state.occasions_available_with_exception) || !_.isEmpty(this.state.occasions_filter) ? [
             <View key='occasions_filter' style={{flex: 1, alignItems: 'center'}}>
@@ -224,7 +232,7 @@ class Filtre extends Component {
             underlayColor='rgba(0, 0, 0, 0)'
             style={styles.submitButton}
             onPress={() => {
-              this.props.navigator.replace(Results.route({rank: 1}));
+              this.props.navigator.replace(Restaurant.route({rank: 1}));
             }}>
             <Text style={styles.submitText}>Valider</Text>
           </TouchableHighlight>
@@ -457,6 +465,20 @@ var styles = StyleSheet.create({
     padding: 2,
     backgroundColor: '#FFFFFF',
   },
+  priceWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 10,
+    marginBottom: 20,
+    padding: 2,
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    width: windowWidth - 40,
+    height: 50
+  },
   pastilleWrapperOverlay: {
     flex: 1,
     alignItems: 'center',
@@ -474,6 +496,11 @@ var styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 70,
     backgroundColor: 'transparent',
+  },
+  priceButton: {
+    width: 70,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   pastilleContainer: {
     flex: 1,
