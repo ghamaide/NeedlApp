@@ -122,7 +122,7 @@ export class NotifsStore extends CachedStore {
   handleAcceptFriendshipSuccess(result) {
     var friend_activities = _.map(result.activities, (activity) => {
       var temp_date = moment(activity.date);
-      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
+      var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
       activity.formatted_date = formatted_date;
       activity.seen = true;
     });
@@ -135,14 +135,14 @@ export class NotifsStore extends CachedStore {
   }
 
   handleMaskProfilSuccess(result) {
-    var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
+    var friend_id = ProfilStore.getFriendFromFriendship(result.friendshipId).id;
     _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 
   handleDisplayProfilSuccess(result) {
     _.forEach(result.notifications, (notification) => {
       var temp_date = moment(notification.date);
-      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
+      var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
       this.friendsNotifications.push(_.extend(notification, {formatted_date: formatted_date, seen: true}));
     })
   }
@@ -150,7 +150,7 @@ export class NotifsStore extends CachedStore {
   handleFollowExpertSuccess(result) {
     _.forEach(result.activities, (activity) => {
       var temp_date = moment(activity.date);
-      var formatted_date = this.formatDate(temp_date.day(), temp_date.month(), temp_date.year());
+      var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
       this.followingsNotifications.push(_.extend(activity, {formatted_date: formatted_date, seen: true}));
     })
   }

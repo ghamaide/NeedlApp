@@ -71,6 +71,8 @@ class Carte extends Page {
 
     // Overlay in case no restaurants with criteria are found. Defauts to false.
     this.state.error_overlay = false;
+    this.state.message1 = '';
+    this.state.message2 = '';
   };
 
   // State update with every store update
@@ -207,7 +209,13 @@ class Carte extends Page {
           title='Carte'
           rightImage={require('../../assets/img/actions/icons/filter.png')}
           rightButtonTitle="mes envies" 
-          onRightButtonPress={() => this.props.navigator.push(Filtre.route())} />
+          onRightButtonPress={() => {
+            if (!RestaurantsStore.filterActive() && this.state.restaurants.length == 0) {
+              this.setState({error_overlay: true, message1: 'Tu n\'as ucun restaurant dans cette zone.', message2: 'Essaie de changer d\'endroit'});
+            } else {
+              this.props.navigator.push(Filtre.route())
+            }
+          }} />
 
         <View style={{flex: 1, position: 'relative'}}>
           <MapView
@@ -231,7 +239,7 @@ class Carte extends Page {
               if (this.state.restaurants.length > 0) {
                 this.props.navigator.push(Results.route({rank: 1}))
               } else {
-                this.setState({error_overlay: true});
+                this.setState({error_overlay: true, message1: 'Aucun restaurant ne correspond à tes critères dans la zone recherchée.', message2: 'Essaie de chercher avec d\'autres critères ou dans une autre zone.'});
               }
             }}>
             <Text style={styles.submitText}>Lancer ma recherche !</Text>
@@ -243,9 +251,14 @@ class Carte extends Page {
         {this.state.error_overlay ? [
           <Overlay key='error_overlay' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', alignItems: 'center', justifyContent: 'center'}}>
             <View style={styles.errorContainer}>
-              <Text style={styles.errorMessage}>Aucun restaurant ne correspond à tes critères dans la zone recherchée.</Text>
-              <Text style={styles.errorMessage}>Essaie de chercher avec d'autres critères ou dans une autre zone.</Text>
-              <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.setState({error_overlay: false})} style={styles.closeButton}>
+              <Text style={styles.errorMessage}>{this.state.message1}</Text>
+              <Text style={styles.errorMessage}>{this.state.message2}</Text>
+              <TouchableHighlight 
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={styles.closeButton}
+                onPress={() => {
+                  this.setState({error_overlay: false});
+                }}>
                 <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize: 12}}>Fermer</Text>
               </TouchableHighlight>
             </View>

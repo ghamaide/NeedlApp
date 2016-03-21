@@ -106,18 +106,18 @@ export class FriendsActions {
     return err;
   }
 
-  maskProfil(friendship_id) {
+  maskProfil(friendshipId) {
     return (dispatch) => {
       dispatch();
 
       request('POST', '/api/v2/friendships/make_invisible')
-        .query({id: friendship_id})
-        .end((err, result) => {s
+        .query({id: friendshipId})
+        .end((err, result) => {
           if (err) {
             return this.maskProfilFailed(err);
           }
 
-          this.maskProfilSuccess({friendship_id: friendship_id, restaurants: result.restaurants});
+          this.maskProfilSuccess({friendshipId: friendshipId, restaurants: result.restaurants});
         });
     }
   }
@@ -130,18 +130,18 @@ export class FriendsActions {
     return err;
   }
 
-  displayProfil(friendship_id) {
+  displayProfil(friendshipId) {
     return (dispatch) => {
       dispatch();
 
       request('POST', '/api/v2/friendships/make_visible')
-        .query({id: friendship_id})
+        .query({id: friendshipId})
         .end((err, result) => {
           if (err) {
             return this.displayProfilFailed(err);
           }
 
-          this.displayProfilSuccess({friendship_id: friendship_id, restaurants: result.restaurants});
+          this.displayProfilSuccess({friendshipId: friendshipId, restaurants: result.restaurants, notifications: result.activities});
         });
     }
   }

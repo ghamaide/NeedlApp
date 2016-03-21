@@ -15,6 +15,8 @@ import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
+import Results from './Results';
+
 var windowWidth = Dimensions.get('window').width;
 
 class Filtre extends Component {
@@ -218,7 +220,12 @@ class Filtre extends Component {
             </View>
           ] : null}
 
-          <TouchableHighlight onPress={() => this.props.navigator.pop()} underlayColor='rgba(0, 0, 0, 0)' style={styles.submitButton}>
+          <TouchableHighlight 
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={styles.submitButton}
+            onPress={() => {
+              this.props.navigator.replace(Results.route({rank: 1}));
+            }}>
             <Text style={styles.submitText}>Valider</Text>
           </TouchableHighlight>
         </ScrollView>

@@ -213,9 +213,21 @@ export class RestaurantsStore extends CachedStore {
     });
   }
 
-  handleMaskProfilSuccess(id) {
+  handleMaskProfilSuccess(result) {
+    var friend = ProfilStore.getFriendFromFriendship(result.friendshipId);
+
+    // Update all restaurants where score changed
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(this.restaurants, (localRestaurant) => {return localRestaurant.id == restaurant.id});
+      if (index > -1) {
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+      } else {
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+      }
+    });
+
     // Mask all the restaurants where friend was only recommender or wisher
-    _.map(this.restaurants, (restaurant) => {
+    _.forEach(this.restaurants, (restaurant) => {
       var nb = 0;
 
       if (restaurant.my_friends_recommending) {
@@ -229,22 +241,35 @@ export class RestaurantsStore extends CachedStore {
         return;
       }
 
-      if (_.isEqual(restaurant.my_friends_recommending, [id]) || _.isEqual(restaurant.my_friends_wishing, [id])) {
+      if (_.isEqual(restaurant.my_friends_recommending, [friend.id]) || _.isEqual(restaurant.my_friends_wishing, [friend.id])) {
         restaurant.ON_MAP = false;
       }
     });
   }
 
-  handleDisplayProfilSuccess(id) {
+  handleDisplayProfilSuccess(result) {
+    var friend = ProfilStore.getFriendFromFriendship(result.friendshipId);
+
+    // Update all restaurants where score changed
+    _.forEach(result.restaurants, (restaurant) => {
+      var index = _.findIndex(this.restaurants, (localRestaurant) => {return localRestaurant.id == restaurant.id});
+      if (index > -1) {
+        this.restaurants[index] = _.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)});
+      } else {
+        this.restaurants.push(_.extend(restaurant, {ON_MAP: true, subways: this.parseSubways(restaurant.subways)}));
+      }
+    });
+
     // Display all the restaurants where friend was recommender or wisher and restaurant wasn't on map
-    _.map(this.restaurants, (restaurant) => {
-      if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, id) || _.includes(restaurant.my_friends_recommending, id)) {
+    _.forEach(this.restaurants, (restaurant) => {
+      if (restaurant.ON_MAP = false && _.includes(restaurant.my_friends_wishing, friend.id) || _.includes(restaurant.my_friends_recommending, friend.id)) {
         restaurant.ON_MAP = true;
       }
     });
   }
 
   handleFollowExpertSuccess(result) {
+    // Add or update every restaurant the expert recommended
     _.forEach(result.restaurants, (restaurant) => {
       var index = _.findIndex(this.restaurants, (localRestaurant) => {return localRestaurant.id == restaurant.id});
       if (index > -1) {
@@ -685,7 +710,7 @@ export class RestaurantsStore extends CachedStore {
 
   static filterActive() {
     var filters = this.getState().filters;
-    return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0);
+    return (filters.prices.length > 0) || (filters.ambiences.length > 0) || (filters.occasions.length > 0) || (filters.types.length > 0) || (filters.types.friends > 0);
   }
 
   static MAP_PRICES = [

@@ -218,7 +218,7 @@ export class ProfilStore extends CachedStore {
   }
 
   handleMaskProfilSuccess(result) {
-    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendshipId}).id;
     var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = true;
@@ -241,7 +241,7 @@ export class ProfilStore extends CachedStore {
   }
 
   handleDisplayProfilSuccess(result) {
-    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendship_id}).id;
+    var friend_id = _.find(this.friends, (profil) => {return profil.friendship_id === result.friendshipId}).id;
     var index = _.findIndex(this.friends, function(o) {return o.id === friend_id});
     if (index > -1) {
       this.friends[index].invisible = false;

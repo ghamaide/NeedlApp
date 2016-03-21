@@ -7,6 +7,8 @@ import LinearGradient from 'react-native-linear-gradient';
 
 import Text from './Text';
 
+import RestaurantsActions from '../../actions/RestaurantsActions';
+
 import MeStore from '../../stores/Me'
 import NotifsStore from '../../stores/Notifs'
 import ProfilStore from '../../stores/Profil'
@@ -42,6 +44,11 @@ class Menu extends Component {
           if (this.props.tabsBlocked) {
             return;
           }
+
+          if (index == 0) {
+            RestaurantsActions.resetFilters();
+          }
+
           this.props.resetToTab(index);
         }}>
           <View style={styles.itemInnerContainer}>

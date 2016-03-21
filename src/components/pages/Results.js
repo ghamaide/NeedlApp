@@ -12,6 +12,8 @@ import RestaurantElement from '../elements/Restaurant';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 
+import RestaurantsActions from '../../actions/RestaurantsActions';
+
 import RestaurantsStore from '../../stores/Restaurants';
 
 class Results extends Page {
@@ -130,7 +132,10 @@ class Results extends Page {
           titles={titles}
           onPress={this.onPressMenu}
           leftButtonTitle='Retour'
-          onLeftButtonPress={() => this.props.navigator.pop()} />
+          onLeftButtonPress={() => {
+            RestaurantsActions.resetFilters();
+            this.props.navigator.pop();
+          }} />
 
           <RestaurantElement
             restaurant={restaurant}
