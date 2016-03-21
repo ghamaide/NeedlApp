@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Dimensions, Image, ListView, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Dimensions, Image, ListView, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
@@ -150,7 +150,21 @@ class Notifs extends Page {
 
   renderPage() {
     return (
-      <View style={{flex: 1}}>
+      <ScrollView
+        contentInset={{top: 0}}
+        automaticallyAdjustContentInsets={false}
+        showsVerticalScrollIndicator={false}
+        onScroll={this.onScroll}
+        scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.loading}
+            onRefresh={this.onRefresh}
+            tintColor='#FE3139'
+            title='Chargement...'
+            colors={['#FFFFFF']}
+            progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
+        }>
         <NavigationBar type='default' title='Feed' />
 
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
@@ -182,7 +196,7 @@ class Notifs extends Page {
           showsVerticalScrollIndicator={false} />
 
         <MenuIcon onPress={this.props.toggle} />
-      </View>
+      </ScrollView>
     );
   };
 }
