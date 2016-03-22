@@ -1,10 +1,11 @@
 'use strict';
 
-import React, {View} from 'react-native';
+import React, {Dimensions, Platform, View} from 'react-native';
 
 import _ from 'lodash';
 // Uncomment for destination guide
 import Polyline from 'polyline';
+import Swiper from 'react-native-swiper';
 
 import RestaurantElement from '../elements/Restaurant';
 
@@ -63,6 +64,9 @@ class Restaurant extends Page {
   };
 
   componentWillMount() {
+    RestaurantsStore.listen(this.onRestaurantsChange);
+
+    // Fetch user's current location
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
         if (this.isInParis(initialPosition)) {
@@ -96,11 +100,10 @@ class Restaurant extends Page {
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
-
-    RestaurantsStore.listen(this.onRestaurantsChange);
   }
 
   componentDidMount() {
+    // Check if we display a message
     if (this.props.note == 'already_wishlisted') {
       this.setState({already_wishlisted: true});
       this.timer = setTimeout(() => {
@@ -129,7 +132,9 @@ class Restaurant extends Page {
   onPressMenu = (index) => {
     if (this.state.rank != index) {
       this.setState({rank: index});
-      this.getDirections(this.state.position);
+      if (this.state.isInParis) {
+        this.getDirections(this.state.position);
+      }
     }
   };
 
@@ -218,15 +223,43 @@ class Restaurant extends Page {
           ]
         ]}
 
-        <RestaurantElement
-          restaurant={restaurant}
-          navigator={this.props.navigator}
-          loading={this.state.loading}
-          isInParis={true}
-          polylineCoords={this.state.polylineCoords}
-          already_recommended={this.state.already_recommended}
-          already_wishlisted={this.state.already_wishlisted}
-          rank={_.findIndex(this.state.restaurants, restaurant) + 1} />
+        {this.state.rank > 0 ? [
+          <Swiper 
+            key='restaurants'
+            index={this.state.rank - 1}
+            showsButtons={false}
+            loop={false}
+            width={Dimensions.get('window').width}
+            height={Platform.OS === 'ios' ? Dimensions.get('window').height - 80 : Dimensions.get('window').height - 40}
+            autoplay={false}
+            onMomentumScrollEnd={(e, state, context) => {
+              this.setState({rank: state.index + 1});
+            }}
+            paginationStyle={{bottom: -15 /* Out of visible range */}}>
+            {_.map(this.state.restaurants, (restaurant, key) => {
+              return (
+                <RestaurantElement
+                  key={key}
+                  restaurant={restaurant}
+                  navigator={this.props.navigator}
+                  loading={this.state.loading}
+                  isInParis={true}
+                  polylineCoords={this.state.polylineCoords}
+                  rank={key + 1} />
+              );
+            })}
+          </Swiper>
+        ] : [
+          <RestaurantElement
+            key='restaurant'
+            restaurant={restaurant}
+            navigator={this.props.navigator}
+            loading={this.state.loading}
+            isInParis={true}
+            polylineCoords={this.state.polylineCoords}
+            already_recommended={this.state.already_recommended}
+            already_wishlisted={this.state.already_wishlisted} />
+        ]}
 
         {this.props.fromReco ? [
           <MenuIcon key='menu_icon' onPress={this.props.toggle} />

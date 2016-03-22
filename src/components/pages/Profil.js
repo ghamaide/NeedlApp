@@ -27,6 +27,7 @@ import MeStore from '../../stores/Me';
 import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
+import Badges from './Badges';
 import CarteProfil from './CarteProfil';
 import EditMe from './EditMe';
 import Friends from './Friends';
@@ -276,7 +277,7 @@ class Profil extends Page {
                     underlayColor='rgba(0, 0, 0, 0)'
                     style={styles.textInfo}
                     onPress={() => {
-                      if (!is_following && MeStore.getState().me.id === profil.id && profil.score > 1) {
+                      if (!is_following && MeStore.getState().me.id === profil.id && profil.score >= 1) {
                         this.props.navigator.push(Information.route({id: profil.id, origin: 'score'}));
                       } else {
                         return ;
@@ -296,10 +297,21 @@ class Profil extends Page {
 
               {/* Container for badge information or public description */}
               {!is_following ? [
-                <View key='badge_container' style={styles.badgeInfoContainer}>
-                  <Text style={styles.badgeName}>{profil.badge.name}</Text>
-                  <Text style={styles.badgeDescription} numberOfLines={3}>{profil.badge.description}</Text>
-                </View>
+                <TouchableHighlight
+                  key='badge_container'
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  onPress={() => {
+                    if (MeStore.getState().me.id === profil.id) {
+                      this.props.navigator.push(Badges.route());
+                    } else {
+                      return ;
+                    }
+                  }}>
+                  <View style={styles.badgeInfoContainer}>
+                    <Text style={styles.badgeName}>{profil.badge.name}</Text>
+                    <Text style={styles.badgeDescription} numberOfLines={3}>{profil.badge.description}</Text>
+                  </View>
+                </TouchableHighlight>
               ] : [
                 <View key='description_container' style={styles.descriptionContainer}>
                   <Text style={styles.description} numberOfLines={3}>{profil.description}</Text>
@@ -316,7 +328,19 @@ class Profil extends Page {
 
               {/* Badge Image */}
               {!is_following ? [
-                <Image key='badge_image' source={profil.badge.image} style={styles.badgeImage} />
+                <TouchableHighlight
+                  key='badge_image'
+                  style={styles.badgeImageContainer} 
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  onPress={() => {
+                    if (MeStore.getState().me.id === profil.id) {
+                      this.props.navigator.push(Badges.route());
+                    } else {
+                      return ;
+                    }
+                  }}>
+                  <Image source={profil.badge.image} style={styles.badgeImage} />
+                </TouchableHighlight>
               ] : null}
 
               {/* Container for actions on profile */}
@@ -787,10 +811,16 @@ var styles = StyleSheet.create({
     width: IMAGE_HEIGHT,
     borderRadius: 12
   },
-  badgeImage: {
+  badgeImageContainer: {
     position: 'absolute',
     top: IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2,
     left: IMAGE_HEIGHT + MARGIN_LEFT - BADGE_IMAGE_HEIGHT / 2,
+    height: BADGE_IMAGE_HEIGHT,
+    width: BADGE_IMAGE_HEIGHT,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  badgeImage: {
     height: BADGE_IMAGE_HEIGHT,
     width: BADGE_IMAGE_HEIGHT,
     borderRadius: BADGE_IMAGE_HEIGHT / 2

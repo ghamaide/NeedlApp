@@ -53,14 +53,16 @@ class NavBarSwitch extends Component {
         {_.map(this.props.titles, (title, key) => {
           return (
             <View key={'button_' + key} style={{flexDirection: 'row'}}>
-              <TouchableOpacity style={{borderBottomWidth: this.props.active === (key + 1) ? 1 : 0, borderColor: '#FE3139'}} onPress={() => this.props.onPress(key + 1)}>
-                <Text
-                  style={[styles.navBarTitleSwitch, {color: this.props.active === (key + 1) ? '#FE3139' : '#3A325D'}]}>
-                  {title}
-                </Text>
+              <TouchableOpacity style={{padding: 5}} onPress={() => this.props.onPress(key + 1)}>
+                <View style={{alignItems: 'center', justifyContent: 'center', borderBottomWidth: this.props.active === (key + 1) ? 1 : 0, borderColor: '#FE3139'}}>
+                  <Text
+                    style={[styles.navBarTitleSwitch, {color: this.props.active === (key + 1) ? '#FE3139' : '#3A325D'}]}>
+                    {title}
+                  </Text>
+                </View>
               </TouchableOpacity>
               {key < this.props.titles.length - 1 ? [
-                <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {marginLeft: 6, marginRight: 6}]}>|</Text>
+                <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {paddingTop: 5, marginLeft: 1, marginRight: 1}]}>|</Text>
               ] : null}
             </View>
           );

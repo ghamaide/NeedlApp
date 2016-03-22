@@ -58,6 +58,7 @@ class RecoStepSave extends Component {
   };
 
   addActivity = () => {
+    this.setState({error: ''});
     var reco = RecoStore.getReco();
     if (reco.type === 'recommendation') {
       if (!reco.editing) {

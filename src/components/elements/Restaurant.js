@@ -7,14 +7,13 @@ import DeviceInfo from 'react-native-device-info';
 import MapView from 'react-native-maps';
 import Mixpanel from 'react-native-mixpanel';
 import RNComm from 'react-native-communications';
-import Swiper from 'react-native-swiper'
+import Swiper from 'react-native-swiper';
 
 import Button from './Button';
 import Option from './Option';
 import Options from './Options';
 import RestaurantHeader from './RestaurantHeader';
 
-import Carousel from '../ui/Carousel';
 import NavigationBar from '../ui/NavigationBar';
 import Text from '../ui/Text';
 
@@ -33,6 +32,8 @@ import Web from '../pages/Web';
 
 var windowHeight = Dimensions.get('window').height;
 var windowWidth = Dimensions.get('window').width;
+
+var THRESHOLD = 40;
 
 class Restaurant extends Component {
   constructor(props) {
@@ -169,22 +170,23 @@ class Restaurant extends Component {
         }>
 
         <View key='restaurant_image' style={styles.header}>
-          <Carousel
-            ref='carouselRestaurant' 
-            style={{flexDirection: 'row', flex: 1, position: 'relative'}}>
-            {_.map(restaurant.pictures, (picture) => {
-              return (
-                <RestaurantHeader
-                  key={picture}
-                  name={restaurant.name}
-                  rank={this.props.rank}
-                  picture={picture}
-                  type={restaurant.food[1]}
-                  height={250}
-                  budget={restaurant.price_range} />
-              );
-            })}
-          </Carousel>
+          <TouchableHighlight
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={{flex: 1}}
+            onPress={() => {
+              console.log('show carousel photos here');
+            }}>
+            <View style={{width: windowWidth, height: 250}}>
+              <RestaurantHeader
+                key='restaurant_image'
+                name={restaurant.name}
+                rank={this.props.rank}
+                picture={restaurant.pictures[0]}
+                type={restaurant.food[1]}
+                height={250}
+                budget={restaurant.price_range} />
+            </View>
+          </TouchableHighlight>
         </View>
 
         <View key='restaurant_call_top' style={[styles.callContainer]}>
