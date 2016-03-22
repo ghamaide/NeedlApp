@@ -230,7 +230,7 @@ class Restaurant extends Page {
             showsButtons={false}
             loop={false}
             width={Dimensions.get('window').width}
-            height={Platform.OS === 'ios' ? Dimensions.get('window').height - 80 : Dimensions.get('window').height - 40}
+            height={Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40}
             autoplay={false}
             onMomentumScrollEnd={(e, state, context) => {
               this.setState({rank: state.index + 1});

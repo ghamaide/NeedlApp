@@ -22,10 +22,11 @@ import Step3 from './Step3';
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
 class RecoStep1 extends Component {
-  static route() {
+  static route(props) {
     return {
       component: RecoStep1,
-      title: 'Sélection'
+      title: 'Sélection',
+      passProps: props
     };
   };
 
