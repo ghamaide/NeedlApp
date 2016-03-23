@@ -1,17 +1,19 @@
 'use strict';
 
-import React, {Dimensions, Platform, View} from 'react-native';
+import React, {Dimensions, Image, Platform, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
-// Uncomment for destination guide
+import MapView from 'react-native-maps';
 import Polyline from 'polyline';
 import Swiper from 'react-native-swiper';
 
 import RestaurantElement from '../elements/Restaurant';
+import PriceMarker from '../elements/PriceMarker';
 
 import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
+import Text from '../ui/Text';
 
 import RestaurantsActions from '../../actions/RestaurantsActions';
 
@@ -48,6 +50,12 @@ class Restaurant extends Page {
 
     // Initially, we assume the user is not in Paris
     this.state.isInParis = false;
+
+    // Whether to show user's location
+    this.state.showsUserLocation = true;
+
+    // Initial region is the first restaurant
+    this.state.region = RestaurantsStore.getState().currentRegion;
   };
 
   restaurantState() {
@@ -189,27 +197,43 @@ class Restaurant extends Page {
     return polylineCoords;
   };
 
+  // Check if position is in paris
+  isInParis = (initialPosition) => {
+    return (initialPosition.coords.latitude <= this.state.paris.northLatitude && initialPosition.coords.latitude >= this.state.paris.southLatitude && initialPosition.coords.longitude <= this.state.paris.eastLongitude && initialPosition.coords.longitude >= this.state.paris.westLongitude);
+  };
+
+  onRegionChangeComplete = (region) => {
+    this.setState({region: region});
+  };
+
   renderPage() {
     if (this.state.rank > 0) {
       var restaurant = this.state.restaurants[this.state.rank - 1];
     } else {
       var restaurant = this.state.restaurant;
     }
+
     var titles = [], index = 0;
     _.map(this.state.restaurants, (restaurant) => {
       index +=1;
       titles.push('#' + index);
     });
 
+    var listImage = require('../../assets/img/other/icons/list.png');
+    var mapImage = require('../../assets/img/other/icons/map.png');
+
     return (
       <View>
         {this.state.rank > 0 ? [
           <NavigationBar 
-            key='navbar' 
+            key='navbar'
             type='switch_and_back'
             active={this.state.rank}
             titles={titles}
             onPress={this.onPressMenu}
+            rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
+            rightImage={this.state.showMap ? listImage : mapImage}
+            onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}
             leftButtonTitle='Retour'
             onLeftButtonPress={() => {
               RestaurantsActions.resetFilters();
@@ -217,49 +241,112 @@ class Restaurant extends Page {
             }} />
         ] : [
           this.props.fromReco ? [
-            <NavigationBar key='navbar' type='default' title={restaurant.name} />
+            <NavigationBar
+              key='navbar'
+              type='default'
+              title={restaurant.name}
+              rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
+              rightImage={this.state.showMap ? listImage : mapImage}
+              onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}/>
           ] : [
-            <NavigationBar key='navbar' type='back' title={restaurant.name} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+            <NavigationBar
+              key='navbar'
+              type='back'
+              title={restaurant.name}
+              rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
+              rightImage={this.state.showMap ? listImage : mapImage}
+              onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}
+              leftButtonTitle='Retour'
+              onLeftButtonPress={() => this.props.navigator.pop()} />
           ]
         ]}
 
-        {this.state.rank > 0 ? [
-          <Swiper 
-            key='restaurants'
-            index={this.state.rank - 1}
-            showsButtons={false}
-            loop={false}
-            width={Dimensions.get('window').width}
-            height={Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40}
-            autoplay={false}
-            onMomentumScrollEnd={(e, state, context) => {
-              this.setState({rank: state.index + 1});
-            }}
-            paginationStyle={{bottom: -15 /* Out of visible range */}}>
-            {_.map(this.state.restaurants, (restaurant, key) => {
-              return (
-                <RestaurantElement
-                  key={key}
-                  restaurant={restaurant}
-                  navigator={this.props.navigator}
-                  loading={this.state.loading}
-                  isInParis={true}
-                  polylineCoords={this.state.polylineCoords}
-                  rank={key + 1} />
-              );
-            })}
-          </Swiper>
+        {!this.state.showMap ? [
+          this.state.rank > 0 ? [
+            <Swiper 
+              key='restaurants'
+              index={this.state.rank - 1}
+              showsButtons={false}
+              loop={false}
+              width={Dimensions.get('window').width}
+              height={Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40}
+              autoplay={false}
+              onMomentumScrollEnd={(e, state, context) => {
+                this.setState({rank: state.index + 1});
+                this.getDirections(this.state.position);
+              }}
+              paginationStyle={{bottom: -15 /* Out of visible range */}}>
+              {_.map(this.state.restaurants, (restaurant, key) => {
+                return (
+                  <RestaurantElement
+                    key={key}
+                    restaurant={restaurant}
+                    navigator={this.props.navigator}
+                    loading={this.state.loading}
+                    isInParis={true}
+                    polylineCoords={this.state.polylineCoords}
+                    rank={key + 1} />
+                );
+              })}
+            </Swiper>
+          ] : [
+            <RestaurantElement
+              key='restaurant'
+              restaurant={restaurant}
+              toggle={this.props.toggle}
+              navigator={this.props.navigator}
+              loading={this.state.loading}
+              isInParis={true}
+              polylineCoords={this.state.polylineCoords}
+              already_recommended={this.state.already_recommended}
+              already_wishlisted={this.state.already_wishlisted} />
+          ]
         ] : [
-          <RestaurantElement
-            key='restaurant'
-            restaurant={restaurant}
-            toggle={this.props.toggle}
-            navigator={this.props.navigator}
-            loading={this.state.loading}
-            isInParis={true}
-            polylineCoords={this.state.polylineCoords}
-            already_recommended={this.state.already_recommended}
-            already_wishlisted={this.state.already_wishlisted} />
+          <View key='map' style={{flex: 1, height: Dimensions.get('window').height - 60, position: 'relative'}}>
+            <MapView
+              ref='mapview'
+              style={styles.restaurantsMap}
+              showsUserLocation={this.state.showsUserLocation}
+              region={this.state.region}
+              onRegionChange={this.onRegionChange}>
+              {this.state.rank > 0 ? [
+                _.map(this.state.restaurants, (restaurant) => {
+                  var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+                  return (
+                    <MapView.Marker
+                      key={restaurant.id}
+                      coordinate={coordinates}>
+                      <PriceMarker text={'#' + (_.findIndex(this.state.restaurants, restaurant) + 1)} backgroundColor={'#FE3139'} />
+                      <MapView.Callout>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                          <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
+                          <View>
+                            <Text style={{color: '#3A325D', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
+                            <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.food[1]}</Text>
+                          </View>
+                        </View>
+                      </MapView.Callout>
+                    </MapView.Marker>
+                  );
+                })
+              ] : [
+                <MapView.Marker
+                  key={restaurant.id}
+                  coordinate={{latitude: restaurant.latitude, longitude: restaurant.longitude}}>
+                  <PriceMarker text='#1' backgroundColor={'#FE3139'} />
+                  <MapView.Callout>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                      <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
+                      <View>
+                        <Text style={{color: '#3A325D', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
+                        <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.food[1]}</Text>
+                      </View>
+                    </View>
+                  </MapView.Callout>
+                </MapView.Marker>
+              ]}
+            </MapView>
+          </View>
         ]}
 
         {this.props.fromReco ? [
@@ -269,5 +356,12 @@ class Restaurant extends Page {
     );
   };
 }
+
+var styles = StyleSheet.create({
+  restaurantsMap: {
+    flex: 1,
+    position: 'relative'
+  }
+});
 
 export default Restaurant;
