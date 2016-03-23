@@ -56,6 +56,13 @@ class Restaurant extends Page {
 
     // Initial region is the first restaurant
     this.state.region = RestaurantsStore.getState().currentRegion;
+
+    if (Platform.OS === 'android') {
+      this.state.position = {
+        latitude: this.state.paris.centerLatitude,
+        longitude: this.state.paris.centerLongitude 
+      };
+    }
   };
 
   restaurantState() {
@@ -74,9 +81,26 @@ class Restaurant extends Page {
   componentWillMount() {
     RestaurantsStore.listen(this.onRestaurantsChange);
 
+    // For use on Android, getCurrentPosition doesn't work
+    if (Platform.OS === 'android') {
+      navigator.geolocation.watchPosition((initialPosition) => {
+        if (this.isInParis(initialPosition)) {
+          this.setState({
+            position: {
+              latitude: initialPosition.coords.latitude,
+              longitude: initialPosition.coords.longitude
+            },
+            isInParis: true
+          });
+          this.getDirections(this.state.position);
+        }
+      });
+    }
+
     // Fetch user's current location
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
+        console.log(initialPosition);
         if (this.isInParis(initialPosition)) {
           this.setState({
             position: {
@@ -273,7 +297,9 @@ class Restaurant extends Page {
               autoplay={false}
               onMomentumScrollEnd={(e, state, context) => {
                 this.setState({rank: state.index + 1});
-                this.getDirections(this.state.position);
+                if (this.state.isInParis) {
+                  this.getDirections(this.state.position);
+                }
               }}
               paginationStyle={{bottom: -15 /* Out of visible range */}}>
               {_.map(this.state.restaurants, (restaurant, key) => {

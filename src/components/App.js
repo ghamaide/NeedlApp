@@ -249,23 +249,13 @@ class App extends Component {
     }
 
     Branch.getInitSessionResultPatiently(({params, error}) => {
-      // console.log('1');
-      // console.log(params);
+      // do something here
     });
     
     Branch.setIdentity(MeStore.getState().me.id.toString());
 
-    Branch.getFirstReferringParams((params) => {
-      // console.log('2');
-      // console.log(params);
-      if (params.from === 'friend_invitation') {
-        // do something because he arrived from friend invitation 
-      }
-    });
-
     Branch.getLatestReferringParams((params) => {
-      // console.log('3');
-      // console.log(params);
+      // do something here
     });
 
     this.startActions();
@@ -277,9 +267,8 @@ class App extends Component {
     ProfilStore.unlisten(this.onProfileChange);
     RestaurantsStore.unlisten(this.onRestaurantsChange);
 
-    Linking.removeEventListener('url', this.handleOpenURL);
-
     if (Platform.OS === 'ios') {
+      Linking.removeEventListener('url', this.handleOpenURL);
       PushNotificationIOS.removeEventListener('register', this.onDeviceToken);
       PushNotificationIOS.removeEventListener('notification', this.onNotificationIOS);
 

@@ -6,6 +6,7 @@ import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
 import MapView from 'react-native-maps';
 import Mixpanel from 'react-native-mixpanel';
+import Modal from 'react-native-modalbox';
 import RNComm from 'react-native-communications';
 import Swiper from 'react-native-swiper';
 
@@ -39,6 +40,7 @@ class Restaurant extends Component {
   constructor(props) {
     super(props);
 
+    // Initial region of the map
     this.state = {
       region: {
         latitude: this.props.restaurant.latitude,
@@ -47,7 +49,12 @@ class Restaurant extends Component {
         longitudeDelta: 0.02
       }
     };
+
+    // Initial state of polylines for directions
     this.state.polylineCoords = this.props.polylineCoords;
+
+    // Overlay to show carousel of pictures
+    this.state.pictureOverlay = false;
   }
 
   componentWillMount() {
@@ -174,7 +181,7 @@ class Restaurant extends Component {
             underlayColor='rgba(0, 0, 0, 0)'
             style={{flex: 1}}
             onPress={() => {
-              console.log('show carousel photos here');
+              this.setState({pictureOverlay: true});
             }}>
             <View style={{width: windowWidth, height: 250}}>
               <RestaurantHeader
@@ -458,17 +465,34 @@ class Restaurant extends Component {
           </Options>
         : null }
 
+        {/* Restaurant was already reommended */}
         {this.props.already_recommended ? [
           <View key='already_recommended' style={styles.banner}>
             <Text style={styles.bannerText}>Tu as déja recommandé ce restaurant</Text>
           </View>
         ] : null}
 
+        {/* Restaurant was already wishlisted */}
         {this.props.already_wishlisted ? [
           <View key='already_wishlisted' style={styles.banner}>
             <Text style={styles.bannerText}>Tu as déja wishlisté ce restaurant</Text>
           </View>
         ] : null}
+
+        {/* Modal View for Carousel */}
+        <Modal
+          ref='android_modal'
+          style={styles.modal}
+          position='bottom'
+          isOpen={this.state.pictureOverlay}
+          onClosed={() => this.setState({pictureOverlay: false})}>
+            <View>
+              {_.map(restaurant.pictures, (picture, key) => {
+                return <Image key={'picture_' + key} style={{width: windowWidth}} source={{uri: picture}} />
+              })}
+            </View>
+        </Modal>
+
       </ScrollView>
     );
   };

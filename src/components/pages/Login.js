@@ -3,6 +3,7 @@
 import React, {ActivityIndicatorIOS, Component, Dimensions, Image, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
+import Branch from 'react-native-branch';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Text from '../ui/Text';
@@ -11,6 +12,7 @@ import TextInput from '../ui/TextInput';
 import Overlay from '../elements/Overlay';
 
 import LoginActions from '../../actions/LoginActions';
+import ProfilActions from '../../actions/ProfilActions';
 
 import MeStore from '../../stores/Me';
 
@@ -38,6 +40,19 @@ class Login extends Component {
     // Remove to add password confirmation
     //this.state.password_confirmation = '';
   };
+
+  componentWillMount() {
+    Branch.getInitSessionResultPatiently(({params, error}) => {
+      if (params.from === 'invitation' && params['+is_first_session']) {
+        // do something because he arrived from friend invitation
+        this.setState({
+          invitation_user_name: params.user_name,
+          invitation_user_picture: params['$og_image_url'],
+          friendInvitation: true
+        });
+      }
+    });
+  }
 
   componentDidMount() {
     MeStore.listen(this.onMeChange);
@@ -166,6 +181,13 @@ class Login extends Component {
             <Text style={styles.sublineText}>Les restos préférés de tes amis</Text>
           </View>
 
+          {this.state.friendInvitation ? [
+            <View key='invitation' style={{alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
+              <Image style={{width: 60, height: 60, borderRadius: 30}} source={{uri: this.state.invitation_user_picture}} />
+              <Text style={{color: '#FFFFFF', fontSize: 13, marginTop: 10}}>Retrouve {this.state.invitation_user_name} sur Needl</Text>
+            </View>
+          ] : null}
+
           {this.state.index == 1 ? [
             <View key='sign_in' style={styles.loginWrapper}>
               {showSignInError ? [
@@ -227,7 +249,7 @@ class Login extends Component {
                   ref='sign_up_name'
                   returnKeyType='next'
                   autoCorrect={false}
-                  autoCapitalize='none'
+                  autoCapitalize='words'
                   placeholder="Nom"
                   placeholderTextColor='#FFFFFF'
                   selectionColor='#00000'
@@ -418,24 +440,22 @@ var styles = StyleSheet.create({
     height: 30,
     paddingBottom: Platform.OS === 'ios' ? 0 : 5,
     color: '#FFFFFF',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
+    backgroundColor: 'rgba(255, 255, 255, 0.1)'
   },
   switchMethodButton: {
     marginLeft: 20,
     marginRight: 20,
-    marginTop: Platform.OS === 'ios' ? 10 : 15,
+    marginTop: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    borderBottomWidth: Platform.OS === 'ios' ? 0 : 1,
+    borderBottomWidth: .5,
     borderColor: '#FFFFFF'
   },
   switchMethodText: {
     textAlign: 'center',
     color: '#FFFFFF',
-    textDecorationLine: 'underline',
     fontSize: 13,
     paddingTop: 5,
-    paddingBottom: Platform.OS === 'ios' ? 5 : 0
   },
   submitButton: {
     width: 150,
@@ -444,7 +464,7 @@ var styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 7,
     paddingBottom: 7,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,

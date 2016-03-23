@@ -9,10 +9,12 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch();
 
+      console.log('----');
+
       request('GET', '/api/v2/users/' + id)
         .end((err, result) => {
           if (err) {
-            return this.fetchProfilFailed(err, id);
+            return this.fetchProfilFailed(err);
           }
 
           this.fetchProfilSuccess(result);
@@ -28,7 +30,7 @@ export class ProfilActions {
     return profil;
   }
 
-  fetchProfilFailed(err, id) {
+  fetchProfilFailed(err) {
     return err;
   }
 

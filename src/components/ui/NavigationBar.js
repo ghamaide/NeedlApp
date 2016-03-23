@@ -62,7 +62,7 @@ class NavBarSwitch extends Component {
                 </View>
               </TouchableOpacity>
               {key < this.props.titles.length - 1 ? [
-                <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {paddingTop: 5, marginLeft: 1, marginRight: 1}]}>|</Text>
+                <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {paddingTop: 5, marginTop: Platform.OS === 'ios' ? 0 : 5, marginLeft: 1, marginRight: 1}]}>|</Text>
               ] : null}
             </View>
           );

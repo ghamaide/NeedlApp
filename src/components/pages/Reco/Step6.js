@@ -3,6 +3,7 @@
 import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
+import Branch from 'react-native-branch';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Mixpanel from 'react-native-mixpanel';
 import SendIntentAndroid from 'react-native-send-intent';
@@ -124,6 +125,18 @@ class RecoStep6 extends Component {
   };
 
   inviteFriend = () => {
+    var me = ProfilStore.getProfil(MeStore.getState().me.id);
+    var shareOptions = {messageHeader: 'Merci !', messageBody: 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl:'};
+    var branchUniversalObject = {metadata: {user_name: me.name, restaurant_id: this.state.recommendation.restaurant.id, from: 'invitation'}, canonicalIdentifier: 'RNBranchSharedObjectId', contentTitle: 'Merci !', contentDescription: 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name, contentImageUrl: me.picture};
+    var linkProperties = {feature: 'invitation', channel: 'in-app'};
+    Branch.showShareSheet(shareOptions, branchUniversalObject, linkProperties, ({channel, completed, error}) => {
+      if (completed) {
+        // do something here if completed
+        Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
+      }
+    });
+
+  /*
     if (Platform.OS === 'android') {
       SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl: http://download.needl-app.com/invitation');
       Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
@@ -149,7 +162,7 @@ class RecoStep6 extends Component {
             break;
         }
       });
-    }
+    }*/
   };
 
   render() {
