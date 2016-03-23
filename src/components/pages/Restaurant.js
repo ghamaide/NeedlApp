@@ -253,6 +253,7 @@ class Restaurant extends Page {
           <RestaurantElement
             key='restaurant'
             restaurant={restaurant}
+            toggle={this.props.toggle}
             navigator={this.props.navigator}
             loading={this.state.loading}
             isInParis={true}

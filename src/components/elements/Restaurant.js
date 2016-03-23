@@ -107,7 +107,7 @@ class Restaurant extends Component {
       });
     }
 
-    this.props.navigator.push(RecoStep3.route(props));
+    this.props.navigator.push(RecoStep3.route({toggle: this.props.toggle}));
   };
 
   call = () => {

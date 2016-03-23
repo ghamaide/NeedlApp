@@ -139,6 +139,9 @@ class App extends Component {
     switch(data.type) {
       case 'fr.needl.map':
         this.refs.tabs.resetToTab(0);
+        if (!_.isEmpty(RestaurantsStore.filteredRestaurants())) {
+           this.refs.tabs.refs.tabs.push(Restaurant.route({rank: 1}));
+        }
         break;
       case 'fr.needl.top_rated_restaurant':
         var top_rated_restaurant = RestaurantsStore.filteredRestaurants()[0] || RestaurantsStore.getRestaurants()[0];

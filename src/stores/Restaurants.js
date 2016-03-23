@@ -162,14 +162,9 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleAcceptFriendshipSuccess(result) {
-    var ids = [];
-
-    // Populate array of ids of restaurants
-    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
-
-    // Update each restaurant
+    // Update each restaurant where score changed
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(ids, (id) => restaurant.id == id);
+      var index = _.findIndex(this.restaurants, (localRestaurant) => localRestaurant.id === restaurant.id);
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
       } else {
@@ -180,7 +175,6 @@ export class RestaurantsStore extends CachedStore {
 
   handleRemoveFriendshipSuccess(result) {
     var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
-    var ids = [];
 
     // Remove all the restaurants where friend was only recommender or wisher
     _.remove(this.restaurants, (restaurant) => {
@@ -199,12 +193,9 @@ export class RestaurantsStore extends CachedStore {
       }
     });
 
-    // Populate array of ids of restaurants
-    _.forEach(this.restaurants, (restaurant) => {ids.push(restaurant.id)});
-
-    // Update each restaurant
+    // Update each restaurant where score changed
     _.forEach(result.restaurants, (restaurant) => {
-      var index = _.findIndex(ids, (id) => restaurant.id == id);
+      var index = _.findIndex(this.restaurants, (localRestaurant) => localRestaurant.id === restaurant.id);
       if (index > -1) {
         this.restaurants[index] = _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
       } else {

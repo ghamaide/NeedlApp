@@ -74,11 +74,16 @@ export class NotifsStore extends CachedStore {
     var oldNotifications = _.concat(this.friendsNotifications, this.followingsNotifications);
     var editedNotifications = _.map(notifications, (notification) => {
 
-      var index = _.findIndex(oldNotifications, {'restaurant_id': notification.restaurant_id, 'user_id': notification.user_id});
+      // Retrieve old notification if it exists
+      var index = _.findIndex(oldNotifications, (oldNotification) => {
+        return oldNotification.restaurant_id === notification.restaurant_id && oldNotification.user_id === notification.user_id;
+      });
       var oldNotification = oldNotifications[index];
 
+      // Set as seen if already in notifications before update
       notification.seen = oldNotification && oldNotification.seen;
 
+      // Add formatted date for display
       var temp_date = moment(notification.date);
       var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
       notification.formatted_date = formatted_date;
@@ -86,14 +91,17 @@ export class NotifsStore extends CachedStore {
       return notification;
     });
 
+    // Friends notifications
     this.friendsNotifications = _.filter(editedNotifications, (notification) => {
       return notification.user_type === 'friend';
     });
 
+    // Followings notifications
     this.followingsNotifications = _.filter(editedNotifications, (notification) => {
       return notification.user_type === 'following';
     });
 
+    // My notifications
     this.myNotifications = _.filter(editedNotifications, (notification) => {
       return notification.user_type === 'me';
     });
@@ -120,31 +128,33 @@ export class NotifsStore extends CachedStore {
   }
 
   handleAcceptFriendshipSuccess(result) {
-    var friend_activities = _.map(result.activities, (activity) => {
+    // Add friend activities to friends notifications
+    _.forEach(result.activities, (activity) => {
       var temp_date = moment(activity.date);
       var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
-      activity.formatted_date = formatted_date;
-      activity.seen = true;
+      this.friendsNotifications.push(_.extend(notification, {formatted_date: formatted_date, seen: true}));
     });
-    this.friendsNotifications.push(friend_activities);
   }
 
   handleRemoveFriendshipSuccess(result) {
+    // Remove friend activities from friends notifications
     var friend_id = ProfilStore.getFriendFromFriendship(result.friendship_id).id;
     _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 
-  handleMaskProfilSuccess(result) {
-    var friend_id = ProfilStore.getFriendFromFriendship(result.friendshipId).id;
-    _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
-  }
-
   handleDisplayProfilSuccess(result) {
+    // Add friend activities to friends notifications
     _.forEach(result.notifications, (notification) => {
       var temp_date = moment(notification.date);
       var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
       this.friendsNotifications.push(_.extend(notification, {formatted_date: formatted_date, seen: true}));
     })
+  }
+
+  handleMaskProfilSuccess(result) {
+    // Remove friend activities from friends notifications
+    var friend_id = ProfilStore.getFriendFromFriendship(result.friendshipId).id;
+    _.remove(this.friendsNotifications, (notification) => {return notification.user_id === friend_id});
   }
 
   handleFollowExpertSuccess(result) {
@@ -163,7 +173,11 @@ export class NotifsStore extends CachedStore {
   }
 
   handleAddRecoSuccess(result) {
-    var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
+    // Add activity if not there, else update activity
+    var index = _.findIndex(this.myNotifications, (notification) => {
+      return notification.restaurant_id === result.restaurant.id && notification.user_id === MeStore.getState().me.id;
+    });
+
     if (index > -1) {
       this.myNotifications[index] = result.activity;
     } else {
@@ -172,7 +186,11 @@ export class NotifsStore extends CachedStore {
   }
 
   handleUpdateRecommendationSuccess(result) {
-    var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
+    // Add activity if not there, else update activity
+    var index = _.findIndex(this.myNotifications, (notification) => {
+      return notification.restaurant_id === result.restaurant.id && notification.user_id === MeStore.getState().me.id;
+    });
+
     if (index > -1) {
       this.myNotifications[index] = result.activity;
     } else {
@@ -182,12 +200,16 @@ export class NotifsStore extends CachedStore {
 
   handleRemoveRecoSuccess(restaurant) {
     _.remove(this.myNotifications, (notification) => {
-      return notification.user_id == MeStore.getState().me.id && notification.restaurant_id == restaurant.id;
+      return notification.user_id === MeStore.getState().me.id && notification.restaurant_id === restaurant.id;
     });
   }
 
   handleAddWishSuccess(result) {
-    var index = _.findIndex(this.myNotifications, {'restaurant_id': result.restaurant.id, 'user_id': MeStore.getState().me.id});
+    // Add activity if not there, else update activity
+    var index = _.findIndex(this.myNotifications, (notification) => {
+      return notification.restaurant_id === result.restaurant.id && notification.user_id === MeStore.getState().me.id;
+    });
+
     if (index > -1) {
       this.myNotifications[index] = result.activity;
     } else {
@@ -197,13 +219,15 @@ export class NotifsStore extends CachedStore {
 
   handleRemoveWishSuccess(restaurant) {
     _.remove(this.myNotifications, (notification) => {
-      return notification.user_id == MeStore.getState().me.id && notification.restaurant_id == restaurant.id;
+      return notification.user_id === MeStore.getState().me.id && notification.restaurant_id === restaurant.id;
     })
   }
 
   handleLogout() {
     this.friendsNotifications = [];
     this.followingsNotifications = [];
+    this.myNotifications = [];
+    this.status.notificationsPush = 0;
   }
 
   formatDate(day, month, year) {
