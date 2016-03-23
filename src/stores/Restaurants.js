@@ -126,8 +126,9 @@ export class RestaurantsStore extends CachedStore {
     var newRestaurants = restaurants;
 
     // Extend each restaurant with necessary information
-    _.each(newRestaurants, (restaurant) => {
-      return _.extend(restaurant, {ON_MAP: this.isOnMap(restaurant), subways: this.parseSubways(restaurant.subways)});
+    _.forEach(newRestaurants, (restaurant) => {
+      restaurant.subways = this.parseSubways(restaurant.subways);
+      restaurant.ON_MAP = this.isOnMap(restaurant);
     });
 
     this.restaurants = newRestaurants;

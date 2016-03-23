@@ -191,7 +191,7 @@ class CarteProfil extends Page {
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}>
-                  <PriceMarker text={_.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9CE62A' : '#FE3139'} />
+                  <PriceMarker text={'#' + _.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9CE62A' : '#FE3139'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>

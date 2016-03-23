@@ -198,6 +198,7 @@ class Login extends Component {
                 maxLength={20}
                 multiline={false}
                 secureTextEntry={true}
+                onSubmitEditing={this.onMailLogin}
                 onChangeText={(password) => {
                   this.setState({password: password});
                 }} />
@@ -227,7 +228,7 @@ class Login extends Component {
                   returnKeyType='next'
                   autoCorrect={false}
                   autoCapitalize='none'
-                  placeholder="Nom d'utilisateur"
+                  placeholder="Nom"
                   placeholderTextColor='#FFFFFF'
                   selectionColor='#00000'
                   style={styles.input}
@@ -261,6 +262,7 @@ class Login extends Component {
                   maxLength={20}
                   multiline={false}
                   secureTextEntry={true}
+                  onSubmitEditing={this.onMailCreation}
                   onChangeText={(password) => {
                     this.setState({password: password});
                   }} />

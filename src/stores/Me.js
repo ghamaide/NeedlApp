@@ -162,8 +162,7 @@ export class MeStore extends CachedStore {
   }
 
   handleCreateAccountSuccess(me) {
-    this.me = me.user;
-    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.me = _.extend(me.user, {HAS_SHARED: !!me.nb_recos || !!me.nb_wishes});
     this.status.loading = false;
   }
 

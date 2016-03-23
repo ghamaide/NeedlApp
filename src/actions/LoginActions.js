@@ -44,11 +44,11 @@ export class LoginActions {
       request('POST', '/api/v2/sessions.json')
         .query(qs.stringify(user, { arrayFormat: 'brackets' }))
           .end((err, result) => {
-          if (err) {
-            return this.loginEmailFailed(err);
-          }
+            if (err) {
+              return this.loginEmailFailed(err);
+            }
 
-          return this.loginEmailSuccess(result);
+            return this.loginEmailSuccess(result);
         });
     }
   }
@@ -68,11 +68,11 @@ export class LoginActions {
       request('POST', '/api/v2/registrations.json')
         .query(qs.stringify(user, { arrayFormat: 'brackets' }))
         .end((err, result) => {
-          if (err) {
-            return this.createAccountFailed(err);
-          }
+            if (err) {
+              return this.createAccountFailed(err);
+            }
 
-          return this.createAccountSuccess(result);
+            return this.createAccountSuccess(result);
         });
     }
   }
