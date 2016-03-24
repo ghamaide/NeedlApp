@@ -422,10 +422,12 @@ class Restaurant extends Component {
             </MapView.Marker>
         </MapView>
 
-        <View key='restaurant_call_bottom' style={styles.callContainer}>
-          <Text style={styles.reservationText}>Réserver une table</Text>
-          <Button style={styles.button} label='Appeler' onPress={this.call} />
-        </View>
+        {!_.isEmpty(restaurant.phone_number) ? [
+          <View key='restaurant_call_bottom' style={styles.callContainer}>
+            <Text style={styles.reservationText}>Réserver une table</Text>
+            <Button style={styles.button} label='Appeler' onPress={this.call} />
+          </View>
+        ] : null}
 
         {(_.includes(RestaurantsStore.getWishers(restaurant.id), MeStore.getState().me.id) ||
                     _.includes(RestaurantsStore.getRecommenders(restaurant.id), MeStore.getState().me.id)) ?
