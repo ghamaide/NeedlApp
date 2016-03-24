@@ -38,8 +38,6 @@ export class FriendsActions {
       request('POST', '/api/v2/friendships/accept')
         .query({id: friendship_id})
         .end((err, result) => {
-          console.log(err);
-          console.log(result);
           if (err) {
             return this.acceptFriendshipFailed(err);
           }

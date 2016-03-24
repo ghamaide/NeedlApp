@@ -67,12 +67,6 @@ export class RestaurantsActions {
   setDisplayPersonal(display) {
     return display;
   }
-
-  clearFilters() {
-    return function (dispatch) {
-      dispatch();
-    }
-  }
 }
 
 export default alt.createActions(RestaurantsActions);

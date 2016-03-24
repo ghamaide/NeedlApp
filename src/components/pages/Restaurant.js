@@ -100,7 +100,6 @@ class Restaurant extends Page {
     // Fetch user's current location
     navigator.geolocation.getCurrentPosition(
       (initialPosition) => {
-        console.log(initialPosition);
         if (this.isInParis(initialPosition)) {
           this.setState({
             position: {

@@ -20,7 +20,6 @@ export class RestaurantsStore extends CachedStore {
   constructor() {
     super();
 
-    this.showPersonalContent = true;
     this.restaurants = [];
     this.expertsRestaurants = [];
 
@@ -29,7 +28,8 @@ export class RestaurantsStore extends CachedStore {
       types: [],
       ambiences: [],
       occasions: [],
-      friends: []
+      friends: [],
+      showPersonalContent: true
     };
 
     this.currentRegion = {};
@@ -105,7 +105,8 @@ export class RestaurantsStore extends CachedStore {
       types: [],
       ambiences: [],
       occasions: [],
-      friends: []
+      friends: [],
+      showPersonalContent: true
     };
     this.currentRegion = {};
     this.region = {
@@ -399,13 +400,16 @@ export class RestaurantsStore extends CachedStore {
       types: [],
       ambiences: [],
       occasions: [],
-      friends: []
+      friends: [],
+      showPersonalContent: true
     };
     this.status.loading = false;
   }
 
   handleSetDisplayPersonal(display) {
-    this.showPersonalContent = display;
+    var newFilters = _.clone(this.filters);
+    newFilters.showPersonalContent = display;
+    this.filters = newFilters;
   }
 
   handleSetRegion(region) {
@@ -564,7 +568,6 @@ export class RestaurantsStore extends CachedStore {
       var filters = this.getState().filters;
     }
     var currentRegion = this.getState().currentRegion;
-    var showPersonalContent = this.getState().showPersonalContent;
 
     var west = {
       latitude: currentRegion.latitude,
@@ -607,9 +610,9 @@ export class RestaurantsStore extends CachedStore {
       }
 
       // uncomment to show personal content
-      // if(!showPersonalContent && _.includes(restaurant.friends_recommending, MeStore.getState().me.id)) {
-      //   return false;
-      // }
+      if(!filters.showPersonalContent && _.includes(restaurant.my_friends_recommending, MeStore.getState().me.id)) {
+        return false;
+      }
 
       // uncomment to get restaurants in circle only
       if (this.getDistance(restaurant.latitude, restaurant.longitude, currentRegion.latitude, currentRegion.longitude) > radius) {
@@ -678,24 +681,44 @@ export class RestaurantsStore extends CachedStore {
     return ids;
   }
 
+  static getPersonal(restaurants) {
+    if (_.isEmpty(restaurants)) {
+      restaurants = this.filteredRestaurants();
+    }
+
+    var display = false;
+
+    _.forEach(restaurants, (restaurant) => {
+      if (!_.includes(restaurant.my_friends_recommending, MeStore.getState().me.id)) {
+        display = true;
+      }
+    });
+
+    return display;
+  }
+
   static getAvailableFilters(exception) {
     var restaurants;
     switch (exception) {
       case 'price' : 
-        restaurants = this.filteredRestaurants({prices: [], occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends});
+        restaurants = this.filteredRestaurants({prices: [], occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends, showPersonalContent: this.getState().filters.showPersonalContent});
         return this.getPrices(restaurants);
         break;
       case 'occasion' :
-        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: [], ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends});
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: [], ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends, showPersonalContent: this.getState().filters.showPersonalContent});
         return this.getOccasions(restaurants);
         break;
       case 'type' :
-        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: [], friends: this.getState().filters.friends});
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: [], friends: this.getState().filters.friends, showPersonalContent: this.getState().filters.showPersonalContent});
         return this.getTypes(restaurants);
         break;
       case 'friend' :
-        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: []});
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: [], showPersonalContent: this.getState().filters.showPersonalContent});
         return this.getFriends(restaurants);
+        break;
+      case 'personal' :
+        restaurants = this.filteredRestaurants({prices: this.getState().filters.prices, occasions: this.getState().filters.occasions, ambiences: [], types: this.getState().filters.types, friends: this.getState().filters.friends, showPersonalContent: true});
+        return this.getPersonal(restaurants);
         break;
     }
   }

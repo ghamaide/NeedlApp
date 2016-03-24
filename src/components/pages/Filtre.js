@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Animated, Component, Dimensions, Easing, Image, StyleSheet, ScrollView, TouchableHighlight, View} from 'react-native';
+import React, {Animated, Component, Dimensions, Easing, Image, StyleSheet, ScrollView, Switch, TouchableHighlight, View} from 'react-native';
 
 import ToggleGroup from './Reco/ToggleGroup';
 
@@ -36,6 +36,7 @@ class Filtre extends Component {
     this.state.showOverlayAmbiences = false;
     this.state.showOverlayOccasions = false;
     this.state.showOverlayTypes = false;
+    this.state.showPersonalContent = true;
     this.state.bounceValue = [new Animated.Value(1), new Animated.Value(1), new Animated.Value(1), new Animated.Value(1)];
   }
 
@@ -66,6 +67,7 @@ class Filtre extends Component {
       occasions_available_with_exception: RestaurantsStore.getAvailableFilters('occasion'),
       types_available_with_exception: RestaurantsStore.getAvailableFilters('type'),
       friends_available_with_exception: RestaurantsStore.getAvailableFilters('friend'),
+      personal_available_with_exception: RestaurantsStore.getAvailableFilters('personal'),
     };
   };
 
@@ -227,6 +229,18 @@ class Filtre extends Component {
               ]}
             </View>
           ] : null}
+
+          <View style={{flex: 1, width: windowWidth, flexDirection: 'row', alignItems: 'center', paddingLeft: 20, paddingRight: 20, paddingTop: 10, paddingBottom: 10}}>
+            <Switch
+              style={{marginRight: 10}}
+              disabled={!this.state.personal_available_with_exception}
+              value={this.state.showPersonalContent}
+              onValueChange={(value) => {
+                this.setState({showPersonalContent: value});
+                RestaurantsActions.setDisplayPersonal(this.state.showPersonalContent);
+              }} />
+            <Text style={{flex: 1}}>Afficher les restaurants que j'ai recommandés</Text>
+          </View>
 
           <TouchableHighlight 
             underlayColor='rgba(0, 0, 0, 0)'

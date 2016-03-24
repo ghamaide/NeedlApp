@@ -121,9 +121,13 @@ class Profil extends Page {
 
     NativeModules.ImagePickerManager.launchImageLibrary(options, (response)  => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        if (__DEV__) {
+          console.log('User cancelled image picker');
+        }
       } else if (response.error) {
-        console.log('ImagePickerManager Error: ', response.error);
+        if (__DEV__) {
+          console.log('ImagePickerManager Error: ', response.error);
+        }
       } else {
         // You can display the image using either data:
         var uri = 'data:image/jpeg;base64,' + response.data;
