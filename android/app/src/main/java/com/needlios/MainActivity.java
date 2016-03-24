@@ -29,6 +29,8 @@ import com.dispatcher.rnbranch.*;
 
 import com.BV.LinearGradient.LinearGradientPackage;
 
+import com.imagepicker.ImagePickerPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
@@ -69,7 +71,8 @@ public class MainActivity extends ReactActivity {
             new RNMixpanel(),
             new RNSendIntentPackage(),
             new RNBranchPackage(),
-            new LinearGradientPackage()
+            new LinearGradientPackage(),
+            new ImagePickerPackage()
         );
     }
 

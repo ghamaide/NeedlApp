@@ -6,6 +6,7 @@ import _ from 'lodash';
 import CustomActionSheet from 'react-native-custom-action-sheet';
 import Modal from 'react-native-modalbox';
 import RNComm from 'react-native-communications';
+import TimerMixin from 'react-timer-mixin';
 
 import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
@@ -114,6 +115,26 @@ class Profil extends Page {
     RNComm.email(['contact@needl-app.com'], '', '', 'J\'ai une question !', '');
   };
 
+  changePicture = () => {
+    var options = {
+    };
+
+    NativeModules.ImagePickerManager.launchImageLibrary(options, (response)  => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePickerManager Error: ', response.error);
+      } else {
+        // You can display the image using either data:
+        var uri = 'data:image/jpeg;base64,' + response.data;
+
+        this.setState({avatarSource: uri});
+
+        MeActions.uploadPicture(uri);
+      }
+    });
+  }
+
   onPressMenu = (index) => {
     if (this.state.index != index) {
       this.setState({index: index});
@@ -133,6 +154,8 @@ class Profil extends Page {
     var followingsIds =  _.map(ProfilStore.getFollowings(), (following) => {
       return following.id
     });
+
+    var picture = this.state.avatarSource || profil.picture;
 
     var is_following = (!_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id) || (MeStore.getState().me.id === profil.id && profil.public && this.state.index == 2);
 
@@ -324,7 +347,7 @@ class Profil extends Page {
               ]}
 
               {/* Profile Image */}
-              <Image source={{uri: profil.picture}} style={styles.image} />
+              <Image source={{uri: picture}} style={styles.image} />
 
               {/* Badge Image */}
               {!is_following ? [
@@ -520,6 +543,15 @@ class Profil extends Page {
                     this.setState({confirmation_opened: false});
                   }}>
                   <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Modifier mon profil</Text>
+                </TouchableHighlight>
+                <TouchableHighlight 
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={[styles.confirmationContainer, {borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  onPress={() => {
+                    this.setState({confirmation_opened: false});
+                    setTimeout(() => this.changePicture(), 500);
+                  }}>
+                  <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Changer ma photo</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'

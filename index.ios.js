@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {AppRegistry, Component, Platform} from 'react-native';
+import React, {AppRegistry, Component, NetInfo} from 'react-native';
 
 import _ from 'lodash';
 
@@ -11,8 +11,9 @@ import ProfilStore from './src/stores/Profil';
 import FriendsStore from './src/stores/Friends';
 import RestaurantsStore from './src/stores/Restaurants';
 
-import Login from './src/components/pages/Login';
 import App from './src/components/App';
+import Connection from './src/components/pages/Connection';
+import Login from './src/components/pages/Login';
 
 class NeedlIOS extends Component {
 
@@ -40,17 +41,29 @@ class NeedlIOS extends Component {
     FriendsStore.listen(this.onReadyChange.bind(this));
   };
 
+  componentDidMount() {
+    NetInfo.isConnected.fetch().done((isConnected) => {
+      this.setState({isConnected});
+    });
+    NetInfo.isConnected.addEventListener('change', this.handleFirstConnectivityChange);
+  };
+
   componentWillUnmount() {
     MeStore.unlisten(this.onReadyChange.bind(this));
     ProfilStore.unlisten(this.onReadyChange.bind(this));
     RestaurantsStore.unlisten(this.onReadyChange.bind(this));
     FriendsStore.unlisten(this.onReadyChange.bind(this));
+    NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChange);
+  };
+
+  handleFirstConnectivityChange = (isConnected) => {
+    this.setState({isConnected});
   };
 
   // Actions to add the new variables in local storage when user upgrades his version
   onUpdate = () => {
     // If not logged in or logged in and below current version
-    if (_.isEmpty(MeStore.getState().me) || ((Platform.OS == 'ios' && MeStore.getState().me.app_version < '3.0.0') || (Platform.OS == 'android' && MeStore.getState().me.app_version < '1.1.0'))) {
+    if (_.isEmpty(MeStore.getState().me) || MeStore.getState().me.app_version < '3.0.0') {
       RestaurantsActions.setFilter.defer('friends', []);
     }
   };
@@ -62,6 +75,10 @@ class NeedlIOS extends Component {
   render() {
     if (!this.state.ready) {
       return null;
+    }
+
+    if (!this.state.isConnected) {
+      return <Connection />
     }
 
     if (!this.state.loggedIn) {

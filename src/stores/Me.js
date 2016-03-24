@@ -27,6 +27,8 @@ export class MeStore extends CachedStore {
 
     this.version = 0;
 
+    this.isConnected = false;
+
     this.hasUploadedContacts = false;
     this.uploadedContacts = [];
 
@@ -84,7 +86,14 @@ export class MeStore extends CachedStore {
 
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
 
-      handleHideNewBadge: MeActions.HIDE_NEW_BADGE
+      handleHideNewBadge: MeActions.HIDE_NEW_BADGE,
+
+      handleCheckConnectivity: MeActions.checkConnectivity,
+      handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
+
+      handleUploadPicture: MeActions.UPLOAD_PICTURE,
+      handleUploadPictureFailed: MeActions.UPLOAD_PICTURE_FAILED,
+      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS
     });
   }
 
@@ -306,6 +315,29 @@ export class MeStore extends CachedStore {
     this.hasNewBadge = false;
   }
 
+  handleCheckConnectivity() {
+    this.status.loading = true;
+  }
+
+  handleCheckConnectivitySuccess(isConnected) {
+    this.isConnected = isConnected;
+    this.status.loading = false;
+  }
+
+  handleUploadPicture() {
+    delete this.status.error;
+    this.status.loading = true;
+  }
+
+  handleUploadPictureFailed(err) {
+    this.status.error = err;
+    this.status.loading = false;
+  }
+
+  handleUploadPictureSuccess(result) {
+    this.status.loading = false;
+  }
+
   static getMe() {
     return this.getState().me;
   }
@@ -333,6 +365,11 @@ export class MeStore extends CachedStore {
   static hasNewBadge() {
     return this.getState().hasNewBadge;
   }
+  
+  static isConnected() {
+    return this.getState().isConnected;
+  }
+  
 }
 
 export default alt.createStore(MeStore);

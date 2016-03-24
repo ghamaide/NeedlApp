@@ -218,6 +218,46 @@ export class MeActions {
       dispatch();
     }
   }
+
+  checkConnectivity() {
+    return (dispatch) => {
+      dispatch();
+
+      NetInfo.isConnected.fetch().done((isConnected) => {
+        return this.checkConnectivitySuccess(isConnected);
+      });
+    }
+  }
+
+  checkConnectivitySuccess(isConnected) {
+    return isConnected;
+  }
+
+  uploadPicture(uri, callback) {
+    return (dispatch) => {
+      dispatch();
+
+      request.uploadPicture('picture', uri, '/api/v2/users/update_picture', (err, result) => {
+        if (err) {
+          return this.uploadPictureFailed(err);
+        }
+
+        this.uploadPictureSuccess(uri);
+
+        if (callback) {
+          callback();
+        }
+      });
+    }
+  }
+
+  uploadPictureFailed(err) {
+    return err;
+  }
+
+  uploadPictureSuccess(result) {
+    return result;
+  }
 }
 
 export default alt.createActions(MeActions);

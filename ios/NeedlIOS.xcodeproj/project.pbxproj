@@ -32,6 +32,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		13D739631CA3E92C005B8A5E /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 13D739621CA3E921005B8A5E /* libRNImagePicker.a */; };
+		13D739651CA3F53E005B8A5E /* RCTFileTransfer.m in Sources */ = {isa = PBXBuildFile; fileRef = 13D739641CA3F53E005B8A5E /* RCTFileTransfer.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		2D57CEBD2E0A468EB139C11B /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6BB6F15093964E19AC1232CC /* Zocial.ttf */; };
 		3A8B1C4D1649494EBF1ECE01 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F452E3349A1F4BF6ACA35C98 /* EvilIcons.ttf */; };
@@ -55,7 +57,6 @@
 		A32E07B31C075CB60075E6E8 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A32E07B21C075CB10075E6E8 /* libRCTPushNotification.a */; };
 		A32E07B61C075DA20075E6E8 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A32E07B41C075DA20075E6E8 /* Default-568h@2x.png */; };
 		A32E07B71C075DA20075E6E8 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A32E07B51C075DA20075E6E8 /* Default@2x.png */; };
-		A32E07BD1C08AB5B0075E6E8 /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */; };
 		A32E08231C08F9C70075E6E8 /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A32E08221C08F9B90075E6E8 /* libRNOverlay.a */; };
 		A33A43B31C235750003F61B5 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = A33A43B21C235750003F61B5 /* Podfile */; };
 		A33A44471C235C42003F61B5 /* libMixpanel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A33A44461C235C42003F61B5 /* libMixpanel.a */; };
@@ -187,6 +188,13 @@
 			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
 			remoteInfo = RNVectorIcons;
 		};
+		13D739611CA3E921005B8A5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 13D7395D1CA3E921005B8A5E /* RNImagePicker.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 014A3B5C1C6CF33500B6D375;
+			remoteInfo = RNImagePicker;
+		};
 		146834031AC3E56700842450 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -297,6 +305,8 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = NeedlIOS/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = NeedlIOS/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = NeedlIOS/main.m; sourceTree = "<group>"; };
+		13D7395D1CA3E921005B8A5E /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
+		13D739641CA3F53E005B8A5E /* RCTFileTransfer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCTFileTransfer.m; path = "../node_modules/react-native-file-transfer/RCTFileTransfer.m"; sourceTree = "<group>"; };
 		13E2B8AA1C68E12900A8CFEC /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = FacebookSDK/FBSDKCoreKit.framework; sourceTree = "<group>"; };
 		13E2B8AB1C68E12900A8CFEC /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKLoginKit.framework; path = FacebookSDK/FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		13E2B8AC1C68E12900A8CFEC /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKShareKit.framework; path = FacebookSDK/FBSDKShareKit.framework; sourceTree = "<group>"; };
@@ -323,8 +333,6 @@
 		A32E07AD1C075CB10075E6E8 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		A32E07B41C075DA20075E6E8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "NeedlIOS/Default-568h@2x.png"; sourceTree = "<group>"; };
 		A32E07B51C075DA20075E6E8 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "NeedlIOS/Default@2x.png"; sourceTree = "<group>"; };
-		A32E07BB1C08AB5B0075E6E8 /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
-		A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
 		A33A43B21C235750003F61B5 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A33A44401C235C32003F61B5 /* RNMixpanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMixpanel.xcodeproj; path = "../node_modules/react-native-mixpanel/RNMixpanel.xcodeproj"; sourceTree = "<group>"; };
@@ -353,6 +361,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13D739631CA3E92C005B8A5E /* libRNImagePicker.a in Frameworks */,
 				131605A51C71DCAD002BCCB7 /* libRNDeviceInfo.a in Frameworks */,
 				139F27E31C6B519C0016E73E /* libRCTFBLogin.a in Frameworks */,
 				138F19131C5A63C000294FA5 /* libBranch.a in Frameworks */,
@@ -544,6 +553,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		13D7395E1CA3E921005B8A5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				13D739621CA3E921005B8A5E /* libRNImagePicker.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		146834001AC3E56700842450 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -586,6 +603,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				13D739641CA3F53E005B8A5E /* RCTFileTransfer.m */,
+				13D7395D1CA3E921005B8A5E /* RNImagePicker.xcodeproj */,
 				131605DE1C71E81A002BCCB7 /* Pods.xcodeproj */,
 				1316059F1C71DC99002BCCB7 /* RNDeviceInfo.xcodeproj */,
 				139F27DD1C6B51850016E73E /* RCTFBLogin.xcodeproj */,
@@ -595,7 +614,6 @@
 				A34312E81C1975CE001255CF /* RNSearchBar.xcodeproj */,
 				A3D0701B1C158A5200BB5FBD /* RNMessageComposer.xcodeproj */,
 				A32E081D1C08F9B90075E6E8 /* RNOverlay.xcodeproj */,
-				A32E07BA1C08AB5B0075E6E8 /* UIImagePickerManager */,
 				A32E07AD1C075CB10075E6E8 /* RCTPushNotification.xcodeproj */,
 				A32E079F1C075BFB0075E6E8 /* BVLinearGradient.xcodeproj */,
 				A32E07981C075BC20075E6E8 /* RCTContacts.xcodeproj */,
@@ -696,16 +714,6 @@
 				A32E07B21C075CB10075E6E8 /* libRCTPushNotification.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		A32E07BA1C08AB5B0075E6E8 /* UIImagePickerManager */ = {
-			isa = PBXGroup;
-			children = (
-				A32E07BB1C08AB5B0075E6E8 /* UIImagePickerManager.h */,
-				A32E07BC1C08AB5B0075E6E8 /* UIImagePickerManager.m */,
-			);
-			name = UIImagePickerManager;
-			path = "../node_modules/react-native-image-picker/UIImagePickerManager";
 			sourceTree = "<group>";
 		};
 		A32E081E1C08F9B90075E6E8 /* Products */ = {
@@ -907,6 +915,10 @@
 					ProjectRef = 1316059F1C71DC99002BCCB7 /* RNDeviceInfo.xcodeproj */;
 				},
 				{
+					ProductGroup = 13D7395E1CA3E921005B8A5E /* Products */;
+					ProjectRef = 13D7395D1CA3E921005B8A5E /* RNImagePicker.xcodeproj */;
+				},
+				{
 					ProductGroup = A32E07921C075B5B0075E6E8 /* Products */;
 					ProjectRef = A32E07911C075B5B0075E6E8 /* RNKeyboardEvents.xcodeproj */;
 				},
@@ -1054,6 +1066,13 @@
 			fileType = archive.ar;
 			path = libRNVectorIcons.a;
 			remoteRef = 13CBADAF1C6E2BCD00AD1D04 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		13D739621CA3E921005B8A5E /* libRNImagePicker.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNImagePicker.a;
+			remoteRef = 13D739611CA3E921005B8A5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		146834041AC3E56700842450 /* libReact.a */ = {
@@ -1249,9 +1268,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13D739651CA3F53E005B8A5E /* RCTFileTransfer.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				A32E07BD1C08AB5B0075E6E8 /* UIImagePickerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

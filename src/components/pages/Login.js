@@ -43,7 +43,7 @@ class Login extends Component {
 
   componentWillMount() {
     Branch.getInitSessionResultPatiently(({params, error}) => {
-      if (params.from === 'invitation' && params['+is_first_session']) {
+      if (!_.isEmpty(params) && params.from === 'invitation' && params['+is_first_session']) {
         // do something because he arrived from friend invitation
         this.setState({
           invitation_user_name: params.user_name,
@@ -178,7 +178,7 @@ class Login extends Component {
         <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false} style={styles.loginContainer}>
           <View style={styles.logoImageWrapper}>
             <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
-            <Text style={styles.sublineText}>Les restos préférés de tes amis</Text>
+            <Text style={styles.sublineText}>Improvisez une bonne soirée</Text>
           </View>
 
           {this.state.friendInvitation ? [

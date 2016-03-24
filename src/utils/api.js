@@ -51,9 +51,9 @@ var api = (method, URL) => {
   return r;
 };
 
-api.uploadPhoto = (fileName, fileUri, uri, callback) => {
+api.uploadPicture = (fileName, fileUri, uri, callback) => {
   var upload = {
-    uri: fileUri, // either an 'assets-library' url (for files from photo library) or an image dataURL
+    uri: fileUri,
     uploadUrl: config.API + uri + '?user_token=' + MeStore.getState().me.authentication_token + '&user_email=' + MeStore.getState().me.email,
     fileName: fileName,
     mimeType: 'image/jpeg',

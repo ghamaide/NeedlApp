@@ -196,10 +196,12 @@ class Restaurant extends Component {
           </TouchableHighlight>
         </View>
 
-        <View key='restaurant_call_top' style={[styles.callContainer]}>
-          <Text key='call_text' style={styles.reservationText}>Réserver une table</Text>
-          <Button key='call_button' style={styles.button} label='Appeler' onPress={this.call} />
-        </View>
+        {!_.isEmpty(restaurant.phone_number) ? [
+          <View key='restaurant_call_top' style={[styles.callContainer]}>
+            <Text style={styles.reservationText}>Réserver une table</Text>
+            <Button style={styles.button} label='Appeler' onPress={this.call} />
+          </View>
+        ] : null}
 
         <View key='restaurant_recommenders' style={styles.recoContainer}>
           {RestaurantsStore.getRecommenders(restaurant.id).length ? [

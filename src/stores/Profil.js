@@ -73,7 +73,8 @@ export class ProfilStore extends CachedStore {
       handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
       handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
-      handleEditSuccess: MeActions.EDIT_SUCCESS
+      handleEditSuccess: MeActions.EDIT_SUCCESS,
+      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS
     });
   }
 
@@ -288,6 +289,10 @@ export class ProfilStore extends CachedStore {
   
   handleEditSuccess(data) {
     this.me = _.extend(this.me, {fullname : data.name});
+  }
+
+  handleUploadPictureSuccess(result) {
+    this.me = _.extend(this.me, {picture : result});
   }
 
   handleLogout() {
