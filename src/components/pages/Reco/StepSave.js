@@ -63,8 +63,16 @@ class RecoStepSave extends Component {
     if (reco.type === 'recommendation') {
       if (!reco.editing) {
         RecoActions.addReco(reco, this.goToRestaurant);
+        if (!_.isEmpty(reco.pictures)) {
+          // upload pictures here
+          RecoActions.uploadPictures(reco.pictures, reco.restaurant.id);
+        }
       } else {
         RecoActions.updateRecommendation(reco, this.goToRestaurant);
+        if (!_.isEmpty(reco.pictures)) {
+          // upload pictures here
+          RecoActions.uploadPictures(reco.pictures, reco.restaurant.id);
+        }
       }
     } else {
       RecoActions.addWish(reco.restaurant.id, reco.restaurant.origin, this.goToRestaurant);

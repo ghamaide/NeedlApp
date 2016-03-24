@@ -51,23 +51,50 @@ var api = (method, URL) => {
   return r;
 };
 
-api.uploadPicture = (fileName, fileUri, uri, callback) => {
-  var upload = {
-    uri: fileUri,
-    uploadUrl: config.API + uri + '?user_token=' + MeStore.getState().me.authentication_token + '&user_email=' + MeStore.getState().me.email,
-    fileName: fileName,
-    mimeType: 'image/jpeg',
-    headers: {},
-    data: {}
-  };
+api.uploadPicture = (fileName, pictures, uri, callback) => {
+  if (!_.isArray(pictures)) {
+    var upload = {
+      uri: pictures,
+      uploadUrl: config.API + uri + '?user_token=' + MeStore.getState().me.authentication_token + '&user_email=' + MeStore.getState().me.email,
+      fileName: fileName,
+      mimeType: 'image/jpeg',
+      headers: {},
+      data: {}
+    };
 
-  NativeModules.FileTransfer.upload(upload, (err, res) => {
-    if (err || res.status !== 200) {
-      return callback(err || res.data || 'UNKNOWN NETWORK ERROR');
-    }
+    NativeModules.FileTransfer.upload(upload, (err, res) => {
+      if (err || res.status !== 200) {
+        if (__DEV__) {
+          console.log(err, res.data);
+        }
+        return callback(err || res.data || 'UNKNOWN NETWORK ERROR');
+      }
 
-    callback();
-  });
+      callback();
+    });
+  } else {
+    _.forEach(pictures, (picture, key) => {
+      var upload = {
+        uri: picture,
+        uploadUrl: config.API + uri + '?user_token=' + MeStore.getState().me.authentication_token + '&user_email=' + MeStore.getState().me.email,
+        fileName: fileName,
+        mimeType: 'image/jpeg',
+        headers: {},
+        data: {}
+      };
+
+      NativeModules.FileTransfer.upload(upload, (err, res) => {
+        if (err || res.status !== 200) {
+          if (__DEV__) {
+            console.log(err, res.data);
+          }
+          return callback(err || res.data || 'UNKNOWN NETWORK ERROR');
+        }
+
+        callback();
+      });
+    });
+  }
 };
 
 export default api;

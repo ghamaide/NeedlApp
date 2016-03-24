@@ -237,7 +237,7 @@ export class MeActions {
     return (dispatch) => {
       dispatch();
 
-      request.uploadPicture('picture', uri, '/api/v2/users/update_picture', (err, result) => {
+      request.uploadPicture('picture', uri, '/api/v2/users/update_picture', (err) => {
         if (err) {
           return this.uploadPictureFailed(err);
         }

@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Branch from 'react-native-branch';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Mixpanel from 'react-native-mixpanel';
-import SendIntentAndroid from 'react-native-send-intent';
 
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
@@ -38,6 +37,7 @@ class RecoStep6 extends Component {
     this.state = this.stepState();
     this.state.characterNbRemaining = 140;
     this.state.public_recommendation = ProfilStore.getProfil(MeStore.getState().me.id).public;
+    this.state.recommendationPictures = [];
   }
 
   stepState() {
@@ -71,6 +71,7 @@ class RecoStep6 extends Component {
     recommendation.experts_thanking = this.state.expertsThanksIds;
     recommendation.review = this.state.review;
     recommendation.public = this.state.public_recommendation;
+    recommendation.pictures = this.state.recommendationPictures;
     RecoActions.setReco(recommendation);
     this.props.navigator.resetTo(StepSave.route({toggle: this.props.toggle}));
   };
@@ -135,37 +136,45 @@ class RecoStep6 extends Component {
         Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
       }
     });
-
-  /*
-    if (Platform.OS === 'android') {
-      SendIntentAndroid.sendSms('', 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl: http://download.needl-app.com/invitation');
-      Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
-    } else if (Platform.OS === 'ios') {
-      NativeModules.RNMessageComposer.composeMessageWithArgs({
-        'messageText': 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl: http://download.needl-app.com/invitation',
-      }, (result) => {
-        switch(result) {
-          case NativeModules.RNMessageComposer.Sent:
-            Mixpanel.trackWithProperties('Thanks sent', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, type: 'Text', user_type: 'contact'});
-            break;
-          case NativeModules.RNMessageComposer.Cancelled:
-            // User cancelled sending the message
-            break;
-          case NativeModules.RNMessageComposer.Failed:
-            // Message failed to send
-            break;
-          case NativeModules.RNMessageComposer.NotSupported:
-            // The device does not support sending text messages
-            break;
-          default:
-            // Something unexpected happened
-            break;
-        }
-      });
-    }*/
   };
 
+  choosePicture = () => {
+    var options = {
+      title: 'Choisis une photo du restaurant',
+      cancelButtonTitle: 'Annuler',
+      takePhotoButtonTitle: 'Prendre une photo',
+      chooseFromLibraryButtonTitle: 'Choisir depuis la librairie',
+    };
+
+    NativeModules.ImagePickerManager.showImagePicker(options, (response)  => {
+      if (response.didCancel) {
+        if (__DEV__) {
+          console.log('User cancelled image picker');
+        }
+      } else if (response.error) {
+        if (__DEV__) {
+          console.log('ImagePickerManager Error: ', response.error);
+        }
+      } else {
+        // You can display the image using either data:
+        var uri = 'data:image/jpeg;base64,' + response.data;
+        var newRecommendationPictures = this.state.recommendationPictures;
+        newRecommendationPictures.push(uri);
+
+        this.setState({recommendationPictures: newRecommendationPictures});
+      }
+    });
+  }
+
+  removePicture = (key) => {
+    var newRecommendationPictures = this.state.recommendationPictures;
+    _.pullAt(newRecommendationPictures, key);
+
+    this.setState({recommendationPictures: newRecommendationPictures});
+  }
+
   render() {
+    var me = ProfilStore.getProfil(MeStore.getState().me.id);
     var recommenders = _.remove(RestaurantsStore.getRecommenders(this.state.recommendation.restaurant.id), (id) => {return id !== MeStore.getState().me.id});
     return (
       <View>
@@ -186,8 +195,9 @@ class RecoStep6 extends Component {
               }} />
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
-          
-          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
+
+          {/* Private or public recommendation */}
+          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
             <View key='public_recommendation' style={{paddingLeft: 10, paddingRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
               <Switch
                 onValueChange={(value) => this.setState({public_recommendation: value})}
@@ -195,6 +205,39 @@ class RecoStep6 extends Component {
               <Text style={{marginLeft: 10, fontSize: 12, color: '#3A325D'}}>Recommandation {this.state.public_recommendation ? 'publique' : 'privée'}</Text>
             </View>
           ] : null}
+
+          {/* Add a picture if your profile is public */}
+          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+            <View key='public_picture' style={{alignItems: 'flex-start', justifyContent: 'center', margin: 10}}>
+              <Text style={styles.thanksTitle}>Une photo à ajouter ?</Text>
+              <ScrollView 
+                style={styles.thanksScroller}
+                alignItems='center'
+                horizontal={true}>
+                {_.map(this.state.recommendationPictures, (picture, key) => {
+                  return (
+                    <TouchableHighlight
+                      key={'photo_' + key}
+                      underlayColor='rgba(0, 0, 0, 0)'
+                      onPress={() => this.removePicture(key)}>
+                      <Image style={{margin: 5, height: IMAGE_WIDTH, width: IMAGE_WIDTH}} source={{uri: picture}} />
+                    </TouchableHighlight>
+                  );
+                })}
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={{height: IMAGE_WIDTH, width: IMAGE_WIDTH, margin: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EDEDF2'}}
+                  onPress={this.choosePicture}>
+                  <Icon
+                    key='icon'
+                    name='plus'
+                    size={IMAGE_WIDTH / 2}
+                    color='#827D9C' />
+                </TouchableHighlight>
+              </ScrollView>
+            </View>
+          ] : null}
+
           
           <View key='recommenders' style={styles.thanksContainer}>
             <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
@@ -266,8 +309,6 @@ var styles = StyleSheet.create({
     fontSize: 12
   },
   thanksContainer: {
-    marginLeft: 10,
-    marginRight: 10,
     marginTop: 5,
     marginBottom: 5,
   },

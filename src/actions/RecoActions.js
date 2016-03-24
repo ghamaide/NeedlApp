@@ -193,6 +193,30 @@ export class RecoActions {
   removeWishSuccess(restaurant) {
     return restaurant;
   }
+
+  uploadPictures(pictures, restaurantId) {
+    return (dispatch) => {
+      dispatch();
+
+      request.uploadPicture('picture', pictures, '/api/v2/restaurants/' + restaurantId + '/add_picture', (err) => {
+        if (err) {
+          return this.uploadPicturesFailed(err);
+        }
+
+        this.uploadPicturesSuccess();
+      });
+    }
+  }
+
+  uploadPicturesFailed(err) {
+    return err;
+  }
+
+  uploadPicturesSuccess() {
+    return function (dispatch) {
+      dispatch()
+    }
+  }
 }
 
 export default alt.createActions(RecoActions);
