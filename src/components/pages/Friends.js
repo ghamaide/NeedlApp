@@ -4,7 +4,6 @@ import React, {ActivityIndicatorIOS, Image, ListView, NativeModules, Platform, P
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
-import Animatable from 'react-native-animatable';
 import RefreshableListView from 'react-native-refreshable-listview';
 
 import MenuIcon from '../ui/MenuIcon';

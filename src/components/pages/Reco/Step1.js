@@ -3,7 +3,6 @@
 import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import Animatable from 'react-native-animatable';
 import SearchBar from 'react-native-search-bar';
 
 import MenuIcon from '../../ui/MenuIcon';
@@ -140,6 +139,7 @@ class RecoStep1 extends Component {
           <TextInput
             key='search'
             ref='searchBar'
+            returnKeyType='done'
             placeholderTextColor='#3A325D'
             placeholder='Sélectionne ton restaurant'
             style={{backgroundColor: '#EEEDF1', margin: 10, padding: 5, color: '#3A325D'}}

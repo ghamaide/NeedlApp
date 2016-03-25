@@ -160,12 +160,14 @@ class EditMe extends Component {
           <TextInput
             style={styles.input}
             ref='nom'
+            returnKeyType='done'
             onChangeText={(name) => this.setState({name: name})}
             value={this.state.name} />
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             ref='email'
+            returnKeyType='done'
             onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
 
@@ -181,6 +183,7 @@ class EditMe extends Component {
                 placeholderTextColor='#3A325D'
                 style={[styles.input, {height: 75, marginBottom: 5}]}
                 value={this.state.description}
+                returnKeyType='done'
                 onChangeText={(description) => {
                   this.setState({description: description});
                   this.setState({characters_remaining: 90 - description.length});
@@ -190,6 +193,7 @@ class EditMe extends Component {
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', width: windowWidth - 40, marginBottom: 15}}>
                 <TextInput
                   placeholder={'Tag #1'}
+                  returnKeyType='next'
                   placeholderTextColor='#3A325D'
                   style={[styles.tagInput, {marginRight: 5}]}
                   value={this.state.tags[0]}
@@ -200,6 +204,7 @@ class EditMe extends Component {
                   }} />
                 <TextInput
                   placeholder={'Tag #2'}
+                  returnKeyType='next'
                   placeholderTextColor='#3A325D'
                   style={[styles.tagInput, {marginLeft: 5}]}
                   value={this.state.tags[1]}
@@ -210,6 +215,7 @@ class EditMe extends Component {
                   }} />
                 <TextInput
                   placeholder={'Tag #3'}
+                  returnKeyType='done'
                   placeholderTextColor='#3A325D'
                   style={[styles.tagInput, {marginRight: 5}]}
                   value={this.state.tags[2]}

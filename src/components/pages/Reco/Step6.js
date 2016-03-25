@@ -193,6 +193,7 @@ class RecoStep6 extends Component {
               maxLength={140}
               multiline={true}
               value={this.state.review}
+              returnKeyType={ProfilStore.getProfil(MeStore.getState().me.id).public ? 'next' : 'done'}
               onChangeText={(review) => {
                 this.setState({review: review});
                 this.handleChange(review.length);

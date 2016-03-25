@@ -396,8 +396,8 @@ class SearchFriend extends Page {
 
         {Platform.OS === 'ios' ? [
           <SearchBar
-            ref='searchBar'
             key='search_ios'
+            ref='searchBar'
             placeholder='Rechercher'
             hideBackground={true}
             textFieldBackgroundColor='#EEEDF1'
@@ -411,9 +411,10 @@ class SearchFriend extends Page {
             onSearchButtonPress={this.closeKeyboard} />
         ] : [
           <TextInput
-            ref='searchBar'
             key='search_android'
+            ref='searchBar'
             placeholder='Rechercher'
+            returnKeyType='done'
             style={{backgroundColor: '#EEEDF1', margin: 10, padding: 5, color: '#3A325D'}}
             onChangeText={(text) => {
               if (this.state.needlActive) {
