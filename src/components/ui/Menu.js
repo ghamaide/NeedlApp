@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import React, {Component, Dimensions, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';
@@ -40,22 +40,25 @@ class Menu extends Component {
 
     return (
       <View key={index} style={styles.itemContainer}>
-        <TouchableWithoutFeedback onPress={() => {
-          if (this.props.tabsBlocked) {
-            return;
-          }
+        <TouchableHighlight
+          underlayColor='rgba(0, 0, 0, 0)'
+          style={{padding: 10}}
+          onPress={() => {
+            if (this.props.tabsBlocked) {
+              return;
+            }
 
-          if (index == 0) {
-            RestaurantsActions.resetFilters();
-          }
+            if (index == 0) {
+              RestaurantsActions.resetFilters();
+            }
 
-          this.props.resetToTab(index);
-        }}>
+            this.props.resetToTab(index);
+          }}>
           <View style={styles.itemInnerContainer}>
             <Image source={icon} style={styles.icons} />
             <Text style={styles.itemText}>{name}</Text>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableHighlight>
 
         {pastille ?
           <View style={styles.pastilleContainer}>
@@ -101,7 +104,6 @@ var styles = StyleSheet.create({
     backgroundColor: '#FE3139'
   },
   itemContainer: {
-    padding: 10,
     margin: 5,
     backgroundColor: 'transparent'
   },

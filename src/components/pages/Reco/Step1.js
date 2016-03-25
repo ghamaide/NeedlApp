@@ -134,6 +134,7 @@ class RecoStep1 extends Component {
             hideBackground={true}
             textFieldBackgroundColor='#EEEDF1'
             tintColor='#3A325D'
+            onSearchButtonPress={this.closeKeyboard}
             onChangeText={this.onRestaurantQuery} />
         ] : [
           <TextInput
