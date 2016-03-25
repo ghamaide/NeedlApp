@@ -289,7 +289,6 @@ class SearchFriend extends Page {
     );
   };
 
-
   renderHeaderWrapperUsers = () => {
     if (!this.state.users.length) {
       return(

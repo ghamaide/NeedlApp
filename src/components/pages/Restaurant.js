@@ -381,6 +381,10 @@ class Restaurant extends Page {
           </View>
         ]}
 
+        {this.props.fromReco ? [
+          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
+        ] : null}
+
         {/* Overlay View for Carousel of Photos */}
         <Modal
           ref='android_modal'
@@ -416,9 +420,6 @@ class Restaurant extends Page {
           </TouchableHighlight>
         </Modal>
 
-        {this.props.fromReco ? [
-          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
-        ] : null}
       </View>
     );
   };

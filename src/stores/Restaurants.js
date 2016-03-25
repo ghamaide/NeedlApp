@@ -434,7 +434,7 @@ export class RestaurantsStore extends CachedStore {
     var index = 0;
     var friends_recommending_and_friends_wishing = _.concat(restaurant.my_friends_wishing, restaurant.my_friends_recommending);
     _.forEach(friends_recommending_and_friends_wishing, (friendId) => {
-      if (!ProfilStore.getProfil(friendId).invisible) {
+      if (!_.isEmpty(ProfilStore.getProfil(friendId)) && !ProfilStore.getProfil(friendId).invisible) {
         index += 1;
       }
     });
