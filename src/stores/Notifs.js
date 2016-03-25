@@ -128,7 +128,6 @@ export class NotifsStore extends CachedStore {
   }
 
   handleAcceptFriendshipSuccess(result) {
-    console.log(result);
     // Add friend activities to friends notifications
     _.forEach(result.activities, (activity) => {
       var temp_date = moment(activity.date);

@@ -132,7 +132,7 @@ class RecoStep6 extends Component {
   inviteFriend = () => {
     var me = ProfilStore.getProfil(MeStore.getState().me.id);
     var shareOptions = {messageHeader: 'Merci !', messageBody: 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name + '. Viens découvrir mes recommandations sur Needl:'};
-    var branchUniversalObject = {metadata: {user_name: me.name, restaurant_id: this.state.recommendation.restaurant.id, from: 'invitation'}, canonicalIdentifier: 'RNBranchSharedObjectId', contentTitle: 'Merci !', contentDescription: 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name, contentImageUrl: me.picture};
+    var branchUniversalObject = {metadata: {friend_id: me.id, friend_name: me.name, restaurant_id: this.state.recommendation.restaurant.id, from: 'invitation'}, canonicalIdentifier: 'RNBranchSharedObjectId', contentTitle: 'Merci !', contentDescription: 'Merci de m\'avoir fait découvrir ' + this.state.recommendation.restaurant.name, contentImageUrl: me.picture};
     var linkProperties = {feature: 'invitation', channel: 'in-app'};
     Branch.showShareSheet(shareOptions, branchUniversalObject, linkProperties, ({channel, completed, error}) => {
       if (completed) {

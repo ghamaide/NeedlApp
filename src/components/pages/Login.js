@@ -36,6 +36,7 @@ class Login extends Component {
     this.state.name = '';
     this.state.password = '';
     this.state.passwordRecovered = false;
+    this.state.friendInvitation = false;
 
     // Remove to add password confirmation
     //this.state.password_confirmation = '';
@@ -46,8 +47,10 @@ class Login extends Component {
       if (!_.isEmpty(params) && params.from === 'invitation' && params['+is_first_session']) {
         // do something because he arrived from friend invitation
         this.setState({
-          invitation_user_name: params.user_name,
-          invitation_user_picture: params['$og_image_url'],
+          invitation_friend_id: params.friend_id,
+          invitation_friend_name: params.friend_name,
+          invitation_friend_picture: params['$og_image_url'],
+          invitation_restaurant_id: params.restaurant_id,
           friendInvitation: true
         });
       }
@@ -73,7 +76,11 @@ class Login extends Component {
 
   onLogin = () => {
     if (!this.state.loading) {
-      LoginActions.loginFacebook();
+      if (this.state.friendInvitation) {
+        LoginActions.loginFacebook(this.state.invitation_friend_id, this.state.invitation_restaurant_id);
+      } else {
+        LoginActions.loginFacebook();
+      }
     }
   };
 
@@ -102,7 +109,12 @@ class Login extends Component {
         password: this.state.password,
         email: this.state.email
       };
-      LoginActions.createAccount(user);
+      if (this.state.friendInvitation) {
+        LoginActions.createAccount(user, this.state.invitation_friend_id, this.state.invitation_restaurant_id);
+      } else {
+        LoginActions.createAccount(user);
+      }
+      
     }
   };
 
@@ -183,8 +195,8 @@ class Login extends Component {
 
           {this.state.friendInvitation ? [
             <View key='invitation' style={{alignItems: 'center', justifyContent: 'center', marginTop: 20}}>
-              <Image style={{width: 60, height: 60, borderRadius: 30}} source={{uri: this.state.invitation_user_picture}} />
-              <Text style={{color: '#FFFFFF', fontSize: 13, marginTop: 10}}>Retrouve {this.state.invitation_user_name} sur Needl</Text>
+              <Image style={{width: 60, height: 60, borderRadius: 30}} source={{uri: this.state.invitation_friend_picture}} />
+              <Text style={{color: '#FFFFFF', fontSize: 13, marginTop: 10}}>Retrouve {this.state.invitation_friend_name} sur Needl !</Text>
             </View>
           ] : null}
 
@@ -206,6 +218,9 @@ class Login extends Component {
                 style={styles.input}
                 maxLength={40}
                 multiline={false}
+                onSubmitEditing={(event) => { 
+                  this.refs.sign_in_password.focus()
+                }}
                 onChangeText={(email) => {
                   this.setState({email: email});
                 }} />
@@ -256,6 +271,9 @@ class Login extends Component {
                   style={styles.input}
                   maxLength={40}
                   multiline={false}
+                  onSubmitEditing={(event) => { 
+                    this.refs.sign_up_email.focus()
+                  }}
                   onChangeText={(name) => {
                     this.setState({name: name});
                   }} />
@@ -270,6 +288,9 @@ class Login extends Component {
                   style={styles.input}
                   maxLength={40}
                   multiline={false}
+                  onSubmitEditing={(event) => { 
+                    this.refs.sign_up_password.focus()
+                  }}
                   onChangeText={(email) => {
                     this.setState({email: email});
                   }} />

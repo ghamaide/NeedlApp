@@ -119,6 +119,7 @@ export class MeStore extends CachedStore {
 
   handleLoginFacebookSuccess(me) {
     this.me = me.user;
+    this.me.score = 0;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
     this.status.loading = false;
   }
@@ -172,6 +173,7 @@ export class MeStore extends CachedStore {
 
   handleCreateAccountSuccess(me) {
     this.me = _.extend(me.user, {HAS_SHARED: !!me.nb_recos || !!me.nb_wishes});
+    this.me.score = 0;
     this.status.loading = false;
   }
 
@@ -179,7 +181,7 @@ export class MeStore extends CachedStore {
     if (profil.id === this.me.id) {
       this.me.app_version = profil.app_version;
       this.me.platform = profil.platform;
-      var oldScore = this.me.score || 0;
+      var oldScore = this.me.score;
       this.me.score = profil.score;
       if (!this.hasNewBadge) {
         if (oldScore < 1) {

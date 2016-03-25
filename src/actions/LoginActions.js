@@ -1,5 +1,6 @@
 'use strict';
 
+import _ from 'lodash';
 import qs from 'qs';
 
 import LoginUtils from '../utils/login';
@@ -8,7 +9,7 @@ import request from '../utils/api';
 import alt from '../alt';
 
 export class LoginActions {
-  loginFacebook() {
+  loginFacebook(friend_id, restaurant_id) {
     return (dispatch) => {
       dispatch()
       LoginUtils.facebook((err, me) => {
@@ -19,7 +20,7 @@ export class LoginActions {
           return this.loginFacebookFailed(err);
         }
         this.loginFacebookSuccess(me);
-      });
+      }, friend_id, restaurant_id);
     }
   }
 
@@ -61,12 +62,12 @@ export class LoginActions {
     return result;
   }
 
-  createAccount(user) {
+  createAccount(user, friend_id, restaurant_id) {
     return (dispatch) => {
       dispatch();
 
       request('POST', '/api/v2/registrations.json')
-        .query(qs.stringify(user, { arrayFormat: 'brackets' }))
+        .query(qs.stringify(_.extend(user, {friend_id: friend_id, restaurant_id: restaurant_id}), { arrayFormat: 'brackets' }))
         .end((err, result) => {
             if (err) {
               return this.createAccountFailed(err);
