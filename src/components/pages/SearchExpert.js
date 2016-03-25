@@ -180,7 +180,7 @@ var styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 14,
-    color: '#555555',
+    color: '#837D9B',
     marginLeft: 10,
     marginRight: 10,
     flex: 1

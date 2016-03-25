@@ -405,14 +405,14 @@ class Restaurant extends Page {
             </Swiper>
             <TouchableHighlight
               underlayColor='rgba(0, 0, 0, 0)'
-              style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EDEDF2', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
+              style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EEEDF1', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
               onPress={() => {
                 this.setState({pictureOverlay: false});
               }}>
               <Icon
                 name='times'
                 size={15}
-                color='#EDEDF2' />
+                color='#EEEDF1' />
           </TouchableHighlight>
         </Modal>
 

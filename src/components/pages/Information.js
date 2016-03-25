@@ -215,7 +215,7 @@ var styles = StyleSheet.create({
   rowWrapper: {
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 0.5,
-    borderColor: '#DDDDDD',
+    borderColor: '#C1BFCC',
   },
   row: {
     padding: 20,

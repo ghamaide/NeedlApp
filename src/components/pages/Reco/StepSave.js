@@ -90,7 +90,7 @@ class RecoStepSave extends Component {
         console.log(this.state.error);
       }
       content = <View style={styles.errorBlock}>
-        <Text style={{color: '#555555', marginBottom: 15}}>Erreur lors de l'enregistrement</Text>
+        <Text style={{color: '#837D9B', marginBottom: 15}}>Erreur lors de l'enregistrement</Text>
         <Button style={styles.errorButton}
           label='Réessayer'
           onPress={this.addActivity} />

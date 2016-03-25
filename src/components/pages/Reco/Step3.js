@@ -79,7 +79,7 @@ class RecoStep3 extends Component {
           console.log(this.state.error);
         }
         content = <View style={styles.errorBlock}>
-          <Text style={{color: '#555555', marginBottom: 20}}>Une erreur est survenue</Text>
+          <Text style={{color: '#837D9B', marginBottom: 20}}>Une erreur est survenue</Text>
           <Button style={styles.errorButton}
             label='Réessayer'
             onPress={() => {

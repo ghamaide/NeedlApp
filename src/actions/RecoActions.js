@@ -59,7 +59,8 @@ export class RecoActions {
             ambiences: reco.ambiences,
             occasions: reco.occasions,
             review: reco.review,
-            public: reco.public
+            public: reco.public,
+            url: reco.url
           }
         }, { arrayFormat: 'brackets' }))
         .end((err, result) => {
@@ -93,7 +94,8 @@ export class RecoActions {
             strengths: reco.strengths,
             ambiences: reco.ambiences,
             occasions: reco.occasions,
-            review: reco.review
+            review: reco.review,
+            url: reco.url
           }
         }, { arrayFormat: 'brackets' }))
         .end((err, result) => {

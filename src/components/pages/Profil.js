@@ -376,7 +376,7 @@ class Profil extends Page {
                   <TouchableHighlight
                     underlayColor='rgba(0, 0, 0, 0)'
                     key={'edit_' + profil.id}
-                    style={[styles.actionButton, {borderColor: '#AAAAAA'}]}
+                    style={[styles.actionButton, {borderColor: '#837D9B'}]}
                     onPress={() => {
                       this.setState({confirmation_opened: true});
                     }}>
@@ -467,7 +467,7 @@ class Profil extends Page {
                           picture={restaurant.pictures[0]}
                           type={restaurant.food[1]}
                           budget={restaurant.price_range}
-                          underlayColor='#EEEEEE'
+                          underlayColor='#EEEDF1'
                           onPress={() => {
                             this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
                           }}/>
@@ -489,7 +489,7 @@ class Profil extends Page {
                           picture={restaurant.pictures[0]}
                           type={restaurant.food[1]}
                           budget={restaurant.price_range}
-                          underlayColor='#EEEEEE'
+                          underlayColor='#EEEDF1'
                           onPress={() => {
                             this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
                           }}/>
@@ -515,7 +515,7 @@ class Profil extends Page {
                         picture={restaurant.pictures[0]}
                         type={restaurant.food[1]}
                         budget={restaurant.price_range}
-                        underlayColor='#EEEEEE'
+                        underlayColor='#EEEDF1'
                         onPress={() => {
                           this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
                         }}/>
@@ -541,7 +541,7 @@ class Profil extends Page {
               <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                 <TouchableHighlight 
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#837D9B', borderBottomWidth: .5}]}
                   onPress={() => {
                     this.props.navigator.push(EditMe.route());
                     this.setState({confirmation_opened: false});
@@ -550,7 +550,7 @@ class Profil extends Page {
                 </TouchableHighlight>
                 <TouchableHighlight 
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.confirmationContainer, {borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  style={[styles.confirmationContainer, {borderColor: '#837D9B', borderBottomWidth: .5}]}
                   onPress={() => {
                     this.setState({confirmation_opened: false});
                     setTimeout(() => this.changePicture(), 500);
@@ -559,7 +559,7 @@ class Profil extends Page {
                 </TouchableHighlight>
                 <TouchableHighlight
                   underlayColor='rgba(0, 0, 0, 0)'
-                  style={[styles.confirmationContainer, {borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                  style={[styles.confirmationContainer, {borderColor: '#837D9B', borderBottomWidth: .5}]}
                   onPress={this.contactUs}>
                   <Text style={[styles.confirmationText, {color: '#3A325D'}]}>Nous contacter</Text>
                 </TouchableHighlight>
@@ -579,7 +579,7 @@ class Profil extends Page {
                   <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                     <TouchableHighlight
                       underlayColor='rgba(0, 0, 0, 0)'
-                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#837D9B', borderBottomWidth: .5}]}
                       onPress={() => {
                         if (this.state.loading) {
                           return;
@@ -608,7 +608,7 @@ class Profil extends Page {
                   <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                     <TouchableHighlight
                       underlayColor='rgba(0, 0, 0, 0)'
-                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#AAAAAA', borderBottomWidth: .5}]}
+                      style={[styles.confirmationContainer, {borderTopLeftRadius: 5, borderTopRightRadius: 5, borderColor: '#837D9B', borderBottomWidth: .5}]}
                       onPress={() => {
                         this.setState({confirmation_opened: false});
                         if (this.state.loading) {
@@ -880,7 +880,7 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   buttonText: {
-    color: '#AAAAAA',
+    color: '#837D9B',
     fontSize: 11,
     fontWeight: '500'
   },

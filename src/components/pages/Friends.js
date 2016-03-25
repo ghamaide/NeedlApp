@@ -211,12 +211,12 @@ class Friends extends Page {
               ref='searchBar'
               placeholder='Rechercher'
               hideBackground={true}
-              textFieldBackgroundColor='#DDDDDD'
+              textFieldBackgroundColor='#C1BFCC'
               onChangeText={this.state.index == 1 ? this.searchFriends : this.searchFollowings} />
           ] : [
             <TextInput
               key='search'
-              style={{backgroundColor: '#DDDDDD', margin: 10, padding: 5}}
+              style={{backgroundColor: '#C1BFCC', margin: 10, padding: 5}}
               ref='searchBar'
               placeholder='Rechercher'
               placeholderTextColor='#3A325D'
@@ -306,7 +306,7 @@ var styles = StyleSheet.create({
   friendRowWrapper: {
     backgroundColor: 'white',
     borderBottomWidth: 0.5,
-    borderColor: '#DDDDDD',
+    borderColor: '#C1BFCC',
   },
   friendRow: {
     padding: 20,
@@ -355,7 +355,7 @@ var styles = StyleSheet.create({
     color: '#FE3139'
   },
   requestsContainer: {
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#C1BFCC',
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',

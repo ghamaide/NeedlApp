@@ -480,7 +480,7 @@ var styles = StyleSheet.create({
   },
   contactName: {
     flex: 1,
-    color: '#000000',
+    color: '#3A325D',
     fontSize: 13,
     paddingTop: 12,
     paddingBottom: 5
@@ -544,14 +544,14 @@ var styles = StyleSheet.create({
   },
   profileName: {
     fontSize: 14,
-    color: '#555555',
+    color: '#837D9B',
     marginLeft: 10,
     marginRight: 10,
     flex: 1
   },
   noResultText: {
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#3A325D',
     textAlign: 'center'
   },
   invitedContainer: {

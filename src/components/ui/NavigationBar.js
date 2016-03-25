@@ -78,7 +78,7 @@ class NavigationBar extends Component {
       title: this.props.rightButtonTitle,
       handler: this.props.onRightButtonPress,
       image: this.props.image,
-      tintColor: '#000000'
+      tintColor: '#3A325D'
     };
 
     const titleConfiguration = {
@@ -90,14 +90,14 @@ class NavigationBar extends Component {
     const leftButtonConfiguration = {
       title: this.props.leftButtonTitle,
       handler: this.props.onLeftButtonPress,
-      tintColor: '#000000'
+      tintColor: '#3A325D'
     };
 
     switch (this.props.type) {
       case 'back' :
         return (
           <NavBar
-            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            style={[{borderBottomWidth: 1, borderColor: '#C1BFCC', paddingBottom: 0, margin: 0}, this.props.style]}
             title={titleConfiguration}
             rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
             leftButton={<BackButton icon={leftButtonConfiguration.icon} title={leftButtonConfiguration.title} onPress={this.props.onLeftButtonPress} /> } />
@@ -106,7 +106,7 @@ class NavigationBar extends Component {
       case 'default' :
         return (
           <NavBar
-            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            style={[{borderBottomWidth: 1, borderColor: '#C1BFCC', paddingBottom: 0, margin: 0}, this.props.style]}
             title={titleConfiguration}
             rightButton={rightButtonConfiguration.title ? <NavBarButton title={rightButtonConfiguration.title} onPress={rightButtonConfiguration.handler} image={this.props.rightImage} /> : []}
             leftButton={leftButtonConfiguration.title ? <NavBarButton title={leftButtonConfiguration.title} onPress={leftButtonConfiguration.handler} image={this.props.leftImage} /> : []} />
@@ -116,7 +116,7 @@ class NavigationBar extends Component {
         return (
           <NavBar
             switch={true}
-            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            style={[{borderBottomWidth: 1, borderColor: '#C1BFCC', paddingBottom: 0, margin: 0}, this.props.style]}
             titles={this.props.titles}
             active={this.props.active}
             onPress={this.props.onPress}
@@ -128,7 +128,7 @@ class NavigationBar extends Component {
         return (
           <NavBar
             switch={true}
-            style={[{borderBottomWidth: 1, borderColor: '#CCCCCC', paddingBottom: 0, margin: 0}, this.props.style]}
+            style={[{borderBottomWidth: 1, borderColor: '#C1BFCC', paddingBottom: 0, margin: 0}, this.props.style]}
             titles={this.props.titles}
             active={this.props.active}
             onPress={this.props.onPress}

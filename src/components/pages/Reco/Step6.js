@@ -20,7 +20,9 @@ import RestaurantsStore from '../../../stores/Restaurants';
 
 import StepSave from './StepSave';
 
-let IMAGE_WIDTH = 60; 
+var windowWidth = Dimensions.get('window').width;
+
+let IMAGE_WIDTH = 60;
 
 class RecoStep6 extends Component {
   static route(props) {
@@ -45,6 +47,7 @@ class RecoStep6 extends Component {
     return {
       recommendation: recommendation,
       review: recommendation.review,
+      url: recommendation.url,
       friendsThanksIds: recommendation.friends_thanking ? recommendation.friends_thanking : [],
       expertsThanksIds: recommendation.experts_thanking ? recommendation.experts_thanking : []
     }
@@ -70,6 +73,7 @@ class RecoStep6 extends Component {
     recommendation.friends_thanking = this.state.friendsThanksIds;
     recommendation.experts_thanking = this.state.expertsThanksIds;
     recommendation.review = this.state.review;
+    recommendation.url = this.state.url;
     recommendation.public = this.state.public_recommendation;
     recommendation.pictures = this.state.recommendationPictures;
     RecoActions.setReco(recommendation);
@@ -118,7 +122,7 @@ class RecoStep6 extends Component {
             {!active ? [
               <View key={'active_' + recommenderId} style={styles.grayImage} />
             ] : null}
-            <Text style={[styles.recommenderName, {color: active ? '#3A325D' : '#AAAAAA'}]}>{recommender.name}</Text>
+            <Text style={[styles.recommenderName, {color: active ? '#3A325D' : '#837D9B'}]}>{recommender.name}</Text>
           </View>
         </TouchableHighlight>
       </View>
@@ -184,7 +188,7 @@ class RecoStep6 extends Component {
             <TextInput 
               ref='review'
               placeholder='Le mot de la fin ? Un plat à ne pas manquer ?'
-              placeholderTextColor='#555555'
+              placeholderTextColor='#837D9B'
               style={styles.reviewInput}
               maxLength={140}
               multiline={true}
@@ -196,8 +200,26 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
 
+          {/* Add an URL to the recommendatio */}
+          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+            <View key='public_url' style={{alignItems: 'flex-start', justifyContent: 'center', margin: 10}}>
+              <TextInput
+               style={styles.urlInput}
+               keyboardType='url'
+               returnKeyType='done'
+               autoCorrect={false}
+               autoCapitalize='none'
+               placeholder='URL'
+               placeholderTextColor='#837D9B'
+               multiline={false}
+               onChangeText={(url) => {
+                 this.setState({url: url});
+               }} />
+            </View>
+          ] : null}
+
           {/* Private or public recommendation */}
-          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
+          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
             <View key='public_recommendation' style={{paddingLeft: 10, paddingRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
               <Switch
                 onValueChange={(value) => this.setState({public_recommendation: value})}
@@ -207,13 +229,23 @@ class RecoStep6 extends Component {
           ] : null}
 
           {/* Add a picture if your profile is public */}
-          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
-            <View key='public_picture' style={{alignItems: 'flex-start', justifyContent: 'center', margin: 10}}>
+          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+            <View key='public_pictures' style={{alignItems: 'center', justifyContent: 'center', margin: 10}}>
               <Text style={styles.thanksTitle}>Une photo à ajouter ?</Text>
               <ScrollView 
                 style={styles.thanksScroller}
-                alignItems='center'
+                alignItems='flex-start'
                 horizontal={true}>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  style={{height: IMAGE_WIDTH, width: IMAGE_WIDTH, margin: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EEEDF1'}}
+                  onPress={this.choosePicture}>
+                  <Icon
+                    key='icon'
+                    name='plus'
+                    size={IMAGE_WIDTH / 2}
+                    color='#837D9B' />
+                </TouchableHighlight>
                 {_.map(this.state.recommendationPictures, (picture, key) => {
                   return (
                     <TouchableHighlight
@@ -224,16 +256,6 @@ class RecoStep6 extends Component {
                     </TouchableHighlight>
                   );
                 })}
-                <TouchableHighlight
-                  underlayColor='rgba(0, 0, 0, 0)'
-                  style={{height: IMAGE_WIDTH, width: IMAGE_WIDTH, margin: 5, justifyContent: 'center', alignItems: 'center', backgroundColor: '#EDEDF2'}}
-                  onPress={this.choosePicture}>
-                  <Icon
-                    key='icon'
-                    name='plus'
-                    size={IMAGE_WIDTH / 2}
-                    color='#827D9C' />
-                </TouchableHighlight>
               </ScrollView>
             </View>
           ] : null}
@@ -243,20 +265,20 @@ class RecoStep6 extends Component {
             <Text style={styles.thanksTitle}>Quelqu'un à remercier ?</Text>
             <ScrollView 
               style={styles.thanksScroller}
-              alignItems='center'
+              alignItems='flex-start'
               horizontal={true}>
               <View style={styles.recommendersContainer}>
                 <View style={styles.recommenderContainer}>
                   <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.inviteFriend} style={styles.recommenderButton}>
                     <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                      <View style={{borderColor: '#C1BFCC', borderWidth: 4, width: IMAGE_WIDTH, height: IMAGE_WIDTH, borderRadius: IMAGE_WIDTH / 2, alignItems: 'center', justifyContent: 'center'}}>
+                      <View style={{backgroundColor: '#EEEDF1', width: IMAGE_WIDTH, height: IMAGE_WIDTH, borderRadius: IMAGE_WIDTH / 2, alignItems: 'center', justifyContent: 'center'}}>
                         <Icon
                           name='plus'
                           size={IMAGE_WIDTH / 2}
-                          color='#C1BFCC' 
+                          color='#837D9B' 
                           style={{marginTop: 5}} />
                       </View>
-                      <Text style={[styles.recommenderName, {color: '#C1BFCC'}]}>Contacts</Text>
+                      <Text style={[styles.recommenderName, {color: '#837D9B'}]}>Contacts</Text>
                     </View>
                   </TouchableHighlight>
                 </View>
@@ -376,6 +398,20 @@ var styles = StyleSheet.create({
     left: 0,
     width: Dimensions.get('window').width,
     height: 10
+  },
+  urlInput: {
+    padding: 10,
+    marginBottom: 5,
+    height: 40,
+    backgroundColor: '#EEEDF1',
+    textAlignVertical: 'top',
+    color: '#3A325D',
+    borderColor: '#C1BFCC',
+    borderWidth: 0.5,
+    fontSize: 12
+  },
+  thanksScroller: {
+    width: windowWidth - 20
   }
 });
 

@@ -26,7 +26,7 @@ class RestaurantHeader extends Component {
     var content = (
       <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.picture} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.picture}}>
-          <LinearGradient colors={['#FFFFFF', '#000000']} style={styles.restaurantImageMask} />
+          <LinearGradient colors={['#FFFFFF', '#3A325D']} style={styles.restaurantImageMask} />
           <View style={styles.restaurantInfos}>
             <Text key='restaurant_name' style={styles.restaurantName}>{this.props.name}</Text>
             {budget ? [
@@ -35,7 +35,7 @@ class RestaurantHeader extends Component {
                 <Text style={{color: '#FFFFFF'}}>
                    , {budget}
                 </Text>
-                <Text style={{color: '#AAAAAA'}}>
+                <Text style={{color: '#837D9B'}}>
                   {emptyBudget}
                 </Text>
               </Text>

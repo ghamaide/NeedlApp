@@ -83,7 +83,7 @@ class Filtre extends Component {
     var backgroundColor = '#FFFFFF';
     var backgroundColorOverlay = 'rgba(0, 0, 0, 0)';
     var color = '#FFFFFF';
-    var colorInactive = '#555555';
+    var colorInactive = '#837D9B';
     var colorOverlay = '#FFFFFF';
     var colorActive = '#FE3139';
 
@@ -367,7 +367,7 @@ class Filtre extends Component {
                               {!active ? [
                                 <View key={'active_' + id} style={styles.grayImage} />
                               ] : null}
-                              <Text style={{color: active ? '#FE3139' : '#CCCCCC', textAlign: 'center'}}>{profile.name}</Text>
+                              <Text style={{color: active ? '#FE3139' : '#C1BFCC', textAlign: 'center'}}>{profile.name}</Text>
                             </View>
                         </TouchableHighlight>
                       );
@@ -408,7 +408,7 @@ class Filtre extends Component {
 var styles = StyleSheet.create({
   container: {
     paddingTop: 10,
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#EEEDF1',
   },
   clearButton: {
     backgroundColor: '#FFFFFF',
@@ -420,7 +420,7 @@ var styles = StyleSheet.create({
     borderColor: '#FE3139'
   },
   resetButton : {
-    backgroundColor: '#EEEEEE',
+    backgroundColor: '#EEEDF1',
     borderRadius: 3,
     padding: 10,
     borderColor: '#C1BFCC',
@@ -465,7 +465,7 @@ var styles = StyleSheet.create({
   clearText: {
     flex: 1,
     fontSize: 14,
-    color: '#000000',
+    color: '#3A325D',
     textAlign: 'center',
     fontWeight: 'bold'
   },
@@ -562,7 +562,7 @@ var styles = StyleSheet.create({
   },
   filtreTitle: {
     margin: 2,
-    color: '#444444',
+    color: '#3A325D',
     fontSize: 15,
     fontWeight: '600',
     justifyContent: 'center',

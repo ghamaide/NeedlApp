@@ -404,33 +404,6 @@ var styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center'
   },
-  title: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#707070',
-    marginBottom: 20
-  },
-  message: {
-    textAlign: 'center',
-    fontSize: 15,
-    color: '#414141',
-    marginBottom: 50
-  },
-  avatar: {
-    height: 40,
-    width: 40,
-    margin: 15,
-    tintColor: '#FFFFFF'
-  },
-  avatarWrapper: {
-    height: 70,
-    width: 70,
-    borderRadius: 35,
-    marginBottom: 40,
-    backgroundColor: '#FE3139',
-    marginTop: 20
-  },
   arrowRight: {
     height: 60,
     width: 60,

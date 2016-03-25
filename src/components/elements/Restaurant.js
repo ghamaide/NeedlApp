@@ -99,7 +99,8 @@ class Restaurant extends Component {
         strengths: _.map(stored_recommendation.strengths, (strength) => {return parseInt(strength)}),
         ambiences: _.map(stored_recommendation.ambiences, (ambience) => {return parseInt(ambience)}),
         occasions: _.map(stored_recommendation.occasions, (occasion) => {return parseInt(occasion)}),
-        review: stored_recommendation.review
+        review: stored_recommendation.review,
+        url: stored_recommendation.url
       }
       RecoActions.setReco(recommendation)
     } else {
@@ -273,7 +274,7 @@ class Restaurant extends Component {
             <Text style={styles.containerTitle}>Ambiances</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, '#444444');
+                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, '#3A325D');
               })}
             </View>
           </View>
@@ -285,7 +286,7 @@ class Restaurant extends Component {
             <Text style={styles.containerTitle}>Points forts</Text>
             <View style={styles.toggleBox}>
               {_.map(restaurant.strengths.slice(0, 3), (strength) => {
-                return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, '#444444');
+                return this.getToggle(RestaurantsStore.MAP_STRENGTHS, strength, '#3A325D');
               })}
             </View>
           </View>
@@ -394,7 +395,7 @@ class Restaurant extends Component {
             <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
             <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
           </View>
-          <TouchableHighlight style={{borderRadius: 5, marginTop: 20, backgroundColor: '#555555', paddingTop: 10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, justifyContent: 'center', alignItems: 'center'}} onPress={this.goWithCityMapper} underlayColor='rgba(0, 0, 0, 0)'>
+          <TouchableHighlight style={{borderRadius: 5, marginTop: 20, backgroundColor: '#837D9B', paddingTop: 10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, justifyContent: 'center', alignItems: 'center'}} onPress={this.goWithCityMapper} underlayColor='rgba(0, 0, 0, 0)'>
             <Text style={{textAlign:'center', color: '#FFFFFF'}}>J'y vais !</Text>
           </TouchableHighlight>
         </View>
@@ -507,7 +508,7 @@ var styles = StyleSheet.create({
     flexDirection: 'row'
   },
   reservationText: {
-    color: '#444444',
+    color: '#3A325D',
     fontSize: 16,
     alignSelf: 'center'
   },
@@ -525,7 +526,7 @@ var styles = StyleSheet.create({
   containerTitle: {
     fontSize: 16,
     fontWeight: '400',
-    color: '#000000',
+    color: '#3A325D',
     marginBottom: 15,
     textAlign: 'center'
   },
@@ -538,7 +539,7 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   address: {
-    color: '#444444',
+    color: '#3A325D',
     fontSize: 14,
     textAlign: 'center',
     marginBottom: 10
@@ -554,7 +555,7 @@ var styles = StyleSheet.create({
     marginTop: 1
   },
   metroText: {
-    color: '#444444'
+    color: '#3A325D'
   },
   avatarWrapper: {
     height: 50,
@@ -592,12 +593,12 @@ var styles = StyleSheet.create({
   },
   reviewText: {
     textAlign: 'center',
-    color: '#000000'
+    color: '#3A325D'
   },
   reviewAuthor: {
     marginTop: 5,
     textAlign: 'center',
-    color: '#444444'
+    color: '#3A325D'
   },
   recoButton: {
     marginTop: 20,
@@ -618,12 +619,12 @@ var styles = StyleSheet.create({
   menuTitle: {
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#3A325D',
     marginBottom: 5
   },
   menuPlat: {
     textAlign: 'center',
-    color: '#444444',
+    color: '#3A325D',
     paddingTop: 2,
     paddingBottom: 2
   },
