@@ -15,7 +15,6 @@ import RecoStore from '../../../stores/Reco';
 
 import Restaurant from '../Restaurant';
 import Step3 from './Step3';
-import Step6 from './Step6';
 import StepSave from './StepSave';
 
 class RecoStep2 extends Component {
@@ -47,7 +46,7 @@ class RecoStep2 extends Component {
               
               if (typeof activity == 'undefined') {
                 if (reco.type === 'recommendation') {
-                  return this.props.navigator.push(Step6.route({toggle: this.props.toggle}));
+                  return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
                 } else {
                   return this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
                 }

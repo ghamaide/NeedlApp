@@ -202,7 +202,7 @@ class RecoStep6 extends Component {
           </View>
 
           {/* Add an URL to the recommendatio */}
-          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
             <View key='public_url' style={{alignItems: 'flex-start', justifyContent: 'center', margin: 10}}>
               <TextInput
                style={styles.urlInput}
@@ -220,7 +220,7 @@ class RecoStep6 extends Component {
           ] : null}
 
           {/* Private or public recommendation */}
-          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
             <View key='public_recommendation' style={{paddingLeft: 10, paddingRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
               <Switch
                 onValueChange={(value) => this.setState({public_recommendation: value})}
@@ -230,7 +230,7 @@ class RecoStep6 extends Component {
           ] : null}
 
           {/* Add a picture if your profile is public */}
-          {ProfilStore.getProfil(MeStore.getState().me.id).public || true ? [
+          {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
             <View key='public_pictures' style={{alignItems: 'center', justifyContent: 'center', margin: 10}}>
               <Text style={styles.thanksTitle}>Une photo à ajouter ?</Text>
               <ScrollView 
