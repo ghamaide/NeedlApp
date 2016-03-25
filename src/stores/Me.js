@@ -216,10 +216,12 @@ export class MeStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleEditSuccess(data) {
+  handleEditSuccess(result) {
+    var newProfil = this.me;
+    newProfil.name = result.name;
+    newProfil.email = result.email;
+    this.me = newProfil;
     this.status.loading = false;
-    this.me.name = data.name;
-    this.me.email = data.email;
   }
 
   handleRecoverPassword() {

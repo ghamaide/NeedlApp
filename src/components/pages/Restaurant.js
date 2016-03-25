@@ -1,9 +1,11 @@
 'use strict';
 
-import React, {Dimensions, Image, Platform, StyleSheet, View} from 'react-native';
+import React, {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import MapView from 'react-native-maps';
+import Modal from 'react-native-modalbox';
 import Polyline from 'polyline';
 import Swiper from 'react-native-swiper';
 
@@ -18,6 +20,9 @@ import Text from '../ui/Text';
 import RestaurantsActions from '../../actions/RestaurantsActions';
 
 import RestaurantsStore from '../../stores/Restaurants';
+
+var windowHeight = Dimensions.get('window').height;
+var windowWidth = Dimensions.get('window').width;
 
 class Restaurant extends Page {
   static route(props) {
@@ -310,6 +315,7 @@ class Restaurant extends Page {
                     loading={this.state.loading}
                     isInParis={true}
                     polylineCoords={this.state.polylineCoords}
+                    onImageTap={() => this.setState({pictureOverlay: true})}
                     rank={key + 1} />
                 );
               })}
@@ -323,6 +329,7 @@ class Restaurant extends Page {
               loading={this.state.loading}
               isInParis={true}
               polylineCoords={this.state.polylineCoords}
+              onImageTap={() => this.setState({pictureOverlay: true})}
               already_recommended={this.state.already_recommended}
               already_wishlisted={this.state.already_wishlisted} />
           ]
@@ -374,6 +381,41 @@ class Restaurant extends Page {
           </View>
         ]}
 
+        {/* Overlay View for Carousel of Photos */}
+        <Modal
+          ref='android_modal'
+          style={styles.modal}
+          position='top'
+          swipeArea={(windowHeight / 2) - 150}
+          isOpen={this.state.pictureOverlay}
+          onClosed={() => this.setState({pictureOverlay: false})}>
+            <Swiper
+              style={{backgroundColor: 'rgba(0, 0, 0, .4)'}}
+              showsButtons={false}
+              width={windowWidth}
+              height={windowHeight}
+              autoplay={Platform.OS === 'ios' ? true : false}
+              autoplayTimeout={5}
+              paginationStyle={{bottom: 5}}
+              dot={<View style={{backgroundColor:'rgba(0, 0, 0, 0.4)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
+              activeDot={<View style={{backgroundColor: '#FE3139', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
+              {_.map(restaurant.pictures, (picture, key) => {
+                return <Image key={'picture_' + key} style={{marginLeft: 20, marginRight: 20, marginTop: (windowHeight / 2) - 150, width: windowWidth - 40, height: 300}} resizeMode='cover' source={{uri: picture}} />
+              })}
+            </Swiper>
+            <TouchableHighlight
+              underlayColor='rgba(0, 0, 0, 0)'
+              style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EDEDF2', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
+              onPress={() => {
+                this.setState({pictureOverlay: false});
+              }}>
+              <Icon
+                name='times'
+                size={15}
+                color='#EDEDF2' />
+          </TouchableHighlight>
+        </Modal>
+
         {this.props.fromReco ? [
           <MenuIcon key='menu_icon' onPress={this.props.toggle} />
         ] : null}
@@ -386,6 +428,13 @@ var styles = StyleSheet.create({
   restaurantsMap: {
     flex: 1,
     position: 'relative'
+  },
+  modal: {
+   width: windowWidth,
+   height: windowHeight,
+   justifyContent: 'flex-end',
+   alignItems: 'flex-end',
+   backgroundColor: 'transparent'
   }
 });
 

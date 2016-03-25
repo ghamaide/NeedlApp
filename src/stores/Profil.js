@@ -287,8 +287,14 @@ export class ProfilStore extends CachedStore {
     this.me = newProfil;
   }
   
-  handleEditSuccess(data) {
-    this.me = _.extend(this.me, {fullname : data.name});
+  handleEditSuccess(result) {
+    var newProfil = this.me;
+    newProfil.fullname = result.name;
+    if (result.public) {
+      newProfil.public = true;
+      newProfil.description = result.description;
+      newProfil.tags = result.tags;
+    }
   }
 
   handleUploadPictureSuccess(result) {

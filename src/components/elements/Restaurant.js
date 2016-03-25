@@ -4,10 +4,8 @@ import React, {Component, Dimensions, Image, Linking, Platform, RefreshControl, 
 
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import MapView from 'react-native-maps';
 import Mixpanel from 'react-native-mixpanel';
-import Modal from 'react-native-modalbox';
 import RNComm from 'react-native-communications';
 import Swiper from 'react-native-swiper';
 
@@ -18,8 +16,6 @@ import RestaurantHeader from './RestaurantHeader';
 
 import NavigationBar from '../ui/NavigationBar';
 import Text from '../ui/Text';
-
-import Overlay from '../elements/Overlay';
 
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
@@ -185,11 +181,12 @@ class Restaurant extends Component {
             underlayColor='rgba(0, 0, 0, 0)'
             style={{flex: 1}}
             onPress={() => {
-              if (restaurant.pictures.length > 1) {
-                this.setState({pictureOverlay: true});
-              } else {
-                return ;
-              }
+              this.props.onImageTap();
+              // if (restaurant.pictures.length > 1) {
+              //   this.setState({pictureOverlay: true});
+              // } else {
+              //   return ;
+              // }
             }}>
             <View style={{width: windowWidth, height: 250}}>
               <RestaurantHeader
@@ -491,40 +488,6 @@ class Restaurant extends Component {
           </View>
         ] : null}
 
-        {/* Overlay View for Carousel */}
-        <Modal
-          ref='android_modal'
-          style={styles.modal}
-          position='top'
-          swipeArea={10}
-          isOpen={this.state.pictureOverlay}
-          onClosed={() => this.setState({pictureOverlay: false})}>
-            <Swiper
-              style={{backgroundColor: 'rgba(0, 0, 0, .5)'}}
-              showsButtons={false}
-              width={windowWidth}
-              height={windowHeight}
-              autoplay={Platform.OS === 'ios' ? true : false}
-              autoplayTimeout={5}
-              paginationStyle={{bottom: Platform.OS === 'ios' ? 65 : 45}}
-              dot={<View style={{backgroundColor:'rgba(0,0,0,.2)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
-              activeDot={<View style={{backgroundColor: '#FE3139', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
-              {_.map(restaurant.pictures, (picture, key) => {
-                return <Image key={'picture_' + key} style={{marginLeft: 20, marginRight: 20, marginTop: Platform.OS === 'ios' ? (windowHeight - 60) / 2 - 150 : (windowHeight - 40) / 2 - 150, width: windowWidth - 40, height: 300}} resizeMode='cover' source={{uri: picture}} />
-              })}
-            </Swiper>
-            <TouchableHighlight
-              underlayColor='rgba(0, 0, 0, 0)'
-              style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EDEDF2', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
-              onPress={() => {
-                this.setState({pictureOverlay: false});
-              }}>
-              <Icon
-                name='times'
-                size={15}
-                color='#EDEDF2' />
-            </TouchableHighlight>
-          </Modal>
       </ScrollView>
     );
   };
@@ -689,18 +652,6 @@ var styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     color: '#FFFFFF'
-  },
-  overlay: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'red'
-  },
-  modal: {
-    width: windowWidth,
-    height: windowHeight,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    backgroundColor: 'transparent'
   }
 });
 

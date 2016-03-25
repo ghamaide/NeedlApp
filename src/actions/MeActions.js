@@ -21,7 +21,6 @@ export class MeActions {
         .query(qs.stringify({
           name: infos.name,
           email: infos.email,
-          picture: infos.picture,
           public: infos.is_public,
           description: infos.description,
           tags: infos.tags
@@ -34,7 +33,6 @@ export class MeActions {
           this.editSuccess({
             name: infos.name,
             email: infos.email,
-            picture: result.picture,
             public: infos.is_public,
             description: infos.description,
             tags: infos.tags

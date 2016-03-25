@@ -168,6 +168,8 @@ class EditMe extends Component {
             ref='email'
             onChangeText={(email) => this.setState({email: email})}
             value={this.state.email} />
+
+          {/* If the user can be public (score above 20), show him the public informations */}
           {can_be_public ? [
             <View key='public_informations' style={{flex: 1}}>
               <Text style={styles.label}>Description</Text>
