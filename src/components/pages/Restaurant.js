@@ -21,6 +21,8 @@ import RestaurantsActions from '../../actions/RestaurantsActions';
 
 import RestaurantsStore from '../../stores/Restaurants';
 
+import Filtre from './Filtre';
+
 var windowHeight = Dimensions.get('window').height;
 var windowWidth = Dimensions.get('window').width;
 
@@ -247,8 +249,7 @@ class Restaurant extends Page {
       titles.push('#' + index);
     });
 
-    var listImage = require('../../assets/img/other/icons/list.png');
-    var mapImage = require('../../assets/img/other/icons/map.png');
+    var filtreImage = require('../../assets/img/actions/icons/filter.png');
 
     return (
       <View>
@@ -259,9 +260,9 @@ class Restaurant extends Page {
             active={this.state.rank}
             titles={titles}
             onPress={this.onPressMenu}
-            rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
-            rightImage={this.state.showMap ? listImage : mapImage}
-            onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}
+            rightButtonTitle='mes envies'
+            rightImage={filtreImage}
+            onRightButtonPress={() => this.props.navigator.replace(Filtre.route())}
             leftButtonTitle='Retour'
             onLeftButtonPress={() => {
               RestaurantsActions.resetFilters();
@@ -289,96 +290,48 @@ class Restaurant extends Page {
           ]
         ]}
 
-        {!this.state.showMap ? [
-          this.state.rank > 0 ? [
-            <Swiper 
-              key='restaurants'
-              index={this.state.rank - 1}
-              showsButtons={false}
-              loop={false}
-              width={Dimensions.get('window').width}
-              height={Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40}
-              autoplay={false}
-              onMomentumScrollEnd={(e, state, context) => {
-                this.setState({rank: state.index + 1});
-                if (this.state.isInParis) {
-                  this.getDirections(this.state.position);
-                }
-              }}
-              paginationStyle={{bottom: -15 /* Out of visible range */}}>
-              {_.map(this.state.restaurants, (restaurant, key) => {
-                return (
-                  <RestaurantElement
-                    key={key}
-                    restaurant={restaurant}
-                    navigator={this.props.navigator}
-                    loading={this.state.loading}
-                    isInParis={true}
-                    polylineCoords={this.state.polylineCoords}
-                    onImageTap={() => this.setState({pictureOverlay: true})}
-                    rank={key + 1} />
-                );
-              })}
-            </Swiper>
-          ] : [
-            <RestaurantElement
-              key='restaurant'
-              restaurant={restaurant}
-              toggle={this.props.toggle}
-              navigator={this.props.navigator}
-              loading={this.state.loading}
-              isInParis={true}
-              polylineCoords={this.state.polylineCoords}
-              onImageTap={() => this.setState({pictureOverlay: true})}
-              already_recommended={this.state.already_recommended}
-              already_wishlisted={this.state.already_wishlisted} />
-          ]
+        {this.state.rank > 0 ? [
+          <Swiper 
+            key='restaurants'
+            index={this.state.rank - 1}
+            showsButtons={false}
+            loop={false}
+            width={Dimensions.get('window').width}
+            height={Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40}
+            autoplay={false}
+            onMomentumScrollEnd={(e, state, context) => {
+              this.setState({rank: state.index + 1});
+              if (this.state.isInParis) {
+                this.getDirections(this.state.position);
+              }
+            }}
+            paginationStyle={{bottom: -15 /* Out of visible range */}}>
+            {_.map(this.state.restaurants, (restaurant, key) => {
+              return (
+                <RestaurantElement
+                  key={key}
+                  restaurant={restaurant}
+                  navigator={this.props.navigator}
+                  loading={this.state.loading}
+                  isInParis={true}
+                  polylineCoords={this.state.polylineCoords}
+                  onImageTap={() => this.setState({pictureOverlay: true})}
+                  rank={key + 1} />
+              );
+            })}
+          </Swiper>
         ] : [
-          <View key='map' style={{flex: 1, height: Dimensions.get('window').height - 60, position: 'relative'}}>
-            <MapView
-              ref='mapview'
-              style={styles.restaurantsMap}
-              showsUserLocation={this.state.showsUserLocation}
-              region={this.state.region}
-              onRegionChange={this.onRegionChange}>
-              {this.state.rank > 0 ? [
-                _.map(this.state.restaurants, (restaurant) => {
-                  var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
-                  return (
-                    <MapView.Marker
-                      key={restaurant.id}
-                      coordinate={coordinates}>
-                      <PriceMarker text={'#' + (_.findIndex(this.state.restaurants, restaurant) + 1)} backgroundColor={'#FE3139'} />
-                      <MapView.Callout>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                          <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
-                          <View>
-                            <Text style={{color: '#3A325D', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
-                            <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.food[1]}</Text>
-                          </View>
-                        </View>
-                      </MapView.Callout>
-                    </MapView.Marker>
-                  );
-                })
-              ] : [
-                <MapView.Marker
-                  key={restaurant.id}
-                  coordinate={{latitude: restaurant.latitude, longitude: restaurant.longitude}}>
-                  <PriceMarker text='#1' backgroundColor={'#FE3139'} />
-                  <MapView.Callout>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
-                      <Image source={{uri: restaurant.pictures[0]}} style={{height: 50, width: 50, marginRight: 5}} />
-                      <View>
-                        <Text style={{color: '#3A325D', fontSize: (Platform.OS === 'ios' ? 15 : 14), fontWeight: '500', marginBottom: 5}}>{restaurant.name}</Text>
-                        <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.food[1]}</Text>
-                      </View>
-                    </View>
-                  </MapView.Callout>
-                </MapView.Marker>
-              ]}
-            </MapView>
-          </View>
+          <RestaurantElement
+            key='restaurant'
+            restaurant={restaurant}
+            toggle={this.props.toggle}
+            navigator={this.props.navigator}
+            loading={this.state.loading}
+            isInParis={true}
+            polylineCoords={this.state.polylineCoords}
+            onImageTap={() => this.setState({pictureOverlay: true})}
+            already_recommended={this.state.already_recommended}
+            already_wishlisted={this.state.already_wishlisted} />
         ]}
 
         {this.props.fromReco ? [
@@ -386,39 +339,41 @@ class Restaurant extends Page {
         ] : null}
 
         {/* Overlay View for Carousel of Photos */}
-        <Modal
-          ref='android_modal'
-          style={styles.modal}
-          position='top'
-          swipeArea={(windowHeight / 2) - 150}
-          isOpen={this.state.pictureOverlay}
-          onClosed={() => this.setState({pictureOverlay: false})}>
-            <Swiper
-              style={{backgroundColor: 'rgba(0, 0, 0, .4)'}}
-              showsButtons={false}
-              width={windowWidth}
-              height={windowHeight}
-              autoplay={Platform.OS === 'ios' ? true : false}
-              autoplayTimeout={5}
-              paginationStyle={{bottom: 5}}
-              dot={<View style={{backgroundColor:'rgba(0, 0, 0, 0.4)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
-              activeDot={<View style={{backgroundColor: '#FE3139', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
-              {_.map(restaurant.pictures, (picture, key) => {
-                return <Image key={'picture_' + key} style={{marginLeft: 20, marginRight: 20, marginTop: (windowHeight / 2) - 150, width: windowWidth - 40, height: 300}} resizeMode='cover' source={{uri: picture}} />
-              })}
-            </Swiper>
-            <TouchableHighlight
-              underlayColor='rgba(0, 0, 0, 0)'
-              style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EEEDF1', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
-              onPress={() => {
-                this.setState({pictureOverlay: false});
-              }}>
-              <Icon
-                name='times'
-                size={15}
-                color='#EEEDF1' />
-          </TouchableHighlight>
-        </Modal>
+        {restaurant.pictures.length > 0 ? [
+          <Modal
+            key='modal'
+            style={styles.modal}
+            position='top'
+            swipeArea={(windowHeight / 2) - 150}
+            isOpen={this.state.pictureOverlay}
+            onClosed={() => this.setState({pictureOverlay: false})}>
+              <Swiper
+                style={{backgroundColor: 'rgba(0, 0, 0, .4)'}}
+                showsButtons={false}
+                width={windowWidth}
+                height={windowHeight}
+                autoplay={Platform.OS === 'ios' ? true : false}
+                autoplayTimeout={5}
+                paginationStyle={{bottom: 5}}
+                dot={<View style={{backgroundColor:'rgba(0, 0, 0, 0.4)', width: 5, height: 5,borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}
+                activeDot={<View style={{backgroundColor: '#FE3139', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3,}} />}>
+                {_.map(restaurant.pictures, (picture, key) => {
+                  return <Image key={'picture_' + key} style={{marginLeft: 20, marginRight: 20, marginTop: (windowHeight / 2) - 150, width: windowWidth - 40, height: 300}} resizeMode='cover' source={{uri: picture}} />
+                })}
+              </Swiper>
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={{width: 30, height: 30, borderRadius: 15, borderColor: '#EEEDF1', borderWidth: 1, justifyContent: 'center', alignItems: 'center', position: 'absolute', right: 7, top: 7}}
+                onPress={() => {
+                  this.setState({pictureOverlay: false});
+                }}>
+                <Icon
+                  name='times'
+                  size={15}
+                  color='#EEEDF1' />
+            </TouchableHighlight>
+          </Modal>
+        ] : null}
 
       </View>
     );

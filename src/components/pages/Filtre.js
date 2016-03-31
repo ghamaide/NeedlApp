@@ -92,7 +92,6 @@ class Filtre extends Component {
         <NavigationBar type='back' title='Filtres' rightButtonTitle='Réinitialiser' onRightButtonPress={this.resetFilters} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         <ScrollView key='filter_scrollview' style={styles.container}>
 
-
           <View style={{flex: 1, alignItems: 'center'}}>
             <Text style={styles.filtreTitle}>Prix</Text>
             <View style={styles.priceWrapper}>

@@ -216,7 +216,7 @@ class Restaurant extends Component {
               <Swiper 
                 style={styles.wrapper}
                 showsButtons={false}
-                height={200}
+                height={220}
                 width={windowWidth - 40}
                 autoplay={Platform.OS === 'ios' ? true : false}
                 autoplayTimeout={5}
