@@ -120,32 +120,36 @@ class Notifs extends Page {
       var recommendation = NotifsStore.getRecommendation(notification.restaurant_id, notification.user_id);
     }
 
-    return (
-      <View style={styles.notifRow}>
-        <RestaurantHeader
-          name={restaurant.name}
-          picture={restaurant.pictures[0]}
-          type={restaurant.food[1]}
-          budget={restaurant.price_range}
-          height={180}
-          onPress={() => {
-            this.props.navigator.push(Restaurant.route({id: notification.restaurant_id}, restaurant.name));
-          }}/>
+    if (!_.isEmpty(restaurant) && !_.isEmpty(user)) {
+      return (
+        <View style={styles.notifRow}>
+          <RestaurantHeader
+            name={restaurant.name}
+            picture={restaurant.pictures[0]}
+            type={restaurant.food[1]}
+            budget={restaurant.price_range}
+            height={180}
+            onPress={() => {
+              this.props.navigator.push(Restaurant.route({id: notification.restaurant_id}, restaurant.name));
+            }}/>
 
-        <View style={[styles.notifInfos]}>
-          <TouchableHighlight style={styles.friendImage} onPress={() => {
-            this.props.navigator.push(Profil.route({id: notification.user_id}, user.name));
-          }}>
-            <Image source={{uri: user.picture}} style={styles.friendImage} />
-          </TouchableHighlight>
-          <View style={[styles.friendQuote, blockColor]}>
-            <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
-            <Text style={[styles.friendQuoteDate, textColor]}>{this.state.friendsActive ? user.name : user.fullname}, le {notification.formatted_date}</Text>
-            <View style={[styles.triangle,  blockColor]} />
+          <View style={[styles.notifInfos]}>
+            <TouchableHighlight style={styles.friendImage} onPress={() => {
+              this.props.navigator.push(Profil.route({id: notification.user_id}, user.name));
+            }}>
+              <Image source={{uri: user.picture}} style={styles.friendImage} />
+            </TouchableHighlight>
+            <View style={[styles.friendQuote, blockColor]}>
+              <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
+              <Text style={[styles.friendQuoteDate, textColor]}>{this.state.friendsActive ? user.name : user.fullname}, le {notification.formatted_date}</Text>
+              <View style={[styles.triangle,  blockColor]} />
+            </View>
           </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return null;
+    }
   };
 
   renderPage() {

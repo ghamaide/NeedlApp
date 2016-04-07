@@ -273,18 +273,12 @@ class Restaurant extends Page {
             <NavigationBar
               key='navbar'
               type='default'
-              title={restaurant.name}
-              rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
-              rightImage={this.state.showMap ? listImage : mapImage}
-              onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}/>
+              title={restaurant.name} />
           ] : [
             <NavigationBar
               key='navbar'
               type='back'
               title={restaurant.name}
-              rightButtonTitle={this.state.showMap ? 'Liste' : 'Carte'}
-              rightImage={this.state.showMap ? listImage : mapImage}
-              onRightButtonPress={() => this.setState({showMap: !this.state.showMap})}
               leftButtonTitle='Retour'
               onLeftButtonPress={() => this.props.navigator.pop()} />
           ]
