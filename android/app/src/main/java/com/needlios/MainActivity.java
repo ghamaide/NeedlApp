@@ -7,8 +7,6 @@ import com.facebook.react.shell.MainReactPackage;
 import java.util.Arrays;
 import java.util.List;
 
-import com.magus.fblogin.FacebookLoginPackage;
-
 import com.AirMaps.AirPackage;
 
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
@@ -31,12 +29,20 @@ import com.BV.LinearGradient.LinearGradientPackage;
 
 import com.imagepicker.ImagePickerPackage;
 
+import android.os.Bundle;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
+
 public class MainActivity extends ReactActivity {
 
     /**
      * Returns the name of the main component registered from JavaScript.
      * This is used to schedule rendering of the component.
      */
+    CallbackManager mCallbackManager;
+
     @Override
     protected String getMainComponentName() {
         return "NeedlIOS";
@@ -57,22 +63,22 @@ public class MainActivity extends ReactActivity {
    */
     @Override
     protected List<ReactPackage> getPackages() {
-        
-        
+        mCallbackManager = new CallbackManager.Factory().create();
+
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
             new AirPackage(),
             new RNDeviceInfo(),
             new VectorIconsPackage(),
             new ReactNativeContacts(),
-            new FacebookLoginPackage(),
             new GcmPackage(),
             new NotificationPackage(this),
             new RNMixpanel(),
             new RNSendIntentPackage(),
             new RNBranchPackage(),
             new LinearGradientPackage(),
-            new ImagePickerPackage()
+            new ImagePickerPackage(),
+            new FBSDKPackage(mCallbackManager)
         );
     }
 
@@ -86,5 +92,17 @@ public class MainActivity extends ReactActivity {
     @Override
     public void onNewIntent(Intent intent) {
         this.setIntent(intent);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

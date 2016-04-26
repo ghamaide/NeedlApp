@@ -84,6 +84,7 @@ android {
         targetSdkVersion 22
         versionCode 5
         versionName "1.1.0"
+        multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -132,7 +133,7 @@ dependencies {
     compile "com.facebook.react:react-native:+"
     compile 'com.google.android.gms:play-services-gcm:8.4.0'
     compile project(':react-native-maps')
-    compile project(':react-native-facebook-login')
+    compile project(":react-native-fbsdk")
     compile project(':react-native-vector-icons')
     compile project(':react-native-contacts')
     compile project(':RNDeviceInfo')
