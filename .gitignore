@@ -48,3 +48,9 @@ Needl.sublime-workspace
 # Frameworks
 #
 ios/FacebookSDK/*
+
+# BUCK
+buck-out/
+\.buckd/
+android/app/libs
+android/keystores/debug.keystore

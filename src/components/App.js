@@ -350,7 +350,7 @@ class App extends Component {
             }
           ]}
           initialSkipCache={!!this.notifLaunchTab}
-          initialSelected={this.notifLaunchTab || 0}
+          initialSelected={this.notifLaunchTab || 4}
           tabsBlocked={false} />
 
         {this.state.showOverlayTutorial ? [

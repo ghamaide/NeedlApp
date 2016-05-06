@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {ActivityIndicatorIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
@@ -11,6 +11,8 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import TextInput from '../ui/TextInput';
+
+import Onboard from '../elements/Onboard';
 
 import FriendsActions from '../../actions/FriendsActions';
 import MeActions from '../../actions/MeActions';
@@ -26,6 +28,11 @@ import SearchExpert from './SearchExpert';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
+
+var triangleWidth = 25;
+
 class Friends extends Page {
   static route() {
     return {
@@ -40,6 +47,10 @@ class Friends extends Page {
     this.state = this.friendsState();
     this.state.index = 1;
     this.state.searched_text = '';
+
+    // Onboarding overlays for both the friend and the following's views
+    this.state.onboarding_overlay_followings = true;
+    this.state.onboarding_overlay_friends = true;
   };
 
   friendsState() {
@@ -106,6 +117,16 @@ class Friends extends Page {
     }
   };
   */
+
+  onScroll = (a, b, c) => {
+    if (this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0) {
+      this.setState({onboarding_overlay_friends: false});
+    }
+
+    if (this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0) {
+      this.setState({onboarding_overlay_followings: false});
+    }
+  };
 
   onRefresh = () => {
     ProfilActions.fetchFriends();
@@ -289,9 +310,21 @@ class Friends extends Page {
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
-          onScroll={this.closeKeyboard} />
+          onScroll={this.onScroll} />
 
         <MenuIcon onPress={this.props.toggle} />
+
+        {this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0 ? [
+          <Onboard key='onboarding_followings' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
+            <Text style={styles.onboardingText}>Viens suivre des <Text style={{color: '#FE3139'}}>bloggers culinaires</Text> que nous avons sélectionnés pour toi.</Text>
+          </Onboard>
+        ] : null}
+
+        {this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0 ? [
+          <Onboard key='onboarding_friends' style={{top: 180}} triangleTop={-25} triangleRight={windowWidth - 80}>
+            <Text style={styles.onboardingText}>Retrouve <Text style={{color: '#FE3139'}}>tes amis</Text> et partage tes coups de coeur avec eux.</Text>
+          </Onboard>
+        ] : null}
       </View>
     );
   };
@@ -438,6 +471,13 @@ var styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     color: '#FFFFFF'
+  },
+  onboardingText: {
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#EEEDF1',
+    margin: 10
   }
 });
 

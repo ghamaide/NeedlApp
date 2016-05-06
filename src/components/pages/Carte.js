@@ -10,6 +10,7 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 
+import Onboard from '../elements/Onboard';
 import Overlay from '../elements/Overlay';
 
 import MeActions from '../../actions/MeActions';
@@ -22,6 +23,9 @@ import Restaurant from './Restaurant';
 import Filtre from './Filtre';
 
 var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
+
+var triangleWidth = 25;
 
 var RATIO = 0.4;
 
@@ -72,6 +76,9 @@ class Carte extends Page {
     this.state.error_overlay = false;
     this.state.message1 = '';
     this.state.message2 = '';
+
+    // Onboarding overlay
+    this.state.onboarding_overlay = true;
   };
 
   // State update with every store update
@@ -173,7 +180,12 @@ class Carte extends Page {
 
   // Update the region and circle radius
   onRegionChange = (region) => {
+    if (!this.state.loading && this.state.onboarding_overlay) {
+      this.setState({onboarding_overlay: false});
+    }
+
     this.setState({region: region});
+
     var west = {
       latitude: region.latitude,
       longitude: region.longitude - region.longitudeDelta / 2
@@ -264,6 +276,18 @@ class Carte extends Page {
           </Overlay>
         ] : null}
 
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_top' style={{top: 90}} triangleTop={-25} triangleRight={20}>
+            <Text style={styles.onboardingText}>Pour plus de <Text style={{color: '#FE3139'}}>choix</Text></Text>
+          </Onboard>
+        ] : null}
+
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_bottom' style={{top: (windowHeight + 60)/ 2 + windowWidth * 0.4 + 30}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
+            <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
+          </Onboard>
+        ] : null}
+
       </View>
     );
   };
@@ -316,6 +340,13 @@ var styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     marginTop: 5
+  },
+  onboardingText: {
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#EEEDF1',
+    margin: 10
   }
 });
 

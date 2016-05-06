@@ -13,6 +13,7 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 
+import Onboard from '../elements/Onboard';
 import Overlay from '../elements/Overlay';
 import RestaurantHeader from '../elements/RestaurantHeader';
 
@@ -76,6 +77,9 @@ class Profil extends Page {
     this.state.wishlistActive = false;
     this.state.index = this.props.index || 1;
     this.state.confirmation_opened = false;
+
+    // Onboarding overlay
+    this.state.onboarding_overlay = true;
   };
 
   componentWillMount() {
@@ -144,6 +148,16 @@ class Profil extends Page {
       this.setState({index: index});
     }
   };
+
+  onScroll = () => {
+    if (this.state.onboarding_overlay && this.state.loading_done) {
+      this.setState({onboarding_overlay: false});
+    }
+
+    if (!this.state.loading) {
+      this.setState({loading_done: true});
+    }
+  }
 
   renderPage() {
     var profil = this.state.profile;
@@ -774,6 +788,11 @@ class Profil extends Page {
           </View>
         </Modal>
 
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_profil' style={{top: 200}} triangleTop={-25} triangleRight={windowWidth - 120}>
+            <Text style={styles.onboardingText}>Ton <Text style={{color: '#FE3139'}}>badge</Text> évolue dès qu’un de tes amis te <Text style={{color: '#FE3139'}}>remercie</Text> pour une de tes recommandations.</Text>
+          </Onboard>
+        ] : null}
       </View>
     );
   };
@@ -939,6 +958,13 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     backgroundColor: 'transparent'
+  },
+  onboardingText: {
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#EEEDF1',
+    margin: 10
   }
 });
 
