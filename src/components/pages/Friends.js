@@ -321,7 +321,7 @@ class Friends extends Page {
         ] : null}
 
         {this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0 ? [
-          <Onboard key='onboarding_friends' style={{top: 180}} triangleTop={-25} triangleRight={windowWidth - 80}>
+          <Onboard key='onboarding_friends' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
             <Text style={styles.onboardingText}>Retrouve <Text style={{color: '#FE3139'}}>tes amis</Text> et partage tes coups de coeur avec eux.</Text>
           </Onboard>
         ] : null}

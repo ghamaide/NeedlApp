@@ -283,7 +283,7 @@ class Carte extends Page {
         ] : null}
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_bottom' style={{top: (windowHeight + 60)/ 2 + windowWidth * 0.4 + 30}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
+          <Onboard key='onboarding_bottom' style={{top: (windowHeight + 60)/ 2 + windowWidth * 0.4 + 15}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
             <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
           </Onboard>
         ] : null}

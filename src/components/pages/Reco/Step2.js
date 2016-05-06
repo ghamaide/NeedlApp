@@ -1,11 +1,13 @@
 'use strict';
 
-import React, {Component, StyleSheet, View} from 'react-native';
+import React, {Component, Dimensions, StyleSheet, View} from 'react-native';
 
 import ToggleGroup from './ToggleGroup';
 
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
+
+import Onboard from '../../elements/Onboard';
 
 import RecoActions from '../../../actions/RecoActions';
 
@@ -17,6 +19,11 @@ import Restaurant from '../Restaurant';
 import Step3 from './Step3';
 import StepSave from './StepSave';
 
+var windowWidth = Dimensions.get('window').width;
+var windowHeight = Dimensions.get('window').height;
+
+var triangleWidth = 25;
+
 class RecoStep2 extends Component {
   static route(props) {
     
@@ -27,7 +34,9 @@ class RecoStep2 extends Component {
     };
   };
 
-  state = {};
+  state = {
+    onboarding_overlay: true
+  };
 
   render() {
     var reco = RecoStore.getReco();
@@ -93,32 +102,51 @@ class RecoStep2 extends Component {
             }}
           </ToggleGroup>
         </View>
+
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_recommendation' style={{top: windowHeight/ 2 - 90}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth + 75} rotation='180deg'>
+            <Text style={styles.onboardingText}>Renseigne tes <Text style={{color: '#FE3139'}}>coups de coeur</Text> et gagne en statut.</Text>
+          </Onboard>
+        ] : null}
+
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_wish' style={{top: windowHeight/ 2 + 130}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth - 65} >
+            <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Garde en mémoire</Text> pour plus tard.</Text>
+          </Onboard>
+        ] : null}
       </View>
     );
   };
 }
 
 var styles = StyleSheet.create({
- container: {
-  backgroundColor: '#FFFFFF',
-  padding: 10,
-  flex: 1,
-  alignItems: 'center',
-  justifyContent: 'center'
- },
- title: {
-  marginBottom: 30,
-  fontSize: 13,
-  color: '#C1BFCC',
-  textAlign: 'center'
- },
- pastilleContainer: {
-  flexDirection: 'row',
-  alignItems: 'center'
- },
- pastille: {
-  margin: 10
- }
+  container: {
+    backgroundColor: '#FFFFFF',
+    padding: 10,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  title: {
+    marginBottom: 30,
+    fontSize: 13,
+    color: '#C1BFCC',
+    textAlign: 'center'
+  },
+  pastilleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  pastille: {
+    margin: 10
+  },
+  onboardingText: {
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#EEEDF1',
+    margin: 10
+  }
 });
 
 export default RecoStep2;

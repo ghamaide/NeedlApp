@@ -12,9 +12,15 @@ var triangleWidth = 25;
 
 class Onboard extends Component {
   render() {
+    if (this.props.rotation) {
+      var rotation = this.props.rotation;
+    } else {
+      var rotation = '0deg';
+    }
+
     return (
       <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
-        <View style={[styles.onboardingTriangle, {position: 'absolute', top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
+        <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
         {this.props.children}
       </View>
     );
