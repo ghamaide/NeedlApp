@@ -118,7 +118,7 @@ class Friends extends Page {
   };
   */
 
-  onScroll = (a, b, c) => {
+  onScroll = () => {
     if (this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0) {
       this.setState({onboarding_overlay_friends: false});
     }

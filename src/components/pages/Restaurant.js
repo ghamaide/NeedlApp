@@ -368,7 +368,6 @@ class Restaurant extends Page {
             </TouchableHighlight>
           </Modal>
         ] : null}
-
       </View>
     );
   };

@@ -17,6 +17,8 @@ import RestaurantHeader from './RestaurantHeader';
 import NavigationBar from '../ui/NavigationBar';
 import Text from '../ui/Text';
 
+import Onboard from '../elements/Onboard';
+
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
 import RestaurantsActions from '../../actions/RestaurantsActions';
@@ -54,6 +56,9 @@ class Restaurant extends Component {
 
     // Overlay to show carousel of pictures
     this.state.pictureOverlay = false;
+
+    // Onboarding
+    this.state.onboarding_overlay = true;
   }
 
   componentWillMount() {
@@ -147,6 +152,12 @@ class Restaurant extends Component {
     RestaurantsActions.fetchRestaurant(this.props.restaurant.id);
   };
 
+  onScroll = () => {
+    if (this.state.onboarding_overlay) {
+      this.setState({onboarding_overlay: false});
+    }
+  };
+
   render() {
     var restaurant = this.props.restaurant;
 
@@ -167,6 +178,7 @@ class Restaurant extends Component {
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
+        onScroll={this.onScroll}
         refreshControl={
           <RefreshControl
             refreshing={this.props.loading}
@@ -489,6 +501,12 @@ class Restaurant extends Component {
           </View>
         ] : null}
 
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_friends' style={{top: 30}} triangleTop={-25} triangleRight={20}>
+            <Text style={styles.onboardingText}>Les restaurants qui apparaissent sont les plus <Text style={{color: '#FE3139'}}>pertinents</Text> pour toi dans cette zone compte tenu du <Text style={{color: '#FE3139'}}>nombre de recommandations</Text> de tes amis et des influenceurs que tu suis.</Text>
+          </Onboard>
+        ] : null}
+
       </ScrollView>
     );
   };
@@ -653,6 +671,13 @@ var styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     color: '#FFFFFF'
+  },
+  onboardingText: {
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#EEEDF1',
+    margin: 10
   }
 });
 
