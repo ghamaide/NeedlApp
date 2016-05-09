@@ -78,7 +78,7 @@ class Carte extends Page {
     this.state.message2 = '';
 
     // Onboarding overlay
-    this.state.onboarding_overlay = true;
+    this.state.onboarding_overlay = !MeStore.getState().me.map_onboarding;
   };
 
   // State update with every store update
@@ -161,6 +161,11 @@ class Carte extends Page {
 
   // Set the region and circle radius, and set region for future map displays (not centering on user's location afterwards)
   onRegionChangeComplete = (region) => {
+    if (!this.state.loading && this.state.onboarding_overlay) {
+      this.setState({onboarding_overlay: false});
+      MeActions.updateOnboardingStatus('map');
+    }
+
     this.setState({region: region});
     var west = {
       latitude: region.latitude,
@@ -180,10 +185,6 @@ class Carte extends Page {
 
   // Update the region and circle radius
   onRegionChange = (region) => {
-    if (!this.state.loading && this.state.onboarding_overlay) {
-      this.setState({onboarding_overlay: false});
-    }
-
     this.setState({region: region});
 
     var west = {

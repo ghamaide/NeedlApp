@@ -256,6 +256,32 @@ export class MeActions {
   uploadPictureSuccess(result) {
     return result;
   }
+
+  updateOnboardingStatus(page) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v2/users/update_onboarding_status')
+        .query({
+          'page': page
+        })
+        .end((err, result) => {
+          if (err) {
+            return this.updateOnboardingStatusFailed(err);
+          }
+
+          this.updateOnboardingStatusSuccess(page);
+        });
+    }
+  }
+
+  updateOnboardingStatusFailed(err) {
+    return err;
+  }
+
+  updateOnboardingStatusSuccess(result) {
+    return result;
+  }
 }
 
 export default alt.createActions(MeActions);

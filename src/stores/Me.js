@@ -93,7 +93,11 @@ export class MeStore extends CachedStore {
 
       handleUploadPicture: MeActions.UPLOAD_PICTURE,
       handleUploadPictureFailed: MeActions.UPLOAD_PICTURE_FAILED,
-      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS
+      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS,
+
+      handleUpdateOnboardingStatus: MeActions.UPDATE_ONBOARDING_STATUS,
+      handleUpdateOnboardingStatusFailed: MeActions.UPDATE_ONBOARDING_STATUS_FAILED,
+      handleUpdateOnboardingStatusSuccess: MeActions.UPDATE_ONBOARDING_STATUS_SUCCESS
     });
   }
 
@@ -121,6 +125,11 @@ export class MeStore extends CachedStore {
     this.me = me.user;
     this.me.score = 0;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.me.map_onboarding = false;
+    this.me.restaurant_onboarding = false;
+    this.me.followings_onboarding = false;
+    this.me.profile_onboarding = false;
+    this.me.recommendation_onboarding = false;
     this.status.loading = false;
   }
 
@@ -152,6 +161,11 @@ export class MeStore extends CachedStore {
   handleLoginEmailSuccess(me) {
     var me = me.user;
     me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    me.map_onboarding = false;
+    me.restaurant_onboarding = false;
+    me.followings_onboarding = false;
+    me.profile_onboarding = false;
+    me.recommendation_onboarding = false;
     this.me = me;
     this.status.loading = false;
   }
@@ -172,7 +186,7 @@ export class MeStore extends CachedStore {
   }
 
   handleCreateAccountSuccess(me) {
-    this.me = _.extend(me.user, {HAS_SHARED: !!me.nb_recos || !!me.nb_wishes});
+    this.me = _.extend(me.user, {HAS_SHARED: !!me.nb_recos || !!me.nb_wishes, map_onboarding: false, restaurant_onboarding: false, followings_onboarding: false, profile_onboarding: false, recommendation_onboarding: false});
     this.me.score = 0;
     this.status.loading = false;
   }
@@ -340,6 +354,41 @@ export class MeStore extends CachedStore {
 
   handleUploadPictureSuccess(result) {
     this.status.loading = false;
+  }
+
+  handleUpdateOnboardingStatus() {
+    delete this.status.error;
+    this.status.loading = true;
+  }
+
+  handleUpdateOnboardingStatusFailed(err) {
+    this.status.error = err;
+  }
+
+  handleUpdateOnboardingStatusSuccess(result) {
+    this.status.loading = false;
+    switch (result) {
+      case 'map':
+        this.me.map_onboarding = true;
+        break;
+      case 'restaurant':
+        this.me.restaurant_onboarding = true;
+        break;
+      case 'followings':
+        this.me.followings_onboarding = true;
+        break;
+      case 'profile':
+        this.me.profile_onboarding = true;
+        break;
+      case 'recommendation':
+        this.me.recommendation_onboarding = true;
+        break;
+      default:
+        if (__DEV__) {
+          console.log('error onboarding');
+        }
+        break;
+    }
   }
 
   static getMe() {

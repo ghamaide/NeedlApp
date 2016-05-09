@@ -79,7 +79,7 @@ class Profil extends Page {
     this.state.confirmation_opened = false;
 
     // Onboarding overlay
-    this.state.onboarding_overlay = true;
+    this.state.onboarding_overlay = !MeStore.getState().me.profile_onboarding;
   };
 
   componentWillMount() {
@@ -152,6 +152,7 @@ class Profil extends Page {
   onScroll = () => {
     if (this.state.onboarding_overlay && this.state.loading_done) {
       this.setState({onboarding_overlay: false});
+      MeActions.updateOnboardingStatus('profile');
     }
 
     if (!this.state.loading) {

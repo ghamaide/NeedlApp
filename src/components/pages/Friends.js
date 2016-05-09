@@ -49,8 +49,8 @@ class Friends extends Page {
     this.state.searched_text = '';
 
     // Onboarding overlays for both the friend and the following's views
-    this.state.onboarding_overlay_followings = true;
-    this.state.onboarding_overlay_friends = true;
+    this.state.onboarding_overlay_followings = !MeStore.getState().me.followings_onboarding;
+    // this.state.onboarding_overlay_friends = true;
   };
 
   friendsState() {
@@ -119,12 +119,13 @@ class Friends extends Page {
   */
 
   onScroll = () => {
-    if (this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0) {
-      this.setState({onboarding_overlay_friends: false});
-    }
+    // if (this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0) {
+    //   this.setState({onboarding_overlay_friends: false});
+    // }
 
     if (this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0) {
       this.setState({onboarding_overlay_followings: false});
+      MeActions.updateOnboardingStatus('followings');
     }
   };
 
@@ -320,11 +321,15 @@ class Friends extends Page {
           </Onboard>
         ] : null}
 
-        {this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0 ? [
-          <Onboard key='onboarding_friends' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
-            <Text style={styles.onboardingText}>Retrouve <Text style={{color: '#FE3139'}}>tes amis</Text> et partage tes coups de coeur avec eux.</Text>
-          </Onboard>
-        ] : null}
+        {
+        /*
+         * this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0 ? [
+         *   <Onboard key='onboarding_friends' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
+         *     <Text style={styles.onboardingText}>Retrouve <Text style={{color: '#FE3139'}}>tes amis</Text> et partage tes coups de coeur avec eux.</Text>
+         *   </Onboard>
+         * ] : null
+         */
+        }
       </View>
     );
   };

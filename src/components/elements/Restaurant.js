@@ -58,11 +58,15 @@ class Restaurant extends Component {
     this.state.pictureOverlay = false;
 
     // Onboarding
-    this.state.onboarding_overlay = true;
+    this.state.onboarding_overlay = this.props.onboarding_overlay;
   }
 
   componentWillMount() {
     Mixpanel.sharedInstanceWithToken('1637bf7dde195b7909f4c3efd151e26d');
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({onboarding_overlay: props.onboarding_overlay});
   }
 
   getToggle (map, v, color) {
@@ -155,6 +159,7 @@ class Restaurant extends Component {
   onScroll = () => {
     if (this.state.onboarding_overlay) {
       this.setState({onboarding_overlay: false});
+      MeActions.updateOnboardingStatus('map');
     }
   };
 

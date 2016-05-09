@@ -9,6 +9,7 @@ import Text from '../../ui/Text';
 
 import Onboard from '../../elements/Onboard';
 
+import MeActions from '../../../actions/MeActions';
 import RecoActions from '../../../actions/RecoActions';
 
 import MeStore from '../../../stores/Me';
@@ -35,7 +36,7 @@ class RecoStep2 extends Component {
   };
 
   state = {
-    onboarding_overlay: true
+    onboarding_overlay: !MeStore.getState().me.recommendation_onboarding
   };
 
   render() {
@@ -44,7 +45,14 @@ class RecoStep2 extends Component {
 
     return (
       <View style={{flex: 1}}>
-        <NavigationBar type='back' title='Statut' leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        <NavigationBar 
+          type='back'
+          title='Statut'
+          leftButtonTitle='Retour' 
+          onLeftButtonPress={() => {
+            MeActions.updateOnboardingStatus('recommendation');
+            this.props.navigator.pop()
+          }} />
         <View style={styles.container}>
           <Text style={styles.title}>As-tu déjà testé le restaurant '{reco.restaurant.name}' ?</Text>
           <ToggleGroup
@@ -52,6 +60,7 @@ class RecoStep2 extends Component {
             fifo={true}
             onSelect={(value) => {
               reco.type = value;
+              MeActions.updateOnboardingStatus('recommendation');
               
               if (typeof activity == 'undefined') {
                 if (reco.type === 'recommendation') {

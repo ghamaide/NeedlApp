@@ -17,8 +17,10 @@ import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 
+import MeActions from '../../actions/MeActions';
 import RestaurantsActions from '../../actions/RestaurantsActions';
 
+import MeStore from '../../stores/Me';
 import RestaurantsStore from '../../stores/Restaurants';
 
 import Filtre from './Filtre';
@@ -70,6 +72,8 @@ class Restaurant extends Page {
         longitude: this.state.paris.centerLongitude 
       };
     }
+
+    this.state.onboarding_overlay = !MeStore.getState().me.restaurant_onboarding;
   };
 
   restaurantState() {
@@ -298,12 +302,18 @@ class Restaurant extends Page {
               if (this.state.isInParis) {
                 this.getDirections(this.state.position);
               }
+              // Add code to remove overlay here if ont already removed
+              if (this.state.onboarding_overlay) {
+                this.setState({onboarding_overlay: false});
+                MeActions.updateOnboardingStatus('restaurant');
+              }
             }}
             paginationStyle={{bottom: -15 /* Out of visible range */}}>
             {_.map(this.state.restaurants, (restaurant, key) => {
               return (
                 <RestaurantElement
                   key={key}
+                  onboarding_overlay={key == 0 && this.state.onboarding_overlay}
                   restaurant={restaurant}
                   navigator={this.props.navigator}
                   loading={this.state.loading}
