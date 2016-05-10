@@ -179,17 +179,9 @@ class Profil extends Page {
     var is_following = (!_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id) || (MeStore.getState().me.id === profil.id && profil.public && this.state.index == 2);
 
     return (
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, paddingTop: !this.props.id ? 20 : 0}}>
         {!this.props.id ? [
-          <NavigationBar 
-            key='navbar_from_tab'
-            type='switch'
-            active={this.state.index}
-            titles={['Privé', 'Public']}
-            onPress={this.onPressMenu}
-            rightImage={require('../../assets/img/other/icons/map.png')}
-            rightButtonTitle='Carte'
-            onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({toggle: this.props.toggle, has_shared: this.props.has_shared, pastille_notifications: this.props.pastille_notifications}))} />
+          null
         ] : [
           MeStore.getState().me.id !== profil.id ? [
             <NavigationBar 
@@ -197,10 +189,12 @@ class Profil extends Page {
               type='back'
               title={profil.fullname || profil.name}
               leftButtonTitle='Retour'
-              onLeftButtonPress={() => this.props.navigator.pop()}
+              onLeftButtonPress={() => {
+                this.props.navigator.pop();
+              }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
           ] : [
             <NavigationBar 
               key='navbar_from_push_and_is_me'
@@ -209,10 +203,12 @@ class Profil extends Page {
               titles={['Privé', 'Public']}
               onPress={this.onPressMenu}
               leftButtonTitle='Retour'
-              onLeftButtonPress={() => this.props.navigator.pop()}
+              onLeftButtonPress={() => {
+                this.props.navigator.pop()
+              }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
           ]
         ]}
 
@@ -543,11 +539,6 @@ class Profil extends Page {
             </View>
           </ScrollView>
         ]}
-
-        {!this.props.id ? [
-          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
-        ] : null}
-
 
         {/* ActionSheet for iOS */}
         <View>

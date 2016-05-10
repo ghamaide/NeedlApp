@@ -12,7 +12,6 @@ import Swiper from 'react-native-swiper';
 import RestaurantElement from '../elements/Restaurant';
 import PriceMarker from '../elements/PriceMarker';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -253,8 +252,6 @@ class Restaurant extends Page {
       titles.push('#' + index);
     });
 
-    var filtreImage = require('../../assets/img/actions/icons/filter.png');
-
     return (
       <View>
         {this.state.rank > 0 ? [
@@ -265,27 +262,26 @@ class Restaurant extends Page {
             titles={titles}
             onPress={this.onPressMenu}
             rightButtonTitle='mes envies'
-            rightImage={filtreImage}
-            onRightButtonPress={() => this.props.navigator.replace(Filtre.route())}
+            rightImage={require('../../assets/img/actions/icons/filter.png')}
+            onRightButtonPress={() => {
+              this.props.navigator.replace(Filtre.route())
+            }}
             leftButtonTitle='Retour'
             onLeftButtonPress={() => {
               RestaurantsActions.resetFilters();
               this.props.navigator.pop();
             }} />
         ] : [
-          this.props.fromReco ? [
-            <NavigationBar
-              key='navbar'
-              type='default'
-              title={restaurant.name} />
-          ] : [
+          !this.props.fromReco ? [
             <NavigationBar
               key='navbar'
               type='back'
               title={restaurant.name}
               leftButtonTitle='Retour'
-              onLeftButtonPress={() => this.props.navigator.pop()} />
-          ]
+              onLeftButtonPress={() => {
+                this.props.navigator.pop()
+              }} />
+          ] : null
         ]}
 
         {this.state.rank > 0 ? [
@@ -313,6 +309,7 @@ class Restaurant extends Page {
               return (
                 <RestaurantElement
                   key={key}
+                  style={{paddingTop: this.props.fromReco ? 20 : 0}}
                   onboarding_overlay={key == 0 && this.state.onboarding_overlay}
                   restaurant={restaurant}
                   navigator={this.props.navigator}
@@ -337,10 +334,6 @@ class Restaurant extends Page {
             already_recommended={this.state.already_recommended}
             already_wishlisted={this.state.already_wishlisted} />
         ]}
-
-        {this.props.fromReco ? [
-          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
-        ] : null}
 
         {/* Overlay View for Carousel of Photos */}
         {restaurant.pictures.length > 0 ? [

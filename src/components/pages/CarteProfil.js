@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Dimensions from 'Dimensions';
 import MapView from 'react-native-maps';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -208,10 +207,6 @@ class CarteProfil extends Page {
             })}
           </MapView>
         </View>
-
-        {!this.props.id ? [
-          <MenuIcon key='menu_icon' onPress={this.props.toggle} />
-        ] : null}
       </View>
     );
   };

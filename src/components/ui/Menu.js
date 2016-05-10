@@ -23,16 +23,13 @@ class Menu extends Component {
     var has_shared;
     switch (index) {
       case 1 : 
-        pastille = ProfilStore.getRequestsReceived().length;
-        break;
-      case 2 : 
         has_shared = MeStore.getState().me.HAS_SHARED;
         break;
-      case 3 :
+      case 2 :
         pastille = NotifsStore.nbUnseenNotifs();
         break;
-      case 4 :
-        pastille = MeStore.hasNewBadge() ? 1 : 0
+      case 3 :
+        pastille = MeStore.hasNewBadge() ? (1 + ProfilStore.getRequestsReceived().length) : (0 + ProfilStore.getRequestsReceived().length);
         break;
       default :
         break;
@@ -55,19 +52,19 @@ class Menu extends Component {
             this.props.resetToTab(index);
           }}>
           <View style={styles.itemInnerContainer}>
-            <Image source={icon} style={styles.icons} />
-            <Text style={styles.itemText}>{name}</Text>
+            <Image source={icon} style={[styles.icons, {opacity: this.props.active == index ? 1 : 0.5}]} />
+            {/*<Text style={styles.itemText}>{name}</Text>*/}
           </View>
         </TouchableHighlight>
 
         {pastille ?
-          <View style={styles.pastilleContainer}>
+          <View style={[styles.pastilleContainer, {opacity: this.props.active == index ? 1 : 0.5}]}>
             <Text style={styles.pastilleText}>{pastille < 10 ? pastille : '9+'}</Text>
           </View>
           : null}
 
         {!has_shared && typeof has_shared !== 'undefined' ?
-          <View style={styles.pastilleContainer}>
+          <View style={[styles.pastilleContainer, {opacity: this.props.active == index ? 1 : 0.5}]}>
             <Text style={styles.pastilleText}>!</Text>
           </View>
           : null}
@@ -97,19 +94,21 @@ var styles = StyleSheet.create({
     right: 0
   },
   menuContainer: {
-    flex: 1,
-    height: Dimensions.get('window').height,
-    width: 2 * Dimensions.get('window').width / 3,
-    paddingTop: 60,
-    backgroundColor: '#FE3139'
+    height: 40,
+    flexDirection: 'row',
+    width: Dimensions.get('window').width,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   itemContainer: {
-    margin: 5,
+    padding: 5,
+    flex: 1,
     backgroundColor: 'transparent'
   },
   itemInnerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   itemText: {
     color: '#FFFFFF',
@@ -124,11 +123,11 @@ var styles = StyleSheet.create({
   },
   pastilleContainer: {
     position: 'absolute',
-    left: 23,
-    top: 0,
-    height: 18,
-    width: 18,
-    borderRadius: 9,
+    right: 15,
+    top: 6,
+    height: 16,
+    width: 16,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -136,7 +135,7 @@ var styles = StyleSheet.create({
   pastilleText: {
     color: '#FE3139',
     fontWeight: 'bold',
-    fontSize: 10
+    fontSize: 9
   }
 });
 

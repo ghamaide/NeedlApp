@@ -6,7 +6,6 @@ import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 import RefreshableListView from 'react-native-refreshable-listview';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -312,8 +311,6 @@ class Friends extends Page {
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false}
           onScroll={this.onScroll} />
-
-        <MenuIcon onPress={this.props.toggle} />
 
         {this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0 ? [
           <Onboard key='onboarding_followings' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>

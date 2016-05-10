@@ -51,7 +51,7 @@ class RecoStep2 extends Component {
           leftButtonTitle='Retour' 
           onLeftButtonPress={() => {
             MeActions.updateOnboardingStatus('recommendation');
-            this.props.navigator.pop()
+            this.props.navigator.pop();
           }} />
         <View style={styles.container}>
           <Text style={styles.title}>As-tu déjà testé le restaurant '{reco.restaurant.name}' ?</Text>
@@ -64,16 +64,16 @@ class RecoStep2 extends Component {
               
               if (typeof activity == 'undefined') {
                 if (reco.type === 'recommendation') {
-                  return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
+                  return this.props.navigator.push(Step3.route());
                 } else {
-                  return this.props.navigator.push(StepSave.route({toggle: this.props.toggle}));
+                  return this.props.navigator.push(StepSave.route());
                 }
               } else {
                 if (reco.type === 'recommendation') {
                   if (activity.notification_type == 'recommendation') {
-                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
                   } else {
-                    return this.props.navigator.push(Step3.route({toggle: this.props.toggle}));
+                    return this.props.navigator.push(Step3.route());
                   }
                 } else {
                   if (activity.notification_type == 'wish') {

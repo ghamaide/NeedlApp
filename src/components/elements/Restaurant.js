@@ -19,6 +19,7 @@ import Text from '../ui/Text';
 
 import Onboard from '../elements/Onboard';
 
+import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
 import RecoActions from '../../actions/RecoActions';
 import RestaurantsActions from '../../actions/RestaurantsActions';
@@ -177,7 +178,7 @@ class Restaurant extends Component {
 
     return (
       <ScrollView
-        style={{flex: 1, height: windowHeight - 60}}
+        style={[this.props.style, {flex: 1, height: windowHeight - 60}]}
         contentInset={{top: 0}}
         scrollEnabled={!this.state.pictureOverlay}
         automaticallyAdjustContentInsets={false}

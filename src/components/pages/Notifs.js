@@ -5,7 +5,6 @@ import React, {Dimensions, Image, ListView, RefreshControl, ScrollView, StyleShe
 import _ from 'lodash';
 import RefreshableListView from 'react-native-refreshable-listview';
 
-import MenuIcon from '../ui/MenuIcon';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
 import NavigationBar from '../ui/NavigationBar';
@@ -51,6 +50,7 @@ class Notifs extends Page {
 
   componentWillMount() {
     NotifsStore.listen(this.onNotificationsChange);
+    NotifsActions.notificationsSeen();
   }
 
   componentWillUnmount() {
@@ -154,9 +154,7 @@ class Notifs extends Page {
 
   renderPage() {
     return (
-      <View style={{flex: 1}}>
-        <NavigationBar type='default' title='Feed' />
-
+      <View style={{flex: 1, paddingTop: 20}}>
         <View key='switch_buttons' style={styles.notificationsButtonContainer}>
           <TouchableHighlight
             underlayColor='rgba(0, 0, 0, 0)'
@@ -184,8 +182,6 @@ class Notifs extends Page {
           scrollRenderAheadDistance={150}
           automaticallyAdjustContentInsets={false}
           showsVerticalScrollIndicator={false} />
-
-        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };

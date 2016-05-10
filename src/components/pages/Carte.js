@@ -1,11 +1,10 @@
 'use strict';
 
-import React, {Dimensions, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -26,6 +25,9 @@ var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 
 var triangleWidth = 25;
+
+let buttonSize = 45;
+let buttonMargin = 10;
 
 var RATIO = 0.4;
 
@@ -216,49 +218,44 @@ class Carte extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        <NavigationBar 
-          type='default' 
-          title='Carte'
-          rightImage={require('../../assets/img/actions/icons/filter.png')}
-          rightButtonTitle="mes envies" 
-          onRightButtonPress={() => {
+        <MapView
+          ref='mapview'
+          rotateEnabled={false}
+          style={styles.restaurantsMap}
+          showsUserLocation={this.state.showsUserLocation}
+          region={this.state.region}
+          onRegionChangeComplete={this.onRegionChangeComplete}
+          onRegionChange={this.onRegionChange}>
+          <MapView.Circle
+            center={center}
+            radius={this.state.radius}
+            fillColor='rgba(0, 0, 0, 0.1)'
+            strokeColor='#FE3139' />
+        </MapView>
+        <TouchableHighlight
+          underlayColor='rgba(0, 0, 0, 0)'
+          style={styles.submitButton}
+          onPress={() => {
+            if (this.state.restaurants.length > 0) {
+              this.props.navigator.push(Restaurant.route({rank: 1}));
+            } else {
+              this.setState({error_overlay: true, message1: 'Aucun restaurant ne correspond à tes critères dans la zone recherchée.', message2: 'Essaie de chercher avec d\'autres critères ou dans une autre zone.'});
+            }
+          }}>
+          <Image source={require('../../assets/img/icons/search.png')} style={styles.submitIcon} />
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor='rgba(0, 0, 0, 0)'
+          style={styles.filterButton}
+          onPress={() => {
             if (!RestaurantsStore.filterActive() && this.state.restaurants.length == 0) {
               this.setState({error_overlay: true, message1: 'Tu n\'as ucun restaurant dans cette zone.', message2: 'Essaie de changer d\'endroit'});
             } else {
-              this.props.navigator.push(Filtre.route())
+              this.props.navigator.push(Filtre.route());
             }
-          }} />
-
-        <View style={{flex: 1, position: 'relative'}}>
-          <MapView
-            ref='mapview'
-            rotateEnabled={false}
-            style={styles.restaurantsMap}
-            showsUserLocation={this.state.showsUserLocation}
-            region={this.state.region}
-            onRegionChangeComplete={this.onRegionChangeComplete}
-            onRegionChange={this.onRegionChange}>
-            <MapView.Circle
-              center={center}
-              radius={this.state.radius}
-              fillColor='rgba(0, 0, 0, 0.1)'
-              strokeColor='#FE3139' />
-          </MapView>
-          <TouchableHighlight
-            underlayColor='rgba(0, 0, 0, 0)'
-            style={styles.submitButton}
-            onPress={() => {
-              if (this.state.restaurants.length > 0) {
-                this.props.navigator.push(Restaurant.route({rank: 1}))
-              } else {
-                this.setState({error_overlay: true, message1: 'Aucun restaurant ne correspond à tes critères dans la zone recherchée.', message2: 'Essaie de chercher avec d\'autres critères ou dans une autre zone.'});
-              }
-            }}>
-            <Text style={styles.submitText}>Lancer ma recherche !</Text>
-          </TouchableHighlight>
-        </View>
-
-        <MenuIcon onPress={this.props.toggle} />
+          }}>
+          <Image source={require('../../assets/img/actions/icons/filter.png')} style={styles.filterIcon} />
+        </TouchableHighlight>
 
         {this.state.error_overlay ? [
           <Overlay key='error_overlay' style={{backgroundColor: 'rgba(0, 0, 0, 0.7)', alignItems: 'center', justifyContent: 'center'}}>
@@ -278,14 +275,20 @@ class Carte extends Page {
         ] : null}
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_top' style={{top: 90}} triangleTop={-25} triangleRight={20}>
-            <Text style={styles.onboardingText}>Pour plus de <Text style={{color: '#FE3139'}}>choix</Text></Text>
+          <Onboard key='onboarding_map' style={{top: 60}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth} rotation='180deg'>
+            <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
           </Onboard>
         ] : null}
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_bottom' style={{top: (windowHeight + 60)/ 2 + windowWidth * 0.4 + 15}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
-            <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
+          <Onboard key='onboarding_filter' style={{bottom: buttonSize + 2 * buttonMargin + 20}} triangleBottom={-25} triangleRight={buttonMargin} rotation='180deg'>
+            <Text style={styles.onboardingText}>Lancer ta recherche avec <Text style={{color: '#FE3139'}}>plus de critères</Text></Text>
+          </Onboard>
+        ] : null}
+
+        {this.state.onboarding_overlay ? [
+          <Onboard key='onboarding_search' style={{width: windowWidth - 2 * (buttonSize + buttonMargin) - triangleWidth - 10, bottom: buttonMargin / 2}} triangleBottom={12.5} triangleRight={-27.5} rotation='90deg'>
+            <Text style={styles.onboardingText}>Lance ta recherche <Text style={{color: '#FE3139'}}>immédiatement</Text></Text>
           </Onboard>
         ] : null}
 
@@ -301,20 +304,38 @@ var styles = StyleSheet.create({
   },
   submitButton : {
     backgroundColor: '#FE3139',
-    borderRadius: 3,
-    padding: 10,
     borderColor: '#FE3139',
     position: 'absolute',
-    bottom: 5,
-    left: 10,
-    width: windowWidth - 20
+    bottom: buttonMargin,
+    right: (2 * buttonMargin) + buttonSize,
+    width: buttonSize,
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  submitText: {
-    flex: 1,
-    fontSize: 15,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontWeight: '600',
+  submitIcon: {
+    tintColor: '#FFFFFF',
+    height: buttonSize - 20,
+    width: (buttonSize - 20) / 1.9
+  },
+  filterButton : {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FE3139',
+    borderWidth: 1,
+    position: 'absolute',
+    bottom: buttonMargin,
+    right: buttonMargin,
+    width: buttonSize,
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  filterIcon: {
+    tintColor: '#FE3139',
+    width: buttonSize - 20,
+    height: buttonSize - 20
   },
   errorContainer: {
     width: 250,
@@ -344,10 +365,10 @@ var styles = StyleSheet.create({
   },
   onboardingText: {
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '500',
     color: '#EEEDF1',
-    margin: 10
+    margin: 5
   }
 });
 

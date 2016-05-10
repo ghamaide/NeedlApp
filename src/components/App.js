@@ -327,12 +327,12 @@ class App extends Component {
               component: Carte,
               title: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
-            },
+            },/*
             {
               component: Friends,
               title: 'Mes conseillers',
               icon: require('../assets/img/tabs/icons/friend.png'),
-            },
+            },*/
             {
               component: RecoStep1,
               title: 'Recommander',

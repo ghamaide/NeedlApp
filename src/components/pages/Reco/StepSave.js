@@ -40,7 +40,8 @@ class RecoStepSave extends Component {
     var reco = RecoStore.getReco();
     var id = reco.restaurant.id;
     setTimeout(() => {
-      this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: id, fromReco: true}, reco.restaurant.name));
+      this.props.showMenu();
+      this.props.navigator.resetTo(Restaurant.route({id: id, fromReco: true}, reco.restaurant.name));
     }, 1000);
   };
 

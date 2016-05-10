@@ -67,7 +67,7 @@ class RecoStep1 extends Component {
         // check if already reco or wish
         RecoActions.setReco({restaurant: restaurant});
         this.closeKeyboard();
-        this.props.navigator.push(Step2.route({toggle: this.props.toggle}));
+        this.props.navigator.push(Step2.route({hideMenu: this.props.hideMenu, showMenu: this.props.showMenu}));
       }}>
         <View style={styles.restaurantRowInner}>
           <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.name_and_address.split(': ')[0]}</Text>
@@ -124,8 +124,6 @@ class RecoStep1 extends Component {
 
     return (
       <View style={styles.container}>
-        <NavigationBar type='default' title='Recommandation' />
-      
         {Platform.OS === 'ios' ? [
           <SearchBar
             key='search'
@@ -148,8 +146,6 @@ class RecoStep1 extends Component {
         ]}
 
         {content}
-
-        <MenuIcon onPress={this.props.toggle} />
       </View>
     );
   };
@@ -165,6 +161,7 @@ var styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     paddingBottom: 10,
+    paddingTop: 30
   },
   restaurantsList: {
     flex: 1,
