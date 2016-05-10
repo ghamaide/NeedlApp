@@ -120,13 +120,13 @@ class Information extends Component {
           ] : [
             _.includes(this.state.requests_received_ids, user.id) ? [
               <TouchableHighlight
-              key={'invite_friend_' + user.id}
-              style={styles.buttonWrapper}
-              underlayColor='rgba(0, 0, 0, 0)'
-              onPress={() => {
-                var user_request = ProfilStore.getRequestReceived(user.id);
-                FriendsActions.acceptFriendship(user_request.friendship_id);
-              }}>
+                key={'invite_friend_' + user.id}
+                style={styles.buttonWrapper}
+                underlayColor='rgba(0, 0, 0, 0)'
+                onPress={() => {
+                  var user_request = ProfilStore.getRequestReceived(user.id);
+                  FriendsActions.acceptFriendship(user_request.friendship_id);
+                }}>
                 <Text style={styles.buttonText}>Accepter</Text>
               </TouchableHighlight>
             ] : [
@@ -290,7 +290,7 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 13,
     textAlign: 'center'
-  },
+  }
 });
 
 export default Information;

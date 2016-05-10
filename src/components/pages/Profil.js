@@ -258,7 +258,11 @@ class Profil extends Page {
                       style={[styles.textInfo, {borderRightWidth: 1.5}]}
                       onPress={() => {
                         // fetch info on friends
-                        this.props.navigator.push(Information.route({id: profil.id, origin: 'users'}));
+                        if (profil.id !== MeStore.getState().me.id) {
+                          this.props.navigator.push(Information.route({id: profil.id, origin: 'users'}));
+                        } else {
+                          this.props.navigator.push(Friends.route({index: 1}));
+                        }
                       }}>
                       <View>
                         <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
@@ -280,14 +284,18 @@ class Profil extends Page {
                     </View>
                   ]}
 
-                  {/* Nombre de followings (amis) ou follwoers (followings) */}
+                  {/* Nombre de followings (amis) ou followers (followings) */}
                   {!is_following ? [
                     <TouchableHighlight
                       key='followings'
                       underlayColor='rgba(0, 0, 0, 0)'
                       style={[styles.textInfo, {borderRightWidth: 1.5}]}
                       onPress={() => {
-                        this.props.navigator.push(Information.route({id: profil.id, origin: 'experts'}));
+                        if (profil.id !== MeStore.getState().me.id) {
+                          this.props.navigator.push(Information.route({id: profil.id, origin: 'experts'}));
+                        } else {
+                          this.props.navigator.push(Friends.route({index: 2}));
+                        }
                       }}>
                       <View>
                         <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
