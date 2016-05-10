@@ -22,28 +22,6 @@ class TabView extends Component {
     };
   };
 
-  hardwareBackPress = () => {
-    var delta = new Date().getTime() - this.state.lastPress;
-
-    if (delta < 500) {
-      return false;
-    } else if (this.refs.tabs.getCurrentRoutes().length > 1) {
-      this.refs.tabs.pop();
-      this.setState({
-        lastPress: new Date().getTime()
-      });
-      return true;
-    } else if (this.state.pressedOnce) {
-      return false;
-    } else {
-      this.setState({
-        lastPress: new Date().getTime(),
-        pressedOnce: true
-      });
-      return true;
-    }
-  };
-
   componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', this.hardwareBackPress);
     this.props.onTab(this.props.initialSelected || 0);

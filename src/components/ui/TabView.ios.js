@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Component, Navigator, StyleSheet, View} from 'react-native';
+import React, {BackAndroid, Component, Navigator, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -16,37 +16,49 @@ class TabView extends Component {
 
     this.state = {
       active: this.props.initialSelected || 0,
-      displayMenu: true
+      pressedOnce: false,
+      lastPress: 0,
     };
   };
 
   componentDidMount() {
+    BackAndroid.addEventListener('hardwareBackPress', this.hardwareBackPress);
     this.props.onTab(this.props.initialSelected || 0);
+  };
+
+  componentWillUnmount() {
+    BackAndroid.removeEventListener('hardwareBackPress', this.hardwareBackPress);
+  };
+
+  hardwareBackPress = () => {
+    var delta = new Date().getTime() - this.state.lastPress;
+
+    if (delta < 500) {
+      return false;
+    } else if (this.refs.tabs.getCurrentRoutes().length > 1) {
+      this.refs.tabs.pop();
+      this.setState({
+        lastPress: new Date().getTime()
+      });
+      return true;
+    } else if (this.state.pressedOnce) {
+      return false;
+    } else {
+      this.setState({
+        lastPress: new Date().getTime(),
+        pressedOnce: true
+      });
+      return true;
+    }
   };
 
   resetToTab(index) {
     this.refs.tabs.resetTo(_.extend(this.props.tabs[index]));
     this.setState({active: index});
-    this.showMenu();
     this.props.onTab(index);
   };
 
-  hideMenu = () => {
-    this.setState({displayMenu: false});
-  };
-
-  showMenu = () => {
-    this.setState({displayMenu: true});
-  };
-
   renderScene = (tab, navigator) => {
-    // if (navigator.getCurrentRoutes().length > 1) {
-    //   this.hideMenu();
-    // } else {
-    //   if (!this.state.displayMenu) {
-    //     this.showMenu();
-    //   }
-    // }
     return (
       <View style={{flex: 1}}>
         {React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps))}
