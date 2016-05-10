@@ -210,8 +210,6 @@ class Friends extends Page {
   };
 
   renderPage() {
-    console.log(this.state.index);
-    console.log(this.props.index);
     return (
       <View style={{flex: 1}}>
         <NavigationBar 

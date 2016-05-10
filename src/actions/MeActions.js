@@ -217,6 +217,12 @@ export class MeActions {
     }
   }
 
+  hideInvitations() {
+    return function (dispatch) {
+      dispatch();
+    }
+  }
+
   checkConnectivity() {
     return (dispatch) => {
       dispatch();

@@ -247,6 +247,32 @@ class Profil extends Page {
               </View>
             ] : null}
 
+            {/* Show notification if invitation received */}
+            {MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().me.showInvitations ? [
+              <View key='invitation_container' style={styles.invitationContainer}>
+                <Text style={{fontWeight: '400', color: '#FFFFFF', textAlign: 'center', fontSize: 12}}>Tu as reçu {ProfilStore.getRequestsReceived().length} invitation{ProfilStore.getRequestsReceived().length > 1 ? 's' : ''}</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.invitationButton}
+                    onPress={() => {
+                      this.props.navigator.push(Friends.route({index: 1}));
+                    }}>
+                    <Text style={{color: '#3A325D', textAlign: 'center', fontSize: 11}}>Voir {ProfilStore.getRequestsReceived().length > 1 ? 'mes invitations' : 'mon invitation'}</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.invitationButton}
+                    onPress={() => {
+                      MeActions.hideInvitations();
+                      this.forceUpdate();
+                    }}>
+                    <Text style={{color: '#3A325D', textAlign: 'center', fontSize: 11}}>Masquer</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            ] : null}
+
             <View style={styles.infoContainer}>
               <View style={styles.infoInnerContainer}>
                 <View style={styles.textInfoContainer}>
@@ -945,6 +971,29 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 15,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5
+  },
+  invitationContainer: {
+    flex: 1,
+    backgroundColor: '#3A325D',
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 20,
+    paddingBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  invitationButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    marginLeft: 5,
+    marginRight: 5,
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 5,

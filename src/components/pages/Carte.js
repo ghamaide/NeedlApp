@@ -80,7 +80,7 @@ class Carte extends Page {
     this.state.message2 = '';
 
     // Onboarding overlay
-    this.state.onboarding_overlay = !MeStore.getState().me.map_onboarding;
+    this.state.onboarding_overlay = !MeStore.getState().me.map_onboarding || true;
   };
 
   // State update with every store update
