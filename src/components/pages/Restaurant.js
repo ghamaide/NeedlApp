@@ -77,7 +77,7 @@ class Restaurant extends Page {
 
   restaurantState() {
     return {
-      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 3),
+      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 5),
       restaurant: RestaurantsStore.getRestaurant(this.props.id),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),

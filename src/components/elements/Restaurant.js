@@ -160,7 +160,7 @@ class Restaurant extends Component {
   onScroll = () => {
     if (this.state.onboarding_overlay) {
       this.setState({onboarding_overlay: false});
-      MeActions.updateOnboardingStatus('map');
+      MeActions.updateOnboardingStatus('restaurant');
     }
   };
 
@@ -185,6 +185,7 @@ class Restaurant extends Component {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
         onScroll={this.onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={this.props.loading}

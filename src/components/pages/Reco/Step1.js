@@ -5,7 +5,6 @@ import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, Nat
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 
-import MenuIcon from '../../ui/MenuIcon';
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
@@ -67,7 +66,7 @@ class RecoStep1 extends Component {
         // check if already reco or wish
         RecoActions.setReco({restaurant: restaurant});
         this.closeKeyboard();
-        this.props.navigator.push(Step2.route({hideMenu: this.props.hideMenu, showMenu: this.props.showMenu}));
+        this.props.navigator.push(Step2.route());
       }}>
         <View style={styles.restaurantRowInner}>
           <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.name_and_address.split(': ')[0]}</Text>

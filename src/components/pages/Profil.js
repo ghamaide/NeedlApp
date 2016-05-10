@@ -8,7 +8,6 @@ import Modal from 'react-native-modalbox';
 import RNComm from 'react-native-communications';
 import TimerMixin from 'react-timer-mixin';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -194,7 +193,7 @@ class Profil extends Page {
               }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
           ] : [
             <NavigationBar 
               key='navbar_from_push_and_is_me'
@@ -208,7 +207,7 @@ class Profil extends Page {
               }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
           ]
         ]}
 

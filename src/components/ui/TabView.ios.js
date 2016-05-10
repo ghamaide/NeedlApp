@@ -1,9 +1,8 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, Navigator, NavigatorIOS, StatusBar, StyleSheet, TouchableWithoutFeedback, View} from 'react-native';
+import React, {Component, Navigator, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
-import SideMenu from 'react-native-side-menu';
 
 import Text from './Text';
 
@@ -26,7 +25,7 @@ class TabView extends Component {
   };
 
   resetToTab(index) {
-    this.refs.tabs.resetTo(_.extend(this.props.tabs[index], {passProps: {hideMenu: this.hideMenu, showMenu: this.showMenu}}));
+    this.refs.tabs.resetTo(_.extend(this.props.tabs[index]));
     this.setState({active: index});
     this.showMenu();
     this.props.onTab(index);
@@ -48,13 +47,25 @@ class TabView extends Component {
     //     this.showMenu();
     //   }
     // }
-    return React.createElement(tab.component, _.extend({navigator: navigator}));
+    return (
+      <View style={{flex: 1}}>
+        {React.createElement(tab.component, _.extend({navigator: navigator}, tab.passProps))}
+        {navigator.getCurrentRoutes().length == 1 ? [
+          <Menu
+            key='menu'
+            style={styles.menu}
+            active={this.state.active}
+            tabs={this.props.tabs}
+            tabsBlocked={this.props.tabsBlocked} 
+            resetToTab={(index) => this.resetToTab(index)} />
+        ] : null}
+      </View>
+    );
   };
 
   render() {
     return (
       <View style={styles.tabbarContainer}>
-        <StatusBar hidden={false} />
         <Navigator
           ref='tabs'
           key='navigator'
@@ -68,15 +79,6 @@ class TabView extends Component {
               gestures: {}
             };
           }} />
-        {this.state.displayMenu ? [
-          <Menu
-            key='menu'
-            style={styles.menu}
-            active={this.state.active}
-            tabs={this.props.tabs}
-            tabsBlocked={this.props.tabsBlocked} 
-            resetToTab={(index) => this.resetToTab(index)} />
-        ] : null}
       </View>
     );
   };

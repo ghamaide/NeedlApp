@@ -48,20 +48,51 @@ class NavBarButton extends Component {
 
 class NavBarSwitch extends Component {
   render() {
+    switch (this.props.active) {
+      case 1:
+        var titles = this.props.titles.slice(0, 3);
+        titles.push('...');
+        var offset = 0;
+        break;
+      case 2:
+        var titles = this.props.titles.slice(0, 3);
+        titles.push('...');
+        var offset = 1;
+        break;
+      case 3:
+        var titles = this.props.titles.slice(0, 3);
+        titles.push('...');
+        var offset = 2;
+        break;
+      case 4:
+        var titles = this.props.titles.slice(2, 5);
+        titles.unshift('...');
+        var offset = 2;
+        break;
+      case 5:
+        var titles = this.props.titles.slice(2, 5);
+        titles.unshift('...');
+        var offset = 2;
+        break;
+      default:
+        var titles = this.props.titles;
+        break;
+    }
+
     return (
       <View style={[styles.navBarTitle, {flexDirection: 'row'}]}>
-        {_.map(this.props.titles, (title, key) => {
+        {_.map(titles, (title, key) => {
           return (
             <View key={'button_' + key} style={{flexDirection: 'row'}}>
               <TouchableOpacity style={{padding: 5}} onPress={() => this.props.onPress(key + 1)}>
-                <View style={{alignItems: 'center', justifyContent: 'center', borderBottomWidth: this.props.active === (key + 1) ? 1 : 0, borderColor: '#FE3139'}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', borderBottomWidth: ('#' + this.props.active === title) ? 1 : 0, borderColor: '#FE3139'}}>
                   <Text
-                    style={[styles.navBarTitleSwitch, {color: this.props.active === (key + 1) ? '#FE3139' : '#3A325D'}]}>
+                    style={[styles.navBarTitleSwitch, {color: ('#' + this.props.active === title) ? '#FE3139' : '#3A325D'}]}>
                     {title}
                   </Text>
                 </View>
               </TouchableOpacity>
-              {key < this.props.titles.length - 1 ? [
+              {!(title == '...' && titles.length == key + 1) && !(title == '#' + this.props.titles.length) ? [
                 <Text key={'separator_' + key} style={[styles.navBarTitleSwitch, {paddingTop: 5, marginTop: Platform.OS === 'ios' ? 0 : 5, marginLeft: 1, marginRight: 1}]}>|</Text>
               ] : null}
             </View>
