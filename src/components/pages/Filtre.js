@@ -454,7 +454,7 @@ var styles = StyleSheet.create({
     marginLeft: (windowWidth - 160) / 2,
    },
   submitButtonOverlay: {
-    backgroundColor: 'rgba(239, 88, 45, 0.7)',
+    backgroundColor: 'rgba(254, 49, 57, 0.7)',
     borderRadius: 3,
     paddingLeft: 40,
     paddingRight: 40,
