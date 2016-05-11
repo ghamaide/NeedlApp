@@ -17,7 +17,7 @@ import NotifsStore from '../../../stores/Notifs';
 import RecoStore from '../../../stores/Reco';
 
 import Restaurant from '../Restaurant';
-import Step3 from './Step3';
+import Step4 from './Step4';
 import StepSave from './StepSave';
 
 var windowWidth = Dimensions.get('window').width;
@@ -64,7 +64,7 @@ class RecoStep2 extends Component {
               
               if (typeof activity == 'undefined') {
                 if (reco.type === 'recommendation') {
-                  return this.props.navigator.push(Step3.route());
+                  return this.props.navigator.push(Step4.route());
                 } else {
                   return this.props.navigator.push(StepSave.route());
                 }
@@ -73,13 +73,13 @@ class RecoStep2 extends Component {
                   if (activity.notification_type == 'recommendation') {
                     return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
                   } else {
-                    return this.props.navigator.push(Step3.route());
+                    return this.props.navigator.push(Step4.route());
                   }
                 } else {
                   if (activity.notification_type == 'wish') {
-                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_wishlisted'}, reco.restaurant.name));
                   } else if (activity.notification_type == 'recommendation') {
-                    return this.props.navigator.resetTo(Restaurant.route({toggle: this.props.toggle, id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
+                    return this.props.navigator.resetTo(Restaurant.route({id: reco.restaurant.id, fromReco: true, note: 'already_recommended'}, reco.restaurant.name));
                   }
                 }
               }

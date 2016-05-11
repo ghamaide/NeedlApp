@@ -93,7 +93,10 @@ class Login extends Component {
   };
 
   onMailCreation = () => {
-    if (!this.validateEmail(this.state.email)) {
+    if (this.state.name.length < 2) {
+      var error = {error_message: 'invalid_name'};
+      this.setState({error: error});
+    } else if (!this.validateEmail(this.state.email)) {
       var error = {error_message: 'incorrect_mail'};
       this.setState({error: error});
     // Remove to add password confirmation
@@ -165,6 +168,10 @@ class Login extends Component {
           message = 'Le mot de passe doit compter au minimum 6 caractères';
           showSignUpError = true;
           break;
+        case 'invalid_name':
+          message = 'Le nom doit contenir au minimum 2 caractères';
+          showSignUpError = true;
+          break;
         case 'incorrect_mail_recovery':
           message = 'L\'adresse mail entrée n\'est pas valide';
           showPasswordForgottenError = true;
@@ -200,6 +207,28 @@ class Login extends Component {
             </View>
           ] : null}
 
+          {/* Login via facebook */}
+          <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='rgba(0, 0, 0, 0)'>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <Icon
+                name='facebook'
+                size={25}
+                color='#FFFFFF' 
+                style={{marginRight: 15}} />
+              <Text style={styles.loginBtnText}>
+                {this.state.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
+              </Text>
+            </View>
+          </TouchableHighlight>
+
+          {/* Transition */}
+          <View style={styles.transition}>
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+          </View>
+
+          {/* Login via mail */}
           {this.state.index == 1 ? [
             <View key='sign_in' style={styles.loginWrapper}>
               {showSignInError ? [
@@ -378,19 +407,6 @@ class Login extends Component {
           ]}
         </ScrollView>
 
-        <TouchableHighlight onPress={this.onLogin} style={styles.loginBtn} activeOpacity={1} underlayColor='rgba(0, 0, 0, 0)'>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-            <Icon
-              name='facebook'
-              size={25}
-              color='#FFFFFF' 
-              style={{marginRight: 15}} />
-            <Text style={styles.loginBtnText}>
-              {this.state.loading ? 'Connexion...' : 'Se connecter avec Facebook'}
-            </Text>
-          </View>
-        </TouchableHighlight>
-
         {/* Loading overlay */}
         {this.state.loading ? [
           <Overlay key='loading_overlay'>
@@ -448,7 +464,6 @@ var styles = StyleSheet.create({
   },
   loginWrapper: {
     alignItems: 'center',
-    marginTop: 20
   },
   input: {
     paddingLeft: 5,
@@ -496,15 +511,16 @@ var styles = StyleSheet.create({
     textAlign: 'center'
   },
   loginBtn: {
-    height: 60,
+    height: 45,
+    borderRadius: 5,
     backgroundColor: '#3B5998',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 85,
-    left: 0,
-    right: 0
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 30,
+    marginBottom: 10
   },
   loginBtnText: {
     color: 'white',
@@ -519,6 +535,20 @@ var styles = StyleSheet.create({
   errorText : {
     fontSize: 12,
     color: '#FFFFFF'
+  },
+  transition: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+    flexDirection: 'row'
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#FFFFFF',
+    marginLeft: 10,
+    marginRight: 10
   }
 });
 

@@ -77,7 +77,7 @@ class RecoStep6 extends Component {
     recommendation.public = this.state.public_recommendation;
     recommendation.pictures = this.state.recommendationPictures;
     RecoActions.setReco(recommendation);
-    this.props.navigator.resetTo(StepSave.route({toggle: this.props.toggle}));
+    this.props.navigator.resetTo(StepSave.route());
   };
 
   thankRecommender = (recommenderId) => {
@@ -309,6 +309,7 @@ var styles = StyleSheet.create({
     backgroundColor: 'transparent',
     margin: 0,
     flex: 1,
+    paddingTop: 10,
     height: Platform.OS == 'ios' ? Dimensions.get('window').height - 60 : Dimensions.get('window').height - 40
   },
   recoContainer: {

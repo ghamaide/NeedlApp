@@ -106,7 +106,7 @@ var styles = StyleSheet.create({
   },
   menu: {
     flex: 1,
-    height: 60,
+    height: 60
   }
 });
 

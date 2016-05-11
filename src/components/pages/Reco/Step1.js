@@ -15,7 +15,6 @@ import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
 
 import Step2 from './Step2';
-import Step3 from './Step3';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 

@@ -3,7 +3,6 @@
 import React, {Component, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import LinearGradient from 'react-native-linear-gradient';
 
 import Text from '../ui/Text';
 
@@ -24,39 +23,39 @@ class RestaurantHeader extends Component {
     }
 
     var content = (
-      <View key={this.props.key} style={[styles.restaurantImage, this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
-        <Image key={this.props.picture} style={[styles.restaurantImage, this.props.style]} source={{uri: this.props.picture}}>
-          <LinearGradient colors={['#FFFFFF', '#3A325D']} style={styles.restaurantImageMask} />
+      <View key={this.props.key} style={[this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
+        <Image key={this.props.picture} style={styles.restaurantImage} source={{uri: this.props.picture}} />
+        <View style={styles.restaurantBanner}>
+          <Text style={styles.restaurantName}>{this.props.name}</Text>
           <View style={styles.restaurantInfos}>
-            <Text key='restaurant_name' style={styles.restaurantName}>{this.props.name}</Text>
+            {this.props.type ? [
+              <Text key='restaurant_type' style={styles.restaurantType}>{this.props.type}</Text>
+            ] : null}
             {budget ? [
               <Text key='restaurant_budget' style={styles.restaurantType}>
-                {this.props.type}
                 <Text style={{color: '#FFFFFF'}}>
-                   , {budget}
+                   {budget}
                 </Text>
                 <Text style={{color: '#837D9B'}}>
                   {emptyBudget}
                 </Text>
               </Text>
-            ] : [
-              <Text key='restaurant_budget' style={styles.restaurantType}>{this.props.type}</Text>
-            ]}
-            {this.props.subway ?
-              <View style={styles.restaurantSubway}>
+            ] : null}
+            {this.props.subway ? [
+              <View key='restaurant_subway' style={styles.restaurantSubway}>
                 <Image
                   source={require('../../assets/img/other/icons/subway.png')}
                   style={styles.restaurantSubwayImage} />
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>
-              : null}
-            {this.props.rank ?
-              <View style={styles.imageRank}>
-                <Text style={styles.imageRankText}>#{this.props.rank}</Text>
-              </View>
-             : null}
+            ] : null}
           </View>
-        </Image>
+        </View>
+        {this.props.rank ?
+          <View style={styles.imageRank}>
+            <Text style={styles.imageRankText}>#{this.props.rank}</Text>
+          </View>
+         : null}
       </View>
     );
 
@@ -75,87 +74,56 @@ var styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  restaurantImageMask: {
+  restaurantBanner: {
+    flex: 1,
+    height: 50,
+    backgroundColor: 'rgba(58, 50, 93, 0.7)',
     position: 'absolute',
     left: 0,
-    bottom: 0,
     right: 0,
-    top: 0,
-    opacity: 0.3
-  },
-  restaurantInfos: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)'    
+    bottom: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   restaurantName: {
     fontSize: 14,
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)',
     color: '#FFFFFF',
-    marginTop: 2,
-    position: 'absolute',
-    bottom: 32,
-    left: 10,
-    fontWeight: '400'
+    padding: 5
+  },
+  restaurantInfos: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    padding: 5,
   },
   restaurantType: {
-    flex: 1,
-    fontSize: 14,
-    backgroundColor: 'rgba(0,0,0,0)',
+    fontSize: 11,
     color: '#FFFFFF',
-    marginTop: 2,
-    position: 'absolute',
-    bottom: 10,
-    left: 10,
-    fontWeight: '400'
+    fontWeight: '400',
+    margin: 1
   },
   restaurantPrice: {
-    flex: 1,
-    fontSize: 14,
-    backgroundColor: 'rgba(0,0,0,0)',
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
+    fontSize: 11,
     color: '#FFFFFF',
-    fontWeight: '400'
+    fontWeight: '400',
+    margin: 1
   },
   restaurantSubway: {
-    flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'rgba(0,0,0,0)',
-    marginTop: 2,
-    position: 'absolute',
-    bottom: 10,
-    right: 5
+    margin: 1
   },
   restaurantSubwayImage: {
-    width: 15,
-    height: 15,
-    marginRight: 5,
+    width: 12,
+    height: 12,
+    marginRight: 3,
     marginTop: 1
   },
   restaurantSubwayText: {
     fontWeight: '400',
-    fontSize: 14,
+    fontSize: 11,
     color: 'white',
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  imageNeedlContainer: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderColor: '#FFFFFF',
-    borderWidth: 1,
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 5
-  },
-  imageNeedl: {
-    width: 18,
-    height: 18,
-    tintColor: '#FFFFFF'
   },
   imageRank: {
     width: 32,

@@ -128,7 +128,8 @@ class Notifs extends Page {
             picture={restaurant.pictures[0]}
             type={restaurant.food[1]}
             budget={restaurant.price_range}
-            height={180}
+            subway={RestaurantsStore.closestSubwayName(restaurant.id)}
+            height={225}
             onPress={() => {
               this.props.navigator.push(Restaurant.route({id: notification.restaurant_id}, restaurant.name));
             }}/>
