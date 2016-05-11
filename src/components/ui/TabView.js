@@ -65,7 +65,6 @@ class TabView extends Component {
         {navigator.getCurrentRoutes().length == 1 ? [
           <Menu
             key='menu'
-            style={styles.menu}
             active={this.state.active}
             tabs={this.props.tabs}
             tabsBlocked={this.props.tabsBlocked} 
@@ -103,10 +102,6 @@ var styles = StyleSheet.create({
   },
   tabbarContent: {
     flex: 1,
-  },
-  menu: {
-    flex: 1,
-    height: 60
   }
 });
 

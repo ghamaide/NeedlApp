@@ -9,7 +9,7 @@ export class ProfilActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/v2/users/' + id)
+      request('GET', '/api/v3/users/' + id)
         .end((err, result) => {
           if (err) {
             return this.fetchProfilFailed(err);

@@ -310,7 +310,7 @@ class Friends extends Page {
           onScroll={this.onScroll} />
 
         {this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0 ? [
-          <Onboard key='onboarding_followings' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
+          <Onboard key='onboarding_followings' style={{top: !ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? 250 : 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
             <Text style={styles.onboardingText}>Viens suivre des <Text style={{color: '#FE3139'}}>bloggers culinaires</Text> que nous avons sélectionnés pour toi.</Text>
           </Onboard>
         ] : null}

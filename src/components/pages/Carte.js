@@ -146,10 +146,12 @@ class Carte extends Page {
   componentWillMount() {
     this.startActions();
     RestaurantsStore.listen(this.onRestaurantsChange);
+    MeStore.listen(this.onMeChange);
   };
 
   componentWillUnmount() {
     RestaurantsStore.unlisten(this.onRestaurantsChange);
+    MeStore.unlisten(this.onMeChange);
   };
 
   componentDidMount() {
@@ -160,6 +162,10 @@ class Carte extends Page {
   onRestaurantsChange = () => {
     this.setState(this.restaurantsState());
   };
+
+  onMeChange = () => {
+    this.setState({onboarding_overlay: !MeStore.getState().me.map_onboarding});
+  }
 
   // Set the region and circle radius, and set region for future map displays (not centering on user's location afterwards)
   onRegionChangeComplete = (region) => {

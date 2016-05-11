@@ -10,6 +10,7 @@ import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 
 import CachedStore from './CachedStore';
+import ProfilStore from './Profil';
 
 export class MeStore extends CachedStore {
 
@@ -132,11 +133,11 @@ export class MeStore extends CachedStore {
     this.me = me.user;
     this.me.score = 0;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
-    this.me.map_onboarding = false;
-    this.me.restaurant_onboarding = false;
-    this.me.followings_onboarding = false;
-    this.me.profile_onboarding = false;
-    this.me.recommendation_onboarding = false;
+    this.me.map_onboarding = true;
+    this.me.restaurant_onboarding = true;
+    this.me.followings_onboarding = true;
+    this.me.profile_onboarding = true;
+    this.me.recommendation_onboarding = true;
     this.status.loading = false;
   }
 
@@ -168,11 +169,11 @@ export class MeStore extends CachedStore {
   handleLoginEmailSuccess(me) {
     var me = me.user;
     me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
-    me.map_onboarding = false;
-    me.restaurant_onboarding = false;
-    me.followings_onboarding = false;
-    me.profile_onboarding = false;
-    me.recommendation_onboarding = false;
+    me.map_onboarding = true;
+    me.restaurant_onboarding = true;
+    me.followings_onboarding = true;
+    me.profile_onboarding = true;
+    me.recommendation_onboarding = true;
     this.me = me;
     this.status.loading = false;
   }
@@ -204,6 +205,11 @@ export class MeStore extends CachedStore {
       this.me.platform = profil.platform;
       var oldScore = this.me.score;
       this.me.score = profil.score;
+      this.me.map_onboarding = profil.map_onboarding;
+      this.me.restaurant_onboarding = profil.restaurant_onboarding;
+      this.me.recommendation_onboarding = profil.recommendation_onboarding;
+      this.me.profile_onboarding = profil.profile_onboarding;
+      this.me.followings_onboarding = profil.followings_onboarding;
       if (!this.hasNewBadge) {
         if (oldScore < 1) {
           this.hasNewBadge = profil.score >= 1;

@@ -240,11 +240,18 @@ class Restaurant extends Page {
     this.setState({region: region});
   };
 
+  closeOnboarding = () => {
+    this.setState({onboarding_overlay: false});
+    MeActions.updateOnboardingStatus('restaurant');
+  }
+
   renderPage() {
     if (this.state.rank > 0) {
       var restaurant = this.state.restaurants[this.state.rank - 1];
       var restaurants = this.state.restaurants.slice(0, 3);
-      restaurants.push(this.state.restaurants.slice(3, _.min([this.state.restaurants.length - 1, 20])));
+      if (this.state.restaurants.length > 3) {
+        restaurants.push(this.state.restaurants.slice(3, _.min([this.state.restaurants.length - 1, 20])));
+      }
     } else {
       var restaurant = this.state.restaurant;
     }
@@ -307,8 +314,7 @@ class Restaurant extends Page {
               }
               // Add code to remove overlay here if ont already removed
               if (this.state.onboarding_overlay) {
-                this.setState({onboarding_overlay: false});
-                MeActions.updateOnboardingStatus('restaurant');
+                this.closeOnboarding();
               }
             }}
             paginationStyle={{bottom: -15 /* Out of visible range */}}>
@@ -319,6 +325,7 @@ class Restaurant extends Page {
                     key={key}
                     style={{paddingTop: this.props.fromReco ? 20 : 0}}
                     onboarding_overlay={key == 0 && this.state.onboarding_overlay}
+                    closeOnboarding={this.closeOnboarding}
                     restaurant={restaurant}
                     navigator={this.props.navigator}
                     loading={this.state.loading}

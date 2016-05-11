@@ -157,6 +157,29 @@ class CarteProfil extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
+        {!this.props.id ? [
+          null
+        ] : [
+          MeStore.getState().me.id !== profile.id ? [
+            <NavigationBar 
+              key='navbar_from_push'
+              type='back'
+              title='Carte'
+              leftButtonTitle='Retour'
+              onLeftButtonPress={() => {
+                this.props.navigator.pop();
+              }} />
+          ] : [
+            <NavigationBar 
+              key='navbar_from_push_and_is_me'
+              type='back'
+              title='Carte'
+              leftButtonTitle='Retour'
+              onLeftButtonPress={() => {
+                this.props.navigator.pop()
+              }} />
+          ]
+        ]}
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
             key='map'

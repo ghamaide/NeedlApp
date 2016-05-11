@@ -94,7 +94,7 @@ var styles = StyleSheet.create({
     right: 0
   },
   menuContainer: {
-    height: 40,
+    height: 50,
     flexDirection: 'row',
     width: Dimensions.get('window').width,
     backgroundColor: 'transparent',
@@ -118,16 +118,16 @@ var styles = StyleSheet.create({
   },
   icons: {
     tintColor:'#FFFFFF',
-    width: 20,
-    height: 20
+    width: 25,
+    height: 25
   },
   pastilleContainer: {
     position: 'absolute',
     right: 15,
     top: 6,
-    height: 16,
-    width: 16,
-    borderRadius: 8,
+    height: 18,
+    width: 18,
+    borderRadius: 9,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',

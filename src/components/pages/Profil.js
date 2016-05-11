@@ -75,9 +75,16 @@ class Profil extends Page {
     super(props);
 
     this.state = this.profilState();
+
+    var isMeAndPublic = MeStore.getState().me.id == this.state.profile.id && this.state.profile.public;
+    
     this.state.recommendationActive = true;
     this.state.wishlistActive = false;
-    this.state.index = this.props.index || 1;
+    if (isMeAndPublic) {
+      this.state.index = this.props.index || 2;
+    } else {
+      this.state.index = this.props.index || 1;
+    }
     this.state.confirmation_opened = false;
 
     // Onboarding overlay
@@ -145,12 +152,6 @@ class Profil extends Page {
     });
   }
 
-  onPressMenu = (index) => {
-    if (this.state.index != index) {
-      this.setState({index: index});
-    }
-  };
-
   onScroll = () => {
     if (this.state.onboarding_overlay && this.state.loading_done) {
       this.setState({onboarding_overlay: false});
@@ -165,9 +166,6 @@ class Profil extends Page {
   renderPage() {
     var profil = this.state.profile;
 
-    var first_name = profil.fullname.split(" ")[0];
-    var last_name = profil.fullname.split(" ")[1] || '';
-
     var friendsIds = _.map(ProfilStore.getFriends(), (friend) => {
       return friend.id
     });
@@ -178,7 +176,18 @@ class Profil extends Page {
 
     var picture = this.state.avatarSource || profil.picture;
 
-    var is_following = (!_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id) || (MeStore.getState().me.id === profil.id && profil.public && this.state.index == 2);
+    var isFollowing = (!_.includes(friendsIds, profil.id) && MeStore.getState().me.id !== profil.id) || (MeStore.getState().me.id === profil.id && profil.public && this.state.index == 2);
+
+    var isMeAndPublic = MeStore.getState().me.id === profil.id && profil.public;
+
+    var hasNewBadge = MeStore.getState().me.id === profil.id && this.state.hasNewBadge;
+    var hasInvitations = MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().me.showInvitations;
+
+    if (this.state.index == 1) {
+      var image = require('../../assets/img/icons/public.png');
+    } else if (this.state.index == 2) {
+      var image = require('../../assets/img/icons/private.png');
+    }
 
     return (
       <View style={{flex: 1, paddingTop: !this.props.id ? 20 : 0}}>
@@ -193,28 +202,20 @@ class Profil extends Page {
               leftButtonTitle='Retour'
               onLeftButtonPress={() => {
                 this.props.navigator.pop();
-              }}
-              rightImage={require('../../assets/img/other/icons/map.png')}
-              rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+              }} />
           ] : [
             <NavigationBar 
               key='navbar_from_push_and_is_me'
-              type='switch_and_back'
-              active={this.state.index}
-              titles={['Privé', 'Public']}
-              onPress={this.onPressMenu}
+              type='back'
+              titles={profil.fullname || profil.name}
               leftButtonTitle='Retour'
               onLeftButtonPress={() => {
                 this.props.navigator.pop()
-              }}
-              rightImage={require('../../assets/img/other/icons/map.png')}
-              rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
+              }} />
           ]
         ]}
 
-        {MeStore.getState().me.id === profil.id && !is_following && this.state.index == 2 ? [
+        {MeStore.getState().me.id === profil.id && !isFollowing && this.state.index == 2 ? [
           <Text key='no_public_profile' style={{margin: 20, textAlign: 'center', color: '#FE3139', fontSize: 14, fontWeight: Platform.OS === 'ios' ? '500' : '400'}}>Ton profil n'est pas encore public. Pour le rendre public, il te faut au moins 20 remerciements. Pour en obtenir, recommande tes restaurants préférés.</Text>
         ] : [
           <ScrollView
@@ -235,7 +236,7 @@ class Profil extends Page {
             }>
 
             {/* Show notification if badge updated */}
-            {MeStore.getState().me.id === profil.id && this.state.hasNewBadge ? [
+            {hasNewBadge ? [
               <View key='new_badge_container' style={styles.newBadgeContainer}>
                 <Text style={{fontWeight: '400', color: '#FFFFFF', textAlign: 'center', fontSize: 12}}>Félicitations, tu as débloqué un nouveau badge : '{profil.badge.name}'</Text>
                 <TouchableHighlight
@@ -251,7 +252,7 @@ class Profil extends Page {
             ] : null}
 
             {/* Show notification if invitation received */}
-            {MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().me.showInvitations ? [
+            {hasInvitations ? [
               <View key='invitation_container' style={styles.invitationContainer}>
                 <Text style={{fontWeight: '400', color: '#FFFFFF', textAlign: 'center', fontSize: 12}}>Tu as reçu {ProfilStore.getRequestsReceived().length} invitation{ProfilStore.getRequestsReceived().length > 1 ? 's' : ''}</Text>
                 <View style={{flexDirection: 'row'}}>
@@ -280,7 +281,7 @@ class Profil extends Page {
               <View style={styles.infoInnerContainer}>
                 <View style={styles.textInfoContainer}>
                   {/* Nombre d'amis (amis) ou de recommendations (followings) */}
-                  {!is_following ? [
+                  {!isFollowing ? [
                     <TouchableHighlight
                       key='friends'
                       underlayColor='rgba(0, 0, 0, 0)'
@@ -314,7 +315,7 @@ class Profil extends Page {
                   ]}
 
                   {/* Nombre de followings (amis) ou followers (followings) */}
-                  {!is_following ? [
+                  {!isFollowing ? [
                     <TouchableHighlight
                       key='followings'
                       underlayColor='rgba(0, 0, 0, 0)'
@@ -351,7 +352,7 @@ class Profil extends Page {
                     underlayColor='rgba(0, 0, 0, 0)'
                     style={styles.textInfo}
                     onPress={() => {
-                      if (!is_following && MeStore.getState().me.id === profil.id && profil.score >= 1) {
+                      if (!isFollowing && MeStore.getState().me.id === profil.id && profil.score >= 1) {
                         this.props.navigator.push(Information.route({id: profil.id, origin: 'score'}));
                       } else {
                         return ;
@@ -359,10 +360,10 @@ class Profil extends Page {
                     }}>
                     <View>
                       <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
-                        {!is_following ? profil.score : profil.public_score}
+                        {!isFollowing ? profil.score : profil.public_score}
                       </Text>
                       <Text style={[styles.textInfoText, {top: 20}]}>
-                        merci{!is_following ? (profil.score > 1 ? 's' : '') : (profil.public_score > 1 ? 's' : '')}
+                        merci{!isFollowing ? (profil.score > 1 ? 's' : '') : (profil.public_score > 1 ? 's' : '')}
                       </Text>
                     </View>
                   </TouchableHighlight>
@@ -370,7 +371,7 @@ class Profil extends Page {
               </View>
 
               {/* Container for badge information or public description */}
-              {!is_following ? [
+              {!isFollowing ? [
                 <TouchableHighlight
                   key='badge_container'
                   underlayColor='rgba(0, 0, 0, 0)'
@@ -401,7 +402,7 @@ class Profil extends Page {
               <Image source={{uri: picture}} style={styles.image} />
 
               {/* Badge Image */}
-              {!is_following ? [
+              {!isFollowing ? [
                 <TouchableHighlight
                   key='badge_image'
                   style={styles.badgeImageContainer} 
@@ -430,7 +431,7 @@ class Profil extends Page {
                     <Text style={[styles.buttonText, {marginTop: 0}]}>Modifier</Text>
                   </TouchableHighlight>
                 ] : [
-                  !is_following ? [
+                  !isFollowing ? [
                     !profil.invisible ? [
                       <TouchableHighlight
                         key={'hide_reco_' + profil.id}
@@ -479,7 +480,7 @@ class Profil extends Page {
               </View>
             </View>
 
-            {!is_following ? [ 
+            {!isFollowing ? [ 
               <View key='switch_buttons' style={styles.restaurantButtonsContainer}>
                 <TouchableHighlight 
                   style={[styles.restaurantButton, {backgroundColor: this.state.recommendationActive ? '#FE3139' : 'transparent'}]}
@@ -501,7 +502,7 @@ class Profil extends Page {
             <View style={styles.restaurantsContainer}>
               {/* Recommendations */}
               {this.state.recommendationActive ? [
-                !is_following ? [
+                !isFollowing ? [
                   profil.recommendations.length ? [
                     _.map(profil.recommendations, (id) => {
                       var restaurant = RestaurantsStore.getRestaurant(id);
@@ -581,6 +582,7 @@ class Profil extends Page {
 
         {/* Button to switch to map */}
         <TouchableHighlight
+          key='switch_profile_map'
           underlayColor='rgba(0, 0, 0, 0)'
           style={styles.submitButton}
           onPress={() => {
@@ -591,7 +593,24 @@ class Profil extends Page {
             }
           }}>
           <Image source={require('../../assets/img/other/icons/map.png')} style={styles.submitIcon} />
-        </TouchableHighlight> 
+        </TouchableHighlight>
+
+        {/* Button to switch to public profile */}
+        {isMeAndPublic ? [
+          <TouchableHighlight
+            key='switch_public_private'
+            underlayColor='rgba(0, 0, 0, 0)'
+            style={styles.switchButton}
+            onPress={() => {
+              if (this.state.index == 1) {
+                this.setState({index: 2});
+              } else if (this.state.index == 2) {
+                this.setState({index: 1});
+              }
+            }}>
+              <Image key='private_image' source={image} style={styles.switchIcon} />
+          </TouchableHighlight>
+        ] : null}
 
         {/* ActionSheet for iOS */}
         <View>
@@ -633,7 +652,7 @@ class Profil extends Page {
                 </TouchableHighlight>
               </View>
             ] : [
-              !is_following ? [
+              !isFollowing ? [
                 !profil.invisible ? [
                   <View key='my_buttons' style={{borderRadius: 5, backgroundColor: 'rgba(238, 237, 241, 0.95)', marginBottom: 8}}>
                     <TouchableHighlight
@@ -751,7 +770,7 @@ class Profil extends Page {
                 </TouchableHighlight>
               </View>
             ] : [
-              !is_following ? [
+              !isFollowing ? [
                 !profil.invisible ? [
                   <View key='my_buttons' style={{flex: 1}}>
                     <TouchableHighlight
@@ -834,7 +853,7 @@ class Profil extends Page {
         </Modal>
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_profil' style={{top: 170}} triangleTop={-25} triangleRight={windowWidth - 120}>
+          <Onboard key='onboarding_profil' style={{top: hasNewBadge && hasInvitations ? 330 : (hasNewBadge || hasInvitations ? 250 : 170)}} triangleTop={-25} triangleRight={windowWidth - 120}>
             <Text style={styles.onboardingText}>Ton <Text style={{color: '#FE3139'}}>badge</Text> évolue dès qu’un de tes amis te <Text style={{color: '#FE3139'}}>remercie</Text> pour une de tes recommandations.</Text>
           </Onboard>
         ] : null}
@@ -1050,6 +1069,23 @@ var styles = StyleSheet.create({
     tintColor: '#FFFFFF',
     height: buttonSize - 20,
     width: buttonSize - 20
+  },
+  switchButton: {
+    backgroundColor: '#FE3139',
+    borderColor: '#FE3139',
+    position: 'absolute',
+    bottom: buttonMargin,
+    left: buttonMargin,
+    width: buttonSize,
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  switchIcon: {
+    tintColor: '#FFFFFF',
+    height: buttonSize - 20,
+    width: (buttonSize - 20) / 1.26
   }
 });
 

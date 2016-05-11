@@ -158,8 +158,7 @@ class Restaurant extends Component {
 
   onScroll = () => {
     if (this.state.onboarding_overlay) {
-      this.setState({onboarding_overlay: false});
-      MeActions.updateOnboardingStatus('restaurant');
+      this.props.closeOnboarding();
     }
   };
 
