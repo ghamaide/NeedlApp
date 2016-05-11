@@ -274,21 +274,24 @@ class Carte extends Page {
           </Overlay>
         ] : null}
 
+        {/* Onboarding for zone in the middle of the map */}
         {this.state.onboarding_overlay ? [
           <Onboard key='onboarding_map' style={{top: 60}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth} rotation='180deg'>
             <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
           </Onboard>
         ] : null}
 
+        {/* Onboarding for the button that shows the filters */}
         {this.state.onboarding_overlay ? [
           <Onboard key='onboarding_filter' style={{bottom: buttonSize + 2 * buttonMargin + 20}} triangleBottom={-25} triangleRight={buttonMargin} rotation='180deg'>
-            <Text style={styles.onboardingText}>Lancer ta recherche avec <Text style={{color: '#FE3139'}}>plus de critères</Text></Text>
+            <Text style={styles.onboardingText}>Lance ta recherche avec <Text style={{color: '#FE3139'}}>plus de critères</Text></Text>
           </Onboard>
         ] : null}
 
+        {/* Onboarding for the button that launches the search immediately */}
         {this.state.onboarding_overlay ? [
           <Onboard key='onboarding_search' style={{width: windowWidth - 2 * (buttonSize + buttonMargin) - triangleWidth - 10, bottom: buttonMargin / 2}} triangleBottom={12.5} triangleRight={-27.5} rotation='90deg'>
-            <Text style={styles.onboardingText}>Lance ta recherche <Text style={{color: '#FE3139'}}>immédiatement</Text></Text>
+            <Text style={styles.onboardingText}>Trouve ton restaurant <Text style={{color: '#FE3139'}}>immédiatement</Text></Text>
           </Onboard>
         ] : null}
 

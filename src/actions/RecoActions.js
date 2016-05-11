@@ -47,7 +47,7 @@ export class RecoActions {
     return (dispatch) => {
       dispatch();
 
-      request('POST', '/api/v2/recommendations')
+      request('POST', '/api/v3/recommendations')
         .query(qs.stringify({
           restaurant_id: reco.restaurant.id,
           restaurant_origin: reco.restaurant.origin,
@@ -55,7 +55,6 @@ export class RecoActions {
             friends_thanking: reco.friends_thanking,
             experts_thanking: reco.experts_thanking,
             strengths: reco.strengths,
-            ambiences: reco.ambiences,
             occasions: reco.occasions,
             review: reco.review,
             public: reco.public,
@@ -84,14 +83,13 @@ export class RecoActions {
     return (dispatch) => {
       dispatch();
 
-      request('PUT', '/api/v2/recommendations/' + reco.restaurant.id)
+      request('PUT', '/api/v3/recommendations/' + reco.restaurant.id)
         .query(qs.stringify({
           restaurant_origin: reco.restaurant.origin,
           recommendation: {
             friends_thanking: reco.friends_thanking,
             experts_thanking: reco.experts_thanking,
             strengths: reco.strengths,
-            ambiences: reco.ambiences,
             occasions: reco.occasions,
             review: reco.review,
             url: reco.url

@@ -30,7 +30,7 @@ class RecoStep4 extends Component {
     if (!reco.strengths || !reco.strengths.length) {
       return;
     }
-    this.props.navigator.push(Step5.route({toggle: this.props.toggle}));
+    this.props.navigator.push(Step5.route());
   };
 
   render() {
@@ -116,7 +116,7 @@ progressBarCompleted: {
   position: 'absolute',
   top: 0,
   left: 0,
-  width: windowWidth / 2,
+  width: windowWidth / 3,
   height: 10
  }
 });

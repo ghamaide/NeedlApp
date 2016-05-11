@@ -5,7 +5,6 @@ import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, Nat
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
 
-import MenuIcon from '../../ui/MenuIcon';
 import NavigationBar from '../../ui/NavigationBar';
 import Text from '../../ui/Text';
 import TextInput from '../../ui/TextInput';
@@ -16,7 +15,6 @@ import MeStore from '../../../stores/Me';
 import RecoStore from '../../../stores/Reco';
 
 import Step2 from './Step2';
-import Step3 from './Step3';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -67,7 +65,7 @@ class RecoStep1 extends Component {
         // check if already reco or wish
         RecoActions.setReco({restaurant: restaurant});
         this.closeKeyboard();
-        this.props.navigator.push(Step2.route({hideMenu: this.props.hideMenu, showMenu: this.props.showMenu}));
+        this.props.navigator.push(Step2.route());
       }}>
         <View style={styles.restaurantRowInner}>
           <Text style={{color: '#3A325D', fontSize: 13}}>{restaurant.name_and_address.split(': ')[0]}</Text>

@@ -23,6 +23,9 @@ import Filtre from './Filtre';
 import Profil from './Profil';
 import Restaurant from './Restaurant';
 
+let buttonSize = 45;
+let buttonMargin = 10;
+
 class CarteProfil extends Page {
   static route(props) {
     return {
@@ -154,25 +157,6 @@ class CarteProfil extends Page {
 
     return (
       <View style={{flex: 1, position: 'relative'}}>
-        {!this.props.id ? [
-          <NavigationBar 
-            key='navbarfromtab'
-            type='default'
-            title='Carte'
-            rightImage={require('../../assets/img/tabs/icons/account.png')}
-            rightButtonTitle='Profil'
-            onRightButtonPress={() => this.props.navigator.replace(Profil.route({toggle: this.props.toggle}))} />
-        ] : [
-          <NavigationBar 
-            key='navbarfrompush'
-            title='Carte'
-            type='back'
-            leftButtonTitle='Retour'
-            onLeftButtonPress={() => this.props.navigator.pop()}
-            rightImage={require('../../assets/img/tabs/icons/account.png')}
-            rightButtonTitle='Profil'
-            onRightButtonPress={() => this.props.navigator.replace(Profil.route({id: this.props.id, toggle: this.props.toggle}))} />
-        ]}
         <View key='mapcontainer' style={{flex: 1, position: 'relative'}}>
           <MapView
             key='map'
@@ -186,11 +170,18 @@ class CarteProfil extends Page {
             onMarkerSelect={this.onMarkerPress}>     
             {_.map(sortedRestaurants, (restaurant) => {
               var coordinates = {latitude: restaurant.latitude, longitude: restaurant.longitude};
+              var budget = _.map(_.range(0, Math.min(3, restaurant.price_range)), function() {
+                return '€';
+              }).join('') + (restaurant.price_range > 3 ? '+' : '');
+
+              if (!budget) {
+                budget = '-'
+              }
               return (
                 <MapView.Marker
                   key={restaurant.id}
                   coordinate={coordinates}>
-                  <PriceMarker text={'#' + _.findIndex(sortedRestaurants, restaurant) + 1} backgroundColor={restaurant.from === 'wish' ? '#9CE62A' : '#FE3139'} />
+                  <PriceMarker text={budget} backgroundColor={restaurant.from === 'wish' ? '#9CE62A' : '#FE3139'} />
                   <MapView.Callout>
                     <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={() => this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name))}>
                       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -207,6 +198,20 @@ class CarteProfil extends Page {
             })}
           </MapView>
         </View>
+
+      {/* Button to switch to profile */}
+        <TouchableHighlight
+          underlayColor='rgba(0, 0, 0, 0)'
+          style={styles.submitButton}
+          onPress={() => {
+            if (!this.props.id) {
+              this.props.navigator.replace(Profil.route())
+            } else {
+              this.props.navigator.replace(Profil.route({id: this.props.id}));
+            }
+          }}>
+          <Image source={require('../../assets/img/tabs/icons/account.png')} style={styles.submitIcon} />
+        </TouchableHighlight> 
       </View>
     );
   };
@@ -216,6 +221,23 @@ var styles = StyleSheet.create({
   restaurantsMap: {
     flex: 1,
     position: 'relative'
+  },
+  submitButton : {
+    backgroundColor: '#FE3139',
+    borderColor: '#FE3139',
+    position: 'absolute',
+    bottom: buttonMargin,
+    right: buttonMargin,
+    width: buttonSize,
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  submitIcon: {
+    tintColor: '#FFFFFF',
+    height: buttonSize - 20,
+    width: buttonSize - 20
   }
 });
 

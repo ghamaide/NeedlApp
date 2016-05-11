@@ -556,7 +556,7 @@ export class RestaurantsStore extends CachedStore {
   static closestSubwayName(id) {
     var restaurant = this.getRestaurant(id);
 
-    if (!restaurant) {
+    if (!restaurant || restaurant.subways.length == 0) {
       return null;
     }
 

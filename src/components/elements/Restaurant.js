@@ -29,7 +29,7 @@ import NotifsStore from '../../stores/Notifs';
 import ProfilStore from '../../stores/Profil';
 import RestaurantsStore from '../../stores/Restaurants';
 
-import RecoStep3 from '../pages/Reco/Step3';
+import RecoStep4 from '../pages/Reco/Step4';
 import Toggle from '../pages/Reco/Toggle';
 import Web from '../pages/Web';
 
@@ -107,7 +107,6 @@ class Restaurant extends Component {
         friends_thanking: stored_recommendation.friends_thanking,
         experts_thanking: stored_recommendation.experts_thanking,
         strengths: _.map(stored_recommendation.strengths, (strength) => {return parseInt(strength)}),
-        ambiences: _.map(stored_recommendation.ambiences, (ambience) => {return parseInt(ambience)}),
         occasions: _.map(stored_recommendation.occasions, (occasion) => {return parseInt(occasion)}),
         review: stored_recommendation.review,
         url: stored_recommendation.url
@@ -124,7 +123,7 @@ class Restaurant extends Component {
       });
     }
 
-    this.props.navigator.push(RecoStep3.route({toggle: this.props.toggle}));
+    this.props.navigator.push(RecoStep4.route());
   };
 
   call = () => {
@@ -160,7 +159,7 @@ class Restaurant extends Component {
   onScroll = () => {
     if (this.state.onboarding_overlay) {
       this.setState({onboarding_overlay: false});
-      MeActions.updateOnboardingStatus('map');
+      MeActions.updateOnboardingStatus('restaurant');
     }
   };
 
@@ -178,13 +177,14 @@ class Restaurant extends Component {
 
     return (
       <ScrollView
-        style={[this.props.style, {flex: 1, height: windowHeight - 60}]}
+        style={[this.props.style, {flex: 1, height: this.props.navigator.getCurrentRoutes().length > 1 ? windowHeight - 60 : windowHeight - 40}]}
         contentInset={{top: 0}}
         scrollEnabled={!this.state.pictureOverlay}
         automaticallyAdjustContentInsets={false}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}
         onScroll={this.onScroll}
+        scrollEventThrottle={16}
         refreshControl={
           <RefreshControl
             refreshing={this.props.loading}
@@ -201,11 +201,6 @@ class Restaurant extends Component {
             style={{flex: 1}}
             onPress={() => {
               this.props.onImageTap();
-              // if (restaurant.pictures.length > 1) {
-              //   this.setState({pictureOverlay: true});
-              // } else {
-              //   return ;
-              // }
             }}>
             <View style={{width: windowWidth, height: 250}}>
               <RestaurantHeader
@@ -214,6 +209,7 @@ class Restaurant extends Component {
                 rank={this.props.rank}
                 picture={restaurant.pictures[0]}
                 type={restaurant.food[1]}
+                subway={RestaurantsStore.closestSubwayName(restaurant.id)}
                 height={250}
                 budget={restaurant.price_range} />
             </View>
@@ -287,12 +283,12 @@ class Restaurant extends Component {
           ] : null}
         </View>
 
-        {restaurant.ambiences.length ?
-          <View key='restaurant_ambiences' style={styles.wishContainer}>
-            <Text style={styles.containerTitle}>Ambiances</Text>
+        {restaurant.occasions && restaurant.occasions.length ?
+          <View key='restaurant_occasions' style={styles.wishContainer}>
+            <Text style={styles.containerTitle}>Occasions</Text>
             <View style={styles.toggleBox}>
-              {_.map(restaurant.ambiences.slice(0, 3), (ambiance) => {
-                return this.getToggle(RestaurantsStore.MAP_AMBIENCES, ambiance, '#3A325D');
+              {_.map(restaurant.occasions.slice(0, 3), (occasion) => {
+                return this.getToggle(RestaurantsStore.MAP_OCCASIONS, occasion, '#3A325D');
               })}
             </View>
           </View>

@@ -33,10 +33,11 @@ var windowHeight = Dimensions.get('window').height;
 var triangleWidth = 25;
 
 class Friends extends Page {
-  static route() {
+  static route(props) {
     return {
       component: Friends,
-      title: 'Amis'
+      title: 'Amis',
+      passProps: props
     };
   };
 
@@ -44,7 +45,7 @@ class Friends extends Page {
     super(props);
 
     this.state = this.friendsState();
-    this.state.index = 1;
+    this.state.index = this.props.index;
     this.state.searched_text = '';
 
     // Onboarding overlays for both the friend and the following's views
@@ -133,12 +134,6 @@ class Friends extends Page {
     ProfilActions.fetchFollowings();
   };
 
-  onPressMenu = (index) => {
-    if (this.state.index != index) {
-      this.setState({index: index});
-    }
-  };
-
   renderFriend = (friend) => {
     return (
       <TouchableHighlight style={styles.friendRowWrapper} underlayColor='#FFFFFF' onPress={() => {
@@ -218,10 +213,12 @@ class Friends extends Page {
     return (
       <View style={{flex: 1}}>
         <NavigationBar 
-          type='switch'
-          active={this.state.index}
-          titles={['Amis', 'Influenceurs']}
-          onPress={this.onPressMenu} />
+          type='back'
+          title={this.state.index == 1 ? 'Amis' : 'Influenceurs'}
+          leftButtonTitle='Retour'
+          onLeftButtonPress={() => {
+            this.props.navigator.pop();
+          }} />
 
         {/* Remove to activate search bar
         this.state.index == 1 ? [

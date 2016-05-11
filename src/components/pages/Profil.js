@@ -8,7 +8,6 @@ import Modal from 'react-native-modalbox';
 import RNComm from 'react-native-communications';
 import TimerMixin from 'react-timer-mixin';
 
-import MenuIcon from '../ui/MenuIcon';
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -45,6 +44,9 @@ let INNER_BANNER_HEIGHT = IMAGE_HEIGHT - 40;
 let MARGIN_LEFT = 10;
 let MARGIN_TOP = 20;
 let TEXT_INFO_WIDTH = Dimensions.get('window').width - IMAGE_HEIGHT - BADGE_IMAGE_HEIGHT / 2 + 10;
+
+let buttonSize = 45;
+let buttonMargin = 10;
 
 class Profil extends Page {
   static route(props) {
@@ -194,7 +196,7 @@ class Profil extends Page {
               }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
           ] : [
             <NavigationBar 
               key='navbar_from_push_and_is_me'
@@ -208,7 +210,7 @@ class Profil extends Page {
               }}
               rightImage={require('../../assets/img/other/icons/map.png')}
               rightButtonTitle='Carte'
-              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({showMenu: this.props.showMenu, id: this.props.id}))} />
+              onRightButtonPress={() => this.props.navigator.replace(CarteProfil.route({id: this.props.id}))} />
           ]
         ]}
 
@@ -248,6 +250,32 @@ class Profil extends Page {
               </View>
             ] : null}
 
+            {/* Show notification if invitation received */}
+            {MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().me.showInvitations ? [
+              <View key='invitation_container' style={styles.invitationContainer}>
+                <Text style={{fontWeight: '400', color: '#FFFFFF', textAlign: 'center', fontSize: 12}}>Tu as reçu {ProfilStore.getRequestsReceived().length} invitation{ProfilStore.getRequestsReceived().length > 1 ? 's' : ''}</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.invitationButton}
+                    onPress={() => {
+                      this.props.navigator.push(Friends.route({index: 1}));
+                    }}>
+                    <Text style={{color: '#3A325D', textAlign: 'center', fontSize: 11}}>Voir {ProfilStore.getRequestsReceived().length > 1 ? 'mes invitations' : 'mon invitation'}</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='rgba(0, 0, 0, 0)'
+                    style={styles.invitationButton}
+                    onPress={() => {
+                      MeActions.hideInvitations();
+                      this.forceUpdate();
+                    }}>
+                    <Text style={{color: '#3A325D', textAlign: 'center', fontSize: 11}}>Masquer</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            ] : null}
+
             <View style={styles.infoContainer}>
               <View style={styles.infoInnerContainer}>
                 <View style={styles.textInfoContainer}>
@@ -259,7 +287,11 @@ class Profil extends Page {
                       style={[styles.textInfo, {borderRightWidth: 1.5}]}
                       onPress={() => {
                         // fetch info on friends
-                        this.props.navigator.push(Information.route({id: profil.id, origin: 'users'}));
+                        if (profil.id !== MeStore.getState().me.id) {
+                          this.props.navigator.push(Information.route({id: profil.id, origin: 'users'}));
+                        } else {
+                          this.props.navigator.push(Friends.route({index: 1}));
+                        }
                       }}>
                       <View>
                         <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
@@ -281,14 +313,18 @@ class Profil extends Page {
                     </View>
                   ]}
 
-                  {/* Nombre de followings (amis) ou follwoers (followings) */}
+                  {/* Nombre de followings (amis) ou followers (followings) */}
                   {!is_following ? [
                     <TouchableHighlight
                       key='followings'
                       underlayColor='rgba(0, 0, 0, 0)'
                       style={[styles.textInfo, {borderRightWidth: 1.5}]}
                       onPress={() => {
-                        this.props.navigator.push(Information.route({id: profil.id, origin: 'experts'}));
+                        if (profil.id !== MeStore.getState().me.id) {
+                          this.props.navigator.push(Information.route({id: profil.id, origin: 'experts'}));
+                        } else {
+                          this.props.navigator.push(Friends.route({index: 2}));
+                        }
                       }}>
                       <View>
                         <Text style={[styles.textInfoText, {fontWeight: '500', top: 5}]}>
@@ -471,13 +507,14 @@ class Profil extends Page {
                       var restaurant = RestaurantsStore.getRestaurant(id);
                       return (
                         <RestaurantHeader
-                          height={205}
-                          style={{marginBottom: 5, backgroundColor: 'transparent'}}
                           key={restaurant.id}
+                          style={{backgroundColor: 'transparent', borderBottomWidth: .5, borderColor: '#FFFFFF'}}
+                          height={250}
                           name={restaurant.name}
                           picture={restaurant.pictures[0]}
                           type={restaurant.food[1]}
                           budget={restaurant.price_range}
+                          subway={RestaurantsStore.closestSubwayName(restaurant.id)}
                           underlayColor='#EEEDF1'
                           onPress={() => {
                             this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
@@ -493,13 +530,14 @@ class Profil extends Page {
                       var restaurant = RestaurantsStore.getRestaurant(id);
                       return (
                         <RestaurantHeader
-                          height={205}
-                          style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                          height={250}
+                          style={{backgroundColor: 'transparent', borderBottomWidth: .5, borderColor: '#FFFFFF'}}
                           key={restaurant.id}
                           name={restaurant.name}
                           picture={restaurant.pictures[0]}
                           type={restaurant.food[1]}
                           budget={restaurant.price_range}
+                          subway={RestaurantsStore.closestSubwayName(restaurant.id)}
                           underlayColor='#EEEDF1'
                           onPress={() => {
                             this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
@@ -519,13 +557,14 @@ class Profil extends Page {
                     var restaurant = RestaurantsStore.getRestaurant(id);
                     return (
                       <RestaurantHeader
-                        height={200}
-                        style={{marginBottom: 5, backgroundColor: 'transparent'}}
+                        height={250}
+                        style={{backgroundColor: 'transparent', borderBottomWidth: .5, borderColor: '#FFFFFF'}}
                         key={restaurant.id}
                         name={restaurant.name}
                         picture={restaurant.pictures[0]}
                         type={restaurant.food[1]}
                         budget={restaurant.price_range}
+                        subway={RestaurantsStore.closestSubwayName(restaurant.id)}
                         underlayColor='#EEEDF1'
                         onPress={() => {
                           this.props.navigator.push(Restaurant.route({id: restaurant.id}, restaurant.name));
@@ -539,6 +578,20 @@ class Profil extends Page {
             </View>
           </ScrollView>
         ]}
+
+        {/* Button to switch to map */}
+        <TouchableHighlight
+          underlayColor='rgba(0, 0, 0, 0)'
+          style={styles.submitButton}
+          onPress={() => {
+            if (!this.props.id) {
+              this.props.navigator.replace(CarteProfil.route())
+            } else {
+              this.props.navigator.replace(CarteProfil.route({id: this.props.id}));
+            }
+          }}>
+          <Image source={require('../../assets/img/other/icons/map.png')} style={styles.submitIcon} />
+        </TouchableHighlight> 
 
         {/* ActionSheet for iOS */}
         <View>
@@ -781,7 +834,7 @@ class Profil extends Page {
         </Modal>
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_profil' style={{top: 200}} triangleTop={-25} triangleRight={windowWidth - 120}>
+          <Onboard key='onboarding_profil' style={{top: 170}} triangleTop={-25} triangleRight={windowWidth - 120}>
             <Text style={styles.onboardingText}>Ton <Text style={{color: '#FE3139'}}>badge</Text> évolue dès qu’un de tes amis te <Text style={{color: '#FE3139'}}>remercie</Text> pour une de tes recommandations.</Text>
           </Onboard>
         ] : null}
@@ -945,6 +998,29 @@ var styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 5
   },
+  invitationContainer: {
+    flex: 1,
+    backgroundColor: '#3A325D',
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 20,
+    paddingBottom: 10,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  invitationButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    marginLeft: 5,
+    marginRight: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5
+  },
   modal: {
     width: windowWidth,
     justifyContent: 'flex-end',
@@ -957,6 +1033,23 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     color: '#EEEDF1',
     margin: 10
+  },
+  submitButton : {
+    backgroundColor: '#FE3139',
+    borderColor: '#FE3139',
+    position: 'absolute',
+    bottom: buttonMargin,
+    right: buttonMargin,
+    width: buttonSize,
+    height: buttonSize,
+    borderRadius: buttonSize / 2,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  submitIcon: {
+    tintColor: '#FFFFFF',
+    height: buttonSize - 20,
+    width: buttonSize - 20
   }
 });
 

@@ -34,7 +34,6 @@ class Toggle extends Component {
   };
 
   render() {
-
     var content;
 
     if (this.props.text) {

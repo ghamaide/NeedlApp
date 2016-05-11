@@ -25,6 +25,9 @@ export class MeStore extends CachedStore {
 
     this.hasNewBadge = false;
 
+    this.showInvitations = true;
+    this.invitationNumber = 0;
+
     this.version = 0;
 
     this.isConnected = false;
@@ -47,6 +50,8 @@ export class MeStore extends CachedStore {
       handleLoginFacebookFailed: LoginActions.LOGIN_FACEBOOK_FAILED,
       handleLoginFacebook: LoginActions.LOGIN_FACEBOOK,
       handleLoginFacebookCancelled: LoginActions.LOGIN_FACEBOOK_CANCELLED,
+
+      handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
 
       handleLoginEmailSuccess: LoginActions.LOGIN_EMAIL_SUCCESS,
       handleLoginEmailFailed: LoginActions.LOGIN_EMAIL_FAILED,
@@ -87,6 +92,8 @@ export class MeStore extends CachedStore {
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
 
       handleHideNewBadge: MeActions.HIDE_NEW_BADGE,
+
+      handleHideInvitations: MeActions.HIDE_INVITATIONS,
 
       handleCheckConnectivity: MeActions.checkConnectivity,
       handleCheckConnectivitySuccess: MeActions.checkConnectivitySuccess,
@@ -331,6 +338,17 @@ export class MeStore extends CachedStore {
 
   handleHideNewBadge() {
     this.hasNewBadge = false;
+  }
+
+  handleHideInvitations() {
+    this.showInvitations = false;
+    this.invitationNumber = ProfilStore.getRequestsReceived().length;
+  }
+
+  handleFetchFriendsSuccess(result) {
+    if (result.requests_received > this.invitationNumber) {
+      this.showInvitations = true;
+    }
   }
 
   handleCheckConnectivity() {

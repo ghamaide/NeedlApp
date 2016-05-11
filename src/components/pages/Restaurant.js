@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,6 +10,7 @@ import Polyline from 'polyline';
 import Swiper from 'react-native-swiper';
 
 import RestaurantElement from '../elements/Restaurant';
+import RestaurantHeader from '../elements/RestaurantHeader';
 import PriceMarker from '../elements/PriceMarker';
 
 import NavigationBar from '../ui/NavigationBar';
@@ -77,7 +78,7 @@ class Restaurant extends Page {
 
   restaurantState() {
     return {
-      restaurants: RestaurantsStore.filteredRestaurants().slice(0, 3),
+      restaurants: RestaurantsStore.filteredRestaurants(),
       restaurant: RestaurantsStore.getRestaurant(this.props.id),
       loading: RestaurantsStore.loading(),
       error: RestaurantsStore.error(),
@@ -242,14 +243,20 @@ class Restaurant extends Page {
   renderPage() {
     if (this.state.rank > 0) {
       var restaurant = this.state.restaurants[this.state.rank - 1];
+      var restaurants = this.state.restaurants.slice(0, 3);
+      restaurants.push(this.state.restaurants.slice(3, _.min([this.state.restaurants.length - 1, 20])));
     } else {
       var restaurant = this.state.restaurant;
     }
 
     var titles = [], index = 0;
-    _.map(this.state.restaurants, (restaurant) => {
-      index +=1;
-      titles.push('#' + index);
+    _.map(restaurants, (restaurant) => {
+      if (index < 3) {
+        index +=1;
+        titles.push('#' + index);
+      } else {
+        titles.push('+');
+      }
     });
 
     return (
@@ -305,27 +312,51 @@ class Restaurant extends Page {
               }
             }}
             paginationStyle={{bottom: -15 /* Out of visible range */}}>
-            {_.map(this.state.restaurants, (restaurant, key) => {
-              return (
-                <RestaurantElement
-                  key={key}
-                  style={{paddingTop: this.props.fromReco ? 20 : 0}}
-                  onboarding_overlay={key == 0 && this.state.onboarding_overlay}
-                  restaurant={restaurant}
-                  navigator={this.props.navigator}
-                  loading={this.state.loading}
-                  isInParis={true}
-                  polylineCoords={this.state.polylineCoords}
-                  onImageTap={() => this.setState({pictureOverlay: true})}
-                  rank={key + 1} />
-              );
+            {_.map(restaurants, (restaurant, key) => {
+              if (key < 3) {
+                return (
+                  <RestaurantElement
+                    key={key}
+                    style={{paddingTop: this.props.fromReco ? 20 : 0}}
+                    onboarding_overlay={key == 0 && this.state.onboarding_overlay}
+                    restaurant={restaurant}
+                    navigator={this.props.navigator}
+                    loading={this.state.loading}
+                    isInParis={true}
+                    polylineCoords={this.state.polylineCoords}
+                    onImageTap={() => this.setState({pictureOverlay: true})}
+                    rank={key + 1} />
+                );
+              } else {
+                return (
+                  <ScrollView key='other_restaurants' style={{flex: 1}}>
+                    {_.map(restaurant, (resto, key) => {
+                      return (
+                        <RestaurantHeader
+                          key={resto.id}
+                          style={{backgroundColor: 'transparent', borderBottomWidth: .5, borderColor: '#FFFFFF'}}
+                          height={225}
+                          name={resto.name}
+                          picture={resto.pictures[0]}
+                          type={resto.food[1]}
+                          budget={resto.price_range}
+                          subway={RestaurantsStore.closestSubwayName(resto.id)}
+                          underlayColor='#EEEDF1'
+                          rank={key + 4}
+                          onPress={() => {
+                            this.props.navigator.push(Restaurant.route({id: resto.id}, resto.name));
+                          }} />
+                      );
+                    })}
+                  </ScrollView>
+                );
+              }
             })}
           </Swiper>
         ] : [
           <RestaurantElement
             key='restaurant'
             restaurant={restaurant}
-            toggle={this.props.toggle}
             navigator={this.props.navigator}
             loading={this.state.loading}
             isInParis={true}

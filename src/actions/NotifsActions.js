@@ -9,7 +9,7 @@ export class NotifsActions {
     return (dispatch) => {
       dispatch();
 
-      request('GET', '/api/v2/activities')
+      request('GET', '/api/v3/activities')
         .end((err, result) => {
           if (err) {
             return this.fetchNotificationsFailed(err);

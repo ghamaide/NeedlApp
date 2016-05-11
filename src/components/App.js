@@ -30,7 +30,7 @@ import Friends from './pages/Friends';
 import Notifs from './pages/Notifs';
 import Profil from './pages/Profil';
 import RecoStep1 from './pages/Reco/Step1';
-import RecoStep3 from './pages/Reco/Step3';
+import RecoStep4 from './pages/Reco/Step4';
 import Restaurant from './pages/Restaurant';
 
 var tab = 0;
@@ -207,7 +207,7 @@ class App extends Component {
         if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(id) !== 'undefined') {
           var restaurant = RestaurantsStore.getRestaurant(parseInt(id));
           RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, recommendation: true});
-          this.refs.tabs.refs.tabs.push(RecoStep3.route())
+          this.refs.tabs.refs.tabs.push(RecoStep4.route())
         }
         break;
     }

@@ -29,7 +29,7 @@ class RecoStep5 extends Component {
     if (!reco.occasions || !reco.occasions.length) {
       return;
     }
-    this.props.navigator.push(Step6.route({toggle: this.props.toggle}));
+    this.props.navigator.push(Step6.route());
   };
 
   render() {
@@ -117,7 +117,7 @@ progressBarCompleted: {
   position: 'absolute',
   top: 0,
   left: 0,
-  width: 0.75 * windowWidth,
+  width: (2 * windowWidth) / 3,
   height: 10
  }
 });
