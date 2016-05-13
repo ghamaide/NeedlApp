@@ -168,7 +168,109 @@ class RecoStep6 extends Component {
         this.setState({recommendationPictures: newRecommendationPictures});
       }
     });
+  };
+
+  capitalize = (text) => {
+    return text.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
   }
+
+  toHashtag = (name) => {
+    var output = this.capitalize(name);
+        
+    var output2 = output.replace(/['"]+/g, '')
+    
+    var output3 = output2.replace(' ', '');
+
+    return '#' + output3;
+  };
+
+  tweet = () => {
+    var restaurant = RestaurantsStore.getRestaurant(this.state.recommendation.restaurant.id);
+
+    if (typeof restaurant == 'undefined') {
+      restaurant = this.state.recommendation.restaurant;
+      var options = {
+        'text':'Mon dernier resto coup de coeur : ' + this.toHashtag(this.state.recommendation.restaurant.name) + ' ! Tous les autres sont sur Needl.',
+        'link':'http://www.needl.fr/'
+      };
+
+      options.imagelink = 'https://s3-eu-west-1.amazonaws.com/needl/production/supports/image+needl.jpg';
+    } else {
+      var options = {
+        'text':'Mon dernier resto coup de coeur : ' + this.toHashtag(restaurant.name) + ' ! Tous les autres sont sur Needl.',
+        'link':'http://www.needl.fr/'
+      };
+
+      var hasPicture = false;
+      
+      if (restaurant.pictures.length > 0) {
+        _.forEach(restaurant.pictures, (picture, key) => {
+          if (picture.substr(0, 29) == 'http://needl.s3.amazonaws.com' && !hasPicture) {
+            options.imagelink = picture;
+            hasPicture = true;
+          }
+
+          if (key == restaurant.pictures.length - 1 && !hasPicture) {
+            options.imagelink = 'https://s3-eu-west-1.amazonaws.com/needl/production/supports/image+needl.jpg';
+          }
+        })
+      }
+    }
+
+    NativeModules.KDSocialShare.tweet(options, (results) => {
+      if (__DEV__) {
+        console.log(results);
+      }
+
+      if (results == 'success') {
+        Mixpanel.trackWithProperties('Twitter Share Reco', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, restaurant: restaurant.name});
+      }
+    });
+  };
+
+  shareOnFacebook = () => {
+    var restaurant = RestaurantsStore.getRestaurant(this.state.recommendation.restaurant.id);
+
+    if (typeof restaurant == 'undefined') {
+      restaurant = this.state.recommendation.restaurant;
+      var options = {
+        'text':'Mon dernier resto coup de coeur : ' + restaurant.name + ' ! Tous les autres sont sur Needl.',
+        'link':'http://www.needl.fr/'
+      };
+
+      options.imagelink = 'https://s3-eu-west-1.amazonaws.com/needl/production/supports/image+needl.jpg';
+    } else {
+      var options = {
+        'text':'Mon dernier resto coup de coeur : ' + restaurant.name + ' ! Tous les autres sont sur Needl.',
+        'link':'http://www.needl.fr/'
+      };
+
+      var hasPicture = false;
+
+      if (restaurant.pictures.length > 0) {
+        _.forEach(restaurant.pictures, (picture, key) => {
+          if (picture.substr(0, 29) == 'http://needl.s3.amazonaws.com' && !hasPicture) {
+            options.imagelink = picture;
+            hasPicture = true;
+          }
+
+          if (key == restaurant.pictures.length - 1 && !hasPicture) {
+            options.imagelink = 'https://s3-eu-west-1.amazonaws.com/needl/production/supports/image+needl.jpg';
+          }
+        })
+      }
+    }
+
+    NativeModules.KDSocialShare.shareOnFacebook(options, (results) => {
+      if (__DEV__) {
+        console.log(results);
+      }
+
+      if (results == 'success') {
+        Mixpanel.trackWithProperties('Facebook Share Reco', {id: MeStore.getState().me.id, user: MeStore.getState().me.name, restaurant: restaurant.name});
+      }
+    });
+  };
 
   removePicture = (key) => {
     var newRecommendationPictures = this.state.recommendationPictures;
@@ -201,7 +303,7 @@ class RecoStep6 extends Component {
               <Text style={styles.character}>{this.state.characterNbRemaining} car.</Text>
           </View>
 
-          {/* Add an URL to the recommendatio */}
+          {/* Add an URL to the recommendation */}
           {ProfilStore.getProfil(MeStore.getState().me.id).public ? [
             <View key='public_url' style={{alignItems: 'flex-start', justifyContent: 'center', margin: 10}}>
               <TextInput
@@ -288,6 +390,31 @@ class RecoStep6 extends Component {
                 })}
               </View>
             </ScrollView>
+          </View>
+
+          <View style={styles.shareContainer}>
+            <Text style={styles.thanksTitle}>Partager au-delà des frontières</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0)'
+                onPress={this.shareOnFacebook}
+                style={[styles.shareButton, {borderColor: '#3B5998'}]}>
+                <Icon
+                  name='facebook'
+                  size={25}
+                  color='#3B5998' />
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                underlayColor='rgba(0, 0, 0, 0)'
+                onPress={this.tweet}
+                style={[styles.shareButton, {borderColor: '#4099FF'}]}>
+                <Icon
+                  name='twitter'
+                  size={30}
+                  color='#4099FF' />
+              </TouchableHighlight>
+            </View>
           </View>
 
           <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 20}}>
@@ -414,6 +541,23 @@ var styles = StyleSheet.create({
   },
   thanksScroller: {
     width: windowWidth - 20
+  },
+  shareContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20
+  },
+  shareButton: {
+    marginLeft: 15,
+    marginRight: 15,
+    marginBottom: 10,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 5,
+    width: 50,
+    height: 50,
+    borderRadius: 25
   }
 });
 

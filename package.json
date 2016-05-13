@@ -35,6 +35,7 @@
     "react-native-search-bar": "^2.6.0",
     "react-native-send-intent": "^1.0.5",
     "react-native-side-menu": "^0.18.0",
+    "react-native-social-share": "^0.7.0",
     "react-native-swiper": "^1.4.3",
     "react-native-system-notification": "^0.1.8",
     "react-native-vector-icons": "^1.1.1",

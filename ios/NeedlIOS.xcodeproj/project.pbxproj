@@ -21,6 +21,8 @@
 		138F19131C5A63C000294FA5 /* libBranch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 138F19121C5A63C000294FA5 /* libBranch.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		13A6489D1C916A210026109C /* Default-736h@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 13A6489C1C916A210026109C /* Default-736h@3x.png */; };
+		13AEFB161CE5D5D00069F368 /* KDSocialShare.m in Sources */ = {isa = PBXBuildFile; fileRef = 13AEFB151CE5D5D00069F368 /* KDSocialShare.m */; };
+		13AEFB181CE5D5EB0069F368 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13AEFB171CE5D5EB0069F368 /* Social.framework */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -242,6 +244,9 @@
 		138F19121C5A63C000294FA5 /* libBranch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libBranch.a; path = "Pods/../build/Debug-iphoneos/libBranch.a"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		13A6489C1C916A210026109C /* Default-736h@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-736h@3x.png"; path = "NeedlIOS/Default-736h@3x.png"; sourceTree = "<group>"; };
+		13AEFB141CE5D5D00069F368 /* KDSocialShare.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KDSocialShare.h; path = "../node_modules/react-native-social-share/iOS/KDSocialShare.h"; sourceTree = "<group>"; };
+		13AEFB151CE5D5D00069F368 /* KDSocialShare.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KDSocialShare.m; path = "../node_modules/react-native-social-share/iOS/KDSocialShare.m"; sourceTree = "<group>"; };
+		13AEFB171CE5D5EB0069F368 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		13B07F961A680F5B00A75B9A /* NeedlIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NeedlIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = NeedlIOS/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = NeedlIOS/AppDelegate.m; sourceTree = "<group>"; };
@@ -302,6 +307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				13AEFB181CE5D5EB0069F368 /* Social.framework in Frameworks */,
 				13D739631CA3E92C005B8A5E /* libRNImagePicker.a in Frameworks */,
 				131605A51C71DCAD002BCCB7 /* libRNDeviceInfo.a in Frameworks */,
 				138F19131C5A63C000294FA5 /* libBranch.a in Frameworks */,
@@ -497,6 +503,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				13AEFB141CE5D5D00069F368 /* KDSocialShare.h */,
+				13AEFB151CE5D5D00069F368 /* KDSocialShare.m */,
 				13D739641CA3F53E005B8A5E /* RCTFileTransfer.m */,
 				13D7395D1CA3E921005B8A5E /* RNImagePicker.xcodeproj */,
 				131605DE1C71E81A002BCCB7 /* Pods.xcodeproj */,
@@ -627,6 +635,7 @@
 		C1A38D0E6D6A7C0FE60568B0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				13AEFB171CE5D5EB0069F368 /* Social.framework */,
 				138F19121C5A63C000294FA5 /* libBranch.a */,
 				A33A44461C235C42003F61B5 /* libMixpanel.a */,
 				604C953D5AC75A31E162C710 /* libPods.a */,
@@ -1082,6 +1091,7 @@
 				13D739651CA3F53E005B8A5E /* RCTFileTransfer.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				13AEFB161CE5D5D00069F368 /* KDSocialShare.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
