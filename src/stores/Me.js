@@ -19,6 +19,8 @@ export class MeStore extends CachedStore {
 
     this.me = {};
 
+    this.logged = false;
+
     this.hasBeenUploadWelcomed = false;
     this.showOverlayTutorial = true;
     this.showedUpdateMessage = true;
@@ -130,6 +132,7 @@ export class MeStore extends CachedStore {
   }
 
   handleLoginFacebookSuccess(me) {
+    this.logged = true;
     this.me = me.user;
     this.me.score = 0;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
@@ -152,6 +155,8 @@ export class MeStore extends CachedStore {
   }
 
   handleLogout() {
+    this.logged = false;
+    LoginActions.callbackLogout.defer();
     this.me = {};
     delete this.status.error;
   }
@@ -167,6 +172,7 @@ export class MeStore extends CachedStore {
   }
 
   handleLoginEmailSuccess(me) {
+    this.logged = true;
     var me = me.user;
     me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
     me.map_onboarding = true;
@@ -194,6 +200,7 @@ export class MeStore extends CachedStore {
   }
 
   handleCreateAccountSuccess(me) {
+    this.logged = true;
     this.me = _.extend(me.user, {HAS_SHARED: !!me.nb_recos || !!me.nb_wishes, map_onboarding: false, restaurant_onboarding: false, followings_onboarding: false, profile_onboarding: false, recommendation_onboarding: false});
     this.me.score = 0;
     this.status.loading = false;

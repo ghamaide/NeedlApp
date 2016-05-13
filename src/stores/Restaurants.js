@@ -47,7 +47,7 @@ export class RestaurantsStore extends CachedStore {
     this.status.error = {};
 
     this.bindListeners({
-      handleLogout: LoginActions.LOGOUT,
+      handleLogout: LoginActions.CALLBACK_LOGOUT,
 
       handleFetchRestaurants: RestaurantsActions.FETCH_RESTAURANTS,
       handleFetchRestaurantsSuccess: RestaurantsActions.FETCH_RESTAURANTS_SUCCESS,

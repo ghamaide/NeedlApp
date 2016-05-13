@@ -33,8 +33,6 @@ export class ProfilStore extends CachedStore {
     this.status.error = {}
   
     this.bindListeners({
-      handleLogout: LoginActions.LOGOUT,
-
       handleFetchFriends: ProfilActions.fetchFriends,
       handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
       handleFetchFriendsFailed: ProfilActions.fetchFriendsFailed,
@@ -74,7 +72,9 @@ export class ProfilStore extends CachedStore {
       handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
       handleEditSuccess: MeActions.EDIT_SUCCESS,
-      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS
+      handleUploadPictureSuccess: MeActions.UPLOAD_PICTURE_SUCCESS,
+
+      handleLogout: LoginActions.CALLBACK_LOGOUT,
     });
   }
 

@@ -61,7 +61,7 @@ export class NotifsStore extends CachedStore {
       handleAddWishSuccess: RecoActions.ADD_WISH_SUCCESS,
       handleRemoveWishSuccess: RecoActions.REMOVE_WISH_SUCCESS,
 
-      handleLogout: LoginActions.LOGOUT
+      handleLogout: LoginActions.CALLBACK_LOGOUT
     });
   }
 

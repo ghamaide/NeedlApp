@@ -176,7 +176,7 @@ class Restaurant extends Component {
 
     return (
       <ScrollView
-        style={[this.props.style, {flex: 1, height: this.props.navigator.getCurrentRoutes().length > 1 ? windowHeight - 60 : windowHeight - 40}]}
+        style={[this.props.style, {flex: 1, height: this.props.navigator.getCurrentRoutes().length > 1 ? windowHeight - 70 : windowHeight - 50}]}
         contentInset={{top: 0}}
         scrollEnabled={!this.state.pictureOverlay}
         automaticallyAdjustContentInsets={false}
@@ -282,6 +282,7 @@ class Restaurant extends Component {
           ] : null}
         </View>
 
+        {/* Occasions for the restaurant */}
         {restaurant.occasions && restaurant.occasions.length ?
           <View key='restaurant_occasions' style={styles.wishContainer}>
             <Text style={styles.containerTitle}>Occasions</Text>
@@ -294,6 +295,7 @@ class Restaurant extends Component {
           : null
         }
 
+        {/* Strengths for the restaurant */}
         {restaurant.strengths && restaurant.strengths.length ?
           <View key='restaurant_strengths' style={styles.recoContainer}>
             <Text style={styles.containerTitle}>Points forts</Text>

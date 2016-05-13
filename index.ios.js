@@ -22,7 +22,7 @@ class NeedlIOS extends Component {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
               RestaurantsStore.getState().status.ready,
-      loggedIn: !!MeStore.getState().me.id
+      loggedIn: MeStore.getState().logged
     };
   };
 

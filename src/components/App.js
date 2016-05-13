@@ -307,8 +307,8 @@ class App extends Component {
   render() {
     var loading_array = [this.state.meLoading, this.state.notificationsLoading, this.state.profileLoading, this.state.restaurantsLoading];
     var index_loading = 0;
-    _.forEach(loading_array, (loading) => {
-      if (typeof loading == 'undefined') {
+    _.forEach(loading_array, (loading, key) => {
+      if (typeof loading == 'undefined' || (key == 3 && loading)) {
         index_loading += 2;
       } else if (loading) {
         index_loading += 1;
@@ -327,12 +327,7 @@ class App extends Component {
               component: Carte,
               title: 'Découvrir',
               icon: require('../assets/img/tabs/icons/home.png')
-            },/*
-            {
-              component: Friends,
-              title: 'Mes conseillers',
-              icon: require('../assets/img/tabs/icons/friend.png'),
-            },*/
+            },
             {
               component: RecoStep1,
               title: 'Recommander',

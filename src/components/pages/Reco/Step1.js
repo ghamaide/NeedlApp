@@ -59,6 +59,7 @@ class RecoStep1 extends Component {
 
   componentWillMount() {
     RecoStore.listen(this.onRecoChange);
+    RecoActions.setReco({});
   };
 
   componentWillUnmount() {

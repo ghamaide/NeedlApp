@@ -113,6 +113,10 @@ class Notifs extends Page {
     var blockColor = !NotifsStore.isSeen(notification.restaurant_id, notification.user_id) ? {backgroundColor: '#FE3139'} : {backgroundColor: '#FFFFFF'};
 
     var user = ProfilStore.getProfil(notification.user_id);
+    if (notification.influencer_id) {
+      var influencer = ProfilStore.getProfil(notification.influencer_id);
+    }
+
     var restaurant = RestaurantsStore.getRestaurant(notification.restaurant_id);
 
     if (notification.notification_type === 'recommendation') {
@@ -142,6 +146,9 @@ class Notifs extends Page {
             </TouchableHighlight>
             <View style={[styles.friendQuote, blockColor]}>
               <Text style={[styles.friendQuoteText, textColor]}>{is_recommendation ? recommendation.review : 'Sur ma Wishlist !'}</Text>
+              {notification.influencer_id ? [
+                <Text key='influencer' style={[styles.discoverText, textColor]}>Découvert sur {influencer.name}</Text>
+              ] : null}
               <Text style={[styles.friendQuoteDate, textColor]}>{this.state.friendsActive ? user.name : user.fullname}, le {notification.formatted_date}</Text>
               <View style={[styles.triangle,  blockColor]} />
             </View>
@@ -219,6 +226,11 @@ var styles = StyleSheet.create({
   },
   friendQuoteText: {
     fontSize: 14
+  },
+  discoverText: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    marginTop: 4
   },
   friendQuoteDate: {
     marginTop: 5,

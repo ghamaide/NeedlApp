@@ -118,6 +118,12 @@ export class LoginActions {
       dispatch()
     }
   }
+
+  callbackLogout() {
+    return function (dispatch) {
+      dispatch()
+    }
+  }
 }
 
 export default alt.createActions(LoginActions);
