@@ -46,11 +46,11 @@ export class RecoStore {
   }
 
   handleAddRecoSuccess(result) {
-    this.reco.restaurant.id = result.restaurant.id;
+    //this.reco.restaurant.id = result.restaurant.id;
   }
 
   handleAddWishSuccess(result) {
-    this.reco.restaurant.id = result.restaurant.id;
+    //this.reco.restaurant.id = result.restaurant.id;
   }
 
   handleUploadPictures() {

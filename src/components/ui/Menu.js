@@ -21,6 +21,7 @@ class Menu extends Component {
   renderItem = (index, name, icon) => {
     var pastille;
     var has_shared;
+    var showInvitations = MeStore.getState().showInvitations;
     switch (index) {
       case 1 : 
         has_shared = MeStore.getState().me.HAS_SHARED;
@@ -29,7 +30,7 @@ class Menu extends Component {
         pastille = NotifsStore.nbUnseenNotifs();
         break;
       case 3 :
-        pastille = MeStore.hasNewBadge() ? (1 + ProfilStore.getRequestsReceived().length) : (0 + ProfilStore.getRequestsReceived().length);
+        pastille = MeStore.hasNewBadge() ? (showInvitations ? 1 + ProfilStore.getRequestsReceived().length : ProfilStore.getRequestsReceived().length) : (showInvitations ? 0 + ProfilStore.getRequestsReceived().length : 0);
         break;
       default :
         break;

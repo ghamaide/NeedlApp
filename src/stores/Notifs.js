@@ -132,7 +132,7 @@ export class NotifsStore extends CachedStore {
     _.forEach(result.activities, (activity) => {
       var temp_date = moment(activity.date);
       var formatted_date = this.formatDate(temp_date.date(), temp_date.month(), temp_date.year());
-      this.friendsNotifications.push(_.extend(notification, {formatted_date: formatted_date, seen: true}));
+      this.friendsNotifications.push(_.extend(activity, {formatted_date: formatted_date, seen: true}));
     });
   }
 

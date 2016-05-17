@@ -286,7 +286,11 @@ export class RestaurantsStore extends CachedStore {
   }
 
   handleFetchAllExpertsSuccess(result) {
-    this.expertsRestaurants = result.restaurants;
+    _.forEach(result.restaurants, (restaurant, key) => {
+      restaurant.subways = this.parseSubways(restaurant.subways);
+      restaurant.ON_MAP = this.isOnMap(restaurant);
+      this.expertsRestaurants.push(restaurant);
+    });
   }
 
   handleAddReco() {
@@ -560,7 +564,11 @@ export class RestaurantsStore extends CachedStore {
       return null;
     }
 
-    return _.find(restaurant.subways, function(subway) {return subway.id === restaurant.closest_subway}).name;
+    if (typeof _.find(restaurant.subways, (subway) => {return subway.id === restaurant.closest_subway}) == 'undefined') {
+      return '';
+    } else {
+      return _.find(restaurant.subways, (subway) => {return subway.id === restaurant.closest_subway}).name;
+    }
   }
 
   static filteredRestaurants(filters) {

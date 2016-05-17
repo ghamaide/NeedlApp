@@ -60,7 +60,7 @@ class Information extends Component {
       origin: this.props.origin,
       information: {
         title: this.props.origin == 'users' ? 'Amis' : (this.props.origin == 'experts' ? 'Influenceurs' : 'Score'),
-        data: this.props.origin == 'users' ? ProfilStore.getFriendsFromUser(this.props.id) : (this.props.origin == 'experts' ? ProfilStore.getFollowingsFromUser(this.props.id) : ProfilStore.getThanksFromUser(this.props.id)),
+        data: this.props.origin == 'users' ? ProfilStore.getFriendsFromUser(this.props.id) : (this.props.origin == 'experts' ? ProfilStore.getFollowingsFromUser(this.props.id) : _.reverse(ProfilStore.getThanksFromUser(this.props.id))),
       },
       requests_received_ids: requests_received_ids,
       requests_sent_ids: requests_sent_ids,

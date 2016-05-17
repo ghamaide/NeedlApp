@@ -359,7 +359,7 @@ export class MeStore extends CachedStore {
   }
 
   handleFetchFriendsSuccess(result) {
-    if (result.requests_received > this.invitationNumber) {
+    if (result.requests_received.length > this.invitationNumber) {
       this.showInvitations = true;
     }
   }

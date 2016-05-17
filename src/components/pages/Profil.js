@@ -181,7 +181,7 @@ class Profil extends Page {
     var isMeAndPublic = MeStore.getState().me.id === profil.id && profil.public;
 
     var hasNewBadge = MeStore.getState().me.id === profil.id && this.state.hasNewBadge;
-    var hasInvitations = MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().me.showInvitations;
+    var hasInvitations = MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().showInvitations;
 
     if (this.state.index == 1) {
       var image = require('../../assets/img/icons/public.png');
