@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Dimensions, StyleSheet, View} from 'react-native';
+import React, {Component} from "react";
+import {Dimensions, StyleSheet, View} from "react-native";
 
 import ToggleGroup from './ToggleGroup';
 

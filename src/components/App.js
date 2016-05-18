@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Alert, AppState, Component, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {ActivityIndicatorIOS, Alert, AppState, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -153,61 +154,63 @@ class App extends Component {
     }
   };
 
-  getParameterByName = (name, url) => {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
+  getURLParameter = (url, name) => {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(url)||[,""])[1].replace(/\+/g, '%20'))||null;
   };
 
-  handleOpenURL = (event, from) => {
-    if (from === 'closed_app') {
+  handleOpenURL = (event, origin) => {
+    if (origin == 'closed_app') {
       var newURL = event.replace('needl://', '');
     } else {
       var newURL = event.url.replace('needl://', '');
     }
-    var index = _.findIndex(newURL, function(char) {return char === '?'});
+
+    var id = this.getURLParameter(newURL, 'id');
+    var restaurantId = this.getURLParameter(newURL, 'restaurant_id');
+    var influencerId = this.getURLParameter(newURL, 'influencer_id');
+
+    
+    var index = _.findIndex(newURL, (char) => {return char == '?'});
     if (index > -1) {
-      var id = this.getParameterByName('id', newURL);
       newURL = newURL.substring(0, index);
     }
 
     switch(newURL) {
       case 'user':
-        this.refs.tabs.resetToTab(1);
+        this.refs.tabs.resetToTab(3);
         if (!isNaN(id) && typeof ProfilStore.getProfil(parseInt(id)) !== 'undefined') {
           this.refs.tabs.refs.tabs.push(Profil.route({id: parseInt(id)}));
         }
         break;
       case 'friends':
-        this.refs.tabs.resetToTab(1);
+        this.refs.tabs.resetToTab(3);
+        this.refs.tabs.refs.tabs.push(Friends.route({index: 1}));
+        break;
+      case 'followings':
+        this.refs.tabs.resetToTab(3);
+        this.refs.tabs.refs.tabs.push(Friends.route({index: 2}));
         break;
       case 'notifs':
-        this.refs.tabs.resetToTab(3);
+        this.refs.tabs.resetToTab(2);
         break;
       case 'profil':
-        this.refs.tabs.resetToTab(4);
+        this.refs.tabs.resetToTab(3);
         break;
       case 'home':
         this.refs.tabs.resetToTab(0);
         break;
-      case 'map':
-        this.refs.tabs.resetToTab(0);
-        break;
       case 'restaurant':
         this.refs.tabs.resetToTab(0);
-        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(parseInt(id)) !== 'undefined') {
-          this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(id)}));
+        if (!isNaN(restaurantId) && typeof RestaurantsStore.getRestaurant(parseInt(restaurantId)) !== 'undefined') {
+          this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(restaurantId)}));
         }
         break;
-      case 'recommendation':
+      case 'wishlist':
         this.refs.tabs.resetToTab(0)
-        if (!isNaN(id) && typeof RestaurantsStore.getRestaurant(id) !== 'undefined') {
-          var restaurant = RestaurantsStore.getRestaurant(parseInt(id));
-          RecoActions.setReco({restaurant: {id: restaurant.id, origin: 'db'}, recommendation: true});
-          this.refs.tabs.refs.tabs.push(RecoStep4.route())
+        if (!isNaN(restaurantId)) {
+          RestaurantsActions.fetchRestaurant(parseInt(restaurantId), () => {
+            this.refs.tabs.refs.tabs.push(Restaurant.route({id: parseInt(restaurantId), influencerId: parseInt(influencerId), action: 'create_wish'}));
+          });
         }
         break;
     }

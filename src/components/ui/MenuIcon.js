@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {Image, Platform, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 

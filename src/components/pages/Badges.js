@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, ScrollView, StyleSheet, View} from 'react-native';
+import React, {Component} from "react";
+import {Dimensions, Image, ScrollView, StyleSheet, View} from "react-native";
 
 import _ from 'lodash';
 

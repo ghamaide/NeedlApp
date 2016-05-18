@@ -15,7 +15,7 @@
     "polyline": "^0.2.0",
     "qs": "^4.0.0",
     "react": "^0.14.7",
-    "react-native": "^0.24.1",
+    "react-native": "^0.25.1",
     "react-native-branch": "0.0.10",
     "react-native-communications": "^0.2.3",
     "react-native-contacts": "^0.2.1",

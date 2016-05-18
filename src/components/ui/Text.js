@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Text} from 'react-native';
+import React from "react";
+import {Text} from "react-native";
 
 import _ from 'lodash';
 
@@ -29,6 +30,6 @@ class NewText extends OldText {
 
     return super.render();
   }
-};
+}
 
 export default NewText;

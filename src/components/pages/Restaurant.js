@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React from "react";
+import {Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -9,6 +10,7 @@ import Modal from 'react-native-modalbox';
 import Polyline from 'polyline';
 import Swiper from 'react-native-swiper';
 
+import Overlay from '../elements/Overlay';
 import RestaurantElement from '../elements/Restaurant';
 import RestaurantHeader from '../elements/RestaurantHeader';
 import PriceMarker from '../elements/PriceMarker';
@@ -74,6 +76,7 @@ class Restaurant extends Page {
     }
 
     this.state.onboarding_overlay = !MeStore.getState().me.restaurant_onboarding;
+    this.state.wishlistOverlay = false;
   };
 
   restaurantState() {
@@ -156,6 +159,10 @@ class Restaurant extends Page {
       this.timer = setTimeout(() => {
         this.setState({already_recommended: false});
       }, 3000);
+    }
+
+    if (this.props.action == 'create_wish') {
+      this.setState({wishlistOverlay: true});
     }
   }
 
@@ -373,6 +380,40 @@ class Restaurant extends Page {
             already_wishlisted={this.state.already_wishlisted} />
         ]}
 
+        {/* Overlay for adding to wishlist */}
+        <Modal
+          key='modal'
+          style={styles.wishlistModal}
+          position='center'
+          swipeArea={0}
+          isOpen={this.state.wishlistOverlay}
+          onClosed={() => this.setState({wishlistOverlay: false})}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalMessage}>Ajouter le restaurant {this.state.restaurant.name} à ta wishlist ?</Text>
+            <View style={{flexDirection: 'row'}}>
+              <TouchableHighlight 
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={styles.submitButton}
+                onPress={() => {
+                  if (RestaurantsStore.loading()) {
+                    return;
+                  }
+                  RecoActions.addWish(restaurant.id, 'db');
+                }}>
+                <Text style={{textAlign: 'center', color: '#FFFFFF', fontSize: 12}}>Valider</Text>
+              </TouchableHighlight>
+              <TouchableHighlight 
+                underlayColor='rgba(0, 0, 0, 0)'
+                style={styles.closeButton}
+                onPress={() => {
+                  this.setState({wishlistOverlay: false});
+                }}>
+                <Text style={{textAlign: 'center', color: '#FE3139', fontSize: 12}}>Annuler</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
+
         {/* Overlay View for Carousel of Photos */}
         {restaurant.pictures.length > 0 ? [
           <Modal
@@ -425,6 +466,50 @@ var styles = StyleSheet.create({
    justifyContent: 'flex-end',
    alignItems: 'flex-end',
    backgroundColor: 'transparent'
+  },
+  wishlistModal: {
+   width: windowWidth,
+   height: windowHeight,
+   justifyContent: 'center',
+   alignItems: 'center',
+   backgroundColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  modalContainer: {
+    width: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  modalMessage: {
+    textAlign: 'center',
+    fontSize: 14,
+    marginBottom: 5,
+    color: '#FE3139'
+  },
+  submitButton: {
+    backgroundColor: '#FE3139',
+    borderRadius: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    margin: 5
+  },
+  closeButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: '#FE3139'
   }
 });
 

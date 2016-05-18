@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, StyleSheet, View, WebView} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, WebView} from 'react-native';
 
 import Mixpanel from 'react-native-mixpanel';
 

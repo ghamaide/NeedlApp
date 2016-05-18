@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, AlertIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React from "react";
+import {ActivityIndicatorIOS, AlertIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import Contacts from 'react-native-contacts';

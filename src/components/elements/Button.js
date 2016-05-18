@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {StyleSheet, TouchableHighlight, View} from "react-native";
 
 import Text from '../ui/Text';
 

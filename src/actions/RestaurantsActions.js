@@ -28,16 +28,17 @@ export class RestaurantsActions {
     return err;
   }
 
-  fetchRestaurant(id) {
+  fetchRestaurant(id, callback) {
     return (dispatch) => {
       dispatch(id);
 
-      request('GET', '/api/v2/restaurants/' + id)
+      request('GET', '/api/v3/restaurants/' + id)
         .end((err, result) => {
           if (err) {
             return this.fetchRestaurantFailed(err);
           }
           this.fetchRestaurantSuccess(result);
+          callback();
         });
     }
   }

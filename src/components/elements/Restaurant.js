@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, Linking, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {Dimensions, Image, Linking, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';

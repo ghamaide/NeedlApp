@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {BackAndroid, Component, Navigator, StyleSheet, View} from 'react-native';
+import React, {Component} from "react";
+import {BackAndroid, Navigator, StyleSheet, View} from "react-native";
 
 import _ from 'lodash';
 

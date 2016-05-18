@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Component, Dimensions, Image, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from 'react';
+import {ActivityIndicatorIOS, Dimensions, Image, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -79,7 +80,11 @@ class Login extends Component {
       if (this.state.friendInvitation) {
         LoginActions.loginFacebook(this.state.invitation_friend_id, this.state.invitation_restaurant_id);
       } else {
-        LoginActions.loginFacebook();
+        // if (Platform.OS == 'ios') {
+          // LoginActions.loginFacebook();
+        // } else if (Platform.OS == 'android') {
+          LoginActions.loginFacebookAndroid();
+        // }
       }
     }
   };

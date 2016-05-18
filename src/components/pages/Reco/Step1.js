@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {ActivityIndicatorIOS, Component, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {ActivityIndicatorIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';

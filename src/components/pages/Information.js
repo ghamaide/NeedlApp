@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, ListView, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {Dimensions, Image, ListView, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';

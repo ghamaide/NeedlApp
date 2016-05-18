@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Component, Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
+import React, {Component} from "react";
+import {Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';

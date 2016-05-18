@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
+import React from "react";
+import {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from "react-native";
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
