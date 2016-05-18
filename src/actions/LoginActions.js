@@ -38,6 +38,30 @@ export class LoginActions {
     }
   }
 
+  loginFacebookAndroid(token) {
+    return (dispatch) => {
+      dispatch();
+
+      request('POST', '/api/v3/sessions/android_session.json')
+        .query({android_temporary_token: token})
+          .end((err, result) => {
+            if (err) {
+              return this.loginFacebookAndroidFailed(err);
+            }
+
+            return this.loginFacebookAndroidSuccess(result);
+        });
+    }
+  }
+
+  loginFacebookAndroidFailed(err) {
+    return err;
+  }
+
+  loginFacebookAndroidSuccess(result) {
+    return result;
+  }
+
   loginEmail(user) {
     return (dispatch) => {
       dispatch();

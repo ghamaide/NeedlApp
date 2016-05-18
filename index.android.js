@@ -5,6 +5,7 @@ import React, {AppRegistry, Component, NetInfo} from 'react-native';
 import _ from 'lodash';
 
 import RestaurantsActions from './src/actions/RestaurantsActions';
+import MeActions from './src/actions/MeActions';
 
 import MeStore from './src/stores/Me';
 import ProfilStore from './src/stores/Profil';
@@ -14,6 +15,7 @@ import RestaurantsStore from './src/stores/Restaurants';
 import App from './src/components/App';
 import Connection from './src/components/pages/Connection';
 import Login from './src/components/pages/Login';
+import Web from './src/components/pages/Web';
 
 class NeedlIOS extends Component {
 
@@ -22,7 +24,8 @@ class NeedlIOS extends Component {
       ready: MeStore.getState().status.ready &&
               ProfilStore.getState().status.ready &&
               RestaurantsStore.getState().status.ready,
-      loggedIn: !!MeStore.getState().me.id
+      loggedIn: MeStore.getState().logged,
+      openLoginAndroid: MeStore.getState().status.openLoginAndroid
     };
   };
 
@@ -35,6 +38,7 @@ class NeedlIOS extends Component {
 
   componentWillMount() {
     this.onUpdate();
+        MeActions.closeLoginFacebookAndroid();
     MeStore.listen(this.onReadyChange.bind(this));
     ProfilStore.listen(this.onReadyChange.bind(this));
     RestaurantsStore.listen(this.onReadyChange.bind(this));
@@ -55,6 +59,17 @@ class NeedlIOS extends Component {
     FriendsStore.unlisten(this.onReadyChange.bind(this));
     NetInfo.isConnected.removeEventListener('change', handleFirstConnectivityChange);
   };
+
+  createToken = () => {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (var i=0; i < 10; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+  }
 
   handleFirstConnectivityChange = (isConnected) => {
     this.setState({isConnected});
@@ -82,7 +97,12 @@ class NeedlIOS extends Component {
     }
 
     if (!this.state.loggedIn) {
-      return <Login />;
+      if (this.state.openLoginAndroid) {
+        var token = this.createToken();
+        return <Web origin='android' source={'http://www.needl.fr/users/auth/facebook?origin=app&token=' + token} token={token} />
+      } else {
+        return <Login />;
+      }
     }
 
     return <App />;

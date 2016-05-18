@@ -5,6 +5,9 @@ import {StyleSheet, View, WebView} from 'react-native';
 
 import Mixpanel from 'react-native-mixpanel';
 
+import MeActions from '../../actions/MeActions';
+import LoginActions from '../../actions/LoginActions';
+
 import MeStore from '../../stores/Me';
 
 import Text from '../ui/Text';
@@ -24,6 +27,8 @@ class Web extends Component {
 
     this.state = {
       source: this.props.source,
+      origin: this.props.origin,
+      token: this.props.token,
       title: this.props.title
     }
   }
@@ -31,7 +36,19 @@ class Web extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <NavigationBar key='navbar' type='back' title={this.state.title} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        {!this.state.origin ? [
+          <NavigationBar key='navbar' type='back' title={this.state.title} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
+        ] : [
+          <NavigationBar 
+            key='navbar'
+            type='back'
+            title={this.state.title}
+            leftButtonTitle='Retour'
+            onLeftButtonPress={() => {
+              MeActions.closeLoginFacebookAndroid();
+              LoginActions.loginFacebookAndroid(this.state.token);
+            }} />
+        ]}
         <WebView
           automaticallyAdjustContentInsets={false}
           style={styles.webview}

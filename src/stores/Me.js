@@ -20,6 +20,7 @@ export class MeStore extends CachedStore {
     this.me = {};
 
     this.logged = false;
+    this.status.openLoginAndroid = false;
 
     this.hasBeenUploadWelcomed = false;
     this.showOverlayTutorial = true;
@@ -53,6 +54,13 @@ export class MeStore extends CachedStore {
       handleLoginFacebookFailed: LoginActions.LOGIN_FACEBOOK_FAILED,
       handleLoginFacebook: LoginActions.LOGIN_FACEBOOK,
       handleLoginFacebookCancelled: LoginActions.LOGIN_FACEBOOK_CANCELLED,
+      
+      handleLoginFacebookAndroid: LoginActions.LOGIN_FACEBOOK_ANDROID,
+      handleLoginFacebookAndroidFailed: LoginActions.LOGIN_FACEBOOK_ANDROID_FAILED,
+      handleLoginFacebookAndroidSuccess: LoginActions.LOGIN_FACEBOOK_ANDROID_SUCCESS,
+
+      handleOpenLoginFacebookAndroid: MeActions.OPEN_LOGIN_FACEBOOK_ANDROID,
+      handleCloseLoginFacebookAndroid: MeActions.CLOSE_LOGIN_FACEBOOK_ANDROID,
 
       handleFetchFriendsSuccess: ProfilActions.fetchFriendsSuccess,
 
@@ -136,11 +144,6 @@ export class MeStore extends CachedStore {
     this.me = me.user;
     this.me.score = 0;
     this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
-    this.me.map_onboarding = true;
-    this.me.restaurant_onboarding = true;
-    this.me.followings_onboarding = true;
-    this.me.profile_onboarding = true;
-    this.me.recommendation_onboarding = true;
     this.status.loading = false;
   }
 
@@ -166,6 +169,33 @@ export class MeStore extends CachedStore {
     delete this.status.error;
   }
 
+  handleLoginFacebookAndroid() {
+    this.status.openLoginAndroid = false;
+    this.status.loading = true;
+    delete this.status.error; 
+  }
+
+  handleLoginFacebookAndroidFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleLoginFacebookAndroidSuccess(me) {
+    this.logged = true;
+    this.me = me.user;
+    this.me.score = 0;
+    this.me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
+    this.status.loading = false;
+  }
+
+  handleOpenLoginFacebookAndroid() {
+    this.status.openLoginAndroid = true;
+  }
+
+  handleCloseLoginFacebookAndroid() {
+    this.status.openLoginAndroid = true;
+  }
+
   handleLoginEmail() {
     this.status.loading = true;
     delete this.status.error; 
@@ -175,11 +205,6 @@ export class MeStore extends CachedStore {
     this.logged = true;
     var me = me.user;
     me.HAS_SHARED = !!me.nb_recos || !!me.nb_wishes;
-    me.map_onboarding = true;
-    me.restaurant_onboarding = true;
-    me.followings_onboarding = true;
-    me.profile_onboarding = true;
-    me.recommendation_onboarding = true;
     this.me = me;
     this.status.loading = false;
   }

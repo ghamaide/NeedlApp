@@ -12,6 +12,17 @@ import request from '../utils/api';
 import MeStore from '../stores/Me';
 
 export class MeActions {
+  openLoginFacebookAndroid() {
+    return function (dispatch) {
+      dispatch()
+    }
+  }
+
+  closeLoginFacebookAndroid() {
+    return function (dispatch) {
+      dispatch()
+    }
+  }
 
   edit(infos, callback) {
     return (dispatch) => {

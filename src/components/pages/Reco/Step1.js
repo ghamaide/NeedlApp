@@ -71,12 +71,6 @@ class RecoStep1 extends Component {
     this.setState(this.getRecoState());
   };
 
-  closeKeyboard = () => {
-    if (Platform.OS === 'ios' && _.isEmpty(this.state.chosenRestaurant)) {
-      NativeModules.RNSearchBarManager.blur(React.findNodeHandle(this.refs['searchBar']));
-    }
-  };
-
   closeOnboarding = () => {
     if (this.state.onboarding_overlay) {
       this.setState({onboarding_overlay: false});
@@ -85,7 +79,6 @@ class RecoStep1 extends Component {
   }
 
   onScroll = () => {
-    this.closeKeyboard();
     this.closeOnboarding();
   }
 
@@ -132,7 +125,6 @@ class RecoStep1 extends Component {
       <TouchableHighlight style={styles.restaurantRow} onPress={() => {
         // check if already reco or wish
         RecoActions.setReco(_.extend(reco, {restaurant: restaurant}));
-        this.closeKeyboard();
         this.setState({chosenRestaurant: restaurant});
         this.setState({query: ''});
 
@@ -165,7 +157,6 @@ class RecoStep1 extends Component {
                   textFieldBackgroundColor='#EEEDF1'
                   tintColor='#3A325D'
                   onFocus={this.onFocus}
-                  onSearchButtonPress={this.closeKeyboard}
                   onChangeText={this.onRestaurantQuery} />
               ] : [
                 <TextInput
@@ -258,7 +249,6 @@ class RecoStep1 extends Component {
                     dataSource={ds.cloneWithRows(this.state.restaurants || [])}
                     renderRow={this.renderRestaurant}
                     contentInset={{top: 0}}
-                    onScroll={this.closeKeyboard}
                     automaticallyAdjustContentInsets={false}
                     showsVerticalScrollIndicator={false} />
                 ]

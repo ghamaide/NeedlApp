@@ -13,6 +13,7 @@ import TextInput from '../ui/TextInput';
 import Overlay from '../elements/Overlay';
 
 import LoginActions from '../../actions/LoginActions';
+import MeActions from '../../actions/MeActions';
 import ProfilActions from '../../actions/ProfilActions';
 
 import MeStore from '../../stores/Me';
@@ -80,11 +81,11 @@ class Login extends Component {
       if (this.state.friendInvitation) {
         LoginActions.loginFacebook(this.state.invitation_friend_id, this.state.invitation_restaurant_id);
       } else {
-        // if (Platform.OS == 'ios') {
-          // LoginActions.loginFacebook();
-        // } else if (Platform.OS == 'android') {
-          LoginActions.loginFacebookAndroid();
-        // }
+        if (Platform.OS == 'ios') {
+          LoginActions.loginFacebook();
+        } else if (Platform.OS == 'android') {
+          MeActions.openLoginFacebookAndroid();
+        }
       }
     }
   };
