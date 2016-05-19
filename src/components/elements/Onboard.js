@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Dimensions, StyleSheet, View} from "react-native";
+import React, {Component} from 'react';
+import {Dimensions, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -20,10 +20,12 @@ class Onboard extends Component {
     }
 
     return (
-      <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
-        <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
-        {this.props.children}
-      </View>
+      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
+        <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
+          {this.props.children}
+          <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
+        </View>
+      </TouchableHighlight>
     );
   };
 }
@@ -44,14 +46,16 @@ var styles = StyleSheet.create({
   onboardingTriangle: {
     width: 0,
     height: 0,
-    backgroundColor: 'transparent',
     borderStyle: 'solid',
-    borderLeftWidth: triangleHeight,
+    overflow: 'hidden',
     borderRightWidth: triangleHeight,
+    borderTopWidth: 0,
+    borderLeftWidth: triangleHeight,
     borderBottomWidth: triangleWidth,
-    borderLeftColor: 'transparent',
+    borderTopColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'rgba(0, 0, 0, 0.7)'
+    borderLeftColor: 'transparent',
+    borderBottomColor: 'rgba(0, 0, 0, 0.7)',
   }
 });
 

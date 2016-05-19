@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {ActivityIndicatorIOS, StyleSheet, View} from "react-native";
+import React, {Component} from 'react';
+import {ActivityIndicatorIOS, StyleSheet, View} from 'react-native';
 
 import _ from 'lodash';
 

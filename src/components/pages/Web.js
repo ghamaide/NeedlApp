@@ -39,7 +39,7 @@ class Web extends Component {
         {!this.state.origin ? [
           <NavigationBar key='navbar' type='back' title={this.state.title} leftButtonTitle='Retour' onLeftButtonPress={() => this.props.navigator.pop()} />
         ] : [
-          <NavigationBar 
+          <NavigationBar
             key='navbar'
             type='back'
             title={this.state.title}
@@ -51,7 +51,6 @@ class Web extends Component {
         ]}
         <WebView
           automaticallyAdjustContentInsets={false}
-          style={styles.webview}
           source={{uri: this.state.source}}
           javaScriptEnabled={true}
           domStorageEnabled={true}
@@ -64,10 +63,8 @@ class Web extends Component {
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1
-  },
-  webview: {
-
+    flex: 1,
+    backgroundColor: '#FFFFFF'
   }
 });
 

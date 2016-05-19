@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {StyleSheet, Dimensions, TouchableHighlight, View, Image, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from "react-native";
+import React, {Component} from 'react';
+import {StyleSheet, Dimensions, TouchableHighlight, View, Image, Platform, ActivityIndicatorIOS, ProgressBarAndroid} from 'react-native';
 import _ from 'lodash';
 
 import Text from '../ui/Text';

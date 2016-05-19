@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Dimensions, Image, Linking, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
+import React, {Component} from 'react';
+import {Dimensions, Image, Linking, Platform, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import DeviceInfo from 'react-native-device-info';
@@ -37,7 +37,7 @@ import Web from '../pages/Web';
 var windowHeight = Dimensions.get('window').height;
 var windowWidth = Dimensions.get('window').width;
 
-var THRESHOLD = 40;
+var triangleWidth = 25;
 
 class Restaurant extends Component {
   constructor(props) {
@@ -60,7 +60,7 @@ class Restaurant extends Component {
     this.state.pictureOverlay = false;
 
     // Onboarding
-    this.state.onboarding_overlay = this.props.onboarding_overlay;
+    this.state.onboardingOverlay = this.props.onboardingOverlay;
   }
 
   componentWillMount() {
@@ -68,7 +68,7 @@ class Restaurant extends Component {
   }
 
   componentWillReceiveProps(props) {
-    this.setState({onboarding_overlay: props.onboarding_overlay});
+    this.setState({onboardingOverlay: props.onboardingOverlay});
   }
 
   getToggle (map, v, color) {
@@ -158,7 +158,7 @@ class Restaurant extends Component {
   };
 
   onScroll = () => {
-    if (this.state.onboarding_overlay) {
+    if (this.state.onboardingOverlay) {
       this.props.closeOnboarding();
     }
   };
@@ -505,8 +505,8 @@ class Restaurant extends Component {
           </View>
         ] : null}
 
-        {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_friends' style={{top: 30}} triangleTop={-25} triangleRight={20}>
+        {this.state.onboardingOverlay ? [
+          <Onboard key='onboarding_friends' style={{top: 30}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
             <Text style={styles.onboardingText}>Les restaurants qui apparaissent sont les plus <Text style={{color: '#FE3139'}}>pertinents</Text> pour toi dans cette zone compte tenu du <Text style={{color: '#FE3139'}}>nombre de recommandations</Text> de tes amis et des influenceurs que tu suis.</Text>
           </Onboard>
         ] : null}

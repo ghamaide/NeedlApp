@@ -1,7 +1,7 @@
 'use strict';
 
-import React from "react";
-import {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from "react-native";
+import React from 'react';
+import {Dimensions, Image, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import MapView from 'react-native-maps';
@@ -81,7 +81,7 @@ class Carte extends Page {
     this.state.message2 = '';
 
     // Onboarding overlay
-    this.state.onboarding_overlay = !MeStore.getState().me.map_onboarding;
+    this.state.onboardingOverlay = !MeStore.getState().me.map_onboarding || true;
   };
 
   // State update with every store update
@@ -165,13 +165,13 @@ class Carte extends Page {
   };
 
   onMeChange = () => {
-    this.setState({onboarding_overlay: !MeStore.getState().me.map_onboarding});
+    this.setState({onboardingOverlay: !MeStore.getState().me.map_onboarding || true});
   }
 
   // Set the region and circle radius, and set region for future map displays (not centering on user's location afterwards)
   onRegionChangeComplete = (region) => {
-    if (!this.state.loading && this.state.onboarding_overlay) {
-      this.setState({onboarding_overlay: false});
+    if (!this.state.loading && this.state.onboardingOverlay) {
+      this.setState({onboardingOverlay: false});
       MeActions.updateOnboardingStatus('map');
     }
 
@@ -240,7 +240,7 @@ class Carte extends Page {
             strokeColor='#FE3139' />
         </MapView>
         <TouchableHighlight
-          underlayColor='rgba(0, 0, 0, 0)'
+          underlayColor='rgba(255, 255, 255, 1)'
           style={styles.submitButton}
           onPress={() => {
             if (this.state.restaurants.length > 0) {
@@ -282,21 +282,21 @@ class Carte extends Page {
         ] : null}
 
         {/* Onboarding for zone in the middle of the map */}
-        {this.state.onboarding_overlay ? [
+        {this.state.onboardingOverlay ? [
           <Onboard key='onboarding_map' style={{top: 60}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth} rotation='180deg'>
             <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
           </Onboard>
         ] : null}
 
         {/* Onboarding for the button that shows the filters */}
-        {this.state.onboarding_overlay ? [
+        {this.state.onboardingOverlay ? [
           <Onboard key='onboarding_filter' style={{bottom: buttonSize + 2 * buttonMargin + 20}} triangleBottom={-25} triangleRight={buttonMargin} rotation='180deg'>
             <Text style={styles.onboardingText}>Lance ta recherche avec <Text style={{color: '#FE3139'}}>plus de critères</Text></Text>
           </Onboard>
         ] : null}
 
         {/* Onboarding for the button that launches the search immediately */}
-        {this.state.onboarding_overlay ? [
+        {this.state.onboardingOverlay ? [
           <Onboard key='onboarding_search' style={{width: windowWidth - 2 * (buttonSize + buttonMargin) - triangleWidth - 10, bottom: buttonMargin / 2}} triangleBottom={12.5} triangleRight={-27.5} rotation='90deg'>
             <Text style={styles.onboardingText}>Trouve ton restaurant <Text style={{color: '#FE3139'}}>immédiatement</Text></Text>
           </Onboard>

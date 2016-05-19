@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Image, Platform, StyleSheet, Text, View} from "react-native";
+import React, {Component} from 'react';
+import {Image, Platform, StyleSheet, Text, View} from 'react-native';
 
 class PriceMarker extends Component {
   constructor(props) {

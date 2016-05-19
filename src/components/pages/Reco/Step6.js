@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from "react-native";
+import React, {Component} from 'react';
+import {Dimensions, Image, NativeModules, Platform, ScrollView, StyleSheet, Switch, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -393,30 +393,33 @@ class RecoStep6 extends Component {
             </ScrollView>
           </View>
 
-          <View style={styles.shareContainer}>
-            <Text style={styles.thanksTitle}>Partager au-delà des frontières</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-              <TouchableHighlight
-                underlayColor='rgba(0, 0, 0, 0)'
-                onPress={this.shareOnFacebook}
-                style={[styles.shareButton, {borderColor: '#3B5998'}]}>
-                <Icon
-                  name='facebook'
-                  size={25}
-                  color='#3B5998' />
-              </TouchableHighlight>
+          {/* Social sharing nly on iOS at the moment */}
+          {Platform.OS == 'ios' ? [
+            <View key='social_sharing' style={styles.shareContainer}>
+              <Text style={styles.thanksTitle}>Partager au-delà des frontières</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  onPress={this.shareOnFacebook}
+                  style={[styles.shareButton, {borderColor: '#3B5998'}]}>
+                  <Icon
+                    name='facebook'
+                    size={25}
+                    color='#3B5998' />
+                </TouchableHighlight>
 
-              <TouchableHighlight
-                underlayColor='rgba(0, 0, 0, 0)'
-                onPress={this.tweet}
-                style={[styles.shareButton, {borderColor: '#4099FF'}]}>
-                <Icon
-                  name='twitter'
-                  size={30}
-                  color='#4099FF' />
-              </TouchableHighlight>
+                <TouchableHighlight
+                  underlayColor='rgba(0, 0, 0, 0)'
+                  onPress={this.tweet}
+                  style={[styles.shareButton, {borderColor: '#4099FF'}]}>
+                  <Icon
+                    name='twitter'
+                    size={30}
+                    color='#4099FF' />
+                </TouchableHighlight>
+              </View>
             </View>
-          </View>
+          ] : null}
 
           <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 20}}>
             <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.onRightButtonPress} style={styles.submitButton}>

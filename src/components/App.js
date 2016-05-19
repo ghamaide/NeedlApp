@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {ActivityIndicatorIOS, Alert, AppState, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
+import React, {Component} from 'react';
+import {ActivityIndicatorIOS, Alert, AppState, DeviceEventEmitter, Dimensions, Image, Linking, Platform, ProgressBarAndroid, PushNotificationIOS, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Branch from 'react-native-branch';
@@ -56,7 +56,6 @@ class App extends Component {
     return {
       unseen_notifications: NotifsStore.nbUnseenNotifs(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
-      showOverlayTutorial: MeStore.showOverlayTutorial()
     }
   };
 
@@ -65,7 +64,6 @@ class App extends Component {
       meLoading: MeStore.loading(),
       hasBeenUploadWelcomed: MeStore.hasBeenUploadWelcomed(),
       showedUpdateMessage: MeStore.showedUpdateMessage(),
-      showOverlayTutorial: MeStore.showOverlayTutorial(),
       hasNewBadge: MeStore.hasNewBadge()
     });
   };
@@ -351,25 +349,7 @@ class App extends Component {
           initialSelected={this.notifLaunchTab || 0}
           tabsBlocked={false} />
 
-        {this.state.showOverlayTutorial ? [
-          <Overlay key='overlay_tutorial'>
-            <TouchableHighlight style={{flex: 1}} underlayColor='rgba(0, 0, 0, 0)' onPress={() => MeActions.hideOverlayTutorial()}>
-              <ScrollView
-                style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', paddingTop: 50}}
-                contentInset={{top: 0}}
-                automaticallyAdjustContentInsets={false}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.container}>
-                <Image style={styles.arrowLeft} source={require('../assets/img/other/icons/arrow_curved.png')} />
-                <Image style={styles.arrowRight} source={require('../assets/img/other/icons/arrow_curved.png')} />
-                <Text style={styles.titleLeft}>Retrouve tes amis et influenceurs préférés !</Text>
-                <Text style={styles.titleRight}>Une envie particulière ?</Text>
-              </ScrollView>
-            </TouchableHighlight>
-          </Overlay>
-        ] : null}
-
-        {index_loading > 1 && !this.state.showOverlayTutorial ? [
+        {index_loading > 1 ? [
           <Overlay key='loading_overlay'>
             <ScrollView
               style={{flex: 1, backgroundColor: 'rgba(255, 255, 255, 0.8)'}}

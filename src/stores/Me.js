@@ -23,7 +23,6 @@ export class MeStore extends CachedStore {
     this.status.openLoginAndroid = false;
 
     this.hasBeenUploadWelcomed = false;
-    this.showOverlayTutorial = true;
     this.showedUpdateMessage = true;
     this.dismissedUpdateMessage = false;
 
@@ -97,8 +96,6 @@ export class MeStore extends CachedStore {
       handleLogout: LoginActions.LOGOUT,
 
       handleHasBeenUploadWelcomed: MeActions.HAS_BEEN_UPLOAD_WELCOMED,
-
-      handleHideOverlayTutorial: MeActions.HIDE_OVERLAY_TUTORIAL,
 
       handleShowedUpdateMessage: MeActions.SHOWED_UPDATE_MESSAGE,
 
@@ -193,7 +190,7 @@ export class MeStore extends CachedStore {
   }
 
   handleCloseLoginFacebookAndroid() {
-    this.status.openLoginAndroid = true;
+    this.status.openLoginAndroid = false;
   }
 
   handleLoginEmail() {
@@ -370,10 +367,6 @@ export class MeStore extends CachedStore {
     this.dismissedUpdateMessage = true;
   }
 
-  handleHideOverlayTutorial() {
-    this.showOverlayTutorial = false;
-  }
-
   handleHideNewBadge() {
     this.hasNewBadge = false;
   }
@@ -465,10 +458,6 @@ export class MeStore extends CachedStore {
 
   static showedUpdateMessage() {
     return this.getState().showedUpdateMessage;
-  }
-
-  static showOverlayTutorial() {
-    return this.getState().showOverlayTutorial;
   }
 
   static hasNewBadge() {

@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Dimensions, Image, StyleSheet, TouchableHighlight, View} from "react-native";
+import React, {Component} from 'react';
+import {Dimensions, Image, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import LinearGradient from 'react-native-linear-gradient';

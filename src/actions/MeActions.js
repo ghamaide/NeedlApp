@@ -1,8 +1,7 @@
 'use strict';
 
 import {NetInfo, Platform} from 'react-native';
-
-import {FBLoginManager} from 'NativeModules';
+import {LoginManager, AccessToken} from 'react-native-fbsdk';
 
 import qs from 'qs';
 
@@ -173,32 +172,33 @@ export class MeActions {
 
   linkFacebookAccount(callback) {
     return (dispatch) => {
-      dispatch()
-      
-      FBLoginManager.loginWithPermissions(['email', 'user_friends'], (err, data) => {
-        if (err) {
+      dispatch();
+
+      LoginManager.logInWithReadPermissions(['email', 'user_friends']).then(
+        function(data) {
+          AccessToken.getCurrentAccessToken().then((accessToken) => {
+            request('GET', '/users/auth/facebook_access_token/callback')
+              .query({
+                'access_token': accessToken,
+                'link_to_facebook': 'true'
+              })
+              .end((err, result) => {
+                if (err) {
+                  return this.linkFacebookAccountFailed(err);
+                }
+
+                if (callback) {
+                  callback();
+                }
+
+                this.linkFacebookAccountSuccess(result);
+              });
+          });
+        },
+        function(error) {
           return this.linkFacebookAccountFailed(err);
         }
-
-        var token = (typeof data.credentials === 'undefined' ? data.token : data.credentials.token);
-
-        request('GET', '/users/auth/facebook_access_token/callback')
-          .query({
-            'access_token': token,
-            'link_to_facebook': 'true'
-          })
-          .end((err, result) => {
-            if (err) {
-              return this.linkFacebookAccountFailed(err);
-            }
-
-            if (callback) {
-              callback();
-            }
-
-            this.linkFacebookAccountSuccess(result);
-          });
-      });
+      );
     }
   }
 
@@ -208,12 +208,6 @@ export class MeActions {
 
   linkFacebookAccountSuccess(result) {
     return result;
-  }
-
-  hideOverlayTutorial() {
-    return function (dispatch) {
-      dispatch()
-    }
   }
 
   showedUpdateMessage() {

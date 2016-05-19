@@ -1,7 +1,7 @@
 'use strict';
 
-import React from "react";
-import {Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
+import React from 'react';
+import {Dimensions, Image, Platform, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -75,7 +75,7 @@ class Restaurant extends Page {
       };
     }
 
-    this.state.onboarding_overlay = !MeStore.getState().me.restaurant_onboarding;
+    this.state.onboardingOverlay = !MeStore.getState().me.restaurant_onboarding;
     this.state.wishlistOverlay = false;
   };
 
@@ -248,7 +248,7 @@ class Restaurant extends Page {
   };
 
   closeOnboarding = () => {
-    this.setState({onboarding_overlay: false});
+    this.setState({onboardingOverlay: false});
     MeActions.updateOnboardingStatus('restaurant');
   }
 
@@ -320,7 +320,7 @@ class Restaurant extends Page {
                 this.getDirections(this.state.position);
               }
               // Add code to remove overlay here if ont already removed
-              if (this.state.onboarding_overlay) {
+              if (this.state.onboardingOverlay) {
                 this.closeOnboarding();
               }
             }}
@@ -331,7 +331,7 @@ class Restaurant extends Page {
                   <RestaurantElement
                     key={key}
                     style={{paddingTop: this.props.fromReco ? 20 : 0}}
-                    onboarding_overlay={key == 0 && this.state.onboarding_overlay}
+                    onboardingOverlay={key == 0 && this.state.onboardingOverlay}
                     closeOnboarding={this.closeOnboarding}
                     restaurant={restaurant}
                     navigator={this.props.navigator}
@@ -381,6 +381,7 @@ class Restaurant extends Page {
         ]}
 
         {/* Overlay for adding to wishlist */}
+        {/*
         <Modal
           key='modal'
           style={styles.wishlistModal}
@@ -413,6 +414,7 @@ class Restaurant extends Page {
             </View>
           </View>
         </Modal>
+        */}
 
         {/* Overlay View for Carousel of Photos */}
         {restaurant.pictures.length > 0 ? [

@@ -1,7 +1,7 @@
 'use strict';
 
-import React from "react";
-import {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
+import React from 'react';
+import {ActivityIndicatorIOS, Animated, Dimensions, Image, NativeModules, Platform, ProgressBarAndroid, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import CustomActionSheet from 'react-native-custom-action-sheet';
@@ -89,7 +89,7 @@ class Profil extends Page {
     this.state.confirmation_opened = false;
 
     // Onboarding overlay
-    this.state.onboarding_overlay = !MeStore.getState().me.profile_onboarding;
+    this.state.onboardingOverlay = !MeStore.getState().me.profile_onboarding;
   };
 
   componentWillMount() {
@@ -153,14 +153,18 @@ class Profil extends Page {
     });
   }
 
-  onScroll = () => {
-    if (this.state.onboarding_overlay && this.state.loading_done) {
-      this.setState({onboarding_overlay: false});
+  closeOverlay = () => {
+    if (this.state.onboardingOverlay && this.state.loadingDone) {
+      this.setState({onboardingOverlay: false});
       MeActions.updateOnboardingStatus('profile');
     }
+  }
+
+  onScroll = () => {
+    this.closeOverlay();
 
     if (!this.state.loading) {
-      this.setState({loading_done: true});
+      this.setState({loadingDone: true});
     }
   }
 
@@ -740,6 +744,7 @@ class Profil extends Page {
           ref='android_modal'
           style={styles.modal}
           position='bottom'
+          onRequestClose={() => this.setState({confirmation_opened: false})}
           isOpen={this.state.confirmation_opened && Platform.OS === 'android'}
           onClosed={() => this.setState({confirmation_opened: false})}>
           <View style={{width: windowWidth, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(238, 237, 241, 0.95)'}}>
@@ -853,8 +858,8 @@ class Profil extends Page {
           </View>
         </Modal>
 
-        {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_profil' style={{top: hasNewBadge && hasInvitations ? 330 : (hasNewBadge || hasInvitations ? 250 : 170)}} triangleTop={-25} triangleRight={windowWidth - 120}>
+        {this.state.onboardingOverlay ? [
+          <Onboard onPress={this.closeOverlay} key='onboarding_profil' style={{top: hasNewBadge && hasInvitations ? 330 : (hasNewBadge || hasInvitations ? 250 : 170)}} triangleTop={-25} triangleRight={windowWidth - 120}>
             <Text style={styles.onboardingText}>Ton <Text style={{color: '#FE3139'}}>badge</Text> évolue dès qu’un de tes amis te <Text style={{color: '#FE3139'}}>remercie</Text> pour une de tes recommandations.</Text>
           </Onboard>
         ] : null}

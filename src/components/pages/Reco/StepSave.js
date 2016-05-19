@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {ActivityIndicatorIOS, Platform, ProgressBarAndroid, StyleSheet, View} from "react-native";
+import React, {Component} from 'react';
+import {ActivityIndicatorIOS, Platform, ProgressBarAndroid, StyleSheet, View} from 'react-native';
 
 import Text from '../../ui/Text';
 

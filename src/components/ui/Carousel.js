@@ -1,7 +1,7 @@
 'use strict';
 
-import React, {Component} from "react";
-import {Image, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, {Component} from 'react';
+import {Image, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import _ from 'lodash';
 
 class Carousel extends Component{

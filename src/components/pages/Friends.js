@@ -1,7 +1,7 @@
 'use strict';
 
-import React from "react";
-import {ActivityIndicatorIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from "react-native";
+import React from 'react';
+import {ActivityIndicatorIOS, Dimensions, Image, ListView, NativeModules, Platform, ProgressBarAndroid, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
@@ -25,6 +25,7 @@ import ProfilStore from '../../stores/Profil';
 import Profil from './Profil';
 import SearchFriend from './SearchFriend';
 import SearchExpert from './SearchExpert';
+import Web from './Web';
 
 let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => !_.isEqual(r1, r2)});
 
@@ -243,13 +244,19 @@ class Friends extends Page {
           ]
         ] : null */}
 
-        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? [
+        {!ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked && this.state.index == 1 ? [
           !this.state.facebook_loading ? [
             <TouchableHighlight
               key='link_to_facebook'
               underlayColor='rgba(0, 0, 0, 0)'
               style={styles.linkFacebookButton}
-              onPress={() => MeActions.linkFacebookAccount()}>
+              onPress={() => {
+                if (Platform.OS == 'ios') {
+                  MeActions.linkFacebookAccount()
+                } else if (Platform.OS == 'android') {
+                  this.props.navigator.push(Web.route({source:'http://www.needl.fr/users/auth/facebook?action=facebook_link&user_token=' + MeStore.getState().me.authentication_token}));
+                }
+              }}>
               <Text style={[styles.linkFacebookButtonText, {marginTop: 3}]}>Lier mon compte Facebook</Text>
             </TouchableHighlight>
           ] : [
@@ -264,9 +271,11 @@ class Friends extends Page {
             <Text style={styles.invitationText}>Ajouter un nouvel ami</Text>
           </TouchableHighlight>
         ] : [
-          <TouchableHighlight key='invite_following' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchExpert.route())} underlayColor='rgba(0, 0, 0, 0)'>
-            <Text style={styles.invitationText}>Ajouter un nouvel influenceur</Text>
-          </TouchableHighlight>
+          ProfilStore.getAllExperts().length > 0 ? [
+            <TouchableHighlight key='invite_following' style={styles.invitationButton} onPress={() => this.props.navigator.push(SearchExpert.route())} underlayColor='rgba(0, 0, 0, 0)'>
+              <Text style={styles.invitationText}>Ajouter un nouvel influenceur</Text>
+            </TouchableHighlight>
+          ] : null
         ]}
 
         {this.state.index == 1 && this.state.requests_received.length > 0 ? [
@@ -312,7 +321,7 @@ class Friends extends Page {
 
         {this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0 ? [
           <Onboard key='onboarding_followings' style={{top: !ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? 250 : 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
-            <Text style={styles.onboardingText}>Viens suivre des <Text style={{color: '#FE3139'}}>bloggers culinaires</Text> que nous avons sélectionnés pour toi.</Text>
+            <Text style={styles.onboardingText}>Découvre le profil des <Text style={{color: '#FE3139'}}>bloggers culinaires</Text> que nous avons sélectionnés pour toi.</Text>
           </Onboard>
         ] : null}
 
