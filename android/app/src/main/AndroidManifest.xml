@@ -36,7 +36,7 @@
 
       <meta-data 
         android:name="io.branch.sdk.BranchKey" 
-        android:value="key_test_eln0dceslLCEV8U9nUfrvehpFxdpWl26" />
+        android:value="key_live_lni5hjavnJFzJYS5jHjqfbmmFAjkXe2N" />
 
       <meta-data
         android:name="com.google.android.geo.API_KEY"

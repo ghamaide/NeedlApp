@@ -258,13 +258,13 @@ class RecoStep1 extends Component {
         </ScrollView>
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_recommendation' style={{top: windowHeight/ 2 + 130}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth + 75}>
+          <Onboard key='onboarding_recommendation' style={{top: windowHeight/ 2 + 130}} top={-25} right={windowWidth / 2 - triangleWidth + 55} onPress={this.closeOnboarding}>
             <Text style={styles.onboardingText}>Renseigne tes <Text style={{color: '#FE3139'}}>coups de coeur</Text> et gagne en statut.</Text>
           </Onboard>
         ] : null}
 
         {this.state.onboarding_overlay ? [
-          <Onboard key='onboarding_wish' style={{top: windowHeight/ 2 - 70}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth - 65} rotation='180deg'>
+          <Onboard key='onboarding_wish' style={{top: windowHeight/ 2 - 70}} bottom={-25} right={windowWidth / 2 - triangleWidth - 45} rotation='180deg' onPress={this.closeOnboarding}>
             <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Garde en mémoire</Text> pour plus tard.</Text>
           </Onboard>
         ] : null}

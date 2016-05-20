@@ -506,7 +506,7 @@ class Restaurant extends Component {
         ] : null}
 
         {this.state.onboardingOverlay ? [
-          <Onboard key='onboarding_friends' style={{top: 30}} triangleTop={-25} triangleRight={windowWidth / 2 - triangleWidth}>
+          <Onboard key='onboarding_friends' style={{top: 30}} top={-25} right={windowWidth / 2 - triangleWidth}>
             <Text style={styles.onboardingText}>Les restaurants qui apparaissent sont les plus <Text style={{color: '#FE3139'}}>pertinents</Text> pour toi dans cette zone compte tenu du <Text style={{color: '#FE3139'}}>nombre de recommandations</Text> de tes amis et des influenceurs que tu suis.</Text>
           </Onboard>
         ] : null}

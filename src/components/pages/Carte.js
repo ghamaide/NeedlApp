@@ -26,6 +26,7 @@ var windowWidth = Dimensions.get('window').width;
 var windowHeight = Dimensions.get('window').height;
 
 var triangleWidth = 25;
+var triangleHeight = 15;
 
 let buttonSize = 45;
 let buttonMargin = 10;
@@ -81,7 +82,7 @@ class Carte extends Page {
     this.state.message2 = '';
 
     // Onboarding overlay
-    this.state.onboardingOverlay = !MeStore.getState().me.map_onboarding || true;
+    this.state.onboardingOverlay = !MeStore.getState().me.map_onboarding;
   };
 
   // State update with every store update
@@ -165,7 +166,7 @@ class Carte extends Page {
   };
 
   onMeChange = () => {
-    this.setState({onboardingOverlay: !MeStore.getState().me.map_onboarding || true});
+    this.setState({onboardingOverlay: !MeStore.getState().me.map_onboarding});
   }
 
   // Set the region and circle radius, and set region for future map displays (not centering on user's location afterwards)
@@ -283,21 +284,21 @@ class Carte extends Page {
 
         {/* Onboarding for zone in the middle of the map */}
         {this.state.onboardingOverlay ? [
-          <Onboard key='onboarding_map' style={{top: 60}} triangleBottom={-25} triangleRight={windowWidth / 2 - triangleWidth} rotation='180deg'>
+          <Onboard key='onboarding_map' style={{top: 60}} bottom={-25} right={windowWidth / 2 - triangleWidth} rotation='180deg'>
             <Text style={styles.onboardingText}><Text style={{color: '#FE3139'}}>Zoome</Text> et <Text style={{color: '#FE3139'}}>déplace</Text> toi pour ajuster la zone de recherche</Text>
           </Onboard>
         ] : null}
 
         {/* Onboarding for the button that shows the filters */}
         {this.state.onboardingOverlay ? [
-          <Onboard key='onboarding_filter' style={{bottom: buttonSize + 2 * buttonMargin + 20}} triangleBottom={-25} triangleRight={buttonMargin} rotation='180deg'>
+          <Onboard key='onboarding_filter' style={{bottom: buttonSize + 2 * buttonMargin + 20}} bottom={-25} right={buttonMargin} rotation='180deg'>
             <Text style={styles.onboardingText}>Lance ta recherche avec <Text style={{color: '#FE3139'}}>plus de critères</Text></Text>
           </Onboard>
         ] : null}
 
         {/* Onboarding for the button that launches the search immediately */}
         {this.state.onboardingOverlay ? [
-          <Onboard key='onboarding_search' style={{width: windowWidth - 2 * (buttonSize + buttonMargin) - triangleWidth - 10, bottom: buttonMargin / 2}} triangleBottom={12.5} triangleRight={-27.5} rotation='90deg'>
+          <Onboard key='onboarding_search' style={{width: windowWidth - 2 * (buttonSize + buttonMargin) - triangleWidth - 10, bottom: buttonMargin / 2}} bottom={12.5} right={-27.5} rotation='90deg'>
             <Text style={styles.onboardingText}>Trouve ton restaurant <Text style={{color: '#FE3139'}}>immédiatement</Text></Text>
           </Onboard>
         ] : null}
@@ -379,6 +380,20 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     color: '#EEEDF1',
     margin: 5
+  },
+  onboardingTriangle: {
+    width: 0,
+    height: 0,
+    borderStyle: 'solid',
+    overflow: 'hidden',
+    borderRightWidth: triangleHeight,
+    borderTopWidth: 0,
+    borderLeftWidth: triangleHeight,
+    borderBottomWidth: triangleWidth,
+    borderTopColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderBottomColor: 'red'//rgba(0, 0, 0, 0.7)',
   }
 });
 

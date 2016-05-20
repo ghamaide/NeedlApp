@@ -320,7 +320,7 @@ class Friends extends Page {
           onScroll={this.onScroll} />
 
         {this.state.onboarding_overlay_followings && this.state.index == 2 && this.state.filtered_followings.length > 0 ? [
-          <Onboard key='onboarding_followings' style={{top: !ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? 250 : 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
+          <Onboard key='onboarding_followings' style={{top: !ProfilStore.getProfil(MeStore.getState().me.id).facebook_linked ? 250 : 210}} top={-25} right={windowWidth - 67}>
             <Text style={styles.onboardingText}>Découvre le profil des <Text style={{color: '#FE3139'}}>bloggers culinaires</Text> que nous avons sélectionnés pour toi.</Text>
           </Onboard>
         ] : null}
@@ -328,7 +328,7 @@ class Friends extends Page {
         {
         /*
          * this.state.onboarding_overlay_friends && this.state.index == 1 && this.state.filtered_friends.length > 0 ? [
-         *   <Onboard key='onboarding_friends' style={{top: 210}} triangleTop={-25} triangleRight={windowWidth - 67}>
+         *   <Onboard key='onboarding_friends' style={{top: 210}} top={-25} right={windowWidth - 67}>
          *     <Text style={styles.onboardingText}>Retrouve <Text style={{color: '#FE3139'}}>tes amis</Text> et partage tes coups de coeur avec eux.</Text>
          *   </Onboard>
          * ] : null

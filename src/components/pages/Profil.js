@@ -859,7 +859,7 @@ class Profil extends Page {
         </Modal>
 
         {this.state.onboardingOverlay ? [
-          <Onboard onPress={this.closeOverlay} key='onboarding_profil' style={{top: hasNewBadge && hasInvitations ? 330 : (hasNewBadge || hasInvitations ? 250 : 170)}} triangleTop={-25} triangleRight={windowWidth - 120}>
+          <Onboard onPress={this.closeOverlay} key='onboarding_profil' style={{top: hasNewBadge && hasInvitations ? 330 : (hasNewBadge || hasInvitations ? 250 : 170)}} top={-25} right={windowWidth - 120}>
             <Text style={styles.onboardingText}>Ton <Text style={{color: '#FE3139'}}>badge</Text> évolue dès qu’un de tes amis te <Text style={{color: '#FE3139'}}>remercie</Text> pour une de tes recommandations.</Text>
           </Onboard>
         ] : null}

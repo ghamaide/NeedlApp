@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Dimensions, StyleSheet, TouchableHighlight, View} from 'react-native';
+import {Dimensions, Platform, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
 
@@ -19,18 +19,44 @@ class Onboard extends Component {
       var rotation = '0deg';
     }
 
+    if (this.props.onPress) {
+      return (
+        <TouchableHighlight key={this.props.key} style={[styles.onboardingContainerButton, this.props.style]} onPress={this.props.onPress} underlayColor='rgba(0, 0, 0, 0)'>
+          <View style={{justifyContent: 'center', alignItems: 'center', padding: 5}}>
+            {this.props.children}
+            <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
+          </View>
+        </TouchableHighlight>
+      );
+    }
+
     return (
-      <TouchableHighlight underlayColor='rgba(0, 0, 0, 0)' onPress={this.props.onPress}>
-        <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
-          {this.props.children}
-          <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
-        </View>
-      </TouchableHighlight>
+      <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
+        {this.props.children}
+        {/* Show triangle on iOS and bubble on Android */}
+        {Platform.OS == 'ios' ? [
+          <View key='ios_triangle' style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
+        ] : null}
+        {Platform.OS == 'android' ? [
+          <View key='android_triangle' style={[styles.onboardingCircle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
+        ] : null}
+      </View>
     );
   };
 }
 
 var styles = StyleSheet.create({
+  onboardingContainerButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    borderRadius: 5,
+    left: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    marginLeft: 5,
+    marginRight: 5,
+    width: windowWidth - 10
+  },
   onboardingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
