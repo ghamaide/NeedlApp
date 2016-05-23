@@ -11,6 +11,7 @@ import FollowingsActions from '../actions/FollowingsActions';
 import FriendsActions from '../actions/FriendsActions';
 import LoginActions from '../actions/LoginActions';
 import NotifsActions from '../actions/NotifsActions';
+import ProfilActions from '../actions/ProfilActions';
 import RecoActions from '../actions/RecoActions';
 
 import MeStore from './Me';
@@ -35,6 +36,7 @@ export class NotifsStore extends CachedStore {
     this.friendsNotifications = [];
     this.followingsNotifications = [];
     this.myNotifications = [];
+
     this.status.loading = false;
     this.status.error = {};
 
@@ -43,7 +45,11 @@ export class NotifsStore extends CachedStore {
       handleFetchNotificationsSuccess: NotifsActions.FETCH_NOTIFICATIONS_SUCCESS,
       handleFetchNotificationsFailed: NotifsActions.FETCH_NOTIFICATIONS_FAILED,
 
-      handleSetNotificationsAsSeen: NotifsActions.NOTIFICATIONS_SEEN,
+      handleNotificationsSeen: NotifsActions.NOTIFICATIONS_SEEN,
+      handleNotificationsSeenFailed: NotifsActions.NOTIFICATIONS_SEEN_FAILED,
+      handleNotificationsSeenSuccess: NotifsActions.NOTIFICATIONS_SEEN_SUCCESS,
+
+      handleFetchProfilSuccess: ProfilActions.FETCH_PROFIL_SUCCESS,
 
       handleAcceptFriendshipSuccess: FriendsActions.ACCEPT_FRIENDSHIP_SUCCESS,
       handleRemoveFriendshipSuccess: FriendsActions.REMOVE_FRIENDSHIP_SUCCESS,
@@ -74,14 +80,12 @@ export class NotifsStore extends CachedStore {
     var oldNotifications = _.concat(this.friendsNotifications, this.followingsNotifications);
     var editedNotifications = _.map(notifications, (notification) => {
 
-      // Retrieve old notification if it exists
-      var index = _.findIndex(oldNotifications, (oldNotification) => {
-        return oldNotification.restaurant_id === notification.restaurant_id && oldNotification.user_id === notification.user_id;
-      });
-      var oldNotification = oldNotifications[index];
-
-      // Set as seen if already in notifications before update
-      notification.seen = oldNotification && oldNotification.seen;
+      // Mark notifications as seen if last read date is prior to notification date
+      if (notification.date >= this.notifications_read_date || this.notifications_read_date == null) {
+        notification.seen = false;
+      } else {
+        notification.seen = true;
+      }
 
       // Add formatted date for display
       var temp_date = moment(notification.date);
@@ -115,7 +119,21 @@ export class NotifsStore extends CachedStore {
     this.status.error = err;
   }
 
-  handleSetNotificationsAsSeen() {
+  handleNotificationsSeen() {
+    this.status.loading = true;
+    delete this.status.error;
+  }
+
+  handleNotificationsSeenFailed(err) {
+    this.status.loading = false;
+    this.status.error = err;
+  }
+
+  handleNotificationsSeenSuccess(result) {
+    // Update notifications read date
+    this.notifications_read_date = result.notification_date;
+
+    // Update notifications as seen according to the read date
     this.friendsNotifications = _.map(this.friendsNotifications, (notification) => {
       notification.seen = true;
       return notification;
@@ -125,6 +143,12 @@ export class NotifsStore extends CachedStore {
       notification.seen = true;
       return notification;
     });
+  }
+
+  handleFetchProfilSuccess(profil) {
+    if (profil.id === MeStore.getState().me.id) {
+      this.notifications_read_date = profil.notifications_read_date;
+    }
   }
 
   handleAcceptFriendshipSuccess(result) {

@@ -29,9 +29,27 @@ export class NotifsActions {
   }
 
   notificationsSeen() {
-    return function (dispatch) {
+    return (dispatch) => {
       dispatch();
+
+      request('GET', '/api/v3/activities/marked_as_read')
+        .end((err, result) => {
+          if (err) {
+            return this.notificationsSeenFailed(err);
+          }
+
+          console.log(result);
+          this.notificationsSeenSuccess(result);
+        });
     }
+  }
+
+  notificationsSeenSuccess(result) {
+    return result;
+  }
+
+  notificationsSeenFailed(err) {
+    return err;
   }
 }
 

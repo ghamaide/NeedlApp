@@ -56,7 +56,6 @@ class Notifs extends Page {
 
   componentWillUnmount() {
     NotifsStore.unlisten(this.onNotificationsChange);
-    NotifsActions.notificationsSeen();
   };
 
   onNotificationsChange = () => {
