@@ -278,7 +278,7 @@ class Restaurant extends Component {
               key='recommandation_button'
               style={styles.recoButton}
               label={'Je recommande'}
-              icon={require('../../assets/img/actions/icons/japprouve.png')}
+              icon={require('../../assets/images/icons/recommend.png')}
               onPress={() => {this.recommend(false);}} />
           ] : null}
         </View>
@@ -347,7 +347,7 @@ class Restaurant extends Component {
               <Option
                 style={styles.recoButton}
                 label={RestaurantsStore.loading() ? 'Enregistrement...' : 'Ajouter à ma wishlist'}
-                icon={require('../../assets/img/actions/icons/aessayer.png')}
+                icon={require('../../assets/images/icons/aessayer.png')}
                 onPress={() => {
                   if (RestaurantsStore.loading()) {
                     return;
@@ -408,7 +408,7 @@ class Restaurant extends Component {
           <Text style={styles.containerTitle}>Adresse</Text>
           <Text style={styles.address}>{restaurant.address}</Text>
           <View style={styles.metroContainer}>
-            <Image source={require('../../assets/img/other/icons/metro.png')} style={styles.metroImage} />
+            <Image source={require('../../assets/images/icons/metro.png')} style={styles.metroImage} />
             <Text style={styles.metroText}>{RestaurantsStore.closestSubwayName(restaurant.id)}</Text>
           </View>
           <TouchableHighlight style={{borderRadius: 5, marginTop: 20, backgroundColor: '#837D9B', paddingTop: 10, paddingBottom: 10, paddingRight: 20, paddingLeft: 20, justifyContent: 'center', alignItems: 'center'}} onPress={this.goWithCityMapper} underlayColor='rgba(0, 0, 0, 0)'>
@@ -458,7 +458,7 @@ class Restaurant extends Component {
               <Option
                 key='wihlist_remove'
                 label={RestaurantsStore.loading() ? 'Suppression...' : 'Retirer de ma wishlist'}
-                icon={require('../../assets/img/actions/icons/unlike.png')}
+                icon={require('../../assets/images/icons/unlike.png')}
                 onPress={() => {
                   if (RestaurantsStore.loading()) {
                     return;
@@ -470,13 +470,13 @@ class Restaurant extends Component {
                   });
                 }} />
             ] : [
-              <Option key='reco_modification' label='Modifier ma reco' icon={require('../../assets/img/actions/icons/modify.png')} onPress={() => {
+              <Option key='reco_modification' label='Modifier ma reco' icon={require('../../assets/images/icons/modify.png')} onPress={() => {
                 this.recommend(true);
               }} />,
               <Option
                 key='reco_remove'
                 label={RestaurantsStore.loading() ? 'Suppression...' : 'Supprimer ma reco'}
-                icon={require('../../assets/img/actions/icons/poubelle.png')}
+                icon={require('../../assets/images/icons/poubelle.png')}
                 onPress={() => {
                   if (RestaurantsStore.loading()) {
                     return;

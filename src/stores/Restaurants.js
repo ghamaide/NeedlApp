@@ -739,219 +739,184 @@ export class RestaurantsStore extends CachedStore {
   static MAP_PRICES = [
     {
       label: 1,
-      icon: require('../assets/img/prices/icons/prix_1.png')
+      icon: require('../assets/images/icons/prix_1.png')
     },
     {
       label: 2,
-      icon: require('../assets/img/prices/icons/prix_2.png')
+      icon: require('../assets/images/icons/prix_2.png')
     },
     {
       label: 3,
-      icon: require('../assets/img/prices/icons/prix_3.png')
+      icon: require('../assets/images/icons/prix_3.png')
     },
     {
       label: 4,
-      icon: require('../assets/img/prices/icons/prix_4.png')
-    }
-  ];
-
-  static MAP_AMBIENCES = [
-    {
-      label: 'Chic',
-      icon: require('../assets/img/ambiances/icons/chic.png')
-    },
-    {
-      label: 'Festif',
-      icon: require('../assets/img/ambiances/icons/festif.png')
-    },
-    {
-      label: 'Convivial',
-      icon: require('../assets/img/ambiances/icons/convivial.png')
-    },
-    {
-      label: 'Romantique',
-      icon: require('../assets/img/ambiances/icons/romantique.png')
-    },
-    {
-      label: 'Branché',
-      icon: require('../assets/img/ambiances/icons/branche.png')
-    },
-    {
-      label: 'Typique',
-      icon: require('../assets/img/ambiances/icons/typique.png')
-    },
-    {
-      label: 'Cosy',
-      icon: require('../assets/img/ambiances/icons/cosy.png')
-    },
-    {
-      label: 'Inclassable',
-      icon: require('../assets/img/ambiances/icons/autre.png')
+      icon: require('../assets/images/icons/prix_4.png')
     }
   ];
 
   static MAP_OCCASIONS = [
     {
       label: 'Business',
-      icon: require('../assets/img/occasions/icons/dej_business.png')
+      icon: require('../assets/images/icons/dej_business.png')
     },
     {
       label: 'Couple',
-      icon: require('../assets/img/occasions/icons/en_couple.png')
+      icon: require('../assets/images/icons/en_couple.png')
     },
     {
       label: 'Famille',
-      icon: require('../assets/img/occasions/icons/en_famille.png')
+      icon: require('../assets/images/icons/en_famille.png')
     },
     {
       label: 'Amis',
-      icon: require('../assets/img/occasions/icons/entre_amis.png')
+      icon: require('../assets/images/icons/entre_amis.png')
     },
     {
       label: 'Groupe',
-      icon: require('../assets/img/occasions/icons/grandes_tablees.png')
+      icon: require('../assets/images/icons/grandes_tablees.png')
     },
     {
       label: 'Brunch',
-      icon: require('../assets/img/occasions/icons/brunch.png')
+      icon: require('../assets/images/icons/brunch.png')
     },
     {
       label: 'Terrasse',
-      icon: require('../assets/img/occasions/icons/terrasse.png')
+      icon: require('../assets/images/icons/terrasse.png')
     },
     {
       label: 'Rapide',
-      icon: require('../assets/img/occasions/icons/fast.png')
+      icon: require('../assets/images/icons/fast.png')
     },
     {
       label: 'Date',
-      icon: require('../assets/img/occasions/icons/date.png')
+      icon: require('../assets/images/icons/date.png')
     }
   ];
 
   static MAP_STRENGTHS = [
     {
       label: 'Cuisine',
-      icon: require('../assets/img/points_forts/icons/cuisine.png')
+      icon: require('../assets/images/icons/cuisine.png')
     },
     {
       label: 'Service',
-      icon: require('../assets/img/points_forts/icons/service.png')
+      icon: require('../assets/images/icons/service.png')
     },
     {
       label: 'Cadre',
-      icon: require('../assets/img/points_forts/icons/cadre.png')
+      icon: require('../assets/images/icons/cadre.png')
     },
     {
       label: 'Original',
-      icon: require('../assets/img/points_forts/icons/original.png')
+      icon: require('../assets/images/icons/original.png')
     },
     {
       label: 'Copieux',
-      icon: require('../assets/img/points_forts/icons/copieux.png')
+      icon: require('../assets/images/icons/copieux.png')
     },
     {
       label: 'Vins',
-      icon: require('../assets/img/points_forts/icons/vins.png')
+      icon: require('../assets/images/icons/vins.png')
     },
     {
       label: 'Qté Prix',
-      icon: require('../assets/img/points_forts/icons/qtiteprix.png')
+      icon: require('../assets/images/icons/qtiteprix.png')
     }
   ];
 
   static MAP_TYPES = [
     {
       label: 'Coréen',
-      icon: require('../assets/img/types/icons/korean.png')
+      icon: require('../assets/images/icons/korean.png')
     },
     {
       label: 'Thai',
-      icon: require('../assets/img/types/icons/thai.png')
+      icon: require('../assets/images/icons/thai.png')
     },
     {
       label: 'Chinois',
-      icon: require('../assets/img/types/icons/chinese.png')
+      icon: require('../assets/images/icons/chinese.png')
     },
     {
       label: 'Indien',
-      icon: require('../assets/img/types/icons/indian.png')
+      icon: require('../assets/images/icons/indian.png')
     },
     {
       label: 'Japonais',
-      icon: require('../assets/img/types/icons/japanese.png')
+      icon: require('../assets/images/icons/japanese.png')
     },
     {
       label: 'Sushi',
-      icon: require('../assets/img/types/icons/sushi.png')
+      icon: require('../assets/images/icons/sushi.png')
     },
     {
       label: 'Autres Asie',
-      icon: require('../assets/img/types/icons/others_asia.png')
+      icon: require('../assets/images/icons/others_asia.png')
     },
     {
       label: 'Français',
-      icon: require('../assets/img/types/icons/french.png')
+      icon: require('../assets/images/icons/french.png')
     },
     {
       label: 'Italien',
-      icon: require('../assets/img/types/icons/italian.png')
+      icon: require('../assets/images/icons/italian.png')
     },
     {
       label: 'Pizza',
-      icon: require('../assets/img/types/icons/pizza.png')
+      icon: require('../assets/images/icons/pizza.png')
     },
     {
       label: 'Burger',
-      icon: require('../assets/img/types/icons/burger.png')
+      icon: require('../assets/images/icons/burger.png')
     },
     {
       label: 'Street Food',
-      icon: require('../assets/img/types/icons/street_food.png')
+      icon: require('../assets/images/icons/street_food.png')
     },
     {
       label: 'Autres Europe',
-      icon: require('../assets/img/types/icons/others_europe.png')
+      icon: require('../assets/images/icons/others_europe.png')
     },
     {
       label: 'Viandes et Grillades',
-      icon: require('../assets/img/types/icons/grill.png')
+      icon: require('../assets/images/icons/grill.png')
     },
     {
       label: 'Oriental',
-      icon: require('../assets/img/types/icons/oriental.png')
+      icon: require('../assets/images/icons/oriental.png')
     },
     {
       label: 'Mexicain',
-      icon: require('../assets/img/types/icons/mexican.png')
+      icon: require('../assets/images/icons/mexican.png')
     },
     {
       label: 'Autres Amérique Latine',
-      icon: require('../assets/img/types/icons/latino.png')
+      icon: require('../assets/images/icons/latino.png')
     },
     {
       label: 'Fruits de mer',
-      icon: require('../assets/img/types/icons/seafood.png')
+      icon: require('../assets/images/icons/seafood.png')
     },
     {
       label: 'Africain',
-      icon: require('../assets/img/types/icons/african.png')
+      icon: require('../assets/images/icons/african.png')
     },
     {
       label: 'Créole',
-      icon: require('../assets/img/types/icons/creole.png')
+      icon: require('../assets/images/icons/creole.png')
     },
     {
       label: 'Crêpes',
-      icon: require('../assets/img/types/icons/crepes.png')
+      icon: require('../assets/images/icons/crepes.png')
     },
     {
       label: 'Tapas',
-      icon: require('../assets/img/types/icons/tapas.png')
+      icon: require('../assets/images/icons/tapas.png')
     },
     {
       label: 'Végétarien',
-      icon: require('../assets/img/types/icons/vegetarian.png')
+      icon: require('../assets/images/icons/vegetarian.png')
     }
   ];
 }

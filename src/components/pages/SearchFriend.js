@@ -252,7 +252,7 @@ class SearchFriend extends Page {
               <Image
                 key={'check_' + contact.recordID}
                 style={styles.imageCheck}
-                source={require('../../assets/img/actions/icons/check.png')} />
+                source={require('../../assets/images/icons/check.png')} />
             ] : [
               !this.state.loading ? [
                 <TouchableHighlight key={'send_invitation_' + contact.recordID} style={styles.imageWrapper} onPress={() => {
@@ -268,7 +268,7 @@ class SearchFriend extends Page {
                   MeActions.sendMessageContact(contact);
                 }}>
                   <Image
-                    source={require('../../assets/img/actions/icons/send_mail.png')}
+                    source={require('../../assets/images/icons/send_mail.png')}
                     style={styles.imageMail} />
                 </TouchableHighlight>
               ] : [

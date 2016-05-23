@@ -250,7 +250,7 @@ class Carte extends Page {
               this.setState({error_overlay: true, message1: 'Aucun restaurant ne correspond à tes critères dans la zone recherchée.', message2: 'Essaie de chercher avec d\'autres critères ou dans une autre zone.'});
             }
           }}>
-          <Image source={require('../../assets/img/icons/search.png')} style={styles.submitIcon} />
+          <Image source={require('../../assets/images/icons/search.png')} style={styles.submitIcon} />
         </TouchableHighlight>
         <TouchableHighlight
           underlayColor='rgba(0, 0, 0, 0)'
@@ -262,7 +262,7 @@ class Carte extends Page {
               this.props.navigator.push(Filtre.route());
             }
           }}>
-          <Image source={require('../../assets/img/actions/icons/filter.png')} style={styles.filterIcon} />
+          <Image source={require('../../assets/images/icons/filter.png')} style={styles.filterIcon} />
         </TouchableHighlight>
 
         {this.state.error_overlay ? [

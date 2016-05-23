@@ -283,7 +283,7 @@ class Restaurant extends Page {
             titles={titles}
             onPress={this.onPressMenu}
             rightButtonTitle='mes envies'
-            rightImage={require('../../assets/img/actions/icons/filter.png')}
+            rightImage={require('../../assets/images/icons/filter.png')}
             onRightButtonPress={() => {
               this.props.navigator.replace(Filtre.route())
             }}

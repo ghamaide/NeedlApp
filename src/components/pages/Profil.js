@@ -189,9 +189,9 @@ class Profil extends Page {
     var hasInvitations = MeStore.getState().me.id === profil.id && ProfilStore.getRequestsReceived().length > 0 && MeStore.getState().showInvitations;
 
     if (this.state.index == 1) {
-      var image = require('../../assets/img/icons/public.png');
+      var image = require('../../assets/images/icons/public.png');
     } else if (this.state.index == 2) {
-      var image = require('../../assets/img/icons/private.png');
+      var image = require('../../assets/images/icons/private.png');
     }
 
     return (
@@ -597,7 +597,7 @@ class Profil extends Page {
               this.props.navigator.replace(CarteProfil.route({id: this.props.id}));
             }
           }}>
-          <Image source={require('../../assets/img/other/icons/map.png')} style={styles.submitIcon} />
+          <Image source={require('../../assets/images/icons/map.png')} style={styles.submitIcon} />
         </TouchableHighlight>
 
         {/* Button to switch to public profile */}

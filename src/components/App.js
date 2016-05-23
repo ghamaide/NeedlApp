@@ -327,22 +327,22 @@ class App extends Component {
             {
               component: Carte,
               title: 'Découvrir',
-              icon: require('../assets/img/tabs/icons/home.png')
+              icon: require('../assets/images/icons/home.png')
             },
             {
               component: RecoStep1,
               title: 'Recommander',
-              icon: require('../assets/img/tabs/icons/add.png'),
+              icon: require('../assets/images/icons/add.png'),
             },
             {
               component: Notifs,
               title: 'Notifs',
-              icon: require('../assets/img/tabs/icons/notif.png'),
+              icon: require('../assets/images/icons/notif.png'),
             },
             {
               component: Profil,
               title: 'Profil',
-              icon: require('../assets/img/tabs/icons/account.png')
+              icon: require('../assets/images/icons/account.png')
             }
           ]}
           initialSkipCache={!!this.notifLaunchTab}

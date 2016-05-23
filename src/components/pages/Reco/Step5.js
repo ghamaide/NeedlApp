@@ -54,19 +54,19 @@ class RecoStep5 extends Component {
               return (
                 <View style={{alignItems: 'center'}}>
                   <View style={styles.pastilleContainer}>
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/dej_business.png')} activeInitial={false} label='Business' value={1} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_couple.png')} activeInitial={false} label='Couple' value={2} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/en_famille.png')} activeInitial={false} label='Famille' value={3} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/dej_business.png')} activeInitial={false} label='Business' value={1} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/en_couple.png')} activeInitial={false} label='Couple' value={2} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/en_famille.png')} activeInitial={false} label='Famille' value={3} />
                   </View>
                   <View style={styles.pastilleContainer}>
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/entre_amis.png')} activeInitial={false} label='Amis' value={4} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/grandes_tablees.png')} activeInitial={false} label='Groupe' value={5} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/brunch.png')} activeInitial={false} label='Brunch' value={6} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/entre_amis.png')} activeInitial={false} label='Amis' value={4} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/grandes_tablees.png')} activeInitial={false} label='Groupe' value={5} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/brunch.png')} activeInitial={false} label='Brunch' value={6} />
                   </View>
                   <View style={styles.pastilleContainer}>
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/terrasse.png')} activeInitial={false} label='Terrasse' value={7} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/fast.png')} activeInitial={false} label='Fast' value={8} />
-                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/img/occasions/icons/date.png')} activeInitial={false} label='Date' value={9} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/terrasse.png')} activeInitial={false} label='Terrasse' value={7} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/fast.png')} activeInitial={false} label='Fast' value={8} />
+                    <Toggle size={60} width={105} style={styles.pastille} icon={require('../../../assets/images/icons/date.png')} activeInitial={false} label='Date' value={9} />
                   </View>
                 </View>
               );

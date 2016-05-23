@@ -410,61 +410,61 @@ export class ProfilStore extends CachedStore {
   static MAP_BADGES = [
     {
       rank: 0,
-      image: require('../assets/img/badges/novice.png'),
+      image: require('../assets/images/badges/novice.png'),
       name: 'Novice',
       description: 'Tu as maintenant tous les outils pour tisser la toile de tes restaurants préférés !'
     },
     {
       rank: 1,
-      image: require('../assets/img/badges/brodeur.png'),
+      image: require('../assets/images/badges/brodeur.png'),
       name: 'Brodeur',
       description: 'Ton âme d’explorateur a été dévoilée, elle peut désormais s’épanouir librement !'
     },
     {
       rank: 3,
-      image: require('../assets/img/badges/apprenti.png'),
+      image: require('../assets/images/badges/apprenti.png'),
       name: 'Apprenti',
       description: 'Tes premières tentatives ont porté leurs fruits, continue ainsi à développer tes talents !'
     },
     {
       rank: 5,
-      image: require('../assets/img/badges/retoucheur.png'),
+      image: require('../assets/images/badges/retoucheur.png'),
       name: 'Retoucheur',
       description: 'Tu es une solution en situation de crise et tu n’as jamais laissé tombé l’un des tiens.'
     },
     {
       rank: 10,
-      image: require('../assets/img/badges/tricoteur.png'),
+      image: require('../assets/images/badges/tricoteur.png'),
       name: 'Tricoteur',
       description: 'Tu as toujours une bonne idée qu’importe le lieu, et tu la partages avec plaisir.'
     },
     {
       rank: 30,
-      image: require('../assets/img/badges/confectionneur.png'),
+      image: require('../assets/images/badges/confectionneur.png'),
       name: 'Confectionneur',
       description: 'Ta toile s’est étoffée et tes recommandations sont plus que jamais recherchées.'
     },
     {
       rank: 60,
-      image: require('../assets/img/badges/faconneur.png'),
+      image: require('../assets/images/badges/faconneur.png'),
       name: 'Façonneur',
       description: 'L’ascension par l’adresse, la reconnaissance par la maîtrise.'
     },
     {
       rank: 100,
-      image: require('../assets/img/badges/tailleur.png'),
+      image: require('../assets/images/badges/tailleur.png'),
       name: 'Tailleur',
       description: 'Tu dessines le paysage culinaire de tes fidèles.'
     },
     {
       rank: 200,
-      image: require('../assets/img/badges/createur.png'),
+      image: require('../assets/images/badges/createur.png'),
       name: 'Créateur',
       description: 'Tu inities les tendances par l’univers que tu partages.'
     },
     {
       rank: 500,
-      image: require('../assets/img/badges/hautcouturier.png'),
+      image: require('../assets/images/badges/hautcouturier.png'),
       name: 'Grand Couturier',
       description: 'Tes coups de cœur se sèment et s’essaiment.'
     }

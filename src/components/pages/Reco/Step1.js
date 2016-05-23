@@ -179,7 +179,7 @@ class RecoStep1 extends Component {
                   onPress={() => {
                     this.setState({chosenRestaurant: {}});
                   }}>
-                  <Image source={require('../../../assets/img/icons/close.png')} style={{tintColor: '#FFFFFF', width: 10, height: 10}} />
+                  <Image source={require('../../../assets/images/icons/close.png')} style={{tintColor: '#FFFFFF', width: 10, height: 10}} />
                 </TouchableHighlight>
               </View>
             ] : null}
@@ -206,7 +206,7 @@ class RecoStep1 extends Component {
                       size={60}
                       width={140}
                       style={styles.pastille}
-                      icon={require('../../../assets/img/actions/icons/japprouve.png')}
+                      icon={require('../../../assets/images/icons/recommend.png')}
                       activeInitial={false}
                       label='Je recommande'
                       value={'recommendation'} />
@@ -214,7 +214,7 @@ class RecoStep1 extends Component {
                       size={60}
                       width={140}
                       style={styles.pastille}
-                      icon={require('../../../assets/img/actions/icons/aessayer.png')}
+                      icon={require('../../../assets/images/icons/aessayer.png')}
                       activeInitial={false}
                       label='Sur ma wishlist'
                       value={'wish'} />

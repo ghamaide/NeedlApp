@@ -234,7 +234,7 @@ class CarteProfil extends Page {
               this.props.navigator.replace(Profil.route({id: this.props.id}));
             }
           }}>
-          <Image source={require('../../assets/img/tabs/icons/account.png')} style={styles.submitIcon} />
+          <Image source={require('../../assets/images/icons/account.png')} style={styles.submitIcon} />
         </TouchableHighlight> 
       </View>
     );

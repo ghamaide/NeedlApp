@@ -45,7 +45,7 @@ class RestaurantHeader extends Component {
             {this.props.subway ? [
               <View key='restaurant_subway' style={styles.restaurantSubway}>
                 <Image
-                  source={require('../../assets/img/other/icons/subway.png')}
+                  source={require('../../assets/images/icons/subway.png')}
                   style={styles.restaurantSubwayImage} />
                 <Text style={styles.restaurantSubwayText}>{this.props.subway}</Text>
               </View>

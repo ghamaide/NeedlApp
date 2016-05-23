@@ -202,7 +202,7 @@ class Login extends Component {
       <View>
         <ScrollView keyboardShouldPersistTaps={true} scrollEnabled={false} style={styles.loginContainer}>
           <View style={styles.logoImageWrapper}>
-            <Image source={require('../../assets/img/other/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
+            <Image source={require('../../assets/images/icons/needllogo.png')} style={styles.logoImage} resizeMode='contain' />
             <Text style={styles.sublineText}>Improvisez une bonne soirée</Text>
           </View>
 

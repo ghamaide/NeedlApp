@@ -48,7 +48,7 @@ class Connection extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image style={styles.image} source={require('../../assets/img/other/icons/needllogo.png')} resizeMode={Image.resizeMode.contain} />
+        <Image style={styles.image} source={require('../../assets/images/icons/needllogo.png')} resizeMode={Image.resizeMode.contain} />
         <Text style={styles.text}>Malheureusement tu n'es pas connecté à Internet, connecte toi pour accéder à tes restos !</Text>
         {this.state.loading ? [
           Platform.OS === 'ios' ? [
