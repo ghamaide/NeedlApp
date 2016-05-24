@@ -1,6 +1,7 @@
 package com.needlios;
 
 import com.facebook.react.ReactActivity;
+import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 
@@ -67,6 +68,7 @@ public class MainActivity extends ReactActivity {
 
         return Arrays.<ReactPackage>asList(
             new MainReactPackage(),
+            new FBSDKPackage(),
             new AirPackage(),
             new RNDeviceInfo(),
             new VectorIconsPackage(),

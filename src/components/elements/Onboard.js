@@ -21,7 +21,7 @@ class Onboard extends Component {
 
     if (this.props.onPress) {
       return (
-        <TouchableHighlight key={this.props.key} style={[styles.onboardingContainerButton, this.props.style]} onPress={this.props.onPress} underlayColor='rgba(0, 0, 0, 0)'>
+        <TouchableHighlight style={[styles.onboardingContainerButton, this.props.style]} onPress={this.props.onPress} underlayColor='rgba(0, 0, 0, 0)'>
           <View style={{justifyContent: 'center', alignItems: 'center', padding: 5}}>
             {this.props.children}
             <View style={[styles.onboardingTriangle, {transform: [{rotate: rotation}], position: 'absolute', bottom: this.props.triangleBottom, top: this.props.triangleTop, right: this.props.triangleRight}]}></View>
@@ -31,7 +31,7 @@ class Onboard extends Component {
     }
 
     return (
-      <View key={this.props.key} style={[styles.onboardingContainer, this.props.style]}>
+      <View style={[styles.onboardingContainer, this.props.style]}>
         {this.props.children}
         {/* Show triangle on iOS and bubble on Android */}
         {Platform.OS == 'ios' ? [

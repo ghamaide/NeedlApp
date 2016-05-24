@@ -24,7 +24,7 @@ class RestaurantHeader extends Component {
     }
 
     var content = (
-      <View key={this.props.key} style={[this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
+      <View style={[this.props.style, {height: this.props.height, marginTop: this.props.marginTop, marginBottom: this.props.marginBottom}]}>
         <Image key={this.props.picture} style={styles.restaurantImage} source={{uri: this.props.picture}} />
         <View style={styles.restaurantBanner}>
           <Text style={styles.restaurantName}>{this.props.name}</Text>

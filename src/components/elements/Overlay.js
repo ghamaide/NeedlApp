@@ -8,7 +8,7 @@ import _ from 'lodash';
 class Overlay extends Component {
   render() {
     return (
-      <View key={this.props.key} style={[styles.overlayWrapper, this.props.style]}>
+      <View style={[styles.overlayWrapper, this.props.style]}>
         {this.props.children}
       </View>
     );

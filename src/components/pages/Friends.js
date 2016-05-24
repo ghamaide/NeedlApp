@@ -5,7 +5,6 @@ import {ActivityIndicatorIOS, Dimensions, Image, ListView, NativeModules, Platfo
 
 import _ from 'lodash';
 import SearchBar from 'react-native-search-bar';
-import RefreshableListView from 'react-native-refreshable-listview';
 
 import NavigationBar from '../ui/NavigationBar';
 import Page from '../ui/Page';
@@ -306,10 +305,17 @@ class Friends extends Page {
           })
         ] : null}
 
-        <RefreshableListView
+        <ListView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor='#FE3139'
+              title='Chargement...'
+              colors={['#FFFFFF']}
+              progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
+          }
           style={styles.friendsList}
-          refreshDescription='Chargement...'
-          loadData={this.onRefresh}
           dataSource={this.state.index == 1 ? ds.cloneWithRows(this.state.filtered_friends) : ds.cloneWithRows(this.state.filtered_followings)}
           renderRow={this.state.index == 1 ? this.renderFriend : this.renderFollowing}
           renderHeaderWrapper={this.renderHeader}

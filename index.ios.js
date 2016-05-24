@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {AppRegistry, Component, NetInfo} from 'react-native';
+import React, {Component} from 'react';
+import {AppRegistry, NetInfo} from 'react-native';
 
 import _ from 'lodash';
 
@@ -81,9 +82,9 @@ class NeedlIOS extends Component {
       return <Connection />
     }
 
-    if (!this.state.loggedIn) {
-      return <Login />;
-    }
+    // if (!this.state.loggedIn) {
+    //   return <Login />;
+    // }
 
     return <App />;
   };

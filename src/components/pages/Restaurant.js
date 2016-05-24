@@ -417,7 +417,7 @@ class Restaurant extends Page {
         */}
 
         {/* Overlay View for Carousel of Photos */}
-        {restaurant.pictures.length > 0 ? [
+        {restaurant.pictures && restaurant.pictures.length > 0 ? [
           <Modal
             key='modal'
             style={styles.modal}

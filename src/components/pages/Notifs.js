@@ -4,7 +4,6 @@ import React from 'react';
 import {Dimensions, Image, ListView, RefreshControl, ScrollView, StyleSheet, TouchableHighlight, View} from 'react-native';
 
 import _ from 'lodash';
-import RefreshableListView from 'react-native-refreshable-listview';
 
 import Page from '../ui/Page';
 import Text from '../ui/Text';
@@ -178,10 +177,16 @@ class Notifs extends Page {
           </TouchableHighlight>
         </View>
 
-        <RefreshableListView
-          key='notifications'
-          refreshDescription='Chargement...'
-          loadData={this.onRefresh}
+        <ListView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.loading}
+              onRefresh={this.onRefresh}
+              tintColor='#FE3139'
+              title='Chargement...'
+              colors={['#FFFFFF']}
+              progressBackgroundColor='rgba(0, 0, 0, 0.5)' />
+          }
           style={styles.notifsList}
           dataSource={ds.cloneWithRows(this.state.friendsActive ? this.state.friendsNotifications : this.state.followingsNotifications)}
           renderRow={this.renderNotification}

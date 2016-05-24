@@ -1,6 +1,7 @@
 'use strict';
 
-import React, {AppRegistry, Component, NetInfo} from 'react-native';
+import React, {Component} from 'react';
+import {AppRegistry, NetInfo} from 'react-native';
 
 import _ from 'lodash';
 
